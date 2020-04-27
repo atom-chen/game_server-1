@@ -4,41 +4,32 @@ syntax = "proto3";
 package AuthProto;
 
 enum Cmd {
-	INVALED = 0;
-	eUnameLoginReq = 1; //用户名密码登陆
-  eUnameLoginRes = 2;
-
-  eGuestLoginReq = 3; //游客登陆
-  eGuestLoginRes = 4;
-
-  eUnameRegistReq = 5; //用户名密码注册
-  eUnameRegistRes = 6;
-
-  ePhoneRegistReq = 7; //手机号注册
-  ePhoneRegistRes = 8;
-
-  eGetPhoneRegVerNumReq = 9; //获取手机号注册的验证码
-  eGetPhoneRegVerNumRes = 10;
-
-  eBindPhoneNumberReq = 11; //绑定手机号
-  eBindPhoneNumberRes = 12;
-
-  eResetUserPwdReq = 13; //修改密码
-  eResetUserPwdRes = 14;
-
-  eLoginOutReq = 15; //退出登录
-  eLoginOutRes = 16;
-
-  eEditProfileReq = 17; //修改资料
-  eEditProfileRes = 18;
-  
-  eAccountUpgradeReq = 19; //游客账号升级
-  eAccountUpgradeRes = 20;
-
-  eGetUserCenterInfoReq = 21; //获取玩家信息
-  eGetUserCenterInfoRes = 22;
-
-  eReloginRes = 23; //被重复登录
+	INVALED                     = 0;
+	eUnameLoginReq              = 1;    //用户名密码登陆
+  eUnameLoginRes              = 2;    
+  eGuestLoginReq              = 3;    //游客登陆
+  eGuestLoginRes              = 4;    
+  eUnameRegistReq             = 5;    //用户名密码注册
+  eUnameRegistRes             = 6;    
+  ePhoneRegistReq             = 7;    //手机号注册
+  ePhoneRegistRes             = 8;    
+  eGetPhoneRegVerNumReq       = 9;    //获取手机号注册的验证码
+  eGetPhoneRegVerNumRes       = 10;
+  eBindPhoneNumberReq         = 11;   //绑定手机号
+  eBindPhoneNumberRes         = 12; 
+  eResetUserPwdReq            = 13;   //修改密码
+  eResetUserPwdRes            = 14; 
+  eLoginOutReq                = 15;   //退出登录
+  eLoginOutRes                = 16; 
+  eEditProfileReq             = 17;   //修改资料
+  eEditProfileRes             = 18; 
+  eAccountUpgradeReq          = 19;   //游客账号升级
+  eAccountUpgradeRes          = 20; 
+  eGetUserCenterInfoReq       = 21;   //获取玩家信息
+  eGetUserCenterInfoRes       = 22; 
+  eReloginRes                 = 23;   //被重复登录
+  eWeChatLoginReq             = 24;   //微信登录
+  eWeChatLoginRes             = 25;
 }
 
 message UnameLoginReq {  
@@ -140,4 +131,14 @@ message GetUserCenterInfoRes {
 }
 
 message ReloginRes {
+}
+
+message WeChatLoginReq {
+	required string logincode = 1;
+	required string wechatuserinfo = 2;
+}
+
+message WeChatLoginRes {
+	required sint32 status = 1;
+	optional string wechatuserinfo = 2;
 }

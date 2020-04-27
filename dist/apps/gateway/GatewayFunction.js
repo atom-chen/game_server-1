@@ -7,12 +7,14 @@ var LOGIN_OR_REGIST_ERQ_CMD = [
     AuthProto_1.Cmd.eGuestLoginReq,
     AuthProto_1.Cmd.ePhoneRegistReq,
     AuthProto_1.Cmd.eUnameRegistReq,
+    AuthProto_1.Cmd.eWeChatLoginReq,
 ];
 var LOGIN_OR_REGIST_ERS_CMD = [
     AuthProto_1.Cmd.eUnameLoginRes,
     AuthProto_1.Cmd.eGuestLoginRes,
     AuthProto_1.Cmd.eUnameRegistRes,
     AuthProto_1.Cmd.ePhoneRegistRes,
+    AuthProto_1.Cmd.eWeChatLoginRes,
 ];
 var uid_session_map = {}; //保存已经登录过的玩家 uid-> session
 var GatewayFunction = /** @class */ (function () {

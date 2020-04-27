@@ -13,6 +13,7 @@ var AuthInfoInterface_1 = __importDefault(require("./interface/AuthInfoInterface
 var AuthLoginInterface_1 = __importDefault(require("./interface/AuthLoginInterface"));
 var AuthRegistInterface_1 = __importDefault(require("./interface/AuthRegistInterface"));
 var Stype_1 = require("../protocol/Stype");
+var AuthWeChatLoginInterface_1 = __importDefault(require("./interface/AuthWeChatLoginInterface"));
 var AuthModel = /** @class */ (function () {
     function AuthModel() {
         var _a;
@@ -24,6 +25,7 @@ var AuthModel = /** @class */ (function () {
             _a[AuthProto_1.Cmd.eUnameRegistReq] = this.on_uname_regist_req,
             _a[AuthProto_1.Cmd.eLoginOutReq] = this.on_login_out_req,
             _a[AuthProto_1.Cmd.eGetUserCenterInfoReq] = this.on_get_user_center_info_req,
+            _a[AuthProto_1.Cmd.eWeChatLoginReq] = this.on_wechat_login_req,
             _a[AuthProto_1.Cmd.ePhoneRegistReq] = function () { },
             _a[AuthProto_1.Cmd.eGetPhoneRegVerNumReq] = function () { },
             _a[AuthProto_1.Cmd.eBindPhoneNumberReq] = function () { },
@@ -85,6 +87,13 @@ var AuthModel = /** @class */ (function () {
             return;
         }
         AuthLoginInterface_1["default"].do_login_out_req(session, utag, proto_type, raw_cmd);
+    };
+    AuthModel.prototype.on_wechat_login_req = function (session, utag, proto_type, raw_cmd) {
+        if (utag == 0) {
+            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, { status: Response_1["default"].ILLEGAL_ACCOUNT });
+            return;
+        }
+        AuthWeChatLoginInterface_1["default"].do_wechat_login_req(session, utag, proto_type, raw_cmd);
     };
     AuthModel.Instance = new AuthModel();
     return AuthModel;

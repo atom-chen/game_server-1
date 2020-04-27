@@ -8,6 +8,7 @@ import AuthInfoInterface from './interface/AuthInfoInterface';
 import AuthLoginInterface from './interface/AuthLoginInterface';
 import AuthRegistInterface from './interface/AuthRegistInterface';
 import { Stype, StypeName } from '../protocol/Stype';
+import AuthWeChatLoginInterface from './interface/AuthWeChatLoginInterface';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -25,6 +26,7 @@ class AuthModel {
             [Cmd.eUnameRegistReq]:                  this.on_uname_regist_req,
             [Cmd.eLoginOutReq]:                     this.on_login_out_req,
             [Cmd.eGetUserCenterInfoReq]:            this.on_get_user_center_info_req,
+            [Cmd.eWeChatLoginReq]:                  this.on_wechat_login_req,
             [Cmd.ePhoneRegistReq]:                  () => {},
             [Cmd.eGetPhoneRegVerNumReq]:            () => {},
             [Cmd.eBindPhoneNumberReq]:              () => {},
@@ -95,6 +97,14 @@ class AuthModel {
             return;
         }
         AuthLoginInterface.do_login_out_req(session, utag, proto_type, raw_cmd);
+    }
+
+    on_wechat_login_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (utag == 0) {
+            AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT})
+            return;
+        }
+        AuthWeChatLoginInterface.do_wechat_login_req(session, utag, proto_type, raw_cmd);
     }
 }
 

@@ -28,6 +28,8 @@ var Cmd;
     Cmd[Cmd["eGetUserCenterInfoReq"] = 21] = "eGetUserCenterInfoReq";
     Cmd[Cmd["eGetUserCenterInfoRes"] = 22] = "eGetUserCenterInfoRes";
     Cmd[Cmd["eReloginRes"] = 23] = "eReloginRes";
+    Cmd[Cmd["eWeChatLoginReq"] = 24] = "eWeChatLoginReq";
+    Cmd[Cmd["eWeChatLoginRes"] = 25] = "eWeChatLoginRes";
 })(Cmd = exports.Cmd || (exports.Cmd = {}));
 exports.CmdName = (_a = {},
     _a[0] = "INVALED",
@@ -54,5 +56,7 @@ exports.CmdName = (_a = {},
     _a[21] = "GetUserCenterInfoReq",
     _a[22] = "GetUserCenterInfoRes",
     _a[23] = "ReloginRes",
+    _a[24] = "WeChatLoginReq",
+    _a[25] = "WeChatLoginRes",
     _a);
 //# sourceMappingURL=AuthProto.js.map

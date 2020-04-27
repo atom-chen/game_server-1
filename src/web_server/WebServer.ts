@@ -28,7 +28,7 @@ function start_web_server() {
 	let cwdPath = path.join(__dirname, KW_WWW_ROOT_PATH);
 	if (fs.existsSync(cwdPath)) {
 		app_express.use(express.static(cwdPath));
-		Log.info("path: ", cwdPath, " is exists, start web server success!");
+		//Log.info("path: ", cwdPath, " is exists, start web server success!");
 		Log.info("start web server success, ip:", GameAppConfig.webserver.host, " ,port: ", GameAppConfig.webserver.port);
 	} else {
 		Log.error("path: " , cwdPath, " is not exists, start web server failed!");

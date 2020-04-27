@@ -10,6 +10,7 @@ let LOGIN_OR_REGIST_ERQ_CMD = [
     Cmd.eGuestLoginReq,
     Cmd.ePhoneRegistReq,
     Cmd.eUnameRegistReq,
+    Cmd.eWeChatLoginReq,
 ]
 
 let LOGIN_OR_REGIST_ERS_CMD = [
@@ -17,6 +18,7 @@ let LOGIN_OR_REGIST_ERS_CMD = [
     Cmd.eGuestLoginRes,
     Cmd.eUnameRegistRes,
     Cmd.ePhoneRegistRes,
+    Cmd.eWeChatLoginRes,
 ]
 
 let uid_session_map: USMap = {}  //保存已经登录过的玩家 uid-> session
