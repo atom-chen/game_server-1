@@ -51,6 +51,18 @@ var MySqlAuth = /** @class */ (function () {
             callback(Response_1["default"].OK, sql_ret);
         });
     };
+    //wechat login
+    MySqlAuth.login_by_wechat_unionid = function (unionid, callback) {
+        var sql = "select guest_key , uid from uinfo where guest_key = \"%s\" limit 1";
+        var sql_cmd = util.format(sql, unionid);
+        MySqlAuth.query(sql_cmd, function (err, sql_ret, fields_desic) {
+            if (err) {
+                callback(Response_1["default"].SYSTEM_ERR, err);
+                return;
+            }
+            callback(Response_1["default"].OK, sql_ret);
+        });
+    };
     MySqlAuth.get_uinfo_by_uname_upwd = function (uname, upwd, callback) {
         if (uname && upwd && uname != "" && upwd != "") {
             var sql = "select * from uinfo where uname = \"%s\" and upwd = \"%s\" and is_guest = 0 limit 1";
@@ -73,6 +85,31 @@ var MySqlAuth = /** @class */ (function () {
                 return;
             }
             callback(Response_1["default"].OK, sql_ret);
+        });
+    };
+    MySqlAuth.insert_wechat_user = function (unick, usex, address, unionid, callback) {
+        var max_numid = MAX_NUMBER_ID;
+        MySqlAuth.get_max_uid(function (status, maxuid) {
+            if (status == Response_1["default"].OK) {
+                max_numid = max_numid + maxuid + 1;
+                Log_1["default"].info("insert_uname_upwd_user>> numid: ", max_numid);
+                var sql = "insert into uinfo(`unick`, `usex`, `address` ,`numberid`, `guest_key`)values(\"%s\", %d, \"%s\", %d, \"%s\")";
+                var sql_cmd = util.format(sql, unick, usex, address, max_numid, unionid);
+                Log_1["default"].info("insert_uname_upwd_user>> sql: ", sql_cmd);
+                MySqlAuth.query(sql_cmd, function (err, sql_ret, fields_desic) {
+                    if (err) {
+                        Log_1["default"].info("insert_wechat_user error111");
+                        callback(Response_1["default"].SYSTEM_ERR, err);
+                        return;
+                    }
+                    Log_1["default"].info("insert_wechat_user success!!!");
+                    callback(Response_1["default"].OK, sql_ret);
+                });
+            }
+            else {
+                Log_1["default"].info("insert_wechat_user error333");
+                callback(Response_1["default"].SYSTEM_ERR);
+            }
         });
     };
     MySqlAuth.insert_uname_upwd_user = function (uname, upwdmd5, unick, uface, usex, callback) {

@@ -1,4 +1,5 @@
 "use strict";
+// 微信小程序登录
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -10,7 +11,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 exports.__esModule = true;
+var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
+var Response_1 = __importDefault(require("../../protocol/Response"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
+var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
+var AuthProto_1 = require("../../protocol/AuthProto");
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
 var util = __importStar(require("util"));
 var https = __importStar(require("https"));
@@ -30,11 +35,11 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
         var wechatuserinfo = body.wechatuserinfo;
         if (wechatuserinfo) {
             var userinfoObj = JSON.parse(wechatuserinfo);
-            var encryptedData_1 = userinfoObj.encryptedData;
-            var iv_1 = userinfoObj.iv;
-            var rawData = userinfoObj.rawData;
-            var signature = userinfoObj.signature;
-            var userInfo = userinfoObj.userInfo;
+            var obj_encryptedData_1 = userinfoObj.encryptedData;
+            var obj_iv_1 = userinfoObj.iv;
+            var obj_rawData = userinfoObj.rawData;
+            var obj_signature = userinfoObj.signature;
+            var obj_userInfo = userinfoObj.userInfo;
             var wechat_login_address = util.format(HTTPS_WECHAT_LOGIN, WECHAT_APPID, WECHAT_APPSECRET, logincode);
             Log_1["default"].info("hcc>>wechat_login_address: ", wechat_login_address);
             // Log.info("hcc>>UserInfo:" , userInfo);
@@ -50,10 +55,23 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                     Log_1["default"].info("hcc>>end");
                     var buff = Buffer.concat(datas, size);
                     var result = iconv.decode(buff, "utf8");
-                    var d = JSON.parse(result);
-                    var wxCrypt = new WXBizDataCrypt_1["default"](WECHAT_APPID, d.session_key);
-                    var res = wxCrypt.decryptData(encryptedData_1, iv_1);
-                    Log_1["default"].info("hcc>>real>>res:", res);
+                    try {
+                        var d_result = JSON.parse(result);
+                        if (d_result.session_key) {
+                            try {
+                                var wxCrypt = new WXBizDataCrypt_1["default"](WECHAT_APPID, d_result.session_key);
+                                var decode_data = wxCrypt.decryptData(obj_encryptedData_1, obj_iv_1);
+                                Log_1["default"].info("hcc>>real>>res:", decode_data);
+                                AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
+                            }
+                            catch (error) {
+                                Log_1["default"].error("error1", error);
+                            }
+                        }
+                    }
+                    catch (error) {
+                        Log_1["default"].error("error2", error);
+                    }
                     // res中包含了openId、unionId、nickName、avatarUrl等等信息
                     // 注意，如果你的小游戏没有绑定微信公众号，这里可能也不会有unionId
                     // 微信登录完成，可以开始进入游戏了
@@ -64,11 +82,53 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
             });
         }
     };
+    AuthWeChatLoginInterface.do_login_by_wechat_unionid = function (session, utag, proto_type, decode_data) {
+        var unionId = decode_data.unionId;
+        if (!unionId) {
+            return;
+        }
+        if (!decode_data.province || !decode_data.city) {
+            return;
+        }
+        var avatarUrl = decode_data.avatarUrl;
+        if (!avatarUrl) {
+            return;
+        }
+        MySqlAuth_1["default"].login_by_wechat_unionid(unionId, function (status, data) {
+            if (status == Response_1["default"].OK) {
+                if (data.length <= 0) {
+                    var address = decode_data.country + "-" + decode_data.province + "-" + decode_data.city;
+                    MySqlAuth_1["default"].insert_wechat_user(decode_data.nickName, decode_data.gender, address, unionId, function (status, data) {
+                        if (status == Response_1["default"].OK) {
+                            AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
+                        }
+                        else {
+                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                        }
+                    });
+                }
+                else {
+                    var sql_info = data[0];
+                    var resbody = {
+                        status: 1,
+                        // wechatuserinfo: "OK",
+                        wechatuserinfo: JSON.stringify(sql_info)
+                    };
+                    Log_1["default"].info("hcc>>do_login_by_wechat_unionid: ", resbody);
+                    AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, resbody);
+                }
+            }
+            else {
+                AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+            }
+        });
+    };
     return AuthWeChatLoginInterface;
 }());
 /*
 hcc>>real>>res: {
     openId: 'oH8dH45oVZTuPNK6hQaSeANR-F9Y',
+    unionId: 'oaCkmwOd91uU-3oX78pJ59PFndGs',
     nickName: 'C小C',
     gender: 1,
     language: 'zh_CN',

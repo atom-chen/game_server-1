@@ -1,5 +1,6 @@
 import crypto from "crypto"
 import Log from "./Log";
+import CryptoUtil from './CryptoUtil';
 
 class WXBizDataCrypt {
         
@@ -13,9 +14,9 @@ class WXBizDataCrypt {
 
     decryptData(encryptedData:string, iv:string) {
         // base64 decode
-        let session_key = new Buffer(this.sessionKey, 'base64')
-        let encrypt_data = new Buffer(encryptedData, 'base64')
-        let iv_data = new Buffer(iv, 'base64')
+        let session_key = CryptoUtil.base64_decode(this.sessionKey);
+        let encrypt_data = CryptoUtil.base64_decode(encryptedData);
+        let iv_data = CryptoUtil.base64_decode(iv);
         let decoded = null;
         try {
             // 解密
@@ -25,7 +26,6 @@ class WXBizDataCrypt {
             decoded = decipher.update(encrypt_data, 'binary', 'utf8')
             decoded += decipher.final('utf8')
             decoded = JSON.parse(decoded)
-
         } catch (err) {
             Log.error('hcc>> Illegal Buffer 111',err); //todo ，第一次登录会报错
         }
@@ -33,7 +33,6 @@ class WXBizDataCrypt {
         if (decoded && decoded.watermark && decoded.watermark.appid !== this.appId) {
             Log.error('hcc>> Illegal Buffer 222')
         }
-
         return decoded
     }
 }

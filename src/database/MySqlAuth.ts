@@ -45,6 +45,19 @@ class MySqlAuth {
 			callback(Response.OK, sql_ret);
 		});
 	}
+
+	//wechat login
+	static login_by_wechat_unionid(unionid:string, callback:Function){
+		var sql = "select guest_key , uid from uinfo where guest_key = \"%s\" limit 1";
+		var sql_cmd = util.format(sql, unionid);
+		MySqlAuth.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
+			if (err) {
+				callback(Response.SYSTEM_ERR, err);
+				return;
+			}
+			callback(Response.OK, sql_ret);
+		});
+	}
 	
 	static get_uinfo_by_uname_upwd(uname:string, upwd:string, callback:Function) {
 		if(uname && upwd && uname != "" && upwd != ""){
@@ -71,6 +84,33 @@ class MySqlAuth {
 			callback(Response.OK, sql_ret);
 		});
 	}
+
+	static insert_wechat_user(unick: string, usex: number, address:string, unionid:string ,callback: Function) {
+		let max_numid = MAX_NUMBER_ID;
+		MySqlAuth.get_max_uid(function (status: number, maxuid: number) {
+			if (status == Response.OK) {
+				max_numid = max_numid + maxuid + 1;
+				Log.info("insert_uname_upwd_user>> numid: ", max_numid)
+				var sql = "insert into uinfo(`unick`, `usex`, `address` ,`numberid`, `guest_key`)values(\"%s\", %d, \"%s\", %d, \"%s\")";
+				var sql_cmd = util.format(sql, unick, usex, address, max_numid,unionid);
+				Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
+				MySqlAuth.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
+					if (err) {
+						Log.info("insert_wechat_user error111");
+						callback(Response.SYSTEM_ERR, err);
+						return;
+					}
+
+					Log.info("insert_wechat_user success!!!");
+					callback(Response.OK, sql_ret);
+				});
+			} else {
+				Log.info("insert_wechat_user error333");
+				callback(Response.SYSTEM_ERR);
+			}
+		})
+	}
+
 	static insert_uname_upwd_user(uname:string , upwdmd5:string ,unick:string, uface:number, usex:number, callback:Function){
 		let max_numid = MAX_NUMBER_ID;
 		MySqlAuth.get_max_uid(function (status:number, maxuid: number) {
@@ -95,7 +135,6 @@ class MySqlAuth {
 				callback(Response.SYSTEM_ERR);
 			}
 		})
-
 	}
 
 	static insert_guest_user(unick:string, uface:number, usex:number, ukey:string, callback:Function) {

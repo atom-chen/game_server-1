@@ -1,3 +1,5 @@
+// 微信小程序登录
+
 import MySqlAuth from "../../../database/MySqlAuth"
 import Response from '../../protocol/Response';
 import Log from "../../../utils/Log";
@@ -24,11 +26,11 @@ class AuthWeChatLoginInterface {
         let wechatuserinfo = body.wechatuserinfo;
         if (wechatuserinfo){
             let userinfoObj     = JSON.parse(wechatuserinfo);
-            let encryptedData   = userinfoObj.encryptedData;
-            let iv              = userinfoObj.iv;
-            let rawData         = userinfoObj.rawData;
-            let signature       = userinfoObj.signature;
-            let userInfo        = userinfoObj.userInfo;
+            let obj_encryptedData   = userinfoObj.encryptedData;
+            let obj_iv              = userinfoObj.iv;
+            let obj_rawData         = userinfoObj.rawData;
+            let obj_signature       = userinfoObj.signature;
+            let obj_userInfo        = userinfoObj.userInfo;
             let wechat_login_address = util.format(HTTPS_WECHAT_LOGIN, WECHAT_APPID, WECHAT_APPSECRET, logincode);
 
             Log.info("hcc>>wechat_login_address: ", wechat_login_address);
@@ -46,10 +48,21 @@ class AuthWeChatLoginInterface {
                     Log.info("hcc>>end");
                     let buff = Buffer.concat(datas, size);
                     let result = iconv.decode(buff, "utf8");
-                    let d = JSON.parse(result);
-                    let wxCrypt = new WXBizDataCrypt(WECHAT_APPID, d.session_key)
-                    let res = wxCrypt.decryptData(encryptedData, iv);
-                    Log.info("hcc>>real>>res:", res);
+                    try {
+                        let d_result = JSON.parse(result);
+                        if (d_result.session_key) {
+                            try {
+                                let wxCrypt = new WXBizDataCrypt(WECHAT_APPID, d_result.session_key)
+                                let decode_data = wxCrypt.decryptData(obj_encryptedData, obj_iv);
+                                Log.info("hcc>>real>>res:", decode_data);
+                                AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
+                            } catch (error) {
+                                Log.error("error1" , error);
+                            }
+                        }
+                    } catch (error) {
+                        Log.error("error2", error);
+                    }
                     // res中包含了openId、unionId、nickName、avatarUrl等等信息
                     // 注意，如果你的小游戏没有绑定微信公众号，这里可能也不会有unionId
                     // 微信登录完成，可以开始进入游戏了
@@ -61,11 +74,54 @@ class AuthWeChatLoginInterface {
             })             
         }
     }
+
+    static do_login_by_wechat_unionid(session: any, utag: number, proto_type: number, decode_data:any){
+        let unionId = decode_data.unionId;
+        if (!unionId){
+            return;
+        }
+
+        if(!decode_data.province || !decode_data.city){
+            return;
+        }
+
+        let avatarUrl = decode_data.avatarUrl;
+        if (!avatarUrl){
+            return;
+        }
+        
+        MySqlAuth.login_by_wechat_unionid(unionId, function (status: number, data: any) {
+            if (status == Response.OK) {
+                if (data.length <= 0) { 
+                    let address = decode_data.country + "-" + decode_data.province + "-" + decode_data.city;
+                    MySqlAuth.insert_wechat_user(decode_data.nickName, decode_data.gender, address, unionId, function(status:number, data:any) {
+                        if (status == Response.OK) {
+                            AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
+                        }else{
+                            AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, {status:Response.INVALID_PARAMS})
+                        }
+                    })
+                }else{
+                    let sql_info = data[0]
+                    let resbody = {
+                        status: 1,
+                        // wechatuserinfo: "OK",
+                        wechatuserinfo: JSON.stringify(sql_info)
+                    }
+                    Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
+                    AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, resbody)
+                }
+            }else{
+                AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
+            }
+        });
+    }
 }
 
 /*
 hcc>>real>>res: {
     openId: 'oH8dH45oVZTuPNK6hQaSeANR-F9Y',
+    unionId: 'oaCkmwOd91uU-3oX78pJ59PFndGs',
     nickName: 'C小C',
     gender: 1,
     language: 'zh_CN',

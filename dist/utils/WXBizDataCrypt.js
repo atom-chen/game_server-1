@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var crypto_1 = __importDefault(require("crypto"));
 var Log_1 = __importDefault(require("./Log"));
+var CryptoUtil_1 = __importDefault(require("./CryptoUtil"));
 var WXBizDataCrypt = /** @class */ (function () {
     function WXBizDataCrypt(appId, sessionKey) {
         this.appId = "";
@@ -14,9 +15,9 @@ var WXBizDataCrypt = /** @class */ (function () {
     }
     WXBizDataCrypt.prototype.decryptData = function (encryptedData, iv) {
         // base64 decode
-        var session_key = new Buffer(this.sessionKey, 'base64');
-        var encrypt_data = new Buffer(encryptedData, 'base64');
-        var iv_data = new Buffer(iv, 'base64');
+        var session_key = CryptoUtil_1["default"].base64_decode(this.sessionKey);
+        var encrypt_data = CryptoUtil_1["default"].base64_decode(encryptedData);
+        var iv_data = CryptoUtil_1["default"].base64_decode(iv);
         var decoded = null;
         try {
             // 解密
@@ -28,7 +29,7 @@ var WXBizDataCrypt = /** @class */ (function () {
             decoded = JSON.parse(decoded);
         }
         catch (err) {
-            Log_1["default"].error('hcc>> Illegal Buffer 111', err);
+            Log_1["default"].error('hcc>> Illegal Buffer 111', err); //todo ，第一次登录会报错
         }
         if (decoded && decoded.watermark && decoded.watermark.appid !== this.appId) {
             Log_1["default"].error('hcc>> Illegal Buffer 222');
