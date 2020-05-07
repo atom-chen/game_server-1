@@ -30,7 +30,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
     }
     AuthWeChatLoginInterface.do_wechat_login_req = function (session, utag, proto_type, raw_cmd) {
         var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
-        Log_1["default"].info("hcc>>do_wechat_login_req:", body);
+        // Log.info("hcc>>do_wechat_login_req:" , body);
         var logincode = body.logincode;
         var wechatuserinfo = body.wechatuserinfo;
         if (wechatuserinfo) {
@@ -41,7 +41,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
             var obj_signature = userinfoObj.signature;
             var obj_userInfo = userinfoObj.userInfo;
             var wechat_login_address = util.format(HTTPS_WECHAT_LOGIN, WECHAT_APPID, WECHAT_APPSECRET, logincode);
-            Log_1["default"].info("hcc>>wechat_login_address: ", wechat_login_address);
+            // Log.info("hcc>>wechat_login_address: ", wechat_login_address);
             // Log.info("hcc>>UserInfo:" , userInfo);
             https.get(wechat_login_address, function (ret) {
                 var datas = [];
@@ -49,10 +49,9 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                 ret.on("data", function (data) {
                     datas.push(data);
                     size += data.length;
-                    Log_1["default"].info("hcc>>recv data, size: ", size);
+                    // Log.info("hcc>>recv data, size: " , size);
                 });
                 ret.on("end", function () {
-                    Log_1["default"].info("hcc>>end");
                     var buff = Buffer.concat(datas, size);
                     var result = iconv.decode(buff, "utf8");
                     try {
@@ -84,21 +83,20 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
     };
     AuthWeChatLoginInterface.do_login_by_wechat_unionid = function (session, utag, proto_type, decode_data) {
         var unionId = decode_data.unionId;
-        if (!unionId) {
-            return;
-        }
-        if (!decode_data.province || !decode_data.city) {
-            return;
-        }
         var avatarUrl = decode_data.avatarUrl;
-        if (!avatarUrl) {
+        var nickName = decode_data.nickName;
+        var gender = decode_data.gender;
+        var country = decode_data.country;
+        var province = decode_data.province;
+        var city = decode_data.city;
+        if (!avatarUrl || !nickName || !gender || !country || !province || !city || !unionId) {
             return;
         }
+        var address = country + "-" + province + "-" + city;
         MySqlAuth_1["default"].login_by_wechat_unionid(unionId, function (status, data) {
             if (status == Response_1["default"].OK) {
                 if (data.length <= 0) {
-                    var address = decode_data.country + "-" + decode_data.province + "-" + decode_data.city;
-                    MySqlAuth_1["default"].insert_wechat_user(decode_data.nickName, decode_data.gender, address, unionId, function (status, data) {
+                    MySqlAuth_1["default"].insert_wechat_user(nickName, gender, address, unionId, avatarUrl, function (status, data) {
                         if (status == Response_1["default"].OK) {
                             AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
                         }
@@ -111,11 +109,20 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                     var sql_info = data[0];
                     var resbody = {
                         status: 1,
-                        // wechatuserinfo: "OK",
+                        uid: sql_info.uid,
                         wechatuserinfo: JSON.stringify(sql_info)
                     };
                     Log_1["default"].info("hcc>>do_login_by_wechat_unionid: ", resbody);
                     AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, resbody);
+                    //登录成功后，立即更新玩家微信数据，可能会耗费IO，但是为了同步微信信息没办法
+                    var login_uid = sql_info.uid;
+                    if (login_uid) {
+                        MySqlAuth_1["default"].update_wechat_user_info(login_uid, nickName, gender, address, unionId, avatarUrl, function (status, data) {
+                            if (status == Response_1["default"].OK) {
+                                Log_1["default"].info("hcc>>wechat login >> update user info success!!");
+                            }
+                        });
+                    }
                 }
             }
             else {

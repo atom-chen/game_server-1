@@ -139,6 +139,7 @@ message WeChatLoginReq {
 }
 
 message WeChatLoginRes {
-	required sint32 status = 1;
-	optional string wechatuserinfo = 2;
+  required sint32 status = 1;
+  int32 uid = 2;
+	optional string wechatuserinfo = 3;
 }

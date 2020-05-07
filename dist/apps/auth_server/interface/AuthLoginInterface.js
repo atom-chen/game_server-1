@@ -68,8 +68,8 @@ var AuthLoginInterface = /** @class */ (function () {
         MySqlAuth_1["default"].login_by_guestkey(body.guestkey, function (status, data) {
             Log_1["default"].info("login_by_guestkey ret: ", data);
             if (status == Response_1["default"].OK) {
-                if (data.length <= 0) { //
-                    var unick = "gst" + StringUtil_1["default"].random_int_str(5);
+                if (data.length <= 0) {
+                    var unick = "guest";
                     var usex = StringUtil_1["default"].random_int(0, 1);
                     var uface = StringUtil_1["default"].random_int(1, 9);
                     MySqlAuth_1["default"].insert_guest_user(unick, uface, usex, body.guestkey, function (status, data) {

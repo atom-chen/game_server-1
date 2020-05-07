@@ -31,7 +31,7 @@ var AuthRegistInterface = /** @class */ (function () {
             AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eUnameRegistRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
             return;
         }
-        var unick = "gst" + StringUtil_1["default"].random_int_str(5);
+        var unick = "user";
         var usex = StringUtil_1["default"].random_int(0, 1);
         var uface = StringUtil_1["default"].random_int(1, 9);
         MySqlAuth_1["default"].check_uname_exist(body.uname, function (status, data) {

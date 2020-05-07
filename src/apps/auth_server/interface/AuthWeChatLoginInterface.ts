@@ -21,7 +21,7 @@ class AuthWeChatLoginInterface {
 
     static do_wechat_login_req(session: any, utag: number, proto_type: number, raw_cmd: any){
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-        Log.info("hcc>>do_wechat_login_req:" , body);
+        // Log.info("hcc>>do_wechat_login_req:" , body);
         let logincode = body.logincode;
         let wechatuserinfo = body.wechatuserinfo;
         if (wechatuserinfo){
@@ -33,7 +33,7 @@ class AuthWeChatLoginInterface {
             let obj_userInfo        = userinfoObj.userInfo;
             let wechat_login_address = util.format(HTTPS_WECHAT_LOGIN, WECHAT_APPID, WECHAT_APPSECRET, logincode);
 
-            Log.info("hcc>>wechat_login_address: ", wechat_login_address);
+            // Log.info("hcc>>wechat_login_address: ", wechat_login_address);
             // Log.info("hcc>>UserInfo:" , userInfo);
             https.get(wechat_login_address, function (ret: http.IncomingMessage){
                 let datas:any = [];
@@ -41,11 +41,10 @@ class AuthWeChatLoginInterface {
                 ret.on("data",function(data:any) {
                     datas.push(data);
                     size += data.length;
-                    Log.info("hcc>>recv data, size: " , size);
+                    // Log.info("hcc>>recv data, size: " , size);
                 });
 
                 ret.on("end",function() {
-                    Log.info("hcc>>end");
                     let buff = Buffer.concat(datas, size);
                     let result = iconv.decode(buff, "utf8");
                     try {
@@ -76,25 +75,24 @@ class AuthWeChatLoginInterface {
     }
 
     static do_login_by_wechat_unionid(session: any, utag: number, proto_type: number, decode_data:any){
+
         let unionId = decode_data.unionId;
-        if (!unionId){
-            return;
-        }
-
-        if(!decode_data.province || !decode_data.city){
-            return;
-        }
-
         let avatarUrl = decode_data.avatarUrl;
-        if (!avatarUrl){
+        let nickName = decode_data.nickName;
+        let gender = decode_data.gender;
+        let country = decode_data.country;
+        let province =decode_data.province;
+        let city = decode_data.city;
+
+        if (!avatarUrl || !nickName || !gender || !country || !province || !city || !unionId){
             return;
         }
-        
+
+        let address = country + "-" + province + "-" + city;
         MySqlAuth.login_by_wechat_unionid(unionId, function (status: number, data: any) {
             if (status == Response.OK) {
                 if (data.length <= 0) { 
-                    let address = decode_data.country + "-" + decode_data.province + "-" + decode_data.city;
-                    MySqlAuth.insert_wechat_user(decode_data.nickName, decode_data.gender, address, unionId, function(status:number, data:any) {
+                    MySqlAuth.insert_wechat_user(nickName, gender, address, unionId, avatarUrl, function(status:number, data:any) {
                         if (status == Response.OK) {
                             AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
                         }else{
@@ -105,11 +103,20 @@ class AuthWeChatLoginInterface {
                     let sql_info = data[0]
                     let resbody = {
                         status: 1,
-                        // wechatuserinfo: "OK",
+                        uid: sql_info.uid,
                         wechatuserinfo: JSON.stringify(sql_info)
                     }
                     Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
                     AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, resbody)
+                    //登录成功后，立即更新玩家微信数据，可能会耗费IO，但是为了同步微信信息没办法
+                    let login_uid = sql_info.uid;
+                    if(login_uid){
+                        MySqlAuth.update_wechat_user_info(login_uid, nickName, gender, address, unionId, avatarUrl,function(status:number, data:any) {
+                            if(status == Response.OK){
+                                Log.info("hcc>>wechat login >> update user info success!!");
+                            }
+                        });
+                    }
                 }
             }else{
                 AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })

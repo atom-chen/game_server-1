@@ -53,7 +53,7 @@ var MySqlAuth = /** @class */ (function () {
     };
     //wechat login
     MySqlAuth.login_by_wechat_unionid = function (unionid, callback) {
-        var sql = "select guest_key , uid from uinfo where guest_key = \"%s\" limit 1";
+        var sql = "select unionid , uid from uinfo where unionid = \"%s\" limit 1";
         var sql_cmd = util.format(sql, unionid);
         MySqlAuth.query(sql_cmd, function (err, sql_ret, fields_desic) {
             if (err) {
@@ -87,27 +87,24 @@ var MySqlAuth = /** @class */ (function () {
             callback(Response_1["default"].OK, sql_ret);
         });
     };
-    MySqlAuth.insert_wechat_user = function (unick, usex, address, unionid, callback) {
+    MySqlAuth.insert_wechat_user = function (unick, usex, address, unionid, avatarurl, callback) {
         var max_numid = MAX_NUMBER_ID;
         MySqlAuth.get_max_uid(function (status, maxuid) {
             if (status == Response_1["default"].OK) {
                 max_numid = max_numid + maxuid + 1;
                 Log_1["default"].info("insert_uname_upwd_user>> numid: ", max_numid);
-                var sql = "insert into uinfo(`unick`, `usex`, `address` ,`numberid`, `guest_key`)values(\"%s\", %d, \"%s\", %d, \"%s\")";
-                var sql_cmd = util.format(sql, unick, usex, address, max_numid, unionid);
-                Log_1["default"].info("insert_uname_upwd_user>> sql: ", sql_cmd);
+                var sql = "insert into uinfo(`unick`, `usex`, `address` ,`numberid`, `unionid`, `avatarurl`)values(\"%s\", %d, \"%s\", %d, \"%s\",\"%s\")";
+                var sql_cmd = util.format(sql, unick, usex, address, max_numid, unionid, avatarurl);
+                // Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
                 MySqlAuth.query(sql_cmd, function (err, sql_ret, fields_desic) {
                     if (err) {
-                        Log_1["default"].info("insert_wechat_user error111");
                         callback(Response_1["default"].SYSTEM_ERR, err);
                         return;
                     }
-                    Log_1["default"].info("insert_wechat_user success!!!");
                     callback(Response_1["default"].OK, sql_ret);
                 });
             }
             else {
-                Log_1["default"].info("insert_wechat_user error333");
                 callback(Response_1["default"].SYSTEM_ERR);
             }
         });
@@ -117,6 +114,7 @@ var MySqlAuth = /** @class */ (function () {
         MySqlAuth.get_max_uid(function (status, maxuid) {
             if (status == Response_1["default"].OK) {
                 max_numid = max_numid + maxuid + 1;
+                unick = unick + String(max_numid);
                 Log_1["default"].info("insert_uname_upwd_user>> numid: ", max_numid);
                 var sql = "insert into uinfo(`uname`, `upwd` ,`unick`, `uface`, `usex`, `numberid`, `guest_key`)values(\"%s\", \"%s\", \"%s\", %d, %d, %d,0)";
                 var sql_cmd = util.format(sql, uname, upwdmd5, unick, uface, usex, max_numid);
@@ -142,6 +140,7 @@ var MySqlAuth = /** @class */ (function () {
         MySqlAuth.get_max_uid(function (status, maxuid) {
             if (status == Response_1["default"].OK) {
                 max_numid = max_numid + maxuid + 1;
+                unick = unick + String(max_numid);
                 var sql = "insert into uinfo(`guest_key`, `unick`, `uface`, `usex`, `numberid`, `is_guest`)values(\"%s\", \"%s\", %d, %d, %d,1)";
                 var sql_cmd = util.format(sql, ukey, unick, uface, usex, max_numid);
                 MySqlAuth.query(sql_cmd, function (err, sql_ret, fields_desic) {
@@ -188,6 +187,21 @@ var MySqlAuth = /** @class */ (function () {
                 return;
             }
             callback(Response_1["default"].OK, sql_ret[0].uid);
+        });
+    };
+    MySqlAuth.update_wechat_user_info = function (uid, unick, usex, address, unionid, avatarurl, callback) {
+        var sql = "update uinfo set unick = \"%s\", usex = %d, address = \"%s\", unionid = \"%s\" ,avatarurl = \"%s\" where uid = %d";
+        var sql_cmd = util.format(sql, unick, usex, address, unionid, avatarurl, uid);
+        MySqlAuth.query(sql_cmd, function (err, sql_ret, fields_desic) {
+            if (err) {
+                if (callback) {
+                    callback(Response_1["default"].SYSTEM_ERR, err);
+                }
+                return;
+            }
+            if (callback) {
+                callback(Response_1["default"].OK, sql_ret);
+            }
         });
     };
     ////////////////////////////////////

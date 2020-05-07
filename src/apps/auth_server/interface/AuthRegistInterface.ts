@@ -30,7 +30,7 @@ class AuthRegistInterface {
             return;
         }
 
-        let unick = "gst" + StringUtil.random_int_str(5);
+        let unick = "user";
         var usex = StringUtil.random_int(0, 1);
         var uface = StringUtil.random_int(1, 9);
         MySqlAuth.check_uname_exist(body.uname, function (status: number, data: any) {
