@@ -14,7 +14,6 @@ import WXBizDataCrypt from '../../../utils/WXBizDataCrypt';
 
 let WECHAT_APPID        = "wxb03d15124f396116";
 let WECHAT_APPSECRET    = "6b0b8e0066b7e0e9b841a6b9e05b6941";
-// let http_wechat_login = "https://api.weixin.qq.com/sns/jscode2session?appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code";
 let HTTPS_WECHAT_LOGIN   = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
 
 class AuthWeChatLoginInterface {
@@ -85,18 +84,22 @@ class AuthWeChatLoginInterface {
         let city = decode_data.city;
 
         if (!avatarUrl || !nickName || !gender || !country || !province || !city || !unionId){
+            Log.warn("hcc>>do_login_by_wechat_unionid>>1111");
             return;
         }
 
         let address = country + "-" + province + "-" + city;
         MySqlAuth.login_by_wechat_unionid(unionId, function (status: number, data: any) {
             if (status == Response.OK) {
-                if (data.length <= 0) { 
+                if (data.length <= 0) {
+                    Log.warn("hcc>>do_login_by_wechat_unionid>>2222");
                     MySqlAuth.insert_wechat_user(nickName, gender, address, unionId, avatarUrl, function(status:number, data:any) {
                         if (status == Response.OK) {
+                            Log.warn("hcc>>do_login_by_wechat_unionid>>3333");
                             AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
                         }else{
-                            AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, {status:Response.INVALID_PARAMS})
+                            AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, {status:Response.INVALID_PARAMS});
+                            Log.warn("hcc>>do_login_by_wechat_unionid>>4444");
                         }
                     })
                 }else{
@@ -126,7 +129,7 @@ class AuthWeChatLoginInterface {
 }
 
 /*
-hcc>>real>>res: {
+hcc>>real>>res:decode_data: {
     openId: 'oH8dH45oVZTuPNK6hQaSeANR-F9Y',
     unionId: 'oaCkmwOd91uU-3oX78pJ59PFndGs',
     nickName: 'C小C',
