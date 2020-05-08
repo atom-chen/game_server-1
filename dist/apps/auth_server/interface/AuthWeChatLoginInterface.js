@@ -97,7 +97,10 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
         if (!city) {
             city = "unknown";
         }
-        if (!avatarUrl || !nickName || !gender || !unionId) {
+        if (gender == undefined || gender == NaN) {
+            return;
+        }
+        if (!avatarUrl || !nickName || !unionId) {
             Log_1["default"].warn("hcc>>do_login_by_wechat_unionid>>1111");
             return;
         }
