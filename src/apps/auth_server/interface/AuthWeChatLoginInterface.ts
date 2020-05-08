@@ -75,15 +75,27 @@ class AuthWeChatLoginInterface {
 
     static do_login_by_wechat_unionid(session: any, utag: number, proto_type: number, decode_data:any){
 
-        let unionId = decode_data.unionId;
-        let avatarUrl = decode_data.avatarUrl;
-        let nickName = decode_data.nickName;
-        let gender = decode_data.gender;
-        let country = decode_data.country;
-        let province =decode_data.province;
-        let city = decode_data.city;
+        let unionId         = decode_data.unionId;
+        let avatarUrl       = decode_data.avatarUrl;
+        let nickName        = decode_data.nickName;
+        let gender          = decode_data.gender;
+        let country         = decode_data.country;
+        let province        = decode_data.province;
+        let city            = decode_data.city;
 
-        if (!avatarUrl || !nickName || !gender || !country || !province || !city || !unionId){
+        if(!country){
+            country = "unknown";
+        }
+
+        if (!province) {
+            province = "unknown";
+        }
+
+        if (!city) {
+            city = "unknown";
+        }
+
+        if (!avatarUrl || !nickName || !gender || !unionId){
             Log.warn("hcc>>do_login_by_wechat_unionid>>1111");
             return;
         }

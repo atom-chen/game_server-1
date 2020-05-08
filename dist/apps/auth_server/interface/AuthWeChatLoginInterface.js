@@ -88,7 +88,16 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
         var country = decode_data.country;
         var province = decode_data.province;
         var city = decode_data.city;
-        if (!avatarUrl || !nickName || !gender || !country || !province || !city || !unionId) {
+        if (!country) {
+            country = "unknown";
+        }
+        if (!province) {
+            province = "unknown";
+        }
+        if (!city) {
+            city = "unknown";
+        }
+        if (!avatarUrl || !nickName || !gender || !unionId) {
             Log_1["default"].warn("hcc>>do_login_by_wechat_unionid>>1111");
             return;
         }
