@@ -30,6 +30,9 @@ enum Cmd {
   eReloginRes                 = 23;   //被重复登录
   eWeChatLoginReq             = 24;   //微信登录
   eWeChatLoginRes             = 25;
+  eWeChatSessionLoginReq      = 26;   //微信session登录
+  eWeChatSessionLoginRes      = 27;
+
 }
 
 message UnameLoginReq {  
@@ -135,11 +138,21 @@ message ReloginRes {
 
 message WeChatLoginReq {
 	required string logincode = 1;
-	required string wechatuserinfo = 2;
+	required string userlogininfo = 2;
 }
 
 message WeChatLoginRes {
   required sint32 status = 1;
   int32 uid = 2;
-	optional string wechatuserinfo = 3;
+	optional string userlogininfo = 3;
+}
+
+message WeChatSessionLoginReq {
+  required string wechatsessionkey = 1;
+}
+
+message WeChatSessionLoginRes {
+  required sint32 status = 1;
+  int32 uid = 2;
+  optional string userlogininfo = 3;
 }

@@ -22,7 +22,7 @@ class AuthWeChatLoginInterface {
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         // Log.info("hcc>>do_wechat_login_req:" , body);
         let logincode = body.logincode;
-        let wechatuserinfo = body.wechatuserinfo;
+        let wechatuserinfo = body.userlogininfo;
         if (wechatuserinfo){
             let userinfoObj     = JSON.parse(wechatuserinfo);
             let obj_encryptedData   = userinfoObj.encryptedData;
@@ -43,6 +43,10 @@ class AuthWeChatLoginInterface {
                     // Log.info("hcc>>recv data, size: " , size);
                 });
 
+                // res中包含了openId、unionId、nickName、avatarUrl等等信息
+                // 注意，如果你的小游戏没有绑定微信公众号，这里可能也不会有unionId
+                // 微信登录完成，可以开始进入游戏了
+
                 ret.on("end",function() {
                     let buff = Buffer.concat(datas, size);
                     let result = iconv.decode(buff, "utf8");
@@ -61,9 +65,6 @@ class AuthWeChatLoginInterface {
                     } catch (error) {
                         Log.error("error2", error);
                     }
-                    // res中包含了openId、unionId、nickName、avatarUrl等等信息
-                    // 注意，如果你的小游戏没有绑定微信公众号，这里可能也不会有unionId
-                    // 微信登录完成，可以开始进入游戏了
                 });
 
                 ret.on("error", function (data: any) {
@@ -123,7 +124,7 @@ class AuthWeChatLoginInterface {
                     let resbody = {
                         status: 1,
                         uid: sql_info.uid,
-                        wechatuserinfo: JSON.stringify(sql_info)
+                        userlogininfo: JSON.stringify(sql_info)
                     }
                     Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
                     AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, resbody)
@@ -141,6 +142,36 @@ class AuthWeChatLoginInterface {
                 AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
             }
         });
+    }
+
+    //微信session登录(其实就是unionid登录)
+    static do_wechat_session_login_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
+        Log.info("hcc>>do_wechat_session_login_req111,body:  " , body);
+        if(body){
+            let wechatsessionkey = body.wechatsessionkey;
+            if (wechatsessionkey){
+                MySqlAuth.login_by_wechat_unionid(wechatsessionkey, function (status: number, data: any) {
+                    if (status == Response.OK) {
+                        if (data.length <= 0) {
+                            Log.warn("hcc>>do_wechat_session_login_req>>2222");
+                            AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })   
+                        } else {
+                            let sql_info = data[0]
+                            let resbody = {
+                                status: 1,
+                                uid: sql_info.uid,
+                                userlogininfo: JSON.stringify(sql_info)
+                            }
+                            Log.info("hcc>>do_wechat_session_login_req: ", resbody)
+                            AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, resbody)
+                        }
+                    } else {
+                        AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
+                    }
+                });
+            }
+        }
     }
 }
 

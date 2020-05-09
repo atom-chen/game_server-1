@@ -27,6 +27,7 @@ class AuthModel {
             [Cmd.eLoginOutReq]:                     this.on_login_out_req,
             [Cmd.eGetUserCenterInfoReq]:            this.on_get_user_center_info_req,
             [Cmd.eWeChatLoginReq]:                  this.on_wechat_login_req,
+            [Cmd.eWeChatSessionLoginReq]:           this.on_wechat_session_login_req,
             [Cmd.ePhoneRegistReq]:                  () => {},
             [Cmd.eGetPhoneRegVerNumReq]:            () => {},
             [Cmd.eBindPhoneNumberReq]:              () => {},
@@ -105,6 +106,14 @@ class AuthModel {
             return;
         }
         AuthWeChatLoginInterface.do_wechat_login_req(session, utag, proto_type, raw_cmd);
+    }
+
+    on_wechat_session_login_req(session: any, utag: number, proto_type: number, raw_cmd: any){
+        if (utag == 0) {
+            AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
+            return;
+        }
+        AuthWeChatLoginInterface.do_wechat_session_login_req(session, utag, proto_type, raw_cmd);
     }
 }
 

@@ -8,6 +8,7 @@ var LOGIN_OR_REGIST_ERQ_CMD = [
     AuthProto_1.Cmd.ePhoneRegistReq,
     AuthProto_1.Cmd.eUnameRegistReq,
     AuthProto_1.Cmd.eWeChatLoginReq,
+    AuthProto_1.Cmd.eWeChatSessionLoginReq,
 ];
 var LOGIN_OR_REGIST_ERS_CMD = [
     AuthProto_1.Cmd.eUnameLoginRes,
@@ -15,6 +16,7 @@ var LOGIN_OR_REGIST_ERS_CMD = [
     AuthProto_1.Cmd.eUnameRegistRes,
     AuthProto_1.Cmd.ePhoneRegistRes,
     AuthProto_1.Cmd.eWeChatLoginRes,
+    AuthProto_1.Cmd.eWeChatSessionLoginRes,
 ];
 var uid_session_map = {}; //保存已经登录过的玩家 uid-> session
 var GatewayFunction = /** @class */ (function () {

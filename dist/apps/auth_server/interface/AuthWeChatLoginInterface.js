@@ -31,7 +31,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
         var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
         // Log.info("hcc>>do_wechat_login_req:" , body);
         var logincode = body.logincode;
-        var wechatuserinfo = body.wechatuserinfo;
+        var wechatuserinfo = body.userlogininfo;
         if (wechatuserinfo) {
             var userinfoObj = JSON.parse(wechatuserinfo);
             var obj_encryptedData_1 = userinfoObj.encryptedData;
@@ -50,6 +50,9 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                     size += data.length;
                     // Log.info("hcc>>recv data, size: " , size);
                 });
+                // res中包含了openId、unionId、nickName、avatarUrl等等信息
+                // 注意，如果你的小游戏没有绑定微信公众号，这里可能也不会有unionId
+                // 微信登录完成，可以开始进入游戏了
                 ret.on("end", function () {
                     var buff = Buffer.concat(datas, size);
                     var result = iconv.decode(buff, "utf8");
@@ -70,9 +73,6 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                     catch (error) {
                         Log_1["default"].error("error2", error);
                     }
-                    // res中包含了openId、unionId、nickName、avatarUrl等等信息
-                    // 注意，如果你的小游戏没有绑定微信公众号，这里可能也不会有unionId
-                    // 微信登录完成，可以开始进入游戏了
                 });
                 ret.on("error", function (data) {
                     Log_1["default"].error("hcc>>error:", data);
@@ -125,7 +125,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                     var resbody = {
                         status: 1,
                         uid: sql_info.uid,
-                        wechatuserinfo: JSON.stringify(sql_info)
+                        userlogininfo: JSON.stringify(sql_info)
                     };
                     Log_1["default"].info("hcc>>do_login_by_wechat_unionid: ", resbody);
                     AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, resbody);
@@ -144,6 +144,37 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                 AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
             }
         });
+    };
+    //微信session登录(其实就是unionid登录)
+    AuthWeChatLoginInterface.do_wechat_session_login_req = function (session, utag, proto_type, raw_cmd) {
+        var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
+        Log_1["default"].info("hcc>>do_wechat_session_login_req111,body:  ", body);
+        if (body) {
+            var wechatsessionkey = body.wechatsessionkey;
+            if (wechatsessionkey) {
+                MySqlAuth_1["default"].login_by_wechat_unionid(wechatsessionkey, function (status, data) {
+                    if (status == Response_1["default"].OK) {
+                        if (data.length <= 0) {
+                            Log_1["default"].warn("hcc>>do_wechat_session_login_req>>2222");
+                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                        }
+                        else {
+                            var sql_info = data[0];
+                            var resbody = {
+                                status: 1,
+                                uid: sql_info.uid,
+                                userlogininfo: JSON.stringify(sql_info)
+                            };
+                            Log_1["default"].info("hcc>>do_wechat_session_login_req: ", resbody);
+                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatSessionLoginRes, utag, proto_type, resbody);
+                        }
+                    }
+                    else {
+                        AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                    }
+                });
+            }
+        }
     };
     return AuthWeChatLoginInterface;
 }());
