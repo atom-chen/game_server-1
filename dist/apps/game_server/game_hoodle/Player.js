@@ -82,6 +82,10 @@ var Player = /** @class */ (function () {
     Player.prototype.get_uname = function () {
         return this._ucenter_info.uname;
     };
+    //玩家名字
+    Player.prototype.get_unick = function () {
+        return this._ucenter_info.unick;
+    };
     //金币
     Player.prototype.get_uchip = function () {
         return this._ugame_info.uchip;

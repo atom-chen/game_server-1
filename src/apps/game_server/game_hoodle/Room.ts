@@ -4,11 +4,11 @@ import Log from '../../../utils/Log';
 import { GameState } from './config/State';
 
 class Room {
-    _roomid:string              = "";
-    _gamerule:string            = "";
-    _gamerule_obj:any           = {};
-    _player_set:any             = {}; //uid->player
-    _host_player_uid:number     = -1;
+    _roomid:string              = "";       //房间ID
+    _gamerule:string            = "";       //规则json字符串
+    _player_set:any             = {};       //玩家信息，uid->player
+    _host_player_uid:number     = -1;       //房主uid
+    _is_match_room:boolean      = false;    //是否匹配房间，默认false
 
     ///////
     _game_state:number          = GameState.InView; //游戏状态
@@ -33,7 +33,6 @@ class Room {
             Log.error(error);
             return;
         }
-        this._gamerule_obj = gameruleObj;
         this._player_count = gameruleObj.playerCount;
         this._play_count = gameruleObj.playCount;
     }
@@ -151,9 +150,24 @@ class Room {
         }
         return false;
     }
+
     //当前房间内人数
     get_player_count(){
         return ArrayUtil.GetArrayLen(this._player_set)
+    }
+
+    //房间在线人数
+    get_online_player_count(){
+        let online_player_count = 0;
+        for (let key in this._player_set) {
+            let player: Player = this._player_set[key];
+            if (player) {
+                if (player.get_offline() == false) {
+                    online_player_count++;
+                }
+            }
+        }
+        return online_player_count;
     }
 
     //房间配置的最多人数
@@ -194,6 +208,14 @@ class Room {
 
     get_game_state(){
         return this._game_state;
+    }
+
+    set_is_match_room(is_match:boolean){
+        this._is_match_room = is_match;
+    }
+
+    get_is_match_room():boolean{
+        return this._is_match_room;
     }
 
     broadcast_in_room(ctype:number, body:any ,not_to_player?:Player){

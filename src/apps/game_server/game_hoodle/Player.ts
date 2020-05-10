@@ -92,6 +92,11 @@ class Player{
         return this._ucenter_info.uname;
     }
 
+    //玩家名字
+    get_unick(){
+        return this._ucenter_info.unick;
+    }
+
     //金币
     get_uchip(){
         return this._ugame_info.uchip;

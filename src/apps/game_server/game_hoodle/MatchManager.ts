@@ -25,11 +25,11 @@ class MatchManager {
     start_match(){
         let _this = this;
         setInterval(function() {
-           let player = _this.get_matching_player();
+           let player = _this.get_matching_player(); //待匹配列表，还没正式进入匹配
            if(player){
                 let match_count = ArrayUtil.GetArrayLen(_this._in_match_list);
                if (match_count < GameHoodleConfig.MATCH_GAME_RULE.playerCount){
-                    let ret = _this.add_player_to_in_match_list(player);
+                    let ret = _this.add_player_to_in_match_list(player);//加入正式匹配列表
                     if(ret){
                         let tmp_in_match_list = _this._in_match_list
                         let match_count = ArrayUtil.GetArrayLen(_this._in_match_list);
@@ -56,6 +56,7 @@ class MatchManager {
         }
         let room:Room = RoomManager.getInstance().alloc_room();
         room.set_game_rule(JSON.stringify(GameHoodleConfig.MATCH_GAME_RULE));
+        room.set_is_match_room(true);
         this.set_room_host(room);
         Log.info("hcc>>in_match_list len: " , ArrayUtil.GetArrayLen(in_match_list))
         for(let key in in_match_list){
@@ -259,7 +260,7 @@ class MatchManager {
         let name_str = ""
         for(let key in this._match_list){
             let player:Player = this._match_list[key];
-            let uname = player.get_uname();
+            let uname = player.get_unick();
             name_str = name_str + uname + "  ,"
         }
         if(name_str == ""){

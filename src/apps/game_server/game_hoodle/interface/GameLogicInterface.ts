@@ -16,19 +16,19 @@ class GameLogicInterface {
     static do_player_shoot(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = playerMgr.get_player(utag);
         if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_uname(),"on_player_shoot room is not exist!")
+            Log.warn(player.get_unick(),"on_player_shoot room is not exist!")
             return;
         }
         let userstate = player.get_user_state()
         if (userstate != UserState.Playing) {
-            Log.warn(player.get_uname(), "on_player_shoot user is not in playing state!")
+            Log.warn(player.get_unick(), "on_player_shoot user is not in playing state!")
             return;
         }
 
         let room = roomMgr.get_room_by_uid(player.get_uid());
         if (room) {
             if (room.get_game_state() != GameState.Gameing) {
-                Log.warn(player.get_uname(),"on_player_shoot room is not in playing state!")
+                Log.warn(player.get_unick(),"on_player_shoot room is not in playing state!")
                 return;
             }
             //发送玩家射击信息
@@ -37,27 +37,27 @@ class GameLogicInterface {
             //设置下一个玩家射击权限
             GameFunction.set_next_player_power(room);
             //发送权限
-            GameFunction.send_player_power(room);
+            // GameFunction.send_player_power(room); //在玩家停下来的时候发送权限，不在这里发
         }
     }
 
     static do_player_ball_pos(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = PlayerManager.getInstance().get_player(utag);
         if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_uname(), "on_player_ball_pos room is not exist!")
+            Log.warn(player.get_unick(), "on_player_ball_pos room is not exist!")
             return;
         }
 
         let userstate = player.get_user_state()
         if (userstate != UserState.Playing) {
-            Log.warn(player.get_uname(), "on_player_ball_pos user is not in playing state!")
+            Log.warn(player.get_unick(), "on_player_ball_pos user is not in playing state!")
             return;
         }
 
         let room = roomMgr.get_room_by_uid(player.get_uid());
         if (room) {
             if (room.get_game_state() != GameState.Gameing) {
-                Log.warn(player.get_uname(), "on_player_ball_pos room is not in playing state!")
+                Log.warn(player.get_unick(), "on_player_ball_pos room is not in playing state!")
                 return;
             }
 
@@ -79,27 +79,30 @@ class GameLogicInterface {
                     }
                 }
             }
+            //重新发送玩家位置信息
             GameFunction.send_player_ball_pos(room);
+            //小球停下来后，才发送权限
+            GameFunction.send_player_power(room);
         }
     }
 
     static do_player_is_shooted(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = playerMgr.get_player(utag);
         if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_uname(), "on_player_is_shooted room is not exist!")
+            Log.warn(player.get_unick(), "on_player_is_shooted room is not exist!")
             return;
         }
 
         let userstate = player.get_user_state()
         if (userstate != UserState.Playing) {
-            Log.warn(player.get_uname(), "on_player_is_shooted user is not in playing state!")
+            Log.warn(player.get_unick(), "on_player_is_shooted user is not in playing state!")
             return;
         }
 
         let room = roomMgr.get_room_by_uid(player.get_uid());
         if (room) {
             if (room.get_game_state() != GameState.Gameing) {
-                Log.warn(player.get_uname(), "on_player_is_shooted room is not in playing state!")
+                Log.warn(player.get_unick(), "on_player_is_shooted room is not in playing state!")
                 return;
             }
 
@@ -113,7 +116,7 @@ class GameLogicInterface {
             if (src_player && des_player) {
                 src_player.set_user_score(src_player.get_user_score() + 1);
                 des_player.set_user_score(des_player.get_user_score() - 1);
-                Log.info("hcc>>playerScore: src_player:", src_player.get_uname(), "+1", " des_player:", des_player.get_uname(), "-1");
+                Log.info("hcc>>playerScore: src_player:", src_player.get_unick(), "+1", " des_player:", des_player.get_unick(), "-1");
             }
             //发送分数
             GameFunction.send_player_score(room);

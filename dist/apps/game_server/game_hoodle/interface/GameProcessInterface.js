@@ -20,7 +20,7 @@ var GameProcessInterface = /** @class */ (function () {
     GameProcessInterface.do_player_check_link_game = function (utag) {
         var player = playerMgr.get_player(utag);
         if (!GameCheck_1["default"].check_room(utag)) {
-            Log_1["default"].warn(player.get_uname(), "check_link_game room is not exist!");
+            Log_1["default"].warn(player.get_unick(), "check_link_game room is not exist!");
             return;
         }
         var room = roomMgr.get_room_by_uid(player.get_uid());
@@ -44,13 +44,13 @@ var GameProcessInterface = /** @class */ (function () {
     GameProcessInterface.do_player_ready = function (utag) {
         var player = playerMgr.get_player(utag);
         if (!GameCheck_1["default"].check_room(utag)) {
-            Log_1["default"].warn(player.get_uname(), "on_user_ready room is not exist!");
+            Log_1["default"].warn(player.get_unick(), "on_user_ready room is not exist!");
             player.send_cmd(GameHoodleProto_1.Cmd.eUserReadyRes, { status: Response_1["default"].INVALIDI_OPT });
             return;
         }
         var userstate = player.get_user_state();
         if (userstate == State_1.UserState.Ready || userstate == State_1.UserState.Playing) {
-            Log_1["default"].warn(player.get_uname(), "on_user_ready user is already ready or is playing!");
+            Log_1["default"].warn(player.get_unick(), "on_user_ready user is already ready or is playing!");
             player.send_cmd(GameHoodleProto_1.Cmd.eUserReadyRes, { status: Response_1["default"].INVALIDI_OPT });
             return;
         }

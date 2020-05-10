@@ -22,11 +22,11 @@ var MatchManager = /** @class */ (function () {
     MatchManager.prototype.start_match = function () {
         var _this = this;
         setInterval(function () {
-            var player = _this.get_matching_player();
+            var player = _this.get_matching_player(); //待匹配列表，还没正式进入匹配
             if (player) {
                 var match_count = ArrayUtil_1["default"].GetArrayLen(_this._in_match_list);
                 if (match_count < GameHoodleConfig_1["default"].MATCH_GAME_RULE.playerCount) {
-                    var ret = _this.add_player_to_in_match_list(player);
+                    var ret = _this.add_player_to_in_match_list(player); //加入正式匹配列表
                     if (ret) {
                         var tmp_in_match_list = _this._in_match_list;
                         var match_count_1 = ArrayUtil_1["default"].GetArrayLen(_this._in_match_list);
@@ -52,6 +52,7 @@ var MatchManager = /** @class */ (function () {
         }
         var room = RoomManager_1["default"].getInstance().alloc_room();
         room.set_game_rule(JSON.stringify(GameHoodleConfig_1["default"].MATCH_GAME_RULE));
+        room.set_is_match_room(true);
         this.set_room_host(room);
         Log_1["default"].info("hcc>>in_match_list len: ", ArrayUtil_1["default"].GetArrayLen(in_match_list));
         for (var key in in_match_list) {
@@ -235,7 +236,7 @@ var MatchManager = /** @class */ (function () {
         var name_str = "";
         for (var key in this._match_list) {
             var player = this._match_list[key];
-            var uname = player.get_uname();
+            var uname = player.get_unick();
             name_str = name_str + uname + "  ,";
         }
         if (name_str == "") {

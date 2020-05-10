@@ -8,6 +8,7 @@ import RoomManager from '../RoomManager';
 import GameFunction from './GameFunction';
 import MatchManager from '../MatchManager';
 import GameSendMsg from '../GameSendMsg';
+import { GameState } from '../config/State';
 
 let playerMgr: PlayerManager    = PlayerManager.getInstance();
 let roomMgr: RoomManager        = RoomManager.getInstance();
@@ -19,22 +20,45 @@ class GameLinkInterface {
     static do_player_lost_connect(utag:number){
         let player: Player = playerMgr.get_player(utag);
         if (player) {
+
+            //设置房间内玩家掉线
             let room = roomMgr.get_room_by_uid(utag);
             if (room) {
                 player.set_offline(true)
-                //send to room other player user lost connect
                 room.broadcast_in_room(Cmd.eUserOfflineRes, { seatid: player.get_seat_id() }, player);
                 GameFunction.broadcast_player_info_in_rooom(room, player);
             }
-            let uname = player.get_uname();
+
+            //删掉玩家对象，但是如果在房间里面，玩家引用还会在房间里面，方便下次重连
+            let uname = player.get_unick();
             let numid = player.get_numberid();
             let issuccess = playerMgr.delete_player(utag);
             if(issuccess){
                 Log.warn(uname + " ,numid:" + numid + " is lostconnect,totalPlyaerCount: " + playerMgr.get_player_count());
             }
+            
+            //如果在匹配，就从匹配列表中删除
             let ret = matchMgr.stop_player_match(player.get_uid());
             if (ret) {
                 Log.info(uname, "delete from match")
+            }
+
+            //如果在匹配房间内游戏还没开始，达到条件房间就解散
+            if(room && room.get_is_match_room()){
+                if (room.get_game_state() != GameState.InView){ //游戏已经开始，不能直接解散
+                    return;
+                }
+                //游戏还没开始，而且没有在线玩家，房间解散
+
+                let playerCount = room.get_player_count();
+                let onlinePlayerCount = room.get_online_player_count();
+                Log.info("hcc>>do_player_lost_connect: playerCouont: ", playerCount, " ,onlinePlayerCount: ", onlinePlayerCount);
+                if (playerCount == 0 || onlinePlayerCount == 0){
+                    room.kick_all_player();
+                    let roomID = room.get_room_id();
+                    let ret = roomMgr.delete_room(roomID);
+                    Log.info("hcc>>do_player_lost_connect>>delete room :", ret, " ,roomid: ", roomID); 
+                }
             }
         }
     }

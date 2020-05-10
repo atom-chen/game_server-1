@@ -21,7 +21,7 @@ var GameMatchInterface = /** @class */ (function () {
         //如果在房间内，不能匹配
         var room = roomMgr.get_room_by_uid(player.get_uid());
         if (room) {
-            Log_1["default"].warn(player.get_uname(), "do_player_match error user is at room!");
+            Log_1["default"].warn(player.get_unick(), "do_player_match error user is at room!");
             player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, { status: Response_1["default"].INVALIDI_OPT });
             return;
         }
@@ -29,14 +29,14 @@ var GameMatchInterface = /** @class */ (function () {
         if (GameHoodleConfig_1["default"].KW_IS_GOLD_LIMIT) {
             if (player.get_uchip() < GameHoodleConfig_1["default"].KW_MIN_GOLD_ENTER_ROOM) {
                 player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, { status: Response_1["default"].INVALIDI_OPT });
-                Log_1["default"].warn(player.get_uname(), "do_player_match error, gold is not enough");
+                Log_1["default"].warn(player.get_unick(), "do_player_match error, gold is not enough");
                 return;
             }
         }
         //加入匹配等待列表
         var ret = matchMgr.add_player_to_match_list(player);
         if (!ret) {
-            Log_1["default"].warn(player.get_uname(), "do_player_match error user is in matching!");
+            Log_1["default"].warn(player.get_unick(), "do_player_match error user is in matching!");
             player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, { status: Response_1["default"].NOT_YOUR_TURN });
             return;
         }
@@ -53,11 +53,11 @@ var GameMatchInterface = /** @class */ (function () {
             userinfo: userinfo_array
         };
         player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, body);
-        Log_1["default"].info(player.get_uname(), "do_player_match user add matching success!");
+        Log_1["default"].info(player.get_unick(), "do_player_match user add matching success!");
     };
     GameMatchInterface.do_player_stop_match = function (utag) {
         var player = playerMgr.get_player(utag);
-        var uname = player.get_uname();
+        var uname = player.get_unick();
         var ret = matchMgr.stop_player_match(player.get_uid());
         if (!ret) {
             Log_1["default"].warn(uname, "odo_player_stop_match failed!");

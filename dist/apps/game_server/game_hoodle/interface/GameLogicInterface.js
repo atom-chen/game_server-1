@@ -18,18 +18,18 @@ var GameLogicInterface = /** @class */ (function () {
     GameLogicInterface.do_player_shoot = function (utag, proto_type, raw_cmd) {
         var player = playerMgr.get_player(utag);
         if (!GameCheck_1["default"].check_room(utag)) {
-            Log_1["default"].warn(player.get_uname(), "on_player_shoot room is not exist!");
+            Log_1["default"].warn(player.get_unick(), "on_player_shoot room is not exist!");
             return;
         }
         var userstate = player.get_user_state();
         if (userstate != State_1.UserState.Playing) {
-            Log_1["default"].warn(player.get_uname(), "on_player_shoot user is not in playing state!");
+            Log_1["default"].warn(player.get_unick(), "on_player_shoot user is not in playing state!");
             return;
         }
         var room = roomMgr.get_room_by_uid(player.get_uid());
         if (room) {
             if (room.get_game_state() != State_1.GameState.Gameing) {
-                Log_1["default"].warn(player.get_uname(), "on_player_shoot room is not in playing state!");
+                Log_1["default"].warn(player.get_unick(), "on_player_shoot room is not in playing state!");
                 return;
             }
             //发送玩家射击信息
@@ -38,24 +38,24 @@ var GameLogicInterface = /** @class */ (function () {
             //设置下一个玩家射击权限
             GameFunction_1["default"].set_next_player_power(room);
             //发送权限
-            GameFunction_1["default"].send_player_power(room);
+            // GameFunction.send_player_power(room); //在玩家停下来的时候发送权限，不在这里发
         }
     };
     GameLogicInterface.do_player_ball_pos = function (utag, proto_type, raw_cmd) {
         var player = PlayerManager_1["default"].getInstance().get_player(utag);
         if (!GameCheck_1["default"].check_room(utag)) {
-            Log_1["default"].warn(player.get_uname(), "on_player_ball_pos room is not exist!");
+            Log_1["default"].warn(player.get_unick(), "on_player_ball_pos room is not exist!");
             return;
         }
         var userstate = player.get_user_state();
         if (userstate != State_1.UserState.Playing) {
-            Log_1["default"].warn(player.get_uname(), "on_player_ball_pos user is not in playing state!");
+            Log_1["default"].warn(player.get_unick(), "on_player_ball_pos user is not in playing state!");
             return;
         }
         var room = roomMgr.get_room_by_uid(player.get_uid());
         if (room) {
             if (room.get_game_state() != State_1.GameState.Gameing) {
-                Log_1["default"].warn(player.get_uname(), "on_player_ball_pos room is not in playing state!");
+                Log_1["default"].warn(player.get_unick(), "on_player_ball_pos room is not in playing state!");
                 return;
             }
             var player_set = room.get_all_player();
@@ -76,24 +76,27 @@ var GameLogicInterface = /** @class */ (function () {
                     }
                 }
             }
+            //重新发送玩家位置信息
             GameFunction_1["default"].send_player_ball_pos(room);
+            //小球停下来后，才发送权限
+            GameFunction_1["default"].send_player_power(room);
         }
     };
     GameLogicInterface.do_player_is_shooted = function (utag, proto_type, raw_cmd) {
         var player = playerMgr.get_player(utag);
         if (!GameCheck_1["default"].check_room(utag)) {
-            Log_1["default"].warn(player.get_uname(), "on_player_is_shooted room is not exist!");
+            Log_1["default"].warn(player.get_unick(), "on_player_is_shooted room is not exist!");
             return;
         }
         var userstate = player.get_user_state();
         if (userstate != State_1.UserState.Playing) {
-            Log_1["default"].warn(player.get_uname(), "on_player_is_shooted user is not in playing state!");
+            Log_1["default"].warn(player.get_unick(), "on_player_is_shooted user is not in playing state!");
             return;
         }
         var room = roomMgr.get_room_by_uid(player.get_uid());
         if (room) {
             if (room.get_game_state() != State_1.GameState.Gameing) {
-                Log_1["default"].warn(player.get_uname(), "on_player_is_shooted room is not in playing state!");
+                Log_1["default"].warn(player.get_unick(), "on_player_is_shooted room is not in playing state!");
                 return;
             }
             //先转发射中消息
@@ -105,7 +108,7 @@ var GameLogicInterface = /** @class */ (function () {
             if (src_player && des_player) {
                 src_player.set_user_score(src_player.get_user_score() + 1);
                 des_player.set_user_score(des_player.get_user_score() - 1);
-                Log_1["default"].info("hcc>>playerScore: src_player:", src_player.get_uname(), "+1", " des_player:", des_player.get_uname(), "-1");
+                Log_1["default"].info("hcc>>playerScore: src_player:", src_player.get_unick(), "+1", " des_player:", des_player.get_unick(), "-1");
             }
             //发送分数
             GameFunction_1["default"].send_player_score(room);

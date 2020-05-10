@@ -210,13 +210,13 @@ var GameInfoInterface = /** @class */ (function () {
                             if (status == Response_1["default"].OK) {
                                 //减去金币
                                 player.set_uchip(player.get_uchip() - propprice_1);
-                                Log_1["default"].info("hcc>>write_player_chip success", player.get_uname());
+                                Log_1["default"].info("hcc>>write_player_chip success", player.get_unick());
                                 //加上道具
                                 var is_success = GameInfoInterface.user_update_ball_info(player, GameHoodleConfig_1["default"].BALL_UPDATE_TYPE.ADD_TYPE, propinfo_1.level, propcount_1);
                                 if (is_success) {
                                     MySqlGame_1["default"].update_ugame_uball_info(player.get_uid(), player.get_uball_info(), function (status, ret) {
                                         if (status == Response_1["default"].OK) {
-                                            Log_1["default"].info("hcc>>write_player_ball success", player.get_uname());
+                                            Log_1["default"].info("hcc>>write_player_ball success", player.get_unick());
                                             var res_body = {
                                                 status: Response_1["default"].OK,
                                                 propsvrindex: shopInfo.propsvrindex,

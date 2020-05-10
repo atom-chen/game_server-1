@@ -8,11 +8,11 @@ var Log_1 = __importDefault(require("../../../utils/Log"));
 var State_1 = require("./config/State");
 var Room = /** @class */ (function () {
     function Room(roomid) {
-        this._roomid = "";
-        this._gamerule = "";
-        this._gamerule_obj = {};
-        this._player_set = {}; //uid->player
-        this._host_player_uid = -1;
+        this._roomid = ""; //房间ID
+        this._gamerule = ""; //规则json字符串
+        this._player_set = {}; //玩家信息，uid->player
+        this._host_player_uid = -1; //房主uid
+        this._is_match_room = false; //是否匹配房间，默认false
         ///////
         this._game_state = State_1.GameState.InView; //游戏状态
         this._play_count = -1; //总的配置局数
@@ -33,7 +33,6 @@ var Room = /** @class */ (function () {
             Log_1["default"].error(error);
             return;
         }
-        this._gamerule_obj = gameruleObj;
         this._player_count = gameruleObj.playerCount;
         this._play_count = gameruleObj.playCount;
     };
@@ -144,6 +143,19 @@ var Room = /** @class */ (function () {
     Room.prototype.get_player_count = function () {
         return ArrayUtil_1["default"].GetArrayLen(this._player_set);
     };
+    //房间在线人数
+    Room.prototype.get_online_player_count = function () {
+        var online_player_count = 0;
+        for (var key in this._player_set) {
+            var player = this._player_set[key];
+            if (player) {
+                if (player.get_offline() == false) {
+                    online_player_count++;
+                }
+            }
+        }
+        return online_player_count;
+    };
     //房间配置的最多人数
     Room.prototype.get_conf_player_count = function () {
         return this._player_count;
@@ -174,6 +186,12 @@ var Room = /** @class */ (function () {
     };
     Room.prototype.get_game_state = function () {
         return this._game_state;
+    };
+    Room.prototype.set_is_match_room = function (is_match) {
+        this._is_match_room = is_match;
+    };
+    Room.prototype.get_is_match_room = function () {
+        return this._is_match_room;
     };
     Room.prototype.broadcast_in_room = function (ctype, body, not_to_player) {
         if (!ctype) {

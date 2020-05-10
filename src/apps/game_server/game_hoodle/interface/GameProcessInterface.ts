@@ -19,7 +19,7 @@ class GameProcessInterface {
 
         let player: Player = playerMgr.get_player(utag);
         if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_uname(), "check_link_game room is not exist!")
+            Log.warn(player.get_unick(), "check_link_game room is not exist!")
             return;
         }
 
@@ -45,14 +45,14 @@ class GameProcessInterface {
     static do_player_ready(utag:number){
         let player: Player = playerMgr.get_player(utag);
         if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_uname(), "on_user_ready room is not exist!")
+            Log.warn(player.get_unick(), "on_user_ready room is not exist!")
             player.send_cmd(Cmd.eUserReadyRes, { status: Response.INVALIDI_OPT })
             return;
         }
 
         let userstate = player.get_user_state()
         if (userstate == UserState.Ready || userstate == UserState.Playing) {
-            Log.warn(player.get_uname(), "on_user_ready user is already ready or is playing!")
+            Log.warn(player.get_unick(), "on_user_ready user is already ready or is playing!")
             player.send_cmd(Cmd.eUserReadyRes, { status: Response.INVALIDI_OPT })
             return;
         }

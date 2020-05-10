@@ -19,7 +19,7 @@ class GameMatchInterface {
         //如果在房间内，不能匹配
         let room = roomMgr.get_room_by_uid(player.get_uid())
         if (room) {
-            Log.warn(player.get_uname(), "do_player_match error user is at room!")
+            Log.warn(player.get_unick(), "do_player_match error user is at room!")
             player.send_cmd(Cmd.eUserMatchRes, { status: Response.INVALIDI_OPT });
             return;
         }
@@ -28,7 +28,7 @@ class GameMatchInterface {
         if (GameHoodleConfig.KW_IS_GOLD_LIMIT) {
             if (player.get_uchip() < GameHoodleConfig.KW_MIN_GOLD_ENTER_ROOM) {
                 player.send_cmd(Cmd.eUserMatchRes, { status: Response.INVALIDI_OPT })
-                Log.warn(player.get_uname(), "do_player_match error, gold is not enough")
+                Log.warn(player.get_unick(), "do_player_match error, gold is not enough")
                 return;
             }
         }
@@ -36,7 +36,7 @@ class GameMatchInterface {
         //加入匹配等待列表
         let ret = matchMgr.add_player_to_match_list(player);
         if (!ret) {
-            Log.warn(player.get_uname(), "do_player_match error user is in matching!")
+            Log.warn(player.get_unick(), "do_player_match error user is in matching!")
             player.send_cmd(Cmd.eUserMatchRes, { status: Response.NOT_YOUR_TURN });
             return;
         }
@@ -54,12 +54,12 @@ class GameMatchInterface {
             userinfo: userinfo_array,
         }
         player.send_cmd(Cmd.eUserMatchRes, body)
-        Log.info(player.get_uname(), "do_player_match user add matching success!")
+        Log.info(player.get_unick(), "do_player_match user add matching success!")
     }
 
     static do_player_stop_match(utag:number){
         let player: Player = playerMgr.get_player(utag);
-        let uname = player.get_uname();
+        let uname = player.get_unick();
         let ret = matchMgr.stop_player_match(player.get_uid());
         if (!ret) {
             Log.warn(uname, "odo_player_stop_match failed!")

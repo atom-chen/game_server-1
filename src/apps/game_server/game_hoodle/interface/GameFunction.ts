@@ -154,11 +154,11 @@ class GameFunction {
                             gold_win = (-1)*player_cur_chip;
                         }
                     }
-                    Log.info(player.get_uname(),"hcc>>cal_player_chip_and_write: score: " , score, " ,gold_win: " , gold_win, " ,cur_chip: " , player.get_uchip()," ,after add: " , (player.get_uchip() + gold_win));
+                    Log.info(player.get_unick(),"hcc>>cal_player_chip_and_write: score: " , score, " ,gold_win: " , gold_win, " ,cur_chip: " , player.get_uchip()," ,after add: " , (player.get_uchip() + gold_win));
                     player.set_uchip(player.get_uchip() + gold_win);
                     MySqlGame.add_ugame_uchip(player.get_uid(),gold_win,function(status:number, ret:any) {
                         if(status == Response.OK){
-                            Log.info("hcc>>cal_player_chip_and_write success", player.get_uname())
+                            Log.info("hcc>>cal_player_chip_and_write success", player.get_unick())
                         }
                     });
                 }
