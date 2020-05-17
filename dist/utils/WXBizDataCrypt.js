@@ -6,6 +6,7 @@ exports.__esModule = true;
 var crypto_1 = __importDefault(require("crypto"));
 var Log_1 = __importDefault(require("./Log"));
 var CryptoUtil_1 = __importDefault(require("./CryptoUtil"));
+//微信小游戏序登录解密
 var WXBizDataCrypt = /** @class */ (function () {
     function WXBizDataCrypt(appId, sessionKey) {
         this.appId = "";

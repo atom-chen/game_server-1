@@ -2,6 +2,8 @@ import crypto from "crypto"
 import Log from "./Log";
 import CryptoUtil from './CryptoUtil';
 
+//微信小游戏序登录解密
+
 class WXBizDataCrypt {
         
     appId:string = "";

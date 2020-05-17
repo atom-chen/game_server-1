@@ -1,4 +1,5 @@
 //web 服务器，获取服务端接口
+//热更新配置
 
 import * as fs from 'fs';
 import * as path from "path";
@@ -11,18 +12,6 @@ let KW_WWW_ROOT_PATH 		= "www_root";
 let KW_WEB_SERVER_PATH 		= "src/web_server"
 
 let app_express: core.Express = express();
-/*
-let cwdPath = path.join(process.cwd(), "www_root");
-fs.exists(cwdPath, function (exists: boolean) {
-	if(exists){
-		Log.info("path exist: ", cwdPath);
-	}else{
-		// process.chdir(KW_WEB_SERVER_PATH); //改变工作目录
-		// Log.warn(cwdPath, "not exist, change path to: ", path.join(process.cwd(), KW_WWW_ROOT_PATH));
-	}
-	// start_web_server();	
-})
-*/
 
 function start_web_server() {
 	let cwdPath = path.join(__dirname, KW_WWW_ROOT_PATH);
