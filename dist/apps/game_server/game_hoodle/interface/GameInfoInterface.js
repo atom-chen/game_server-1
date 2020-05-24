@@ -286,7 +286,7 @@ var GameInfoInterface = /** @class */ (function () {
             var ball_obj = JSON.parse(player.get_uball_info());
             if (balllevel) {
                 var keyStr = GameHoodleConfig_1["default"].BALL_SAVE_KEY_STR + balllevel;
-                if (ball_obj[keyStr] && Number(ball_obj[keyStr]) > 0) {
+                if (ball_obj[keyStr]) {
                     var userConfig = player.get_user_config();
                     userConfig["user_ball_level"] = balllevel;
                     player.set_user_config(userConfig);

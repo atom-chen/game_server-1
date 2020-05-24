@@ -269,9 +269,10 @@ class GameInfoInterface {
         if(req_body){
             let balllevel = req_body.balllevel;
             let ball_obj = JSON.parse(player.get_uball_info());
+
             if (balllevel){
                 let keyStr = GameHoodleConfig.BALL_SAVE_KEY_STR + balllevel;
-                if (ball_obj[keyStr] && Number(ball_obj[keyStr]) > 0){
+                if (ball_obj[keyStr]){
                     let userConfig = player.get_user_config();
                     userConfig["user_ball_level"] = balllevel;
                     player.set_user_config(userConfig);

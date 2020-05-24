@@ -10,7 +10,6 @@ import MySqlGame from '../../../database/MySqlGame';
 import GameHoodleService from './GameHoodleService';
 import MySqlAuth from '../../../database/MySqlAuth';
 import MatchManager from './MatchManager';
-import Log from '../../../utils/Log';
 import GameAppConfig from '../../config/GameAppConfig';
 
 let game_server = GameAppConfig.game_server;
