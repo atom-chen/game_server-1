@@ -180,6 +180,10 @@ e[e.eAccountUpgradeRes = 20] = "eAccountUpgradeRes";
 e[e.eGetUserCenterInfoReq = 21] = "eGetUserCenterInfoReq";
 e[e.eGetUserCenterInfoRes = 22] = "eGetUserCenterInfoRes";
 e[e.eReloginRes = 23] = "eReloginRes";
+e[e.eWeChatLoginReq = 24] = "eWeChatLoginReq";
+e[e.eWeChatLoginRes = 25] = "eWeChatLoginRes";
+e[e.eWeChatSessionLoginReq = 26] = "eWeChatSessionLoginReq";
+e[e.eWeChatSessionLoginRes = 27] = "eWeChatSessionLoginRes";
 })(o.Cmd || (o.Cmd = {}));
 o.CmdName = ((n = {})[0] = "INVALED", n[1] = "UnameLoginReq", n[2] = "UnameLoginRes", 
 n[3] = "GuestLoginReq", n[4] = "GuestLoginRes", n[5] = "UnameRegistReq", n[6] = "UnameRegistRes", 
@@ -188,7 +192,8 @@ n[10] = "GetPhoneRegVerNumRes", n[11] = "BindPhoneNumberReq", n[12] = "BindPhone
 n[13] = "ResetUserPwdReq", n[14] = "ResetUserPwdRes", n[15] = "LoginOutReq", n[16] = "LoginOutRes", 
 n[17] = "EditProfileReq", n[18] = "EditProfileRes", n[19] = "AccountUpgradeReq", 
 n[20] = "AccountUpgradeRes", n[21] = "GetUserCenterInfoReq", n[22] = "GetUserCenterInfoRes", 
-n[23] = "ReloginRes", n);
+n[23] = "ReloginRes", n[24] = "WeChatLoginReq", n[25] = "WeChatLoginRes", n[26] = "WeChatSessionLoginReq", 
+n[27] = "WeChatSessionLoginRes", n);
 cc._RF.pop();
 }, {} ],
 AutoComponent: [ function(e, t, o) {
@@ -287,7 +292,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../framework/uibase/UIDialog"), s = e("../../framework/manager/EventManager"), a = e("../../framework/protocol/GameHoodleProto"), c = e("../../framework/protocol/Response"), u = e("../scene/gameScene/sendMsg/GameSendGameHoodle"), l = e("../../framework/manager/ResourceManager"), f = e("../../framework/utils/ArrayUtil"), d = e("../../framework/manager/DialogManager"), p = e("../../framework/config/GameHoodleConfig"), h = cc._decorator, _ = h.ccclass, g = (h.property, 
+var i = e("../../framework/uibase/UIDialog"), s = e("../../framework/protocol/GameHoodleProto"), a = e("../../framework/protocol/Response"), c = e("../scene/gameScene/sendMsg/GameSendGameHoodle"), u = e("../../framework/manager/ResourceManager"), l = e("../../framework/utils/ArrayUtil"), f = e("../../framework/manager/DialogManager"), d = e("../../framework/config/GameHoodleConfig"), p = e("../../framework/protocol/Stype"), h = cc._decorator, _ = h.ccclass, g = (h.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -297,23 +302,26 @@ return t;
 }
 t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
-this.add_event_dispatcher();
-this.add_button_event_listener();
 };
 t.prototype.start = function() {
+e.prototype.start.call(this);
 this.initUI();
-u.default.send_get_player_ball_info();
+this.add_protocol_delegate();
+c.default.send_get_player_ball_info();
 };
-t.prototype.add_event_dispatcher = function() {
-s.default.on(a.CmdName[a.Cmd.eUserBallInfoRes], this, this.on_event_user_ball_info);
-s.default.on(a.CmdName[a.Cmd.eUpdateUserBallRes], this, this.on_event_update_user_ball_info);
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[s.Cmd.eUserBallInfoRes] = this.on_event_user_ball_info, 
+e[s.Cmd.eUpdateUserBallRes] = this.on_event_update_user_ball_info, e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === p.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.KW_BTN_CLOSE, this.on_click_close.bind(this));
 this.add_click_event(this.view.KW_BTN_COMPOSE, this.on_click_compose.bind(this));
 this.add_click_event(this.view.KW_BTN_UNDO, this.on_click_undo.bind(this));
 };
-t.prototype.onDestroy = function() {};
 t.prototype.initUI = function() {
 this.clear_ball_layout();
 };
@@ -324,12 +332,12 @@ t.prototype.on_click_compose = function(e) {
 var t = this.get_ball_compose_info();
 if (t && t.length > 0) {
 var o = t.length, n = t[0], r = this;
-d.default.getInstance().show_common_dialog(2, function(e) {
+f.default.getInstance().show_common_dialog(2, function(e) {
 if (e) {
 var t = "确定将" + o + "个" + n + "级弹珠合成一个" + (Number(n) + 1) + "级弹珠吗?";
 e.set_content_text(t);
 e.set_btn_callback(function() {
-u.default.send_ball_compose(Number(n));
+c.default.send_ball_compose(Number(n));
 }, function() {
 r.show_user_ball_info(r._ball_info_str);
 }, function() {});
@@ -349,38 +357,38 @@ if (e) {
 var t = e.children, o = [];
 for (var n in t) {
 var r = t[n], i = this.seek_child_by_name(r, "KW_TEXT_LEVEL"), s = this.get_string(i).split("级");
-if (f.default.GetArrayLen(s) > 0) {
+if (l.default.GetArrayLen(s) > 0) {
 var a = s[0];
 o.push(a);
 }
 }
-if (o.length == p.default.BALL_COMPOSE_COUNT) {
+if (o.length == d.default.BALL_COMPOSE_COUNT) {
 for (var c = {}, u = 0; u < o.length; u++) c[o[u]] = u;
-if (1 == f.default.GetArrayLen(c)) return o;
-d.default.getInstance().show_weak_hint("不能同时合成多种小球，只能放置一种!");
-} else d.default.getInstance().show_weak_hint("小球合成需要3个，目前不足!");
+if (1 == l.default.GetArrayLen(c)) return o;
+f.default.getInstance().show_weak_hint("不能同时合成多种小球，只能放置一种!");
+} else f.default.getInstance().show_weak_hint("小球合成需要3个，目前不足!");
 }
 };
 t.prototype.get_ball_level = function(e) {
 return e.split("_")[1];
 };
 t.prototype.on_event_user_ball_info = function(e) {
-var t = e.getUserData();
+var t = e;
 if (t) {
-if (t.status == c.default.OK) {
+if (t.status == a.default.OK) {
 this._ball_info_str = t.userballinfostring;
 this.show_user_ball_info(t.userballinfostring);
 }
 }
 };
 t.prototype.on_event_update_user_ball_info = function(e) {
-var t = e.getUserData();
+var t = e;
 if (t) {
-if (t.status == c.default.OK) {
+if (t.status == a.default.OK) {
 this._ball_info_str = t.userballinfostring;
 this.show_user_ball_info(t.userballinfostring);
-d.default.getInstance().show_weak_hint("合成成功!");
-} else d.default.getInstance().show_weak_hint("合成失败!");
+f.default.getInstance().show_weak_hint("合成成功!");
+} else f.default.getInstance().show_weak_hint("合成失败!");
 }
 };
 t.prototype.clear_ball_layout = function() {
@@ -397,7 +405,7 @@ t.prototype.show_ball_test = function() {
 var e = this.view.KW_SCROLLVIEW_NEW, t = this.seek_child_by_name(e, "KW_LAYOUT"), o = 0, n = null;
 if (e) {
 for (var r = 1; r <= 30; r++) {
-var i = l.ResourceManager.getInstance().getRes("ui_prefabs/games/HoodleBallShow", cc.Prefab);
+var i = u.ResourceManager.getInstance().getRes("ui_prefabs/games/HoodleBallShow", cc.Prefab);
 if (i) {
 var s = this.add_to_node(t, i).getContentSize();
 o++;
@@ -406,8 +414,8 @@ n = s;
 }
 var a = this.seek_child_by_name(e, "content"), c = this.seek_child_by_name(a, "KW_LAYOUT");
 if (a && c && o > 30) {
-var u = n.height * Math.ceil(o / 5) + 200;
-a.setContentSize(a.getContentSize().width, u);
+var l = n.height * Math.ceil(o / 5) + 200;
+a.setContentSize(a.getContentSize().width, l);
 }
 }
 };
@@ -423,13 +431,13 @@ return;
 if (t) {
 var o = this.view.KW_SCROLLVIEW_NEW, n = this.seek_child_by_name(o, "KW_LAYOUT"), r = 0, i = null;
 if (o) {
-cc.log("hcc>>ball_info_obj: ", t);
+console.log("hcc>>ball_info_obj: ", t);
 for (var s in t) {
 var a = t[s], c = this.get_ball_level(s);
 if (a && 0 != Number(a) && c) {
-var u = l.ResourceManager.getInstance().getRes("ui_prefabs/games/HoodleBallShow", cc.Prefab);
-if (u) {
-var f = this.add_to_node(n, u);
+var l = u.ResourceManager.getInstance().getRes("ui_prefabs/games/HoodleBallShow", cc.Prefab);
+if (l) {
+var f = this.add_to_node(n, l);
 if (f) {
 f.info_obj = {
 level: c,
@@ -458,10 +466,10 @@ p.setContentSize(p.getContentSize().width, h);
 };
 t.prototype.on_click_ball_select = function(e, t) {
 var o = e.target.getComponent(cc.Button);
-cc.log("hcc>>on_click_ball_select", o.node.name, t);
+console.log("hcc>>on_click_ball_select", o.node.name, t);
 if (t) {
 var n = Number(t.level), r = Number(t.count), i = this.view.KW_LAYOUT_COMPOSE, s = this.seek_child_by_name(o.node, "KW_TEXT_COUNT"), a = Number(this.get_string(s));
-if (n && r && i && a && a > 0 && r > 0 && i.childrenCount < p.default.BALL_COMPOSE_COUNT) {
+if (n && r && i && a && a > 0 && r > 0 && i.childrenCount < d.default.BALL_COMPOSE_COUNT) {
 a -= 1;
 this.set_string(this.seek_child_by_name(o.node, "KW_TEXT_COUNT"), String(a));
 var c = cc.instantiate(e.target);
@@ -475,7 +483,7 @@ this.set_visible(this.view.KW_TEXT_TITLE_UNDO, !0);
 };
 t.prototype.on_click_ball_unselect = function(e, t) {
 var o = e.target.getComponent(cc.Button);
-cc.log("hcc>>on_click_ball_unselect", o.node.name, t);
+console.log("hcc>>on_click_ball_unselect", o.node.name, t);
 if (t) {
 var n = this.view.KW_SCROLLVIEW_NEW, r = this.seek_child_by_name(n, "KW_LAYOUT");
 if (r) {
@@ -506,12 +514,209 @@ cc._RF.pop();
 }, {
 "../../framework/config/GameHoodleConfig": "GameHoodleConfig",
 "../../framework/manager/DialogManager": "DialogManager",
-"../../framework/manager/EventManager": "EventManager",
 "../../framework/manager/ResourceManager": "ResourceManager",
 "../../framework/protocol/GameHoodleProto": "GameHoodleProto",
 "../../framework/protocol/Response": "Response",
+"../../framework/protocol/Stype": "Stype",
 "../../framework/uibase/UIDialog": "UIDialog",
 "../../framework/utils/ArrayUtil": "ArrayUtil",
+"../scene/gameScene/sendMsg/GameSendGameHoodle": "GameSendGameHoodle"
+} ],
+BallListDialog: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "47f5a0ZrpFCW7Ysjnlm+BxN", "BallListDialog");
+var n = this && this.__extends || function() {
+var e = function(t, o) {
+return (e = Object.setPrototypeOf || {
+__proto__: []
+} instanceof Array && function(e, t) {
+e.__proto__ = t;
+} || function(e, t) {
+for (var o in t) t.hasOwnProperty(o) && (e[o] = t[o]);
+})(t, o);
+};
+return function(t, o) {
+e(t, o);
+function n() {
+this.constructor = t;
+}
+t.prototype = null === o ? Object.create(o) : (n.prototype = o.prototype, new n());
+};
+}(), r = this && this.__decorate || function(e, t, o, n) {
+var r, i = arguments.length, s = i < 3 ? t : null === n ? n = Object.getOwnPropertyDescriptor(t, o) : n;
+if ("object" == typeof Reflect && "function" == typeof Reflect.decorate) s = Reflect.decorate(e, t, o, n); else for (var a = e.length - 1; a >= 0; a--) (r = e[a]) && (s = (i < 3 ? r(s) : i > 3 ? r(t, o, s) : r(t, o)) || s);
+return i > 3 && s && Object.defineProperty(t, o, s), s;
+};
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var i = e("../../framework/uibase/UIDialog"), s = e("../../framework/protocol/GameHoodleProto"), a = e("../../framework/protocol/Response"), c = e("../scene/gameScene/sendMsg/GameSendGameHoodle"), u = e("../../framework/manager/ResourceManager"), l = e("../../framework/protocol/Stype"), f = e("../../framework/manager/DialogManager"), d = cc._decorator, p = d.ccclass, h = (d.property, 
+function(e) {
+n(t, e);
+function t() {
+var t = null !== e && e.apply(this, arguments) || this;
+t._ball_info_str = "";
+return t;
+}
+t.prototype.onLoad = function() {
+e.prototype.onLoad.call(this);
+};
+t.prototype.start = function() {
+e.prototype.start.call(this);
+this.initUI();
+this.add_protocol_delegate();
+c.default.send_get_player_ball_info();
+c.default.send_get_user_config();
+};
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[s.Cmd.eUserBallInfoRes] = this.on_event_user_ball_info, 
+e[s.Cmd.eUserConfigRes] = this.on_event_user_config, e[s.Cmd.eUseHoodleBallRes] = this.on_event_use_hoodleball, 
+e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === l.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
+};
+t.prototype.add_button_event_listener = function() {
+this.add_click_event(this.view.KW_BTN_CLOSE, this.on_click_close.bind(this));
+};
+t.prototype.initUI = function() {
+this.clear_ball_layout();
+};
+t.prototype.on_click_close = function(e) {
+this.close();
+};
+t.prototype.onKeyDown = function(t) {
+e.prototype.onKeyDown.call(this, t);
+};
+t.prototype.get_ball_level = function(e) {
+return e.split("_")[1];
+};
+t.prototype.on_event_user_ball_info = function(e) {
+var t = e;
+if (t) {
+if (t.status == a.default.OK) {
+this._ball_info_str = t.userballinfostring;
+this.show_user_ball_info(t.userballinfostring);
+}
+}
+};
+t.prototype.on_event_user_config = function(e) {
+if (e) {
+if (e.status == a.default.OK) {
+var t = JSON.parse(e.userconfigstring).user_ball_level;
+t && this.show_cur_use_ball(t);
+}
+}
+};
+t.prototype.on_event_use_hoodleball = function(e) {
+if (e) {
+if (e.status == a.default.OK) {
+var t = e.balllevel;
+if (t) {
+this.show_user_ball_info(this._ball_info_str);
+this.show_cur_use_ball(t);
+}
+}
+}
+};
+t.prototype.show_cur_use_ball = function(e) {
+var t = e;
+if (t) {
+var o = this.view.KW_SCROLLVIEW_NEW;
+if (o) {
+var n = this.seek_child_by_name(o, "content"), r = this.seek_child_by_name(n, "KW_LAYOUT");
+if (r) {
+var i = "ball_name_level_" + t, s = this.seek_child_by_name(r, i);
+if (s) {
+var a = t + "级(使用中)";
+this.set_string(this.seek_child_by_name(s, "KW_TEXT_LEVEL"), a);
+}
+}
+}
+}
+};
+t.prototype.clear_ball_layout = function() {
+var e = this.view.KW_SCROLLVIEW_NEW;
+if (e) {
+var t = this.seek_child_by_name(e, "content"), o = this.seek_child_by_name(t, "KW_LAYOUT");
+o && o.removeAllChildren();
+}
+var n = this.view.KW_LAYOUT_COMPOSE;
+n && n.removeAllChildren();
+this.set_visible(this.view.KW_TEXT_TITLE_UNDO, !1);
+};
+t.prototype.show_user_ball_info = function(e) {
+this.clear_ball_layout();
+var t = null;
+try {
+t = JSON.parse(e);
+} catch (e) {
+console.error(e);
+return;
+}
+if (t) {
+var o = this.view.KW_SCROLLVIEW_NEW, n = this.seek_child_by_name(o, "KW_LAYOUT"), r = 0, i = null;
+if (o) {
+console.log("hcc>>ball_info_obj: ", t);
+for (var s in t) {
+var a = t[s], c = this.get_ball_level(s);
+if (a && 0 != Number(a) && c) {
+var l = u.ResourceManager.getInstance().getRes("ui_prefabs/games/HoodleBallShow", cc.Prefab);
+if (l) {
+var f = this.add_to_node(n, l);
+if (f) {
+f.name = "ball_name_level_" + c;
+this.set_string(this.seek_child_by_name(f, "KW_TEXT_COUNT"), a);
+this.set_string(this.seek_child_by_name(f, "KW_TEXT_LEVEL"), String(c) + "级");
+this.set_visible(this.seek_child_by_name(f, "KW_TEXT_COUNT"), !1);
+this.set_visible(this.seek_child_by_name(f, "KW_IMG_LEVEL_BG"), !1);
+this.add_click_evenet_with_data(f, "on_click_ball_select", {
+level: c,
+count: a
+});
+}
+var d = f.getContentSize();
+r++;
+i = d;
+}
+}
+}
+var p = this.seek_child_by_name(o, "content");
+if (p && r > 30) {
+var h = i.height * Math.ceil(r / 5) + 200;
+p.setContentSize(p.getContentSize().width, h);
+}
+}
+}
+};
+t.prototype.on_click_ball_select = function(e, t) {
+var o = e.target.getComponent(cc.Button);
+console.log("hcc>>on_click_ball_select", o.node.name, t);
+if (t) {
+var n = Number(t.level);
+f.default.getInstance().show_common_dialog(1, function(e) {
+if (e) {
+var t = "确定使用（" + n + "）级弹珠吗？";
+e.set_content_text(t);
+e.set_btn_callback(function() {
+c.default.send_use_ball(n);
+}, function() {}, function() {});
+}
+});
+}
+};
+return t = r([ p ], t);
+}(i.default));
+o.default = h;
+cc._RF.pop();
+}, {
+"../../framework/manager/DialogManager": "DialogManager",
+"../../framework/manager/ResourceManager": "ResourceManager",
+"../../framework/protocol/GameHoodleProto": "GameHoodleProto",
+"../../framework/protocol/Response": "Response",
+"../../framework/protocol/Stype": "Stype",
+"../../framework/uibase/UIDialog": "UIDialog",
 "../scene/gameScene/sendMsg/GameSendGameHoodle": "GameSendGameHoodle"
 } ],
 Base64: [ function(e, t, o) {
@@ -650,6 +855,177 @@ return e;
 o.default = n;
 cc._RF.pop();
 }, {} ],
+CellJoinRoom: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "f7dfdSaWlZMzq+sosYQpWdH", "CellJoinRoom");
+var n = this && this.__extends || function() {
+var e = function(t, o) {
+return (e = Object.setPrototypeOf || {
+__proto__: []
+} instanceof Array && function(e, t) {
+e.__proto__ = t;
+} || function(e, t) {
+for (var o in t) t.hasOwnProperty(o) && (e[o] = t[o]);
+})(t, o);
+};
+return function(t, o) {
+e(t, o);
+function n() {
+this.constructor = t;
+}
+t.prototype = null === o ? Object.create(o) : (n.prototype = o.prototype, new n());
+};
+}(), r = e("../../framework/cell/Cell"), i = e("../../framework/protocol/Stype"), s = e("../../framework/protocol/GameHoodleProto"), a = function(e) {
+n(t, e);
+function t() {
+return null !== e && e.apply(this, arguments) || this;
+}
+t.prototype.start = function(t, o, n, r) {
+return !!e.prototype.start.call(this, t, o, n, r);
+};
+t.prototype.onMsgReceive = function(e, t, o) {
+e == i.Stype.GameHoodle && t == s.Cmd.eJoinRoomRes ? this.success(o) : this.fail(o);
+};
+return t;
+}(r.Cell);
+t.exports = a;
+cc._RF.pop();
+}, {
+"../../framework/cell/Cell": "Cell",
+"../../framework/protocol/GameHoodleProto": "GameHoodleProto",
+"../../framework/protocol/Stype": "Stype"
+} ],
+CellManager: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "ad939Q5ouBCL7/Fmon01PEX", "CellManager");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = function() {
+function t() {
+this._cellArray = [];
+}
+t.getInstance = function() {
+return t.staticInstance;
+};
+t.prototype.start = function(t, o, n, r, i) {
+var s = new (e(t))();
+s.start(o, n, r, i);
+var a = {
+cellObj: s,
+name: t
+};
+this._cellArray.push(a);
+return s;
+};
+t.prototype.addCellCallBack = function(e, t) {
+e && e.addCellCallBack(t);
+};
+t.prototype.removeCellModule = function(e) {
+for (var t = null, o = 0; o < this._cellArray.length; o++) if (this._cellArray[o].cellObj === e) {
+t = o;
+break;
+}
+null != t && this._cellArray.splice(t, 1);
+};
+t.prototype.resetAllCell = function() {
+for (var e = 0, t = this._cellArray; e < t.length; e++) {
+t[e].cellObj.stop();
+}
+};
+t.staticInstance = new t();
+return t;
+}();
+o.default = n;
+cc._RF.pop();
+}, {} ],
+Cell: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "735be5UyNVBVJcStcELJSBs", "Cell");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = e("../network/NetWork"), r = e("../manager/CellManager"), i = function() {
+function e() {
+this._callBacks = [];
+this._startTime = 0;
+this._endTime = 0;
+this._timeOutTime = 0;
+this._isStart = !1;
+this._msg = "";
+this._cellScheduleScriptID = 0;
+}
+e.prototype.start = function(e, t, o, r) {
+var i = this;
+if (!e || !t || !o) return !1;
+this._startTime = new Date().getTime();
+this._timeOutTime = r;
+if (this._isStart) return !1;
+this._isStart = !0;
+r > 0 && (this._cellScheduleScriptID = setTimeout(function() {
+i.timeout(null);
+}, 1e3 * this._timeOutTime));
+n.default.getInstance().add_protocol_delegate(this, this.onMsgReceive.bind(this));
+n.default.getInstance().send_msg(t, o, e);
+return !0;
+};
+e.prototype.onMsgReceive = function(e, t, o) {};
+e.prototype.stop = function() {
+if (0 != this._cellScheduleScriptID) {
+clearTimeout(this._cellScheduleScriptID);
+this._cellScheduleScriptID = 0;
+}
+this._callBacks = [];
+this._isStart = !1;
+r.default.getInstance().removeCellModule(this);
+n.default.getInstance().remove_protocol_delegate(this);
+};
+e.prototype.addCellCallBack = function(e) {
+this._callBacks.forEach(function(e) {});
+this._callBacks.push(e);
+};
+e.prototype.dealCell = function(e, t) {
+var o = this;
+this._endTime = new Date().getTime();
+this._callBacks.forEach(function(n) {
+n(o, e, t);
+});
+this.stop();
+};
+e.prototype.success = function(t) {
+this.dealCell(e.TYPE.SUCCESS, t);
+};
+e.prototype.fail = function(t) {
+"" == this.getMessage() && this.setMessage("请求服务器失败，请检查网络!");
+this.dealCell(e.TYPE.FAIL, t);
+};
+e.prototype.timeout = function(t) {
+"" == this.getMessage() && this.setMessage("请求服务器超时，请检查网络!");
+this.dealCell(e.TYPE.TIMEOUT, t);
+};
+e.prototype.getLeftTime = function() {
+return 0 == this._endTime ? this._timeOutTime - (new Date().getTime() - this._startTime) : this._timeOutTime - (this._endTime - this._startTime);
+};
+e.prototype.setMessage = function(e) {
+this._msg = e;
+};
+e.prototype.getMessage = function() {
+return this._msg;
+};
+e.TYPE = {
+NONE: 0,
+SUCCESS: 1,
+FAIL: 2,
+TIMEOUT: 3
+};
+return e;
+}();
+o.Cell = i;
+cc._RF.pop();
+}, {
+"../manager/CellManager": "CellManager",
+"../network/NetWork": "NetWork"
+} ],
 CommonDialog: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "4f29cb6/J5NNJnAHwgnf/MO", "CommonDialog");
@@ -696,8 +1072,8 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
+e.prototype.start.call(this);
 this.initUI();
-this.add_button_event_listener();
 };
 t.prototype.set_content_text = function(e) {
 this._content = e;
@@ -733,7 +1109,6 @@ this.add_click_event(this.view.KW_BTN_CLOSE, this.on_click_close.bind(this));
 this.add_click_event(this.view.KW_UI_BTN_LEFT, this.on_click_left.bind(this));
 this.add_click_event(this.view.KW_UI_BTN_RIGHT, this.on_click_right.bind(this));
 };
-t.prototype.onDestroy = function() {};
 t.prototype.on_click_close = function(e) {
 this._closeBtnCallback && this._closeBtnCallback();
 this.close();
@@ -1052,7 +1427,6 @@ cc.director.getPhysicsManager().debugDrawFlags = e.e_jointBit | e.e_shapeBit;
 cc.director.getPhysicsManager().gravity = this._gravity;
 };
 t.prototype.start = function() {};
-t.prototype.onDestroy = function() {};
 t.prototype.close_phy = function() {
 cc.director.getPhysicsManager().enabled = !1;
 cc.director.getPhysicsManager().debugDrawFlags = 0;
@@ -1140,7 +1514,7 @@ value: !0
 });
 var n = e("../manager/ProtoManager"), r = function() {
 function e() {}
-e.IS_LOCAL_DEBUG = !0;
+e.IS_LOCAL_DEBUG = !1;
 e.LOCAL_HOST = "192.168.0.105";
 e.REMOTE_IP = "www.hccfun.com";
 e.REMOTE_WECHAT_PORT = "6081";
@@ -1148,6 +1522,7 @@ e.NATIVE_PLATFORM_PORT = "6061";
 e.PROTO_TYPE = n.default.PROTO_BUF;
 e.REMORE_HTTP_PORT = "7000";
 e.LOCAL_MANIFEST_PATH = "manifest/project";
+e.APP_OPEN_ID = "oH8dH45oVZTuPNK6hQaSeANR-F9Y";
 return e;
 }();
 o.default = r;
@@ -1183,45 +1558,64 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../framework/utils/Log"), s = e("../framework/manager/SceneManager"), a = e("./scene/hotfixScene/HotFixScene"), c = e("../framework/manager/EventManager"), u = e("../framework/config/EventDefine"), l = e("../framework/network/NetWork"), f = e("../framework/manager/DialogManager"), d = e("../framework/config/PlatForm"), p = cc._decorator, h = p.ccclass, _ = (p.property, 
+var i = e("../framework/manager/SceneManager"), s = e("./scene/hotfixScene/HotFixScene"), a = e("../framework/manager/EventManager"), c = e("../framework/config/EventDefine"), u = e("../framework/network/NetWork"), l = e("../framework/manager/DialogManager"), f = e("../framework/config/PlatForm"), d = e("../framework/uibase/UIController"), p = e("../framework/utils/WeChatLogin"), h = e("./common/RoomData"), _ = cc._decorator, g = _.ccclass, y = (_.property, 
 function(e) {
 n(t, e);
 function t() {
 return null !== e && e.apply(this, arguments) || this;
 }
 t.prototype.onLoad = function() {
-this.node.addComponent("EnablePhysics");
-c.default.on(u.default.EVENT_NET_CONNECTED, this, this.on_net_connected.bind(this));
-c.default.on(u.default.EVENT_NET_CLOSED, this, this.on_net_closed.bind(this));
-c.default.on(u.default.EVENT_NET_ERROR, this, this.on_net_error.bind(this));
-l.default.getInstance().connect();
-cc.debug.setDisplayStats(!1);
+e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-var e = new a.default();
-s.default.getInstance().enter_scene_asyc(e);
-d.default.printPlatForm();
+e.prototype.start.call(this);
+this.add_script("EnablePhysics");
+u.default.getInstance().connect();
+cc.debug.setDisplayStats(!1);
+f.default.printPlatForm();
+p.default.on_wx_foreground(function(e) {
+console.log("hcc>>on_wx_foreground>>LoginSceneShowUI>>  roomid: ", e.roomid);
+var t = e.roomid;
+void 0 != e.roomid && null != e.roomid && "" != e.roomid || (t = "");
+h.default.getInstance().set_share_roomid(t);
+});
+i.default.getInstance().enter_scene_asyc(new s.default());
 this.test_func();
 };
+t.prototype.add_event_dispatcher = function() {
+a.default.on(c.default.EVENT_NET_CONNECTED, this, this.on_net_connected.bind(this));
+a.default.on(c.default.EVENT_NET_CLOSED, this, this.on_net_closed.bind(this));
+a.default.on(c.default.EVENT_NET_ERROR, this, this.on_net_error.bind(this));
+};
 t.prototype.on_net_connected = function(e) {
-i.default.info("GameApp hcc>>>on_net_connected success");
-f.default.getInstance().show_weak_hint("网络连接成功!");
+l.default.getInstance().show_weak_hint("网络连接成功!");
 };
 t.prototype.on_net_closed = function(e) {
-i.default.info("GameApp hcc>>>on_net_closed");
-setTimeout(function() {
-l.default.getInstance().reconnect();
-}, 2e3);
-f.default.getInstance().show_weak_hint("网络断开,正在连接中。。。");
+console.log("GameApp hcc>>>on_net_closed");
+var t = l.default.getInstance().get_dialog("CommonDialog");
+if (t && cc.isValid(t)) {
+console.log("GameApp hcc>>>commonDialog is exist!!");
+l.default.getInstance().close_dialog("CommonDialog");
+}
+l.default.getInstance().show_common_dialog(1, function(e) {
+if (e) {
+e.set_content_text("网络已断开，请重连!");
+e.set_btn_callback(function() {
+u.default.getInstance().reconnect();
+}, function() {}, function() {
+u.default.getInstance().reconnect();
+});
+}
+});
 };
 t.prototype.on_net_error = function(e) {
-i.default.info("GameApp hcc>>>on_net_error");
-f.default.getInstance().show_weak_hint("网络断开!");
+console.log("GameApp hcc>>>on_net_error");
+l.default.getInstance().show_weak_hint("网络断开!");
 };
 t.prototype.test_func = function() {};
-return t = r([ h ], t);
-}(cc.Component));
-o.default = _;
+return t = r([ g ], t);
+}(d.default));
+o.default = y;
 cc._RF.pop();
 }, {
 "../framework/config/EventDefine": "EventDefine",
@@ -1230,7 +1624,9 @@ cc._RF.pop();
 "../framework/manager/EventManager": "EventManager",
 "../framework/manager/SceneManager": "SceneManager",
 "../framework/network/NetWork": "NetWork",
-"../framework/utils/Log": "Log",
+"../framework/uibase/UIController": "UIController",
+"../framework/utils/WeChatLogin": "WeChatLogin",
+"./common/RoomData": "RoomData",
 "./scene/hotfixScene/HotFixScene": "HotFixScene"
 } ],
 GameHoodleConfig: [ function(e, t, o) {
@@ -1391,6 +1787,10 @@ e[e.eStoreListReq = 47] = "eStoreListReq";
 e[e.eStoreListRes = 48] = "eStoreListRes";
 e[e.eBuyThingsReq = 49] = "eBuyThingsReq";
 e[e.eBuyThingsRes = 50] = "eBuyThingsRes";
+e[e.eUseHoodleBallReq = 51] = "eUseHoodleBallReq";
+e[e.eUseHoodleBallRes = 52] = "eUseHoodleBallRes";
+e[e.eUserConfigReq = 53] = "eUserConfigReq";
+e[e.eUserConfigRes = 54] = "eUserConfigRes";
 })(o.Cmd || (o.Cmd = {}));
 o.CmdName = ((n = {})[0] = "INVALED", n[1] = "CreateRoomReq", n[2] = "CreateRoomRes", 
 n[3] = "JoinRoomReq", n[4] = "JoinRoomRes", n[5] = "ExitRoomReq", n[6] = "ExitRoomRes", 
@@ -1406,7 +1806,8 @@ n[37] = "UserMatchReq", n[38] = "UserMatchRes", n[39] = "UserStopMatchReq", n[40
 n[41] = "UserGameInfoReq", n[42] = "UserGameInfoRes", n[43] = "UserBallInfoReq", 
 n[44] = "UserBallInfoRes", n[45] = "UpdateUserBallReq", n[46] = "UpdateUserBallRes", 
 n[47] = "StoreListReq", n[48] = "StoreListRes", n[49] = "BuyThingsReq", n[50] = "BuyThingsRes", 
-n);
+n[51] = "UseHoodleBallReq", n[52] = "UseHoodleBallRes", n[53] = "UserConfigReq", 
+n[54] = "UserConfigRes", n);
 cc._RF.pop();
 }, {} ],
 GameHoodleRecvMsg: [ function(e, t, o) {
@@ -1437,7 +1838,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../../framework/uibase/UIController"), s = e("../../../../framework/manager/EventManager"), a = e("../../../../framework/protocol/GameHoodleProto"), c = e("./GameHoodleData"), u = e("../../../../framework/protocol/Response"), l = e("../../../common/RoomData"), f = e("./HoodleBallManager"), d = e("../../../../framework/manager/DialogManager"), p = cc._decorator, h = p.ccclass, _ = (p.property, 
+var i = e("../../../../framework/uibase/UIController"), s = e("../../../../framework/protocol/GameHoodleProto"), a = e("./GameHoodleData"), c = e("../../../../framework/protocol/Response"), u = e("../../../common/RoomData"), l = e("../../../common/State"), f = e("./HoodleBallManager"), d = e("../../../../framework/manager/DialogManager"), p = e("../../../../framework/protocol/Stype"), h = cc._decorator, _ = h.ccclass, g = (h.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -1447,17 +1848,19 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_event_dispatcher();
+e.prototype.start.call(this);
+this.add_protocol_delegate();
 };
-t.prototype.add_event_dispatcher = function() {
-s.default.on(a.CmdName[a.Cmd.eGameStartRes], this, this.on_event_game_start);
-s.default.on(a.CmdName[a.Cmd.ePlayerFirstBallPosRes], this, this.on_event_first_ball_pos);
-s.default.on(a.CmdName[a.Cmd.ePlayerPowerRes], this, this.on_event_player_power);
-s.default.on(a.CmdName[a.Cmd.ePlayerShootRes], this, this.on_event_player_shoot);
-s.default.on(a.CmdName[a.Cmd.ePlayerBallPosRes], this, this.on_event_ball_pos);
-s.default.on(a.CmdName[a.Cmd.ePlayerIsShootedRes], this, this.on_event_player_is_shooted);
-s.default.on(a.CmdName[a.Cmd.eGameResultRes], this, this.on_event_game_result);
-s.default.on(a.CmdName[a.Cmd.eTotalGameResultRes], this, this.on_event_game_total_result);
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[s.Cmd.eGameStartRes] = this.on_event_game_start, 
+e[s.Cmd.ePlayerFirstBallPosRes] = this.on_event_first_ball_pos, e[s.Cmd.ePlayerPowerRes] = this.on_event_player_power, 
+e[s.Cmd.ePlayerShootRes] = this.on_event_player_shoot, e[s.Cmd.ePlayerBallPosRes] = this.on_event_ball_pos, 
+e[s.Cmd.ePlayerIsShootedRes] = this.on_event_player_is_shooted, e[s.Cmd.eGameResultRes] = this.on_event_game_result, 
+e[s.Cmd.eTotalGameResultRes] = this.on_event_game_total_result, e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === p.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.on_event_game_start = function(e) {
 var t = this.get_script("GameHoodleShowUI");
@@ -1468,45 +1871,47 @@ t.show_all_ball();
 }
 };
 t.prototype.on_event_first_ball_pos = function(e) {
-var t = e.getUserData();
-if (t) {
-var o = t.positions;
-for (var n in o) {
-var r = o[n], i = r.seatid, s = r.posx, a = r.posy;
-this.get_script("GameHoodleShowUI").set_ball_pos(i, Number(s), Number(a));
+if (e) {
+var t = e.positions;
+for (var o in t) {
+var n = t[o], r = n.seatid, i = n.posx, s = n.posy;
+this.get_script("GameHoodleShowUI").set_ball_pos(r, Number(i), Number(s));
 }
 }
 };
 t.prototype.on_event_player_power = function(e) {
-var t = e.getUserData();
-if (t) {
-var o = t.powers;
-for (var n in o) {
-var r = o[n], i = r.seatid, s = r.power;
-c.default.getInstance().set_power(i, s);
-var a = f.default.getInstance().get_ball(i);
-if (a) {
-var u = a.getComponent("HoodleBallCtrl");
-u && u.set_shoot_power_ui(s);
+if (e) {
+var t = e.powers;
+for (var o in t) {
+var n = t[o], r = n.seatid, i = n.power;
+a.default.getInstance().set_power(r, i);
+var s = f.default.getInstance().get_ball(r);
+if (s) {
+var c = s.getComponent("HoodleBallCtrl");
+if (c) {
+c.set_shoot_power_ui(i);
+var u = i == l.PlayerPower.canPlay ? r : -1;
+c.set_src_shoot_seatid(u);
+}
 }
 }
 }
 };
 t.prototype.on_event_player_shoot = function(e) {
-var t = e.getUserData();
+var t = e;
 if (t) {
-if (t.status == u.default.OK) {
+if (t.status == c.default.OK) {
 var o = t.seatid, n = Number(t.posx), r = Number(t.posy), i = Number(t.shootpower), s = this.view.KW_GAME_TABLE;
 if (!s) return;
-var a = s.convertToWorldSpaceAR(cc.v2(n, r)), c = this.get_script("GameHoodleShowUI");
-c && c.show_player_shoot(o, a.x, a.y, i);
+var a = s.convertToWorldSpaceAR(cc.v2(n, r)), u = this.get_script("GameHoodleShowUI");
+u && u.show_player_shoot(o, a.x, a.y, i);
 }
 }
 };
 t.prototype.on_event_ball_pos = function(e) {
-var t = e.getUserData();
+var t = e;
 if (t) {
-if (t.status == u.default.OK) {
+if (t.status == c.default.OK) {
 var o = t.positions;
 for (var n in o) {
 var r = o[n], i = r.seatid, s = Number(r.posx), a = Number(r.posy);
@@ -1516,10 +1921,10 @@ this.get_script("GameHoodleShowUI").set_ball_pos(i, s, a);
 }
 };
 t.prototype.on_event_player_is_shooted = function(e) {
-console.log("hcc>>on_event_player_is_shooted", e.getUserData());
-var t = e.getUserData();
+console.log("hcc>>on_event_player_is_shooted", e);
+var t = e;
 if (t) {
-if (t.status == u.default.OK) {
+if (t.status == c.default.OK) {
 t.srcseatid;
 var o = t.desseatid;
 this.get_script("GameHoodleShowUI").show_ball_shooted_animation(o);
@@ -1531,13 +1936,13 @@ var t = this.get_script("GameHoodleShowUI");
 t && t.set_power_percent_visible(!1);
 };
 t.prototype.on_event_game_total_result = function(e) {
-console.log("hcc>>on_event_game_total_result", e.getUserData());
-var t = e.getUserData(), o = "";
+console.log("hcc>>on_event_game_total_result", e);
+var t = e, o = "";
 if (t) for (var n = t.scores, r = t.golds, i = 0; i < n.length; i++) {
-var s = n[i], a = r[i], c = s.seatid, u = Number(s.score), f = Number(a.gold), p = l.default.getInstance().get_player(c);
+var s = n[i], a = r[i], c = s.seatid, l = Number(s.score), f = Number(a.gold), p = u.default.getInstance().get_player(c);
 if (p) {
-var h = p.get_uname();
-o = o + h + ": 分数 " + (u > 0 ? "+" + u : u) + "   金币:" + (f > 0 ? "+" + f : f) + "\n";
+var h = p.get_unick();
+o = o + h + ": 分数 " + (l > 0 ? "+" + l : l) + "   金币:" + (f > 0 ? "+" + f : f) + "\n";
 }
 }
 var _ = this;
@@ -1556,17 +1961,18 @@ e.active = !0;
 }
 });
 };
-return t = r([ h ], t);
+return t = r([ _ ], t);
 }(i.default));
-o.default = _;
+o.default = g;
 cc._RF.pop();
 }, {
 "../../../../framework/manager/DialogManager": "DialogManager",
-"../../../../framework/manager/EventManager": "EventManager",
 "../../../../framework/protocol/GameHoodleProto": "GameHoodleProto",
 "../../../../framework/protocol/Response": "Response",
+"../../../../framework/protocol/Stype": "Stype",
 "../../../../framework/uibase/UIController": "UIController",
 "../../../common/RoomData": "RoomData",
+"../../../common/State": "State",
 "./GameHoodleData": "GameHoodleData",
 "./HoodleBallManager": "HoodleBallManager"
 } ],
@@ -1612,7 +2018,6 @@ e.prototype.onLoad.call(this);
 u.default.IS_TEST_BALL && this.test_boarn_ball();
 this.set_power_percent_visible(!1);
 };
-t.prototype.start = function() {};
 t.prototype.show_all_ball = function() {
 var e = a.default.getInstance().get_all_player();
 for (var t in e) {
@@ -1633,7 +2038,7 @@ if (t) {
 var o = t.getComponent("HoodleBallCtrl");
 if (o) {
 o.set_ball_id(e.get_uinfo().seatid);
-o.set_name(e.get_uname());
+o.set_name(e.get_unick());
 o.set_img_face(e.get_uinfo().uface);
 this._hoodleManager.set_ball(e.get_uinfo().seatid, t);
 t.active = !1;
@@ -1653,10 +2058,7 @@ t.prototype.show_player_shoot = function(e, t, o, n) {
 var r = this._hoodleManager.get_ball(e);
 if (!r || !cc.isValid(r)) return !1;
 var i = r.getComponent("HoodleBallCtrl");
-if (i) {
-i.shoot_at(cc.v2(t, o), n);
-i.set_src_shoot_seatid(e);
-}
+i && i.shoot_at(cc.v2(t, o), n);
 return !0;
 };
 t.prototype.show_ball_shooted_animation = function(e) {
@@ -1836,7 +2238,6 @@ var i = r.getComponent("HoodleBallCtrl");
 if (i) {
 var a = this.get_shoot_pwer();
 i.shoot_at(t, a);
-i.set_src_shoot_seatid(s.default.getInstance().get_self_seatid());
 c.default.send_player_shoot(s.default.getInstance().get_self_seatid(), n.x, n.y, a);
 }
 }
@@ -1935,13 +2336,12 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_button_event_listener();
+e.prototype.start.call(this);
 };
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.KW_BTN_CLOSE, this.on_click_close.bind(this));
 this.add_click_event(this.view.KW_PANEL_MASK, this.on_click_continue.bind(this));
 };
-t.prototype.onDestroy = function() {};
 t.prototype.set_title_text = function(e) {
 this.set_string(this.view.KW_TEXT_TITLE, e);
 };
@@ -2048,7 +2448,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("./sendMsg/GameSendGameHoodle"), a = cc._decorator, c = a.ccclass, u = (a.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("./sendMsg/GameSendGameHoodle"), a = e("../../common/RoomData"), c = cc._decorator, u = c.ccclass, l = (c.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -2059,13 +2459,15 @@ e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
 s.default.send_check_link_game();
+a.default.getInstance().set_share_roomid("");
 };
-return t = r([ c ], t);
+return t = r([ u ], t);
 }(i.default));
-o.default = u;
+o.default = l;
 cc._RF.pop();
 }, {
 "../../../framework/uibase/UIController": "UIController",
+"../../common/RoomData": "RoomData",
 "./sendMsg/GameSendGameHoodle": "GameSendGameHoodle"
 } ],
 GameSceneRecvAuthMsg: [ function(e, t, o) {
@@ -2096,7 +2498,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/EventManager"), a = e("../../../framework/protocol/AuthProto"), c = e("../../../framework/protocol/Response"), u = e("../../../framework/manager/SceneManager"), l = e("../LoginScene/LoginScene"), f = e("../../../framework/utils/Storage"), d = e("../../../framework/config/LSDefine"), p = e("../../../framework/manager/DialogManager"), h = e("../../../framework/config/EventDefine"), _ = e("../LoginScene/sendMsg/LoginSendAuthMsg"), g = e("../lobbyScene/sendMsg/LobbySendGameHoodle"), y = cc._decorator, m = y.ccclass, v = (y.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/EventManager"), a = e("../../../framework/protocol/AuthProto"), c = e("../../../framework/protocol/Response"), u = e("../../../framework/manager/SceneManager"), l = e("../LoginScene/LoginScene"), f = e("../../../framework/utils/Storage"), d = e("../../../framework/config/LSDefine"), p = e("../../../framework/manager/DialogManager"), h = e("../../../framework/config/EventDefine"), _ = e("../LoginScene/sendMsg/LoginSendAuthMsg"), g = e("../lobbyScene/sendMsg/LobbySendGameHoodle"), y = e("../../../framework/protocol/Stype"), m = cc._decorator, v = m.ccclass, b = (m.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -2106,13 +2508,20 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_event_dispatcher();
+e.prototype.start.call(this);
+this.add_protocol_delegate();
 };
 t.prototype.add_event_dispatcher = function() {
 s.default.on(h.default.EVENT_NET_CONNECTED, this, this.on_net_connected);
-s.default.on(a.CmdName[a.Cmd.eUnameLoginRes], this, this.on_event_uname_login);
-s.default.on(a.CmdName[a.Cmd.eGuestLoginRes], this, this.on_event_guest_login);
-s.default.on(a.CmdName[a.Cmd.eReloginRes], this, this.on_event_relogin);
+};
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[a.Cmd.eUnameLoginRes] = this.on_event_uname_login, 
+e[a.Cmd.eGuestLoginRes] = this.on_event_guest_login, e[a.Cmd.eWeChatSessionLoginRes] = this.on_event_wechat_session_login, 
+e[a.Cmd.eReloginRes] = this.on_event_relogin, e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === y.Stype.Auth && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.on_net_connected = function(e) {
 var t = f.default.get(d.default.USER_LOGIN_TYPE);
@@ -2122,27 +2531,30 @@ o && _.default.send_uname_login(o.uname, o.upwd);
 } else if (t == d.default.LOGIN_TYPE_GUEST) {
 var n = f.default.get(d.default.USER_LOGIN_GUEST_KEY);
 n && _.default.send_guest_login(n);
+} else if (t == d.default.LOGIN_TYPE_WECHAT) {
+var r = f.default.get(d.default.USER_LOGIN_WECHAT_SESSION);
+r && _.default.send_wechat_session_login(r);
 }
 };
 t.prototype.on_event_guest_login = function(e) {
-var t = e.getUserData();
-cc.log("guestlogin udata: ", t);
+var t = e;
+console.log("guestlogin udata: ", t);
 if (t.status == c.default.OK) {
 try {
 var o = JSON.parse(t.userlogininfo);
 f.default.set(d.default.USER_LOGIN_TYPE, d.default.LOGIN_TYPE_GUEST);
 f.default.set(d.default.USER_LOGIN_GUEST_KEY, o.guest_key);
 } catch (e) {
-cc.error(e);
+console.error(e);
 }
-cc.log("on_event_guest_login: key: ", f.default.get(d.default.USER_LOGIN_GUEST_KEY));
+console.log("on_event_guest_login: key: ", f.default.get(d.default.USER_LOGIN_GUEST_KEY));
 g.default.send_login_logic();
-p.default.getInstance().show_weak_hint("游客登录成功!");
+p.default.getInstance().show_weak_hint("游客重新登录成功!");
 } else p.default.getInstance().show_weak_hint("登录失败! " + t.status);
 };
 t.prototype.on_event_uname_login = function(e) {
-var t = e.getUserData();
-cc.log("unamelogin udata: ", t);
+var t = e;
+console.log("unamelogin udata: ", t);
 if (t.status == c.default.OK) {
 try {
 var o = JSON.parse(t.userlogininfo);
@@ -2152,21 +2564,35 @@ uname: o.uname,
 upwd: o.upwd
 });
 } catch (e) {
-cc.error(e);
+console.error(e);
 }
-cc.log("on_event_uname_login: ", f.default.get(d.default.USER_LOGIN_MSG));
+console.log("on_event_uname_login: ", f.default.get(d.default.USER_LOGIN_MSG));
 g.default.send_login_logic();
-p.default.getInstance().show_weak_hint("登录成功!");
+p.default.getInstance().show_weak_hint("玩家重新登录成功!");
 } else p.default.getInstance().show_weak_hint("登录失败! " + t.status);
 };
+t.prototype.on_event_wechat_session_login = function(e) {
+var t = e;
+console.log("hcc>>gamescene>>on_event_wechat_session_login", t);
+if (t.status == c.default.OK) {
+try {
+var o = JSON.parse(t.userlogininfo);
+f.default.set(d.default.USER_LOGIN_WECHAT_SESSION, o.unionid);
+f.default.set(d.default.USER_LOGIN_TYPE, d.default.LOGIN_TYPE_WECHAT);
+} catch (e) {
+console.log(e);
+}
+g.default.send_login_logic();
+} else p.default.getInstance().show_weak_hint("微信重新登录失败! " + t.status);
+};
 t.prototype.on_event_relogin = function(e) {
-cc.log("on_event_relogin...");
+console.log("on_event_relogin...");
 u.default.getInstance().enter_scene_asyc(new l.default());
 p.default.getInstance().show_weak_hint("您已经被挤号,自动退出!");
 };
-return t = r([ m ], t);
+return t = r([ v ], t);
 }(i.default));
-o.default = v;
+o.default = b;
 cc._RF.pop();
 }, {
 "../../../framework/config/EventDefine": "EventDefine",
@@ -2176,6 +2602,7 @@ cc._RF.pop();
 "../../../framework/manager/SceneManager": "SceneManager",
 "../../../framework/protocol/AuthProto": "AuthProto",
 "../../../framework/protocol/Response": "Response",
+"../../../framework/protocol/Stype": "Stype",
 "../../../framework/uibase/UIController": "UIController",
 "../../../framework/utils/Storage": "Storage",
 "../LoginScene/LoginScene": "LoginScene",
@@ -2210,7 +2637,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/EventManager"), a = e("../../../framework/protocol/GameHoodleProto"), c = e("../../../framework/protocol/Response"), u = e("../../../framework/manager/SceneManager"), l = e("../../../framework/manager/DialogManager"), f = e("../lobbyScene/LobbyScene"), d = e("../../common/RoomData"), p = e("../../common/State"), h = cc._decorator, _ = h.ccclass, g = (h.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/protocol/GameHoodleProto"), a = e("../../../framework/protocol/Response"), c = e("../../../framework/manager/SceneManager"), u = e("../../../framework/manager/DialogManager"), l = e("../lobbyScene/LobbyScene"), f = e("../../common/RoomData"), d = e("../../common/State"), p = e("../../../framework/protocol/Stype"), h = e("./sendMsg/GameSendGameHoodle"), _ = cc._decorator, g = _.ccclass, y = (_.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -2220,122 +2647,116 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_event_dispatcher();
+e.prototype.start.call(this);
+this.add_protocol_delegate();
 };
-t.prototype.add_event_dispatcher = function() {
-s.default.on(a.CmdName[a.Cmd.eLoginLogicRes], this, this.on_event_login_logic);
-s.default.on(a.CmdName[a.Cmd.eDessolveRes], this, this.on_event_dessolve);
-s.default.on(a.CmdName[a.Cmd.eJoinRoomRes], this, this.on_event_exit_room);
-s.default.on(a.CmdName[a.Cmd.eCheckLinkGameRes], this, this.on_event_check_link);
-s.default.on(a.CmdName[a.Cmd.eUserInfoRes], this, this.on_event_user_info);
-s.default.on(a.CmdName[a.Cmd.eGameRuleRes], this, this.on_event_game_rule);
-s.default.on(a.CmdName[a.Cmd.eRoomIdRes], this, this.on_event_room_id);
-s.default.on(a.CmdName[a.Cmd.ePlayCountRes], this, this.on_event_play_count);
-s.default.on(a.CmdName[a.Cmd.eUserReadyRes], this, this.on_event_user_ready);
-s.default.on(a.CmdName[a.Cmd.eGameStartRes], this, this.on_event_game_start);
-s.default.on(a.CmdName[a.Cmd.eGameEndRes], this, this.on_event_game_end);
-s.default.on(a.CmdName[a.Cmd.eUserOfflineRes], this, this.on_event_user_offline);
-s.default.on(a.CmdName[a.Cmd.ePlayerScoreRes], this, this.on_event_play_score);
-s.default.on(a.CmdName[a.Cmd.eGameResultRes], this, this.on_event_game_result);
-s.default.on(a.CmdName[a.Cmd.eTotalGameResultRes], this, this.on_event_game_total_result);
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[s.Cmd.eLoginLogicRes] = this.on_event_login_logic, 
+e[s.Cmd.eDessolveRes] = this.on_event_dessolve, e[s.Cmd.eExitRoomRes] = this.on_event_exit_room, 
+e[s.Cmd.eCheckLinkGameRes] = this.on_event_check_link, e[s.Cmd.eUserInfoRes] = this.on_event_user_info, 
+e[s.Cmd.eGameRuleRes] = this.on_event_game_rule, e[s.Cmd.eRoomIdRes] = this.on_event_room_id, 
+e[s.Cmd.ePlayCountRes] = this.on_event_play_count, e[s.Cmd.eUserReadyRes] = this.on_event_user_ready, 
+e[s.Cmd.eGameStartRes] = this.on_event_game_start, e[s.Cmd.eGameEndRes] = this.on_event_game_end, 
+e[s.Cmd.eUserOfflineRes] = this.on_event_user_offline, e[s.Cmd.ePlayerScoreRes] = this.on_event_player_score, 
+e[s.Cmd.eGameResultRes] = this.on_event_game_result, e[s.Cmd.eTotalGameResultRes] = this.on_event_game_total_result, 
+e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === p.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.on_event_login_logic = function(e) {
-var t = e.getUserData();
-cc.log("hcc>>on_event_login_logic>>udata: ", t);
+e.status == a.default.OK && h.default.send_check_link_game();
 };
 t.prototype.on_event_dessolve = function(e) {
-var t = e.getUserData();
-if (t) if (t.status == c.default.OK) {
-l.default.getInstance().show_weak_hint("房间已解散!");
-u.default.getInstance().enter_scene_asyc(new f.default());
-d.default.getInstance().clear_room_data();
-} else l.default.getInstance().show_weak_hint("解散房间失败!");
+if (e) if (e.status == a.default.OK) {
+u.default.getInstance().show_weak_hint("房间已解散!");
+c.default.getInstance().enter_scene_asyc(new l.default());
+f.default.getInstance().clear_room_data();
+} else u.default.getInstance().show_weak_hint("解散房间失败!");
 };
 t.prototype.on_event_exit_room = function(e) {
-var t = e.getUserData();
-if (t) {
-t.status == c.default.OK ? l.default.getInstance().show_weak_hint("退出房间成功!") : l.default.getInstance().show_weak_hint("退出房间失败!");
+if (e) {
+e.status == a.default.OK ? u.default.getInstance().show_weak_hint("退出房间成功!") : u.default.getInstance().show_weak_hint("退出房间失败!");
 }
 };
 t.prototype.on_event_check_link = function(e) {
-var t = e.getUserData();
-if (t) {
-t.status == c.default.OK ? l.default.getInstance().show_weak_hint("进入游戏成功!") : l.default.getInstance().show_weak_hint("进入游戏失败!");
+if (e) {
+e.status == a.default.OK ? u.default.getInstance().show_weak_hint("进入游戏成功!") : u.default.getInstance().show_weak_hint("进入游戏失败!");
 }
 };
 t.prototype.on_event_user_info = function(e) {
-var t = e.getUserData();
+var t = e;
 if (t) {
-cc.log("hcc>>userinfostr: ", t);
+console.log("hcc>>userinfostr: ", t);
 try {
 t.userinfo && t.userinfo.forEach(function(e) {
 var t = e.numberid, o = e.userinfostring, n = JSON.parse(o);
-d.default.getInstance().add_player_by_uinfo(n);
-cc.log("hcc>>userinfo numid: ", t, " ,info: ", o);
+f.default.getInstance().add_player_by_uinfo(n);
+console.log("hcc>>userinfo numid: ", t, " ,info: ", o);
 });
 var o = this.get_script("GameSceneShowUI");
 o && o.show_user_info(t);
 } catch (e) {
-cc.log("hcc>>error: ", e);
+console.log("hcc>>error: ", e);
 }
 }
 };
 t.prototype.on_event_game_rule = function(e) {
-var t = e.getUserData();
-if (t) {
-var o = t.gamerule;
-o && this.set_string(this.view.KW_TEXT_RULE, String(o));
+if (e) {
+var t = e.gamerule;
+t && this.set_string(this.view.KW_TEXT_RULE, String(t));
+f.default.getInstance().set_game_rule(t);
 }
 };
 t.prototype.on_event_room_id = function(e) {
-var t = e.getUserData();
-if (t) {
-var o = t.roomid;
-o && this.set_string(this.view.KW_TEXT_ROOM_NUM, "房间号:" + String(o));
+if (e) {
+var t = e.roomid;
+t && this.set_string(this.view.KW_TEXT_ROOM_NUM, "房间号:" + String(t));
+f.default.getInstance().set_room_id(t);
 }
 };
 t.prototype.on_event_play_count = function(e) {
-var t = e.getUserData();
+var t = e;
 if (t) {
 var o = t.playcount, n = t.totalplaycount;
-d.default.getInstance().set_play_count(Number(o));
-d.default.getInstance().set_totl_play_count(Number(n));
+f.default.getInstance().set_play_count(Number(o));
+f.default.getInstance().set_totl_play_count(Number(n));
 o && n && this.set_string(this.view.KW_TEXT_PLAY_COUNT, "局数:" + String(o) + "/" + String(n));
 }
 };
-t.prototype.on_event_play_score = function(e) {
-var t = e.getUserData();
-if (t) {
-var o = t.scores, n = "";
-for (var r in o) {
-var i = o[r], s = i.score, a = d.default.getInstance().get_player(i.seatid);
-if (a) {
-n += a.get_uname() + ": " + s + "\n";
+t.prototype.on_event_player_score = function(e) {
+if (e) {
+var t = e.scores, o = "";
+for (var n in t) {
+var r = t[n], i = r.score, s = f.default.getInstance().get_player(r.seatid);
+if (s) {
+o += s.get_unick() + ": " + i + "\n";
 }
 }
-console.log("hcc>>score_str: ", n);
-this.set_string(this.view.KW_TEXT_PLAY_SCORE, n);
+console.log("hcc>>score_str: ", o);
+this.set_string(this.view.KW_TEXT_PLAY_SCORE, o);
 }
 };
 t.prototype.on_event_user_offline = function(e) {
-var t = e.getUserData();
-cc.log("on_event_user_offline", t);
+var t = e;
+console.log("on_event_user_offline", t);
 var o = t.seatid;
 if (o) {
-var n = d.default.getInstance().get_player(o);
+var n = f.default.getInstance().get_player(o);
 n && n.set_offline(!0);
 }
 };
 t.prototype.on_event_user_ready = function(e) {
-var t = e.getUserData();
-cc.log("on_event_user_ready", t);
+var t = e;
+console.log("on_event_user_ready", t);
 if (t) {
 var o = t.status, n = t.seatid;
 t.userstate;
-if (o == c.default.OK) {
-var r = d.default.getInstance().get_player(n);
+if (o == a.default.OK) {
+var r = f.default.getInstance().get_player(n);
 if (r) {
-r.set_user_state(p.UserState.Ready);
+r.set_user_state(d.UserState.Ready);
 var i = this.get_script("GameSceneShowUI");
 i && i.show_user_ready(n, !0);
 }
@@ -2343,15 +2764,15 @@ i && i.show_user_ready(n, !0);
 }
 };
 t.prototype.on_event_game_start = function(e) {
-var t = e.getUserData();
-cc.log("on_event_game_start", t);
-l.default.getInstance().show_weak_hint("游戏开始!");
+var t = e;
+console.log("on_event_game_start", t);
+u.default.getInstance().show_weak_hint("游戏开始!");
 var o = this.get_script("GameSceneShowUI");
 o && o.clear_table();
 };
 t.prototype.on_event_game_end = function(e) {
-var t = e.getUserData();
-cc.log("on_event_game_end", t);
+var t = e;
+console.log("on_event_game_end", t);
 };
 t.prototype.on_event_game_result = function(e) {
 this.set_visible(this.view.KW_BTN_READY, !1);
@@ -2365,20 +2786,21 @@ this.set_visible(this.view.KW_BTN_READY, !1);
 this.set_visible(this.view.KW_BTN_BACK_LOBBY, !0);
 }, 2);
 };
-return t = r([ _ ], t);
+return t = r([ g ], t);
 }(i.default));
-o.default = g;
+o.default = y;
 cc._RF.pop();
 }, {
 "../../../framework/manager/DialogManager": "DialogManager",
-"../../../framework/manager/EventManager": "EventManager",
 "../../../framework/manager/SceneManager": "SceneManager",
 "../../../framework/protocol/GameHoodleProto": "GameHoodleProto",
 "../../../framework/protocol/Response": "Response",
+"../../../framework/protocol/Stype": "Stype",
 "../../../framework/uibase/UIController": "UIController",
 "../../common/RoomData": "RoomData",
 "../../common/State": "State",
-"../lobbyScene/LobbyScene": "LobbyScene"
+"../lobbyScene/LobbyScene": "LobbyScene",
+"./sendMsg/GameSendGameHoodle": "GameSendGameHoodle"
 } ],
 GameSceneShowUI: [ function(e, t, o) {
 "use strict";
@@ -2408,7 +2830,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../common/State"), a = e("../../common/RoomData"), c = e("../../../framework/common/UIFunciton"), u = e("../../../framework/manager/ResourceManager"), l = cc._decorator, f = l.ccclass, d = (l.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../common/State"), a = e("../../common/RoomData"), c = e("../../../framework/common/UIFunciton"), u = e("../../../framework/manager/ResourceManager"), l = e("../../../framework/utils/StringUtil"), f = cc._decorator, d = f.ccclass, p = (f.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -2448,7 +2870,7 @@ t.show_one_user_info(s, n);
 t.prototype.show_one_user_info = function(e, t) {
 if (cc.isValid(e)) {
 this.set_visible(e, !0);
-this.set_string(e.getChildByName("KW_TEXT_NAME"), t.uname);
+this.set_string(e.getChildByName("KW_TEXT_NAME"), t.unick);
 this.set_string(e.getChildByName("KW_TEXT_GOLD"), t.uchip);
 var o = "lobby/rectheader/1" + t.uface;
 this.set_sprite_asyc(e.getChildByName("KW_IMG_HEAD"), o);
@@ -2457,11 +2879,16 @@ this.set_visible(e.getChildByName("KW_IMG_OFFINLE"), t.isoffline);
 this.set_visible(e.getChildByName("KW_IMG_MASTER"), 1 == t.ishost);
 this.set_visible(e.getChildByName("KW_IMG_READY"), t.userstate == s.UserState.Ready);
 this.set_visible(e.getChildByName("KW_TEXT_GOLD"), !0);
+console.log("hcc>>gameSceneShowUI: url: ", t.avatarurl);
+t.avatarurl && !l.default.isEmptyString(t.avatarurl) && this.set_headimg_url(e.getChildByName("KW_IMG_HEAD"), t.avatarurl, 80);
 if (Number(t.seatid) == Number(a.default.getInstance().get_self_seatid())) {
 var n = Number(t.userstate);
 n == s.UserState.Ready || n == s.UserState.Playing ? this.set_visible(this.view.KW_BTN_READY, !1) : this.set_visible(this.view.KW_BTN_READY, !0);
 }
-t.userstate == s.UserState.Playing && this.set_visible(e, !1);
+if (t.userstate == s.UserState.Playing) {
+this.set_visible(e, !1);
+this.set_visible(this.view.KW_BTN_SHARE, !1);
+}
 }
 };
 t.prototype.show_all_player_ready_visible = function(e) {
@@ -2486,14 +2913,15 @@ this.show_all_player_ready_visible(!1);
 this.set_visible(this.view.KW_BTN_READY, !1);
 this.view.KW_LAYOUT_USER && this.view.KW_LAYOUT_USER.removeAllChildren();
 };
-return t = r([ f ], t);
+return t = r([ d ], t);
 }(i.default));
-o.default = d;
+o.default = p;
 cc._RF.pop();
 }, {
 "../../../framework/common/UIFunciton": "UIFunciton",
 "../../../framework/manager/ResourceManager": "ResourceManager",
 "../../../framework/uibase/UIController": "UIController",
+"../../../framework/utils/StringUtil": "StringUtil",
 "../../common/RoomData": "RoomData",
 "../../common/State": "State"
 } ],
@@ -2525,7 +2953,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/DialogManager"), a = e("./sendMsg/GameSendGameHoodle"), c = e("../../../framework/manager/SceneManager"), u = e("../lobbyScene/LobbyScene"), l = cc._decorator, f = l.ccclass, d = (l.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/DialogManager"), a = e("./sendMsg/GameSendGameHoodle"), c = e("../../../framework/manager/SceneManager"), u = e("../lobbyScene/LobbyScene"), l = e("../../../framework/config/PlatForm"), f = e("../../common/RoomData"), d = cc._decorator, p = d.ccclass, h = (d.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -2534,14 +2962,12 @@ return null !== e && e.apply(this, arguments) || this;
 t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
-t.prototype.start = function() {
-this.add_button_event_listener();
-};
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.BTN_SETTING, this.on_click_setting);
 this.add_click_event(this.view.BTN_SETTING_2, this.on_click_setting2);
 this.add_click_event(this.view.KW_BTN_READY, this.on_click_ready);
 this.add_click_event(this.view.KW_BTN_BACK_LOBBY, this.on_click_back_lobby);
+this.add_click_event(this.view.KW_BTN_SHARE, this.on_click_share);
 };
 t.prototype.on_click_setting = function(e) {
 s.default.getInstance().show_dialog_asyc("ui_prefabs/dialog/DialogSetting", "SettingDialog");
@@ -2564,14 +2990,42 @@ a.default.send_user_ready();
 t.prototype.on_click_back_lobby = function(e) {
 c.default.getInstance().enter_scene_asyc(new u.default());
 };
-return t = r([ f ], t);
+t.prototype.on_click_share = function(e) {
+console.log("hcc>>on_click_share....");
+if (l.default.isWeChatGame()) {
+var t = f.default.getInstance().get_room_id(), o = f.default.getInstance().get_self_player().get_unick(), n = "roomid=" + t + "&invite_unick=" + o;
+console.log("hcc>>share_room_info:", n);
+var r = cc.url.raw("resources/textures/shareimg/ball_games_hare_img.png");
+console.log("hcc>>share_img_path: ", r);
+if (r && "" != r) {
+var i = {
+title: o + "请你一起来玩弹珠,房间:" + t,
+imageUrl: r,
+query: n,
+success: function(e) {
+console.log("hcc>>share success", e);
+},
+fail: function(e) {
+console.log("hcc>>share fail", e);
+},
+complete: function() {
+console.log("hcc>>share complete");
+}
+};
+wx.shareAppMessage(i);
+}
+}
+};
+return t = r([ p ], t);
 }(i.default));
-o.default = d;
+o.default = h;
 cc._RF.pop();
 }, {
+"../../../framework/config/PlatForm": "PlatForm",
 "../../../framework/manager/DialogManager": "DialogManager",
 "../../../framework/manager/SceneManager": "SceneManager",
 "../../../framework/uibase/UIController": "UIController",
+"../../common/RoomData": "RoomData",
 "../lobbyScene/LobbyScene": "LobbyScene",
 "./sendMsg/GameSendGameHoodle": "GameSendGameHoodle"
 } ],
@@ -2687,6 +3141,17 @@ desseatid: o
 };
 e.send(i.Cmd.ePlayerIsShootedReq, n);
 };
+e.send_get_user_config = function() {
+e.send(i.Cmd.eUserConfigReq);
+};
+e.send_use_ball = function(t) {
+if (!(t <= 0)) {
+var o = {
+balllevel: t
+};
+e.send(i.Cmd.eUseHoodleBallReq, o);
+}
+};
 return e;
 }();
 o.default = c;
@@ -2780,29 +3245,34 @@ t.prototype.get_ball_state = function() {
 return this._ball_state;
 };
 t.prototype.onBeginContact = function(e, t, o) {
-var n = -1, r = -1, i = t.getComponent("HoodleBallCtrl"), l = o.getComponent("HoodleBallCtrl");
-if (i && l && i.get_ball_id && l.get_ball_id) {
-var f = i.get_ball_id(), d = l.get_ball_id();
-console.log("hcc>>selfballid: ", f, " ,otherballid: ", d);
-var p = c.default.getInstance().get_power(f), h = c.default.getInstance().get_power(d);
-if (f == this.get_src_shoot_seatid()) {
-n = f;
-r = d;
-} else {
-n = d;
-r = f;
+var n = this;
+console.log("onBeginContact ball: " + this._ball_name);
+var r = -1, i = -1, l = t.getComponent("HoodleBallCtrl"), f = o.getComponent("HoodleBallCtrl");
+if (l && f && l.get_ball_id && f.get_ball_id) {
+var d = u.default.getInstance().get_player(this._src_shoot_seatid);
+if (-1 != this.get_src_shoot_seatid()) {
+console.log("hcc>>get_src_shoot_seatid： ", this._src_shoot_seatid, ", unick:", d.get_unick());
+var p = l.get_ball_id(), h = f.get_ball_id(), _ = [];
+_.push(p);
+_.push(h);
+console.log("hcc>>selfballid: ", p, " ,otherballid: ", h);
+var g = c.default.getInstance().get_power(p), y = c.default.getInstance().get_power(h);
+_.forEach(function(e) {
+e == n.get_src_shoot_seatid() ? r = e : i = e;
+});
+var m = u.default.getInstance().get_player(r), v = u.default.getInstance().get_player(i);
+console.log("hcc>>src_seatid: ", r, " ,des_seatid: ", i);
+console.log("hcc>>src_player:", m.get_unick(), " ,des_player: ", v.get_unick());
+-1 != r && -1 != i && a.default.send_player_is_shooted(r, i);
+var b = t.getComponent(cc.MotionStreak), w = t.getComponent(cc.MotionStreak);
+if (b && w) if (g == s.PlayerPower.canPlay) {
+b.enabled = !0;
+w.enabled = !1;
+} else if (y == s.PlayerPower.canPlay) {
+b.enabled = !1;
+w.enabled = !0;
 }
-var _ = u.default.getInstance().get_player(n), g = u.default.getInstance().get_player(r);
-console.log("hcc>>src_player:", _.get_uname(), " ,des_player: ", g.get_uname());
--1 != n && -1 != r && a.default.send_player_is_shooted(n, r);
-var y = t.getComponent(cc.MotionStreak), m = t.getComponent(cc.MotionStreak);
-if (y && m) if (p == s.PlayerPower.canPlay) {
-y.enabled = !0;
-m.enabled = !1;
-} else if (h == s.PlayerPower.canPlay) {
-y.enabled = !1;
-m.enabled = !0;
-}
+} else console.log("hcc>>get_src_shoot_seatid === -1");
 }
 };
 t.prototype.onEndContact = function(e, t, o) {};
@@ -2861,7 +3331,7 @@ this._ball_set[e] = t;
 };
 e.prototype.delete_ball = function(e) {
 var t = this._ball_set[e];
-if (t) {
+if (t && cc.isValid(t)) {
 t.destroy();
 delete this._ball_set[e];
 }
@@ -2908,13 +3378,13 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/ResourceManager"), a = e("../../../framework/utils/StringUtil"), c = e("../../../framework/manager/SceneManager"), u = e("../LoginScene/LoginScene"), l = e("../../../framework/hotfix/HotUpdateNew"), f = cc._decorator, d = f.ccclass, p = (f.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/ResourceManager"), a = e("../../../framework/utils/StringUtil"), c = e("../../../framework/manager/SceneManager"), u = e("../LoginScene/LoginScene"), l = e("../../../framework/hotfix/HotUpdateNew"), f = e("../../../framework/config/PlatForm"), d = e("../../../framework/manager/DialogManager"), p = cc._decorator, h = p.ccclass, _ = (p.property, 
 function(e) {
 n(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
 t._progressbar = null;
-t._urlArray = [ "ui_prefabs/login/", "ui_prefabs/lobby/", "ui_prefabs/dialog/", "ui_prefabs/hotfix/", "ui_prefabs/games/", "textures/lobby/", "textures/dialog/", "mainfest/", "config/" ];
+t._urlArray = [ "ui_prefabs/login/", "ui_prefabs/lobby/", "ui_prefabs/dialog/", "ui_prefabs/hotfix/", "ui_prefabs/games/", "textures/lobby/", "textures/dialog/", "textures/shareimg/", "mainfest/", "config/" ];
 t._completedFlag = [];
 t._tryTimes = 0;
 t._resourceMap = [];
@@ -2930,7 +3400,7 @@ this.checkHotUpdate();
 t.prototype.checkHotUpdate = function() {
 var e = l.default.getInstance(), t = this;
 e.checkUpdate(function(o) {
-cc.log("hcc>>enter_login_scene>>is need hotupdate: ", o);
+console.log("hcc>>enter_login_scene>>is need hotupdate: ", o);
 if (o) {
 e.hotUpdateStart();
 e.setUpdateCallback(function(e, o, n) {
@@ -2939,7 +3409,16 @@ o && t.setProgress(o);
 n && t.set_string(t.view.KW_TEXT_PROGRESS_TIP, n);
 if (e) {
 t.set_string(t.view.KW_TEXT_PROGRESS_TIP, "热更新完成!");
-t.startPreloadRes();
+(f.default.isAndroidNative() || f.default.isIOSNative() || f.default.isWin32()) && d.default.getInstance().show_common_dialog(1, function(e) {
+if (e) {
+e.set_content_text("更新完成,请重启!");
+e.set_btn_callback(function() {
+cc.game.restart();
+}, function() {}, function() {
+cc.game.restart();
+});
+}
+});
 }
 });
 } else {
@@ -2986,12 +3465,14 @@ t.enter_login_scene();
 t.prototype.enter_login_scene = function() {
 c.default.getInstance().enter_scene_asyc(new u.default());
 };
-return t = r([ d ], t);
+return t = r([ h ], t);
 }(i.default));
-o.default = p;
+o.default = _;
 cc._RF.pop();
 }, {
+"../../../framework/config/PlatForm": "PlatForm",
 "../../../framework/hotfix/HotUpdateNew": "HotUpdateNew",
+"../../../framework/manager/DialogManager": "DialogManager",
 "../../../framework/manager/ResourceManager": "ResourceManager",
 "../../../framework/manager/SceneManager": "SceneManager",
 "../../../framework/uibase/UIController": "UIController",
@@ -3047,7 +3528,7 @@ cc._RF.push(t, "f8f98XsfAdBPKYBs0qJCMd6", "HotUpdateNew");
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var n = e("../manager/ResourceManager"), r = e("../config/PlatForm"), i = e("../config/GameAppConfig"), s = JSON.stringify({
+var n = e("../manager/ResourceManager"), r = e("../config/GameAppConfig"), i = JSON.stringify({
 packageUrl: "http://192.168.50.220:5555/tutorial-hot-update/remote-assets/",
 remoteManifestUrl: "http://192.168.50.220:5555/tutorial-hot-update/remote-assets/project.manifest",
 remoteVersionUrl: "http://192.168.50.220:5555/tutorial-hot-update/remote-assets/version.manifest",
@@ -3059,7 +3540,7 @@ md5: "fafdde66bd0a81d1e096799fb8b7af95"
 }
 },
 searchPaths: []
-}), a = function() {
+}), s = function() {
 function e() {
 this._assetsManager = null;
 this._updating = !1;
@@ -3076,19 +3557,20 @@ e.prototype.getLocalVersion = function() {
 return this._localVersion;
 };
 e.prototype.init = function() {
+if (this.checkPlatForm()) {
 var e = this;
-n.ResourceManager.getInstance().loadResAsyc(i.default.LOCAL_MANIFEST_PATH, cc.Asset, function(t, o) {
-if (t) cc.log("hcc>>manifest error: ", t); else {
+n.ResourceManager.getInstance().loadResAsyc(r.default.LOCAL_MANIFEST_PATH, cc.Asset, function(t, o) {
+if (t) console.log("hcc>>manifest error: ", t); else {
 e._manifestUrl = o;
-cc.log("hcc>>manifest: ", o.nativeUrl);
+console.log("hcc>>manifest: ", o.nativeUrl);
 if (e._manifestUrl) {
 var n = e._manifestUrl.nativeUrl;
-cc.log("hcc>>_manifestUrl.nativeUrl111>>init: ", n);
+console.log("hcc>>_manifestUrl.nativeUrl111>>init: ", n);
 cc.loader.md5Pipe && (n = cc.loader.md5Pipe.transformURL(n));
-cc.log("hcc>>_manifestUrl.nativeUrl222>>init:  ", n);
+console.log("hcc>>_manifestUrl.nativeUrl222>>init:  ", n);
 if (!e.checkPlatForm()) return;
 var r = (jsb.fileUtils ? jsb.fileUtils.getWritablePath() : "/") + "hotUpdateCache";
-cc.log("hcc>>Storage path for remote asset : ", r);
+console.log("hcc>>Storage path for remote asset : ", r);
 e._assetsManager = new jsb.AssetsManager("", r, e.versionCompareCallback.bind(e));
 e._assetsManager.setVerifyCallback(e.assetsVerifyCallback.bind(e));
 cc.sys.os === cc.sys.OS_ANDROID && e._assetsManager.setMaxConcurrentTask(2);
@@ -3096,18 +3578,19 @@ e._assetsManager.loadLocalManifest(n);
 var i = e._assetsManager.getLocalManifest();
 if (i && i.getVersion) {
 e._localVersion = i.getVersion();
-cc.log("hcc>>localMani: ", i, " ,localversion:", i.getVersion());
+console.log("hcc>>localMani: ", i, " ,localversion:", i.getVersion());
 }
 }
 }
 });
+}
 };
 e.prototype.setUpdateCallback = function(e) {
 this._updateCallback = e;
 };
 e.prototype.checkPlatForm = function() {
 if (!cc.sys.isNative) {
-cc.warn("not native platform,can not hotupdate!");
+console.warn("not native platform,can not hotupdate!");
 return !1;
 }
 return !0;
@@ -3117,15 +3600,15 @@ if (this.checkPlatForm()) if (this._manifestUrl) {
 if (this._updating) e(!1); else if (this._assetsManager) {
 if (this._assetsManager.getState() === jsb.AssetsManager.State.UNINITED) {
 var t = this._manifestUrl.nativeUrl;
-cc.log("hcc>>_manifestUrl.nativeUrl111: ", t);
+console.log("hcc>>_manifestUrl.nativeUrl111: ", t);
 cc.loader.md5Pipe && (t = cc.loader.md5Pipe.transformURL(t));
-cc.log("hcc>>_manifestUrl.nativeUrl222: ", t);
+console.log("hcc>>_manifestUrl.nativeUrl222: ", t);
 this._assetsManager.loadLocalManifest(t);
 }
 if (this._assetsManager.getLocalManifest() && this._assetsManager.getLocalManifest().isLoaded()) {
-cc.log("hcc>>checkUpdate: ", "");
+console.log("hcc>>checkUpdate: ", "");
 this._assetsManager.setEventCallback(function(t) {
-cc.log("hcc>>checkUpdateCallback,Code: " + t.getEventCode());
+console.log("hcc>>checkUpdateCallback,Code: " + t.getEventCode());
 var o = "", n = t.getEventCode();
 switch (n) {
 case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
@@ -3148,7 +3631,7 @@ break;
 default:
 return;
 }
-cc.log("hcc>>checkUpdateCallback: ", o);
+console.log("hcc>>checkUpdateCallback: ", o);
 this._assetsManager.setEventCallback(null);
 this._updating = !1;
 e(n == jsb.EventAssetsManager.NEW_VERSION_FOUND);
@@ -3156,7 +3639,7 @@ e(n == jsb.EventAssetsManager.NEW_VERSION_FOUND);
 this._assetsManager.checkUpdate();
 this._updating = !0;
 } else {
-cc.log("hcc>>checkUpdate: Failed to load local manifest ...");
+console.log("hcc>>checkUpdate: Failed to load local manifest ...");
 e(!1);
 }
 } else e(!1);
@@ -3185,7 +3668,7 @@ console.log("hcc>>assetsVerifyCallback:", o);
 return !0;
 };
 e.prototype.versionCompareCallback = function(e, t) {
-cc.log("hcc>>JS Custom Version Compare: version A is " + e + ", version B is " + t);
+console.log("hcc>>JS Custom Version Compare: version A is " + e + ", version B is " + t);
 for (var o = e.split("."), n = t.split("."), r = 0; r < o.length; ++r) {
 var i = parseInt(o[r]), s = parseInt(String(n[r] || 0));
 if (i !== s) return i - s;
@@ -3193,7 +3676,7 @@ if (i !== s) return i - s;
 return n.length > o.length ? -1 : 0;
 };
 e.prototype.checkUpdateCallback = function(e) {
-cc.log("hcc>>checkUpdateCallback,Code: " + e.getEventCode());
+console.log("hcc>>checkUpdateCallback,Code: " + e.getEventCode());
 var t = "";
 switch (e.getEventCode()) {
 case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
@@ -3220,12 +3703,12 @@ if (this._assetsManager) {
 this._assetsManager.setEventCallback(null);
 this._updating = !1;
 }
-cc.log("hcc>>checkUpdateCallback: ", t);
+console.log("hcc>>checkUpdateCallback: ", t);
 };
 e.prototype.updateCallback = function(e) {
 if (this._assetsManager) {
-cc.log("hcc>>updateCallback, code: ", e.getEventCode());
-var t = !1, o = !1, n = null, i = null;
+console.log("hcc>>updateCallback, code: ", e.getEventCode());
+var t = !1, o = !1, n = null, r = null;
 switch (e.getEventCode()) {
 case jsb.EventAssetsManager.ERROR_NO_LOCAL_MANIFEST:
 n = "本地没有manifest文件，更新失败!";
@@ -3233,7 +3716,7 @@ o = !0;
 break;
 
 case jsb.EventAssetsManager.UPDATE_PROGRESSION:
-i = Math.floor(100 * e.getPercentByFile()) / 100;
+r = Math.floor(100 * e.getPercentByFile()) / 100;
 n = "更新进度: " + Math.floor(e.getDownloadedBytes() / 1024 / 1024 * 100) / 100 + "M / " + Math.floor(e.getTotalBytes() / 1024 / 1024 * 100) / 100 + "M";
 break;
 
@@ -3266,31 +3749,30 @@ break;
 case jsb.EventAssetsManager.ERROR_DECOMPRESS:
 n = "资源解压失败! " + e.getMessage();
 }
-this._updateCallback && this._updateCallback.call(this, !1, i, n);
-cc.log("hcc>>updateCallback: ", n);
+this._updateCallback && this._updateCallback.call(this, !1, r, n);
+console.log("hcc>>updateCallback: ", n);
 if (o) {
 this._assetsManager.setEventCallback(null);
 this._updating = !1;
 }
 if (t) {
-this._updateCallback && this._updateCallback.call(this, !0, i, n);
+this._updateCallback && this._updateCallback.call(this, !0, r, n);
 this._assetsManager.setEventCallback(null);
-var s = jsb.fileUtils.getSearchPaths(), a = this._assetsManager.getLocalManifest();
-if (a) {
-var c = a.getSearchPaths();
-console.log("hcc>>newPaths:", JSON.stringify(c));
-Array.prototype.unshift.apply(s, c);
+var i = jsb.fileUtils.getSearchPaths(), s = this._assetsManager.getLocalManifest();
+if (s) {
+var a = s.getSearchPaths();
+console.log("hcc>>newPaths:", JSON.stringify(a));
+Array.prototype.unshift.apply(i, a);
 }
-cc.sys.localStorage.setItem("HotUpdateSearchPaths", JSON.stringify(s));
-jsb.fileUtils.setSearchPaths(s);
+cc.sys.localStorage.setItem("HotUpdateSearchPaths", JSON.stringify(i));
+jsb.fileUtils.setSearchPaths(i);
 cc.audioEngine.stopAll();
-(r.default.isAndroidNative() || r.default.isIOSNative()) && cc.game.restart();
 }
 }
 };
 e.prototype.loadCustomManifest = function() {
 if (this._assetsManager && this._assetsManager.getState() === jsb.AssetsManager.State.UNINITED) {
-var e = (jsb.fileUtils ? jsb.fileUtils.getWritablePath() : "/") + "hotUpdateCache", t = new jsb.Manifest(s, e);
+var e = (jsb.fileUtils ? jsb.fileUtils.getWritablePath() : "/") + "hotUpdateCache", t = new jsb.Manifest(i, e);
 this._assetsManager.loadLocalManifest(t, e);
 }
 };
@@ -3303,11 +3785,10 @@ this._assetsManager.downloadFailedAssets();
 e.instance = new e();
 return e;
 }();
-o.default = a;
+o.default = s;
 cc._RF.pop();
 }, {
 "../config/GameAppConfig": "GameAppConfig",
-"../config/PlatForm": "PlatForm",
 "../manager/ResourceManager": "ResourceManager"
 } ],
 HttpUtil: [ function(e, t, o) {
@@ -3413,7 +3894,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../framework/uibase/UIDialog"), s = e("../../framework/utils/StringUtil"), a = e("../scene/lobbyScene/sendMsg/LobbySendGameHoodle"), c = e("../../framework/manager/EventManager"), u = e("../../framework/protocol/GameHoodleProto"), l = e("../../framework/protocol/Response"), f = cc._decorator, d = f.ccclass, p = (f.property, 
+var i = e("../../framework/uibase/UIDialog"), s = e("../../framework/utils/StringUtil"), a = e("../../framework/protocol/GameHoodleProto"), c = e("../../framework/protocol/Response"), u = e("../../framework/protocol/Stype"), l = e("../../framework/manager/CellManager"), f = e("../../framework/manager/DialogManager"), d = e("../../framework/cell/Cell"), p = cc._decorator, h = p.ccclass, _ = (p.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -3426,12 +3907,13 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
+e.prototype.start.call(this);
 this.initUI();
-this.add_event_dispatcher();
-this.add_button_event_listener();
+this.add_protocol_delegate();
 };
-t.prototype.add_event_dispatcher = function() {
-c.default.on(u.CmdName[u.Cmd.eJoinRoomRes], this, this.on_event_join_room);
+t.prototype.add_cmd_handler_map = function() {};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === u.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.KW_BTN_CLOSE, this.on_click_close.bind(this));
@@ -3448,7 +3930,6 @@ var t = "KW_SHOW_NUM_" + e;
 this.set_string(this.view[t], "");
 }
 };
-t.prototype.onDestroy = function() {};
 t.prototype.on_click_close = function(e) {
 this.close();
 };
@@ -3477,28 +3958,37 @@ for (var r = "", i = 1; i <= this.KW_TOTAL_ROOM_NUM_COUNT; i++) {
 var c = "KW_SHOW_NUM_" + i;
 r += this.get_string(this.view[c]);
 }
-cc.log("roomid: ", r);
-a.default.send_join_room(r);
+console.log("roomid: ", r);
+var f = {
+roomid: r
+}, d = l.default.getInstance().start("CellJoinRoom", f, u.Stype.GameHoodle, a.Cmd.eJoinRoomReq, 5);
+l.default.getInstance().addCellCallBack(d, this.on_event_join_room_cell.bind(this));
 }
 this._text_index++;
 };
 t.prototype.on_event_join_room = function(e) {
-var t = e.getUserData();
-if (t) {
-t.status == l.default.OK && this.close();
+if (e) {
+e.status == c.default.OK && this.close();
 }
 };
-return t = r([ d ], t);
+t.prototype.on_event_join_room_cell = function(e, t, o) {
+console.log("hcc>>on_event_join_room_cell flag:", t, ",data: ", o);
+console.log("hcc>>on_event_join_room_cell message: ", e.getMessage());
+t == d.Cell.TYPE.SUCCESS ? o && o.status == c.default.OK && this.close() : f.default.getInstance().show_weak_hint(e.getMessage());
+};
+return t = r([ h ], t);
 }(i.default));
-o.default = p;
+o.default = _;
 cc._RF.pop();
 }, {
-"../../framework/manager/EventManager": "EventManager",
+"../../framework/cell/Cell": "Cell",
+"../../framework/manager/CellManager": "CellManager",
+"../../framework/manager/DialogManager": "DialogManager",
 "../../framework/protocol/GameHoodleProto": "GameHoodleProto",
 "../../framework/protocol/Response": "Response",
+"../../framework/protocol/Stype": "Stype",
 "../../framework/uibase/UIDialog": "UIDialog",
-"../../framework/utils/StringUtil": "StringUtil",
-"../scene/lobbyScene/sendMsg/LobbySendGameHoodle": "LobbySendGameHoodle"
+"../../framework/utils/StringUtil": "StringUtil"
 } ],
 LSDefine: [ function(e, t, o) {
 "use strict";
@@ -3511,9 +4001,11 @@ function e() {}
 e.USER_LOGIN_TYPE = "user_login_type";
 e.USER_LOGIN_MSG = "user_login_msg";
 e.USER_LOGIN_GUEST_KEY = "user_login_guest_key";
+e.USER_LOGIN_WECHAT_SESSION = "user_login_wechat_session";
 e.USER_INFO_SELF = "user_info_self";
 e.LOGIN_TYPE_GUEST = "guest_login";
 e.LOGIN_TYPE_UNAME = "uname_login";
+e.LOGIN_TYPE_WECHAT = "wechat_login";
 return e;
 }();
 o.default = n;
@@ -3597,7 +4089,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("./sendMsg/LobbySendAuthMsg"), a = e("./sendMsg/LobbySendGameHoodle"), c = cc._decorator, u = c.ccclass, l = (c.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("./sendMsg/LobbySendAuthMsg"), a = e("./sendMsg/LobbySendGameHoodle"), c = e("../../../framework/utils/WeChatLogin"), u = e("../../common/RoomData"), l = cc._decorator, f = l.ccclass, d = (l.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -3609,13 +4101,23 @@ e.prototype.onLoad.call(this);
 t.prototype.start = function() {
 s.default.send_get_center_info();
 a.default.send_get_ugame_info();
+a.default.send_get_room_status();
+u.default.getInstance().clear_room_data();
+c.default.hide_auth_btn();
+c.default.on_wx_foreground(function(e) {
+console.log("hcc>>on_wx_foreground>>LobbySceneInit>>  roomid: ", e.roomid);
+var t = e.roomid;
+t && "" != t && a.default.send_join_room(String(t));
+});
 };
-return t = r([ u ], t);
+return t = r([ f ], t);
 }(i.default));
-o.default = l;
+o.default = d;
 cc._RF.pop();
 }, {
 "../../../framework/uibase/UIController": "UIController",
+"../../../framework/utils/WeChatLogin": "WeChatLogin",
+"../../common/RoomData": "RoomData",
 "./sendMsg/LobbySendAuthMsg": "LobbySendAuthMsg",
 "./sendMsg/LobbySendGameHoodle": "LobbySendGameHoodle"
 } ],
@@ -3647,7 +4149,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/EventManager"), a = e("../../../framework/protocol/AuthProto"), c = e("../../../framework/protocol/Response"), u = e("../../../framework/manager/SceneManager"), l = e("../LoginScene/LoginScene"), f = e("../../../framework/utils/Storage"), d = e("../../../framework/config/LSDefine"), p = e("../../../framework/common/UserInfo"), h = e("../../../framework/manager/DialogManager"), _ = e("../../../framework/config/EventDefine"), g = e("./sendMsg/LobbySendAuthMsg"), y = e("./sendMsg/LobbySendGameHoodle"), m = e("../LoginScene/sendMsg/LoginSendAuthMsg"), v = cc._decorator, b = v.ccclass, w = (v.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/EventManager"), a = e("../../../framework/protocol/AuthProto"), c = e("../../../framework/protocol/Response"), u = e("../../../framework/manager/SceneManager"), l = e("../LoginScene/LoginScene"), f = e("../../../framework/utils/Storage"), d = e("../../../framework/config/LSDefine"), p = e("../../../framework/common/UserInfo"), h = e("../../../framework/manager/DialogManager"), _ = e("../../../framework/config/EventDefine"), g = e("./sendMsg/LobbySendAuthMsg"), y = e("./sendMsg/LobbySendGameHoodle"), m = e("../LoginScene/sendMsg/LoginSendAuthMsg"), v = e("../../../framework/protocol/Stype"), b = cc._decorator, w = b.ccclass, O = (b.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -3657,15 +4159,21 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_event_dispatcher();
+e.prototype.start.call(this);
+this.add_protocol_delegate();
 };
 t.prototype.add_event_dispatcher = function() {
 s.default.on(_.default.EVENT_NET_CONNECTED, this, this.on_net_connected);
-s.default.on(a.CmdName[a.Cmd.eUnameLoginRes], this, this.on_event_uname_login);
-s.default.on(a.CmdName[a.Cmd.eGuestLoginRes], this, this.on_event_guest_login);
-s.default.on(a.CmdName[a.Cmd.eGetUserCenterInfoRes], this, this.on_event_center_info);
-s.default.on(a.CmdName[a.Cmd.eLoginOutRes], this, this.on_event_login_out);
-s.default.on(a.CmdName[a.Cmd.eReloginRes], this, this.on_event_relogin);
+};
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[a.Cmd.eUnameLoginRes] = this.on_event_uname_login, 
+e[a.Cmd.eGuestLoginRes] = this.on_event_guest_login, e[a.Cmd.eWeChatSessionLoginRes] = this.on_event_wechat_session_login, 
+e[a.Cmd.eGetUserCenterInfoRes] = this.on_event_center_info, e[a.Cmd.eLoginOutRes] = this.on_event_login_out, 
+e[a.Cmd.eReloginRes] = this.on_event_relogin, e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === v.Stype.Auth && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.on_net_connected = function(e) {
 var t = f.default.get(d.default.USER_LOGIN_TYPE);
@@ -3675,28 +4183,31 @@ o && m.default.send_uname_login(o.uname, o.upwd);
 } else if (t == d.default.LOGIN_TYPE_GUEST) {
 var n = f.default.get(d.default.USER_LOGIN_GUEST_KEY);
 n && m.default.send_guest_login(n);
+} else if (t == d.default.LOGIN_TYPE_WECHAT) {
+var r = f.default.get(d.default.USER_LOGIN_WECHAT_SESSION);
+r && m.default.send_wechat_session_login(r);
 }
 };
 t.prototype.on_event_guest_login = function(e) {
-var t = e.getUserData();
-cc.log("guestlogin udata: ", t);
+var t = e;
+console.log("guestlogin udata: ", t);
 if (t.status == c.default.OK) {
 try {
 var o = JSON.parse(t.userlogininfo);
 f.default.set(d.default.USER_LOGIN_TYPE, d.default.LOGIN_TYPE_GUEST);
 f.default.set(d.default.USER_LOGIN_GUEST_KEY, o.guest_key);
 } catch (e) {
-cc.error(e);
+console.error(e);
 }
-cc.log("on_event_guest_login: key: ", f.default.get(d.default.USER_LOGIN_GUEST_KEY));
+console.log("on_event_guest_login: key: ", f.default.get(d.default.USER_LOGIN_GUEST_KEY));
 y.default.send_login_logic();
 g.default.send_get_center_info();
-h.default.getInstance().show_weak_hint("游客登录成功!");
+h.default.getInstance().show_weak_hint("游客重新登录成功!");
 } else h.default.getInstance().show_weak_hint("登录失败! " + t.status);
 };
 t.prototype.on_event_uname_login = function(e) {
-var t = e.getUserData();
-cc.log("unamelogin udata: ", t);
+var t = e;
+console.log("unamelogin udata: ", t);
 if (t.status == c.default.OK) {
 try {
 var o = JSON.parse(t.userlogininfo);
@@ -3706,43 +4217,55 @@ uname: o.uname,
 upwd: o.upwd
 });
 } catch (e) {
-cc.error(e);
+console.error(e);
 }
-cc.log("on_event_uname_login: ", f.default.get(d.default.USER_LOGIN_MSG));
+console.log("on_event_uname_login: ", f.default.get(d.default.USER_LOGIN_MSG));
 y.default.send_login_logic();
 g.default.send_get_center_info();
-h.default.getInstance().show_weak_hint("登录成功!");
+h.default.getInstance().show_weak_hint("玩家重新登录成功!");
 } else h.default.getInstance().show_weak_hint("登录失败! " + t.status);
 };
+t.prototype.on_event_wechat_session_login = function(e) {
+var t = e;
+console.log("hcc>>lobbyscene>>on_event_wechat_session_login", t);
+if (t.status == c.default.OK) {
+try {
+var o = JSON.parse(t.userlogininfo);
+f.default.set(d.default.USER_LOGIN_WECHAT_SESSION, o.unionid);
+f.default.set(d.default.USER_LOGIN_TYPE, d.default.LOGIN_TYPE_WECHAT);
+} catch (e) {
+console.log(e);
+}
+y.default.send_login_logic();
+} else h.default.getInstance().show_weak_hint("微信重新登录失败! " + t.status);
+};
 t.prototype.on_event_center_info = function(e) {
-var t = e.getUserData();
+if (e) {
+var t = e.usercenterinfostring;
 if (t) {
-var o = t.usercenterinfostring;
-if (o) {
-p.default.set_uinfo(o);
-var n = this.get_script("LobbySceneShowUI");
-n && n.show_user_info();
+p.default.set_uinfo(t);
+var o = this.get_script("LobbySceneShowUI");
+o && o.show_user_info();
 }
 }
 };
 t.prototype.on_event_login_out = function(e) {
-var t = e.getUserData();
-if (t) {
-if (t.status == c.default.OK) {
-cc.log("on_event_login_out");
+if (e) {
+if (e.status == c.default.OK) {
+console.log("on_event_login_out");
 u.default.getInstance().enter_scene_asyc(new l.default());
 h.default.getInstance().show_weak_hint("退出成功!");
 }
 }
 };
 t.prototype.on_event_relogin = function(e) {
-cc.log("on_event_relogin...");
+console.log("on_event_relogin...");
 u.default.getInstance().enter_scene_asyc(new l.default());
 h.default.getInstance().show_weak_hint("您已经被挤号,自动退出!");
 };
-return t = r([ b ], t);
+return t = r([ w ], t);
 }(i.default));
-o.default = w;
+o.default = O;
 cc._RF.pop();
 }, {
 "../../../framework/common/UserInfo": "UserInfo",
@@ -3753,6 +4276,7 @@ cc._RF.pop();
 "../../../framework/manager/SceneManager": "SceneManager",
 "../../../framework/protocol/AuthProto": "AuthProto",
 "../../../framework/protocol/Response": "Response",
+"../../../framework/protocol/Stype": "Stype",
 "../../../framework/uibase/UIController": "UIController",
 "../../../framework/utils/Storage": "Storage",
 "../LoginScene/LoginScene": "LoginScene",
@@ -3788,7 +4312,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/EventManager"), a = e("../../../framework/protocol/GameHoodleProto"), c = e("../../../framework/protocol/Response"), u = e("../../../framework/manager/SceneManager"), l = e("../../../framework/common/UserInfo"), f = e("../gameScene/GameScene"), d = e("../../../framework/manager/DialogManager"), p = e("./LobbyScene"), h = e("./sendMsg/LobbySendGameHoodle"), _ = e("../../common/RoomData"), g = cc._decorator, y = g.ccclass, m = (g.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/protocol/GameHoodleProto"), a = e("../../../framework/protocol/Response"), c = e("../../../framework/manager/SceneManager"), u = e("../../../framework/common/UserInfo"), l = e("../gameScene/GameScene"), f = e("../../../framework/manager/DialogManager"), d = e("./LobbyScene"), p = e("./sendMsg/LobbySendGameHoodle"), h = e("../../common/RoomData"), _ = e("../../../framework/protocol/Stype"), g = e("../gameScene/sendMsg/GameSendGameHoodle"), y = cc._decorator, m = y.ccclass, v = (y.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -3798,150 +4322,165 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_event_dispatcher();
+e.prototype.start.call(this);
+this.add_protocol_delegate();
 };
-t.prototype.add_event_dispatcher = function() {
-s.default.on(a.CmdName[a.Cmd.eLoginLogicRes], this, this.on_event_login_logic);
-s.default.on(a.CmdName[a.Cmd.eCreateRoomRes], this, this.on_event_create_room);
-s.default.on(a.CmdName[a.Cmd.eJoinRoomRes], this, this.on_event_join_room);
-s.default.on(a.CmdName[a.Cmd.eExitRoomRes], this, this.on_event_exit_room);
-s.default.on(a.CmdName[a.Cmd.eDessolveRes], this, this.on_event_dessolve_room);
-s.default.on(a.CmdName[a.Cmd.eGetRoomStatusReq], this, this.on_event_get_room_status);
-s.default.on(a.CmdName[a.Cmd.eBackRoomRes], this, this.on_event_back_room);
-s.default.on(a.CmdName[a.Cmd.eUserMatchRes], this, this.on_event_match);
-s.default.on(a.CmdName[a.Cmd.eUserStopMatchRes], this, this.on_event_match_stop);
-s.default.on(a.CmdName[a.Cmd.eUserGameInfoRes], this, this.on_event_ugame_info);
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[s.Cmd.eLoginLogicRes] = this.on_event_login_logic, 
+e[s.Cmd.eCreateRoomRes] = this.on_event_create_room, e[s.Cmd.eJoinRoomRes] = this.on_event_join_room, 
+e[s.Cmd.eExitRoomRes] = this.on_event_exit_room, e[s.Cmd.eDessolveRes] = this.on_event_dessolve_room, 
+e[s.Cmd.eGetRoomStatusRes] = this.on_event_get_room_status, e[s.Cmd.eBackRoomRes] = this.on_event_back_room, 
+e[s.Cmd.eUserMatchRes] = this.on_event_match, e[s.Cmd.eUserStopMatchRes] = this.on_event_match_stop, 
+e[s.Cmd.eUserGameInfoRes] = this.on_event_ugame_info, e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === _.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.on_event_login_logic = function(e) {
-var t = e.getUserData();
-cc.log("on_event_login_logic", t);
-if (t && t.status == c.default.OK) {
-h.default.send_get_room_status();
-h.default.send_get_ugame_info();
-h.default.send_get_uball_info();
-d.default.getInstance().show_weak_hint("登录游戏服务成功!");
+var t = e;
+console.log("hcc>>Lobbyscene>>on_event_login_logic", t);
+if (t && t.status == a.default.OK) {
+p.default.send_get_room_status();
+p.default.send_get_ugame_info();
+p.default.send_get_uball_info();
+f.default.getInstance().show_weak_hint("登录游戏服务成功!");
+var o = h.default.getInstance().get_share_roomid();
+console.log("hcc>>gameapp>>on_event_login_logic roomid: ", o);
+"" != o && p.default.send_join_room(String(o));
 }
 };
 t.prototype.on_event_create_room = function(e) {
-var t = e.getUserData();
-cc.log("on_event_create_room", t);
+var t = e;
+console.log("on_event_create_room", t);
 if (t) {
-if (t.status == c.default.OK) {
-u.default.getInstance().enter_scene_asyc(new f.default());
-d.default.getInstance().show_weak_hint("房间创建成功!");
-} else d.default.getInstance().show_weak_hint("房间创建失败!");
+if (t.status == a.default.OK) {
+c.default.getInstance().enter_scene_asyc(new l.default());
+f.default.getInstance().show_weak_hint("房间创建成功!");
+} else f.default.getInstance().show_weak_hint("房间创建失败!");
 }
 };
 t.prototype.on_event_join_room = function(e) {
-var t = e.getUserData();
-cc.log("on_event_join_room", t);
+var t = e;
+console.log("on_event_join_room", t);
 if (t) {
-if (t.status == c.default.OK) {
-u.default.getInstance().enter_scene_asyc(new f.default());
-d.default.getInstance().show_weak_hint("加入房间成功!");
-} else d.default.getInstance().show_weak_hint("加入房间失败!");
+if (t.status == a.default.OK) {
+c.default.getInstance().enter_scene_asyc(new l.default());
+f.default.getInstance().show_weak_hint("加入房间成功!");
+} else f.default.getInstance().show_weak_hint("加入房间失败!");
 }
+h.default.getInstance().set_share_roomid("");
 };
 t.prototype.on_event_exit_room = function(e) {
-var t = e.getUserData();
-cc.log("on_event_exit_room", t);
+var t = e;
+console.log("on_event_exit_room", t);
 if (t) {
-if (t.status == c.default.OK) {
-u.default.getInstance().enter_scene_asyc(new p.default());
-_.default.getInstance().clear_room_data();
-d.default.getInstance().show_weak_hint("退出房间成功!");
-} else d.default.getInstance().show_weak_hint("退出房间失败!");
+if (t.status == a.default.OK) {
+c.default.getInstance().enter_scene_asyc(new d.default());
+h.default.getInstance().clear_room_data();
+f.default.getInstance().show_weak_hint("退出房间成功!");
+} else f.default.getInstance().show_weak_hint("退出房间失败!");
 }
 };
 t.prototype.on_event_dessolve_room = function(e) {
-var t = e.getUserData();
-cc.log("on_event_dessolve_room", t);
+var t = e;
+console.log("on_event_dessolve_room", t);
 if (t) {
-if (t.status == c.default.OK) {
-u.default.getInstance().enter_scene_asyc(new p.default());
-_.default.getInstance().clear_room_data();
-d.default.getInstance().show_weak_hint("解散房间成功!");
-} else d.default.getInstance().show_weak_hint("解散房间失败!");
+if (t.status == a.default.OK) {
+c.default.getInstance().enter_scene_asyc(new d.default());
+h.default.getInstance().clear_room_data();
+f.default.getInstance().show_weak_hint("解散房间成功!");
+} else f.default.getInstance().show_weak_hint("解散房间失败!");
 }
 };
 t.prototype.on_event_get_room_status = function(e) {
-var t = e.getUserData();
-cc.log("on_event_get_room_status", t);
+var t = e;
+console.log("on_event_get_room_status", t);
 if (t) {
-t.status;
-c.default.OK;
+if (t.status == a.default.OK) {
+this.set_visible(this.view.BTN_BACK_ROOM, !0);
+this.set_visible(this.view.BTN_CREATE_ROOM, !1);
+} else {
+this.set_visible(this.view.BTN_BACK_ROOM, !1);
+this.set_visible(this.view.BTN_CREATE_ROOM, !0);
+}
 }
 };
 t.prototype.on_event_back_room = function(e) {
-var t = e.getUserData();
-cc.log("on_event_back_room", t);
+var t = e;
+console.log("on_event_back_room", t);
 if (t) {
-if (t.status == c.default.OK) {
-u.default.getInstance().enter_scene_asyc(new f.default());
-d.default.getInstance().show_weak_hint("返回房间成功!");
-} else d.default.getInstance().show_weak_hint("返回房间失败!");
+if (t.status == a.default.OK) {
+c.default.getInstance().enter_scene_asyc(new l.default());
+f.default.getInstance().show_weak_hint("返回房间成功!");
+} else f.default.getInstance().show_weak_hint("返回房间失败!");
 }
 };
 t.prototype.on_event_match = function(e) {
-var t = e.getUserData();
-cc.log("on_event_match", t);
+var t = e;
+console.log("on_event_match", t);
 if (t) {
 var o = t.status;
-if (o == c.default.OK) {
+if (o == a.default.OK) {
 var n = t.matchsuccess;
 if (1 == n) {
-d.default.getInstance().show_weak_hint("匹配完成!");
+f.default.getInstance().show_weak_hint("匹配完成!");
 this.scheduleOnce(function(e) {
-d.default.getInstance().close_dialog("MatchDialog");
-u.default.getInstance().enter_scene_asyc(new f.default());
+f.default.getInstance().close_dialog("MatchDialog");
+c.default.getInstance().enter_scene_asyc(new l.default());
 }, 1);
 }
 var r = t.userinfo;
 if (!n && r) {
-d.default.getInstance().close_dialog("MatchDialog");
-d.default.getInstance().show_dialog_asyc("ui_prefabs/dialog/DialogMatch", "MatchDialog", function(e) {
+var i = f.default.getInstance().get_dialog("MatchDialog");
+if (i && cc.isValid(i)) {
+var s = i.getComponent("MatchDialog");
+s && s.show_math_user_info(r);
+} else f.default.getInstance().show_dialog_asyc("ui_prefabs/dialog/DialogMatch", "MatchDialog", function(e) {
 if (e && cc.isValid(e)) {
 var t = e.getComponent("MatchDialog");
 t && t.show_math_user_info(r);
 }
 });
 }
-} else o == c.default.NOT_YOUR_TURN ? d.default.getInstance().show_weak_hint("请稍等候，正在匹配中。。。。") : d.default.getInstance().show_weak_hint("匹配失败!");
+} else o == a.default.NOT_YOUR_TURN ? f.default.getInstance().show_weak_hint("请稍等候，正在匹配中。。。。") : f.default.getInstance().show_weak_hint("匹配失败!");
 }
 };
 t.prototype.on_event_match_stop = function(e) {
-var t = e.getUserData();
-cc.log("on_event_match_stop", t);
+var t = e;
+console.log("on_event_match_stop", t);
 if (t) {
-t.status == c.default.OK ? d.default.getInstance().show_weak_hint("取消匹配!") : d.default.getInstance().show_weak_hint("取消失败!");
+t.status == a.default.OK ? f.default.getInstance().show_weak_hint("取消匹配!") : f.default.getInstance().show_weak_hint("取消失败!");
 }
 };
 t.prototype.on_event_ugame_info = function(e) {
-var t = e.getUserData();
-cc.log("on_event_ugame_info", t);
+var t = e;
+console.log("on_event_ugame_info", t);
 if (t) {
-if (t.status == c.default.OK) {
+if (t.status == a.default.OK) {
 var o = JSON.parse(t.userinfostring);
-l.default.set_ugame_info(o);
+u.default.set_ugame_info(o);
 var n = this.get_script("LobbySceneShowUI");
 n && n.show_user_info();
+g.default.send_get_user_config();
 }
 }
 };
-return t = r([ y ], t);
+return t = r([ m ], t);
 }(i.default));
-o.default = m;
+o.default = v;
 cc._RF.pop();
 }, {
 "../../../framework/common/UserInfo": "UserInfo",
 "../../../framework/manager/DialogManager": "DialogManager",
-"../../../framework/manager/EventManager": "EventManager",
 "../../../framework/manager/SceneManager": "SceneManager",
 "../../../framework/protocol/GameHoodleProto": "GameHoodleProto",
 "../../../framework/protocol/Response": "Response",
+"../../../framework/protocol/Stype": "Stype",
 "../../../framework/uibase/UIController": "UIController",
 "../../common/RoomData": "RoomData",
 "../gameScene/GameScene": "GameScene",
+"../gameScene/sendMsg/GameSendGameHoodle": "GameSendGameHoodle",
 "./LobbyScene": "LobbyScene",
 "./sendMsg/LobbySendGameHoodle": "LobbySendGameHoodle"
 } ],
@@ -3973,7 +4512,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/common/UserInfo"), a = e("../../../framework/hotfix/HotUpdateNew"), c = cc._decorator, u = c.ccclass, l = (c.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/common/UserInfo"), a = e("../../../framework/hotfix/HotUpdateNew"), c = e("../../../framework/utils/StringUtil"), u = cc._decorator, l = u.ccclass, f = (u.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -3983,29 +4522,33 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
+e.prototype.start.call(this);
 this.show_version();
 };
 t.prototype.show_user_info = function() {
 if (this.view.IMG_USER_INFO_BG) {
-this.set_string(this.view.TEXT_USER_NAME, s.default.get_uname());
+this.set_string(this.view.TEXT_USER_NAME, s.default.get_unick());
 this.set_string(this.view.TEXT_USER_ID, s.default.get_numberid());
 var e = "lobby/rectheader/1" + s.default.get_uface();
 this.set_sprite_asyc(this.view.IMG_HEAD, e);
 this.set_string(this.view.TEXT_COIN, s.default.get_uchip());
 console.log("hcc>>LobbySceneShowUI>>show_user_info ", e);
+console.log("hcc>>avatrurl: ", s.default.get_avatrurl());
+s.default.get_avatrurl() && !c.default.isEmptyString(s.default.get_avatrurl()) && this.set_headimg_url(this.view.IMG_HEAD, s.default.get_avatrurl(), 120);
 }
 };
 t.prototype.show_version = function() {
 this.set_string(this.view.KW_TEXT_VERSION, a.default.getInstance().getLocalVersion());
 };
-return t = r([ u ], t);
+return t = r([ l ], t);
 }(i.default));
-o.default = l;
+o.default = f;
 cc._RF.pop();
 }, {
 "../../../framework/common/UserInfo": "UserInfo",
 "../../../framework/hotfix/HotUpdateNew": "HotUpdateNew",
-"../../../framework/uibase/UIController": "UIController"
+"../../../framework/uibase/UIController": "UIController",
+"../../../framework/utils/StringUtil": "StringUtil"
 } ],
 LobbySceneTouchEvent: [ function(e, t, o) {
 "use strict";
@@ -4044,10 +4587,6 @@ return null !== e && e.apply(this, arguments) || this;
 t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
-t.prototype.start = function() {
-console.log("LobbySceneTouchEvent>>start");
-this.add_button_event_listener();
-};
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.KW_BTN_SET, this.on_click_set.bind(this));
 this.add_click_event(this.view.BTN_CREATE_ROOM, this.on_click_create_room.bind(this));
@@ -4059,6 +4598,7 @@ this.add_click_event(this.view.BTN_MATCH_ROOM, this.on_click_match_room.bind(thi
 this.add_click_event(this.view.BTN_MATCH_STOP, this.on_click_match_stop.bind(this));
 this.add_click_event(this.view.KW_BTN_BALL_COMPOSE, this.on_click_ball_compose.bind(this));
 this.add_click_event(this.view.KW_BTN_STORE, this.on_click_store.bind(this));
+this.add_click_event(this.view.KW_BTN_BALL_LIST, this.on_click_ball_list.bind(this));
 };
 t.prototype.on_click_ball_dialog_data = function(e, t) {};
 t.prototype.on_click_set = function(e) {
@@ -4067,6 +4607,7 @@ s.default.getInstance().show_dialog_asyc("ui_prefabs/dialog/DialogMyCenter", "My
 t.prototype.on_click_create_room = function(e) {
 var t = JSON.stringify(c.default.BOX_GAME_RULE);
 a.default.send_create_room(t);
+a.default.send_get_room_status();
 };
 t.prototype.on_click_login_logic = function(e) {
 s.default.getInstance().show_weak_hint("你好你好，在干啥呢？？？？啊啊大打发士大夫阿道夫");
@@ -4080,6 +4621,7 @@ s.default.getInstance().show_dialog_asyc("ui_prefabs/dialog/DialogMyCenter", "My
 };
 t.prototype.on_click_back_room = function(e) {
 a.default.send_back_room();
+a.default.send_get_room_status();
 };
 t.prototype.on_click_match_room = function(e) {
 a.default.send_user_match();
@@ -4092,6 +4634,9 @@ s.default.getInstance().show_dialog_asyc("ui_prefabs/dialog/DialogBallCenter", "
 };
 t.prototype.on_click_store = function(e) {
 s.default.getInstance().show_dialog_asyc("ui_prefabs/dialog/DialogStore", "StoreDialog");
+};
+t.prototype.on_click_ball_list = function(e) {
+s.default.getInstance().show_dialog_asyc("ui_prefabs/dialog/DialogBallList", "BallListDialog");
 };
 return t = r([ l ], t);
 }(i.default));
@@ -4192,9 +4737,12 @@ gamerule: t
 });
 };
 e.send_join_room = function(t) {
-null != t && "" != t && e.send(i.Cmd.eJoinRoomReq, {
+if (null != t && "" != t) {
+console.log("hcc>>send_join_room: ", t);
+e.send(i.Cmd.eJoinRoomReq, {
 roomid: t
 });
+}
 };
 e.send_exit_room = function() {
 e.send(i.Cmd.eExitRoomReq);
@@ -4327,11 +4875,12 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
+e.prototype.start.call(this);
 this.initUI();
 };
 t.prototype.initUI = function() {
 var e = s.default.get(a.default.USER_LOGIN_MSG), t = s.default.get(a.default.USER_LOGIN_TYPE);
-t == a.default.LOGIN_TYPE_GUEST ? cc.log("logintype guest,key: ", s.default.get(a.default.USER_LOGIN_GUEST_KEY)) : t == a.default.LOGIN_TYPE_UNAME && e && cc.log("logintype uname: ", e.uname, ", upwd: ", e.upwd);
+t == a.default.LOGIN_TYPE_GUEST ? console.log("logintype guest,key: ", s.default.get(a.default.USER_LOGIN_GUEST_KEY)) : t == a.default.LOGIN_TYPE_UNAME && e && console.log("logintype uname: ", e.uname, ", upwd: ", e.upwd);
 if (e) {
 var o = this.seek_child_by_name(this.view.KW_IMG_LOGIN_BG, "KW_INPUT_ACCOUNT"), n = this.seek_child_by_name(this.view.KW_IMG_LOGIN_BG, "KW_INPUT_PWD");
 this.set_editbox_string(o, e.uname);
@@ -4379,7 +4928,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/EventManager"), a = e("../../../framework/config/EventDefine"), c = e("../../../framework/utils/Log"), u = e("./../../../framework/protocol/AuthProto"), l = e("../../../framework/protocol/Response"), f = e("../../../framework/manager/SceneManager"), d = e("../lobbyScene/LobbyScene"), p = e("../../../framework/utils/Storage"), h = e("../../../framework/config/LSDefine"), _ = e("../../../framework/manager/DialogManager"), g = e("../lobbyScene/sendMsg/LobbySendGameHoodle"), y = cc._decorator, m = y.ccclass, v = (y.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/manager/EventManager"), a = e("../../../framework/config/EventDefine"), c = e("../../../framework/utils/Log"), u = e("./../../../framework/protocol/AuthProto"), l = e("../../../framework/protocol/Response"), f = e("../../../framework/manager/SceneManager"), d = e("../lobbyScene/LobbyScene"), p = e("../../../framework/utils/Storage"), h = e("../../../framework/config/LSDefine"), _ = e("../../../framework/manager/DialogManager"), g = e("../lobbyScene/sendMsg/LobbySendGameHoodle"), y = e("../../../framework/utils/WeChatLogin"), m = e("../../../framework/protocol/Stype"), v = cc._decorator, b = v.ccclass, w = (v.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -4389,16 +4938,22 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_event_dispatcher();
+e.prototype.start.call(this);
+this.add_protocol_delegate();
 };
 t.prototype.add_event_dispatcher = function() {
 s.default.on(a.default.EVENT_NET_CONNECTED, this, this.on_net_connected);
 s.default.on(a.default.EVENT_NET_CLOSED, this, this.on_net_closed);
 s.default.on(a.default.EVENT_NET_ERROR, this, this.on_net_error);
-s.default.on(u.CmdName[u.Cmd.eUnameLoginRes], this, this.on_event_uname_login);
-s.default.on(u.CmdName[u.Cmd.eGuestLoginRes], this, this.on_event_guest_login);
-s.default.on(u.CmdName[u.Cmd.eUnameRegistRes], this, this.on_event_uname_regist);
-s.default.on("LoginLogicRes", this, this.on_event_login_logic);
+};
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[u.Cmd.eUnameLoginRes] = this.on_event_uname_login, 
+e[u.Cmd.eGuestLoginRes] = this.on_event_guest_login, e[u.Cmd.eWeChatLoginRes] = this.on_event_wechat_login, 
+e[u.Cmd.eUnameRegistRes] = this.on_event_uname_regist, e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === m.Stype.Auth && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.on_net_connected = function(e) {
 c.default.info("LoginSceneRecvMsg hcc>>>on_net_connected");
@@ -4410,8 +4965,8 @@ t.prototype.on_net_error = function(e) {
 c.default.info("LoginSceneRecvMsg hcc>>>on_net_error");
 };
 t.prototype.on_event_guest_login = function(e) {
-var t = e.getUserData();
-cc.log("guestlogin udata: ", t);
+var t = e;
+console.log("guestlogin udata: ", t);
 if (t.status == l.default.OK) {
 f.default.getInstance().enter_scene_asyc(new d.default());
 try {
@@ -4419,16 +4974,15 @@ var o = JSON.parse(t.userlogininfo);
 p.default.set(h.default.USER_LOGIN_TYPE, h.default.LOGIN_TYPE_GUEST);
 p.default.set(h.default.USER_LOGIN_GUEST_KEY, o.guest_key);
 } catch (e) {
-cc.error(e);
+console.error(e);
 }
-cc.log("on_event_guest_login: key: ", p.default.get(h.default.USER_LOGIN_GUEST_KEY));
+console.log("on_event_guest_login: key: ", p.default.get(h.default.USER_LOGIN_GUEST_KEY));
 g.default.send_login_logic();
-_.default.getInstance().show_weak_hint("游客登录成功!");
 } else _.default.getInstance().show_weak_hint("登录失败! " + t.status);
 };
 t.prototype.on_event_uname_login = function(e) {
-var t = e.getUserData();
-cc.log("unamelogin udata: ", t);
+var t = e;
+console.log("unamelogin udata: ", t);
 if (t.status == l.default.OK) {
 f.default.getInstance().enter_scene_asyc(new d.default());
 try {
@@ -4439,23 +4993,34 @@ uname: o.uname,
 upwd: o.upwd
 });
 } catch (e) {
-cc.error(e);
+console.error(e);
 }
-cc.log("on_event_uname_login: ", p.default.get(h.default.USER_LOGIN_MSG));
+console.log("on_event_uname_login: ", p.default.get(h.default.USER_LOGIN_MSG));
 g.default.send_login_logic();
-_.default.getInstance().show_weak_hint("登录成功!");
 } else _.default.getInstance().show_weak_hint("登录失败! " + t.status);
 };
 t.prototype.on_event_uname_regist = function(e) {
-var t = e.getUserData();
+var t = e;
 t.status == l.default.OK ? _.default.getInstance().show_weak_hint("注册成功!") : _.default.getInstance().show_weak_hint("注册失败! " + t.status);
 };
-t.prototype.on_event_login_logic = function(e) {
-e.getUserData().status == l.default.OK && g.default.send_get_ugame_info();
+t.prototype.on_event_wechat_login = function(e) {
+var t = e;
+if (t.status == l.default.OK) {
+y.default.hide_auth_btn();
+f.default.getInstance().enter_scene_asyc(new d.default());
+g.default.send_login_logic();
+try {
+var o = JSON.parse(t.userlogininfo);
+p.default.set(h.default.USER_LOGIN_WECHAT_SESSION, o.unionid);
+p.default.set(h.default.USER_LOGIN_TYPE, h.default.LOGIN_TYPE_WECHAT);
+} catch (e) {
+console.log(e);
+}
+} else _.default.getInstance().show_weak_hint("登录失败! " + t.status);
 };
-return t = r([ m ], t);
+return t = r([ b ], t);
 }(i.default));
-o.default = v;
+o.default = w;
 cc._RF.pop();
 }, {
 "../../../framework/config/EventDefine": "EventDefine",
@@ -4464,9 +5029,11 @@ cc._RF.pop();
 "../../../framework/manager/EventManager": "EventManager",
 "../../../framework/manager/SceneManager": "SceneManager",
 "../../../framework/protocol/Response": "Response",
+"../../../framework/protocol/Stype": "Stype",
 "../../../framework/uibase/UIController": "UIController",
 "../../../framework/utils/Log": "Log",
 "../../../framework/utils/Storage": "Storage",
+"../../../framework/utils/WeChatLogin": "WeChatLogin",
 "../lobbyScene/LobbyScene": "LobbyScene",
 "../lobbyScene/sendMsg/LobbySendGameHoodle": "LobbySendGameHoodle",
 "./../../../framework/protocol/AuthProto": "AuthProto"
@@ -4499,7 +5066,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/hotfix/HotUpdateNew"), a = cc._decorator, c = a.ccclass, u = (a.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("../../../framework/hotfix/HotUpdateNew"), a = e("../../../framework/utils/WeChatLogin"), c = cc._decorator, u = c.ccclass, l = (c.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -4509,18 +5076,21 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
+e.prototype.start.call(this);
 this.show_version();
+a.default.create_authorize_btn(this.view.KW_BTN_WX_LOGIN);
 };
 t.prototype.show_version = function() {
 this.set_string(this.view.KW_TEXT_VERSION, s.default.getInstance().getLocalVersion());
 };
-return t = r([ c ], t);
+return t = r([ u ], t);
 }(i.default));
-o.default = u;
+o.default = l;
 cc._RF.pop();
 }, {
 "../../../framework/hotfix/HotUpdateNew": "HotUpdateNew",
-"../../../framework/uibase/UIController": "UIController"
+"../../../framework/uibase/UIController": "UIController",
+"../../../framework/utils/WeChatLogin": "WeChatLogin"
 } ],
 LoginSceneTouchEvent: [ function(e, t, o) {
 "use strict";
@@ -4550,7 +5120,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../../framework/uibase/UIController"), s = e("./sendMsg/LoginSendAuthMsg"), a = e("../../../framework/utils/StringUtil"), c = e("../../../framework/utils/Storage"), u = e("../../../framework/config/LSDefine"), l = e("../../../framework/manager/DialogManager"), f = cc._decorator, d = f.ccclass, p = (f.property, 
+var i = e("../../../framework/uibase/UIController"), s = e("./sendMsg/LoginSendAuthMsg"), a = e("../../../framework/utils/StringUtil"), c = e("../../../framework/utils/Storage"), u = e("../../../framework/config/LSDefine"), l = e("../../../framework/manager/DialogManager"), f = e("../../../framework/config/PlatForm"), d = e("../../../framework/utils/WeChatLogin"), p = cc._decorator, h = p.ccclass, _ = (p.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -4559,27 +5129,25 @@ return null !== e && e.apply(this, arguments) || this;
 t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
-t.prototype.start = function() {
-this.add_button_event_listener();
-};
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.KW_BTN_GUEST_LOGIN, this.on_click_guest_login.bind(this));
 this.add_click_event(this.view.KW_BTN_LOGIN, this.on_click_uname_login.bind(this));
 this.add_click_event(this.view.KW_BTN_GOTO_REGIST, this.on_click_goto_regist.bind(this));
 this.add_click_event(this.view.KW_BTN_CLOSE, this.on_click_regist_close.bind(this));
 this.add_click_event(this.view.KW_BTN_REGIST, this.on_click_regist.bind(this));
+this.add_click_event(this.view.KW_BTN_WX_LOGIN, this.on_click_wx_login.bind(this));
 };
 t.prototype.on_click_guest_login = function(e) {
 var t = c.default.get(u.default.USER_LOGIN_GUEST_KEY);
 if (!t) {
 t = a.default.random_string(32);
-cc.log("guest login reborn: " + t + " ,len: " + t.length);
+console.log("guest login reborn: " + t + " ,len: " + t.length);
 }
 32 == t.length ? s.default.send_guest_login(t) : l.default.getInstance().show_weak_hint("登陆失败，guestkey生成错误!");
 };
 t.prototype.on_click_uname_login = function(e) {
 var t = this.seek_child_by_name(this.view.KW_IMG_LOGIN_BG, "KW_INPUT_ACCOUNT"), o = this.seek_child_by_name(this.view.KW_IMG_LOGIN_BG, "KW_INPUT_PWD"), n = this.get_editbox_string(t), r = this.get_editbox_string(o);
-cc.log("uname: ", n, " ,upwd: ", r);
+console.log("uname: ", n, " ,upwd: ", r);
 n.length < 6 || r.length < 6 ? l.default.getInstance().show_weak_hint("用户名或密码错误，不能少于六位!") : s.default.send_uname_login(n, r);
 };
 t.prototype.on_click_goto_regist = function(e) {
@@ -4592,9 +5160,9 @@ this.set_visible(this.view.KW_IMG_REGIST_BG, !1);
 };
 t.prototype.on_click_regist = function(e) {
 var t = this.seek_child_by_name(this.view.KW_IMG_REGIST_BG, "KW_INPUT_ACCOUNT"), o = this.seek_child_by_name(this.view.KW_IMG_REGIST_BG, "KW_INPUT_PWD"), n = this.seek_child_by_name(this.view.KW_IMG_REGIST_BG, "KW_INPUT_PWD_COF"), r = this.get_editbox_string(t), i = this.get_editbox_string(o), a = this.get_editbox_string(n);
-cc.log(r, i, a);
+console.log(r, i, a);
 if (r.length < 6 || i.length < 6 || a.length < 6 || i != a) {
-cc.error("regist error!!!");
+console.error("regist error!!!");
 l.default.getInstance().show_weak_hint("账号或密码错误!(不能少于6位)");
 } else {
 s.default.send_uname_regist(r, i);
@@ -4605,16 +5173,21 @@ upwd: i
 });
 }
 };
-return t = r([ d ], t);
+t.prototype.on_click_wx_login = function(e) {
+f.default.isWeChatGame() && d.default.do_wechat_auth_login();
+};
+return t = r([ h ], t);
 }(i.default));
-o.default = p;
+o.default = _;
 cc._RF.pop();
 }, {
 "../../../framework/config/LSDefine": "LSDefine",
+"../../../framework/config/PlatForm": "PlatForm",
 "../../../framework/manager/DialogManager": "DialogManager",
 "../../../framework/uibase/UIController": "UIController",
 "../../../framework/utils/Storage": "Storage",
 "../../../framework/utils/StringUtil": "StringUtil",
+"../../../framework/utils/WeChatLogin": "WeChatLogin",
 "./sendMsg/LoginSendAuthMsg": "LoginSendAuthMsg"
 } ],
 LoginScene: [ function(e, t, o) {
@@ -4690,6 +5263,20 @@ uname: String(t),
 upwdmd5: String(o)
 };
 e.send(i.Cmd.eUnameRegistReq, n);
+};
+e.send_wechat_login = function(t, o) {
+var n = {
+logincode: t,
+userlogininfo: o
+};
+e.send(i.Cmd.eWeChatLoginReq, n);
+};
+e.send_wechat_session_login = function(t) {
+var o = {
+wechatsessionkey: t
+};
+e.send(i.Cmd.eWeChatSessionLoginReq, o);
+console.log("hcc>>send_wechat_session_login>> ", o);
 };
 return e;
 }();
@@ -4789,7 +5376,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../framework/uibase/UIDialog"), s = e("../scene/lobbyScene/sendMsg/LobbySendGameHoodle"), a = e("../../framework/manager/EventManager"), c = e("../../framework/protocol/GameHoodleProto"), u = e("../../framework/protocol/Response"), l = e("../../framework/manager/ResourceManager"), f = cc._decorator, d = f.ccclass, p = (f.property, 
+var i = e("../../framework/uibase/UIDialog"), s = e("../scene/lobbyScene/sendMsg/LobbySendGameHoodle"), a = e("../../framework/protocol/GameHoodleProto"), c = e("../../framework/protocol/Response"), u = e("../../framework/manager/ResourceManager"), l = e("../../framework/utils/StringUtil"), f = e("../../framework/protocol/Stype"), d = cc._decorator, p = d.ccclass, h = (d.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -4799,25 +5386,32 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_event_dispatcher();
-this.add_button_event_listener();
+e.prototype.start.call(this);
+this.add_protocol_delegate();
 };
-t.prototype.add_event_dispatcher = function() {
-a.default.on(c.CmdName[c.Cmd.eUserStopMatchRes], this, this.on_event_match_stop);
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[a.Cmd.eUserStopMatchRes] = this.on_event_match_stop, 
+e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === f.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.KW_UI_BTN_CANCEL, this.on_click_cancel.bind(this));
 };
-t.prototype.onDestroy = function() {};
 t.prototype.on_click_cancel = function(e) {
 s.default.send_user_stop_match();
 this.close();
 };
 t.prototype.show_math_user_info = function(e) {
 var t = this;
-e && e.forEach(function(e) {
+if (e) {
+var o = this.view.KW_LAYOUT_MATCH_USER;
+o && o.destroyAllChildren();
+e.forEach(function(e) {
 e.numberid;
-var o = e.userinfostring, n = l.ResourceManager.getInstance().getRes("ui_prefabs/games/PrefabUserInfo", cc.Prefab);
+var o = e.userinfostring, n = u.ResourceManager.getInstance().getRes("ui_prefabs/games/PrefabUserInfo", cc.Prefab);
 if (n) {
 var r = t.add_to_node(t.view.KW_LAYOUT_MATCH_USER, n);
 if (r) {
@@ -4825,30 +5419,34 @@ var i = 1, s = JSON.parse(o);
 s && (i = s.uface);
 var a = "lobby/rectheader/1" + i;
 t.set_sprite(t.seek_child_by_name(r, "KW_IMG_HEAD"), a);
-t.set_string(t.seek_child_by_name(r, "KW_TEXT_NAME"), s.uname);
+t.set_string(t.seek_child_by_name(r, "KW_TEXT_NAME"), s.unick);
 t.set_string(t.seek_child_by_name(r, "KW_TEXT_GOLD"), s.uchip);
 t.set_visible(t.seek_child_by_name(r, "KW_TEXT_GOLD"), !0);
+console.log("hcc>>show_math_user_info: url: ", s.avatarurl);
+s.avatarurl && !l.default.isEmptyString(s.avatarurl) && t.set_headimg_url(t.seek_child_by_name(r, "KW_IMG_HEAD"), s.avatarurl, 80);
 }
 }
 });
-};
-t.prototype.on_event_match_stop = function(e) {
-var t = e.getUserData();
-cc.log("on_event_match_stop", t);
-if (t) {
-t.status == u.default.OK && this.close();
 }
 };
-return t = r([ d ], t);
+t.prototype.on_event_match_stop = function(e) {
+var t = e;
+console.log("on_event_match_stop", t);
+if (t) {
+t.status == c.default.OK && this.close();
+}
+};
+return t = r([ p ], t);
 }(i.default));
-o.default = p;
+o.default = h;
 cc._RF.pop();
 }, {
-"../../framework/manager/EventManager": "EventManager",
 "../../framework/manager/ResourceManager": "ResourceManager",
 "../../framework/protocol/GameHoodleProto": "GameHoodleProto",
 "../../framework/protocol/Response": "Response",
+"../../framework/protocol/Stype": "Stype",
 "../../framework/uibase/UIDialog": "UIDialog",
+"../../framework/utils/StringUtil": "StringUtil",
 "../scene/lobbyScene/sendMsg/LobbySendGameHoodle": "LobbySendGameHoodle"
 } ],
 MyCenterDialog: [ function(e, t, o) {
@@ -4889,7 +5487,7 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_button_event_listener();
+e.prototype.start.call(this);
 this.initUI();
 };
 t.prototype.add_button_event_listener = function() {
@@ -4900,7 +5498,6 @@ t.prototype.initUI = function() {
 this.set_string(this.view.KW_TEXT_NAME, "昵称：" + u.default.get_unick());
 this.set_string(this.view.KW_TEXT_ACCOUNT, "id: " + u.default.get_numberid());
 };
-t.prototype.onDestroy = function() {};
 t.prototype.on_click_close = function(e) {
 this.close();
 };
@@ -4942,7 +5539,7 @@ this._url && this._socketDelegate && this._socketDelegate.connect(this._url);
 e.prototype.reconnect = function() {
 if (this._url && this._socketDelegate) {
 var e = this._socketDelegate.get_socket_state();
-e != r.SocketState.OPEN && e != r.SocketState.CONNECTING ? this._socketDelegate.connect(this._url) : cc.warn("socket is opend or connecting");
+e != r.SocketState.OPEN && e != r.SocketState.CONNECTING ? this._socketDelegate.connect(this._url) : console.warn("socket is opend or connecting");
 }
 };
 e.prototype.close = function() {
@@ -4950,6 +5547,15 @@ null != this._socketDelegate && this._socketDelegate.close_connect();
 };
 e.prototype.send_msg = function(e, t, o) {
 null != this._socketDelegate && this._socketDelegate.send_msg(e, t, o);
+};
+e.prototype.add_protocol_delegate = function(e, t) {
+this._socketDelegate && this._socketDelegate.add_protocol_delegate(e, t);
+};
+e.prototype.remove_protocol_delegate = function(e, t) {
+this._socketDelegate && this._socketDelegate.remove_protocol_delegate(e, t);
+};
+e.prototype.remove_all_protocol_delegate = function() {
+this._socketDelegate && this._socketDelegate.remove_all_protocol_delegate();
 };
 e.instance = new e();
 return e;
@@ -4974,7 +5580,7 @@ e.getPlatForm = function() {
 return cc.sys.os;
 };
 e.printPlatForm = function() {
-cc.log("platform:" + e.getPlatForm());
+console.log("platform:" + e.getPlatForm());
 };
 e.isWin32 = function() {
 return cc.sys.os == cc.sys.OS_WINDOWS;
@@ -5265,23 +5871,23 @@ n.proto_type = e.read_int16(t, 8);
 if (o > e.HEADER_SIZE) {
 var r = e.read_uint8_array(t, e.HEADER_SIZE, o - e.HEADER_SIZE), a = i.default.getProtoName(n.stype), c = i.default.getCmdName(n.stype, n.ctype);
 if (!a || !c) {
-cc.error("decode_protobuf stype_name or cmd_name null");
+console.error("decode_protobuf stype_name or cmd_name null");
 return n;
 }
 if (!s[a]) {
-cc.error("decode_protobuf stype_name null");
+console.error("decode_protobuf stype_name null");
 return n;
 }
 var u = s[a][c];
 if (!u) {
-cc.error("decode_protobuf msgType is null");
+console.error("decode_protobuf msgType is null");
 return n;
 }
 var l = null;
 try {
 l = u.decode(new Uint8Array(r));
 } catch (e) {
-cc.error(e);
+console.error(e);
 return n;
 }
 n.body = l;
@@ -5291,22 +5897,22 @@ return n;
 e.encode_protobuf_cmd = function(t, o, n, r) {
 var a = i.default.getProtoName(t), c = i.default.getCmdName(t, o);
 if (!a || !c) {
-cc.error("encode_protobuf stype_name or cmd_name null");
+console.error("encode_protobuf stype_name or cmd_name null");
 return null;
 }
 if (!s[a]) {
-cc.error("encode_protobuf stype_name null");
+console.error("encode_protobuf stype_name null");
 return null;
 }
 var u = s[a][c];
 if (!u) {
-cc.error("encode_protobuf msgType is null");
+console.error("encode_protobuf msgType is null");
 return null;
 }
 r || (r = {});
 var l = u.verify(r);
 if (l) {
-cc.error("encode_protobuf error: ", l);
+console.error("encode_protobuf error: ", l);
 return null;
 }
 var f = u.create(r);
@@ -5315,7 +5921,7 @@ var d = u.encode(f).finish(), p = d.byteLength, h = e.HEADER_SIZE + p, _ = e.all
 e.write_uint8_array(_, g, d);
 return _;
 } catch (l) {
-cc.error(l);
+console.error(l);
 }
 };
 e.HEADER_SIZE = 10;
@@ -5397,7 +6003,7 @@ cc.loader.loadRes(e, t, function(e, t, o) {
 n && n(e, t, o);
 }, function(t, n) {
 if (o) {
-t && cc.warn("load res fail, path=" + e + ", err=" + t);
+t && console.warn("load res fail, path=" + e + ", err=" + t);
 o(t, n);
 }
 });
@@ -5407,7 +6013,7 @@ cc.loader.releaseRes(e);
 };
 e.prototype.getRes = function(e, t) {
 var o = cc.loader.getRes(e, t);
-o || cc.warn("preload res path: " + e + " not exist");
+o || console.warn("preload res path: " + e + " not exist");
 return o;
 };
 e.instance = new e();
@@ -5453,6 +6059,7 @@ this._game_rule = "";
 this._room_id = "";
 this._play_count = 0;
 this._total_play_count = 0;
+this._share_roomid = "";
 }
 e.getInstance = function() {
 return e.instance;
@@ -5503,12 +6110,25 @@ return this._player_set[e];
 e.prototype.get_all_player = function() {
 return this._player_set;
 };
+e.prototype.get_self_player = function() {
+return this._player_set[this.get_self_seatid()];
+};
 e.prototype.get_self_seatid = function() {
 for (var e in this._player_set) {
 var t = this._player_set[e];
 if (t.get_numberid() == r.default.get_numberid()) return t.get_seatid();
 }
 return -1;
+};
+e.prototype.get_is_self_host = function() {
+var e = this.get_self_player();
+return !!e && e.get_is_host();
+};
+e.prototype.set_share_roomid = function(e) {
+this._share_roomid = e;
+};
+e.prototype.get_share_roomid = function() {
+return this._share_roomid;
 };
 e.prototype.clear_room_data = function() {
 this.set_game_rule("");
@@ -5565,16 +6185,16 @@ e.prototype.enter_scene_asyc = function(e) {
 if (e && e.preload) {
 var t = this;
 e.preload(function(o, n) {
-if (o) cc.error("enter_scene_asyc error: ", o); else {
+if (o) console.error("enter_scene_asyc error: ", o); else {
 if (t._curScene) {
 var r = t._curScene.get_name() != e.get_name();
 t._curScene.destroy(r);
 }
 t._curScene = e;
-cc.log("enter scene:", t._curScene.get_name());
+console.log("enter scene:", t._curScene.get_name());
 }
 }, function(e, t, o) {
-cc.log("preload scene: %" + e / t * 100);
+console.log("preload scene: %" + e / t * 100);
 });
 }
 };
@@ -5612,7 +6232,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../framework/uibase/UIDialog"), s = e("../scene/lobbyScene/LobbyScene"), a = e("../../framework/manager/SceneManager"), c = e("../scene/lobbyScene/sendMsg/LobbySendGameHoodle"), u = e("../../framework/manager/EventManager"), l = e("../../framework/protocol/GameHoodleProto"), f = e("../../framework/protocol/Response"), d = e("../common/RoomData"), p = cc._decorator, h = p.ccclass, _ = (p.property, 
+var i = e("../../framework/uibase/UIDialog"), s = e("../scene/lobbyScene/LobbyScene"), a = e("../../framework/manager/SceneManager"), c = e("../scene/lobbyScene/sendMsg/LobbySendGameHoodle"), u = e("../../framework/protocol/GameHoodleProto"), l = e("../../framework/protocol/Response"), f = e("../common/RoomData"), d = e("../../framework/protocol/Stype"), p = cc._decorator, h = p.ccclass, _ = (p.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -5622,18 +6242,26 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 };
 t.prototype.start = function() {
-this.add_event_dispatcher();
-this.add_button_event_listener();
+e.prototype.start.call(this);
+this.add_protocol_delegate();
+if (0 == f.default.getInstance().get_is_self_host()) {
+this.set_visible(this.view.KW_BTN_DESSOLVE, !1);
+this.set_posX(this.view.KW_BTN_EXIT, 0);
+}
 };
-t.prototype.add_event_dispatcher = function() {
-u.default.on(l.CmdName[l.Cmd.eJoinRoomRes], this, this.on_event_exit_room);
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[u.Cmd.eJoinRoomRes] = this.on_event_exit_room, 
+e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === d.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.KW_BTN_CLOSE, this.on_click_close.bind(this));
 this.add_click_event(this.view.KW_BTN_EXIT, this.on_click_back.bind(this));
 this.add_click_event(this.view.KW_BTN_DESSOLVE, this.on_click_dessolve.bind(this));
 };
-t.prototype.onDestroy = function() {};
 t.prototype.on_click_close = function(e) {
 this.close();
 };
@@ -5641,16 +6269,15 @@ t.prototype.on_click_back = function(e) {
 c.default.send_exit_room();
 this.close();
 a.default.getInstance().enter_scene_asyc(new s.default());
-d.default.getInstance().clear_room_data();
+f.default.getInstance().clear_room_data();
 };
 t.prototype.on_click_dessolve = function(e) {
 c.default.send_dessolve_room();
 this.close();
 };
 t.prototype.on_event_exit_room = function(e) {
-var t = e.getUserData();
-if (t) {
-t.status == f.default.OK && this.close();
+if (e) {
+e.status == l.default.OK && this.close();
 }
 };
 return t = r([ h ], t);
@@ -5658,10 +6285,10 @@ return t = r([ h ], t);
 o.default = _;
 cc._RF.pop();
 }, {
-"../../framework/manager/EventManager": "EventManager",
 "../../framework/manager/SceneManager": "SceneManager",
 "../../framework/protocol/GameHoodleProto": "GameHoodleProto",
 "../../framework/protocol/Response": "Response",
+"../../framework/protocol/Stype": "Stype",
 "../../framework/uibase/UIDialog": "UIDialog",
 "../common/RoomData": "RoomData",
 "../scene/lobbyScene/LobbyScene": "LobbyScene",
@@ -5674,25 +6301,29 @@ Object.defineProperty(o, "__esModule", {
 value: !0
 });
 var n = e("./Socket"), r = e("../manager/ProtoManager"), i = e("../manager/EventManager"), s = e("../protocol/ProtoCmd"), a = e("../protocol/Stype"), c = e("../config/EventDefine"), u = e("../config/GameAppConfig"), l = function() {
-function e() {}
+function e() {
+this._protocolCallBackList = [];
+}
 e.prototype.on_socket_open = function() {
 i.default.emit(c.default.EVENT_NET_CONNECTED);
 };
 e.prototype.on_socket_message = function(e) {
-var t = r.default.decode_cmd(u.default.PROTO_TYPE, e);
-if (t) {
-var o = s.default.getCmdName(t.stype, t.ctype);
-cc.log("\n\n###########################>>>recvstart");
+var t = this, o = r.default.decode_cmd(u.default.PROTO_TYPE, e);
 if (o) {
-cc.log("Svr:", a.StypeName[t.stype], ",xyname:", o, ",xyid:", t.ctype);
-var n = "";
+var n = s.default.getCmdName(o.stype, o.ctype);
+console.log("\n\n###########################>>>recvstart");
+if (n) {
+console.log("Svr=", a.StypeName[o.stype], ",xyname=", n, ",xyid=" + o.ctype);
+var i = "";
 try {
-n = JSON.stringify(t.body);
+i = JSON.stringify(o.body);
 } catch (e) {}
-cc.log(n);
+console.log(i);
 }
-cc.log("###########################>>>recvend\n\n");
-o && i.default.emit(o, t.body);
+console.log("###########################>>>recvend\n\n");
+this._protocolCallBackList.forEach(function(e) {
+e.callBack && e.callBack.call(t, o.stype, o.ctype, o.body);
+});
 }
 };
 e.prototype.on_socket_error = function(e) {
@@ -5703,8 +6334,39 @@ this._socket && this._socket.close();
 this._socket = null;
 i.default.emit(c.default.EVENT_NET_CLOSED);
 };
+e.prototype.add_protocol_delegate = function(e, t) {
+var o = {
+obj: e,
+callBack: t
+};
+this._protocolCallBackList.push(o);
+console.log("hcc>>add_protocol_delegate: len: ", this._protocolCallBackList.length);
+};
+e.prototype.remove_protocol_delegate = function(e, t) {
+var o = this;
+t && void 0 != t ? this._protocolCallBackList.forEach(function(n) {
+if (n.obj === e && n.callBack === t) {
+var r = o._protocolCallBackList.indexOf(n);
+if (r > -1) {
+o._protocolCallBackList.splice(r, 1);
+console.log("hcc>>remove_protocol_delegate111: len: ", o._protocolCallBackList.length);
+}
+}
+}) : this._protocolCallBackList.forEach(function(t) {
+if (t.obj === e) {
+var n = o._protocolCallBackList.indexOf(t);
+if (n > -1) {
+o._protocolCallBackList.splice(n, 1);
+console.log("hcc>>remove_protocol_delegate222: len: ", o._protocolCallBackList.length);
+}
+}
+});
+};
+e.prototype.remove_all_protocol_delegate = function() {
+this._protocolCallBackList.splice(0, this._protocolCallBackList.length);
+};
 e.prototype.connect = function(e) {
-cc.log("socket is connecting address:", e);
+console.log("socket is connecting address:", e);
 this._socket = new n.WSocket(e, this);
 this._socket.connect();
 };
@@ -5758,7 +6420,7 @@ e.prototype.connect = function() {
 var e = this, t = this._webSocket = new WebSocket(this._url);
 t.binaryType = "arraybuffer";
 t.onopen = function(t) {
-cc.log("WSocket websocket connect " + e._url + " success!!");
+console.log("WSocket websocket connect " + e._url + " success!!");
 e._delegate.on_socket_open();
 };
 t.onmessage = function(t) {
@@ -5766,11 +6428,11 @@ e._delegate.on_socket_message(t.data);
 };
 t.onerror = function(t) {
 e._delegate.on_socket_error(null);
-cc.error("WSocket websocket connect " + e._url + " error");
+console.error("WSocket websocket connect " + e._url + " error");
 };
 t.onclose = function(t) {
 e._delegate.on_socket_closed(t.reason);
-cc.error("WSocket websocket connect " + e._url + " closed");
+console.error("WSocket websocket connect " + e._url + " closed");
 };
 };
 e.prototype.send = function(e) {
@@ -5781,7 +6443,7 @@ if (this._webSocket) {
 try {
 this._webSocket.close();
 } catch (e) {
-cc.error("error while closing webSocket ", e.toString());
+console.error("error while closing webSocket ", e.toString());
 }
 this._webSocket = null;
 }
@@ -5850,7 +6512,7 @@ var t = cc.sys.localStorage.getItem(e), o = null;
 if (t && "undefined" != t && void 0 != t) try {
 o = JSON.parse(t);
 } catch (e) {
-cc.error(e);
+console.error(e);
 }
 return o;
 };
@@ -5890,7 +6552,7 @@ return i > 3 && s && Object.defineProperty(t, o, s), s;
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var i = e("../../framework/uibase/UIDialog"), s = e("../../framework/manager/EventManager"), a = e("../../framework/protocol/GameHoodleProto"), c = e("../../framework/protocol/Response"), u = e("../scene/gameScene/sendMsg/GameSendGameHoodle"), l = e("../../framework/manager/ResourceManager"), f = e("../../framework/utils/ArrayUtil"), d = e("../../framework/manager/DialogManager"), p = e("../scene/lobbyScene/sendMsg/LobbySendGameHoodle"), h = e("../../framework/common/UserInfo"), _ = cc._decorator, g = _.ccclass, y = (_.property, 
+var i = e("../../framework/uibase/UIDialog"), s = e("../../framework/protocol/GameHoodleProto"), a = e("../../framework/protocol/Response"), c = e("../scene/gameScene/sendMsg/GameSendGameHoodle"), u = e("../../framework/manager/ResourceManager"), l = e("../../framework/utils/ArrayUtil"), f = e("../../framework/manager/DialogManager"), d = e("../scene/lobbyScene/sendMsg/LobbySendGameHoodle"), p = e("../../framework/common/UserInfo"), h = e("../../framework/protocol/Stype"), _ = cc._decorator, g = _.ccclass, y = (_.property, 
 function(e) {
 n(t, e);
 function t() {
@@ -5898,25 +6560,28 @@ return null !== e && e.apply(this, arguments) || this;
 }
 t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
-this.add_event_dispatcher();
-this.add_button_event_listener();
 };
 t.prototype.start = function() {
+e.prototype.start.call(this);
 this.initUI();
-u.default.send_store_list_req();
+this.add_protocol_delegate();
+c.default.send_store_list_req();
 };
-t.prototype.add_event_dispatcher = function() {
-s.default.on(a.CmdName[a.Cmd.eStoreListRes], this, this.on_event_store_list);
-s.default.on(a.CmdName[a.Cmd.eBuyThingsRes], this, this.on_event_buy_things);
-s.default.on(a.CmdName[a.Cmd.eUserGameInfoRes], this, this.on_event_ugame_info);
+t.prototype.add_cmd_handler_map = function() {
+var e;
+this._cmd_handler_map = ((e = {})[s.Cmd.eStoreListRes] = this.on_event_store_list, 
+e[s.Cmd.eBuyThingsRes] = this.on_event_buy_things, e[s.Cmd.eUserGameInfoRes] = this.on_event_ugame_info, 
+e);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+e === h.Stype.GameHoodle && this._cmd_handler_map[t] && this._cmd_handler_map[t].call(this, o);
 };
 t.prototype.add_button_event_listener = function() {
 this.add_click_event(this.view.KW_BTN_CLOSE, this.on_click_close.bind(this));
 };
-t.prototype.onDestroy = function() {};
 t.prototype.initUI = function() {
 this.clear_ball_layout();
-this.set_string(this.view.KW_TEXT_MY_CHIP, "我的金币：" + h.default.get_uchip());
+this.set_string(this.view.KW_TEXT_MY_CHIP, "我的金币：" + p.default.get_uchip());
 };
 t.prototype.on_click_close = function(e) {
 this.close();
@@ -5925,25 +6590,24 @@ t.prototype.onKeyDown = function(t) {
 e.prototype.onKeyDown.call(this, t);
 };
 t.prototype.on_event_store_list = function(e) {
-var t = e.getUserData();
+var t = e;
 if (t) {
-t.status == c.default.OK && this.show_store_product_info(t.storeprops);
+t.status == a.default.OK && this.show_store_product_info(t.storeprops);
 }
 };
 t.prototype.on_event_buy_things = function(e) {
-var t = e.getUserData();
-if (t) {
-if (t.status == c.default.OK) {
-p.default.send_get_ugame_info();
-d.default.getInstance().show_weak_hint("购买成功!");
-} else d.default.getInstance().show_weak_hint("购买失败,金币不足!");
+if (e) {
+if (e.status == a.default.OK) {
+d.default.send_get_ugame_info();
+f.default.getInstance().show_weak_hint("购买成功!");
+} else f.default.getInstance().show_weak_hint("购买失败,金币不足!");
 }
 };
 t.prototype.on_event_ugame_info = function(e) {
-var t = e.getUserData();
-cc.log("on_event_ugame_info", t);
+var t = e;
+console.log("on_event_ugame_info", t);
 if (t) {
-if (t.status == c.default.OK) {
+if (t.status == a.default.OK) {
 var o = JSON.parse(t.userinfostring).uchip;
 this.set_string(this.view.KW_TEXT_MY_CHIP, "我的金币：" + String(o));
 }
@@ -5958,20 +6622,20 @@ o && o.removeAllChildren();
 };
 t.prototype.show_store_product_info = function(e) {
 this.clear_ball_layout();
-cc.log("hcc>>storeprops_obj: ", e);
-if (e && !(f.default.GetArrayLen(e) <= 0)) {
+console.log("hcc>>storeprops_obj: ", e);
+if (e && !(l.default.GetArrayLen(e) <= 0)) {
 var t = this.view.KW_SCROLLVIEW_NEW, o = this.seek_child_by_name(t, "KW_LAYOUT"), n = 0, r = null;
 if (t) {
 for (var i in e) {
-var s = e[i], a = JSON.parse(s.propinfo), c = l.ResourceManager.getInstance().getRes("ui_prefabs/games/StoreProduct", cc.Prefab);
+var s = e[i], a = JSON.parse(s.propinfo), c = u.ResourceManager.getInstance().getRes("ui_prefabs/games/StoreProduct", cc.Prefab);
 if (c) {
-var u = this.add_to_node(o, c);
-if (u) {
-this.set_string(this.seek_child_by_name(u, "KW_TEXT_PRICE"), s.propprice + "金币");
-this.set_string(this.seek_child_by_name(u, "KW_TEXT_LEVEL"), a.level + "级");
-this.add_click_evenet_with_data(u, "on_click_product", s);
+var f = this.add_to_node(o, c);
+if (f) {
+this.set_string(this.seek_child_by_name(f, "KW_TEXT_PRICE"), s.propprice + "金币");
+this.set_string(this.seek_child_by_name(f, "KW_TEXT_LEVEL"), a.level + "级");
+this.add_click_evenet_with_data(f, "on_click_product", s);
 }
-var d = u.getContentSize();
+var d = f.getContentSize();
 n++;
 r = d;
 }
@@ -5986,7 +6650,7 @@ p.setContentSize(p.getContentSize().width, h);
 };
 t.prototype.on_click_product = function(e, t) {
 if (t) {
-cc.log("hcc>>click: ", t);
+console.log("hcc>>click: ", t);
 var o = {
 propsvrindex: t.propsvrindex,
 propid: t.propid,
@@ -5994,12 +6658,12 @@ propcount: t.propcount,
 propprice: t.propprice,
 propinfo: t.propinfo
 };
-d.default.getInstance().show_common_dialog(2, function(e) {
+f.default.getInstance().show_common_dialog(2, function(e) {
 if (e) {
 var n = JSON.parse(t.propinfo), r = "确定将购买" + t.propcount + "个" + n.level + "级弹珠吗?需要" + t.propprice + "金币哦!";
 e.set_content_text(r);
 e.set_btn_callback(function() {
-u.default.send_buy_product(o);
+c.default.send_buy_product(o);
 });
 }
 });
@@ -6012,10 +6676,10 @@ cc._RF.pop();
 }, {
 "../../framework/common/UserInfo": "UserInfo",
 "../../framework/manager/DialogManager": "DialogManager",
-"../../framework/manager/EventManager": "EventManager",
 "../../framework/manager/ResourceManager": "ResourceManager",
 "../../framework/protocol/GameHoodleProto": "GameHoodleProto",
 "../../framework/protocol/Response": "Response",
+"../../framework/protocol/Stype": "Stype",
 "../../framework/uibase/UIDialog": "UIDialog",
 "../../framework/utils/ArrayUtil": "ArrayUtil",
 "../scene/gameScene/sendMsg/GameSendGameHoodle": "GameSendGameHoodle",
@@ -6125,6 +6789,9 @@ return t;
 e.stringToUint8Array = function(e) {
 for (var t = [], o = 0, n = e.length; o < n; ++o) t.push(e.charCodeAt(o));
 return new Uint8Array(t);
+};
+e.isEmptyString = function(e) {
+return "" == e || ("''" == e || '""' == e);
 };
 return e;
 }();
@@ -6293,7 +6960,7 @@ get: function() {
 return this.horizontal ? c.Horizontal : c.Vertical;
 },
 set: function(e) {
-cc.error("[TableView] 不允许动态修改scrollModel");
+console.error("[TableView] 不允许动态修改scrollModel");
 },
 enumerable: !0,
 configurable: !0
@@ -6344,7 +7011,7 @@ t.prototype.getCellCount = function() {
 return this.cellCount;
 };
 t.prototype.setCellCount = function(e) {
-"number" == typeof e && e >= 0 ? this.cellCount = e : cc.error("[TableView] setCellCount 参数错误");
+"number" == typeof e && e >= 0 ? this.cellCount = e : console.error("[TableView] setCellCount 参数错误");
 };
 t.prototype.getCellData = function() {
 return this.cellData;
@@ -6772,11 +7439,12 @@ t.prototype = null === o ? Object.create(o) : (n.prototype = o.prototype, new n(
 Object.defineProperty(o, "__esModule", {
 value: !0
 });
-var r = e("../common/UIFunciton"), i = function(e) {
+var r = e("../common/UIFunciton"), i = e("../manager/ResourceManager"), s = e("../network/NetWork"), a = function(e) {
 n(t, e);
 function t() {
 var t = null !== e && e.apply(this, arguments) || this;
 t.view = {};
+t._cmd_handler_map = {};
 t._winSize = new cc.Size(1920, 1080);
 return t;
 }
@@ -6790,6 +7458,26 @@ t.prototype.onLoad = function() {
 r.default.getInstance().resize_screen();
 this.load_all_object(this.node, "");
 this.view[this.node.name] = this.node;
+};
+t.prototype.start = function() {
+this.add_cmd_handler_map();
+this.add_event_dispatcher();
+this.add_button_event_listener();
+};
+t.prototype.onDestroy = function() {
+this.remove_protocol_delegate();
+};
+t.prototype.add_event_dispatcher = function() {};
+t.prototype.add_cmd_handler_map = function() {};
+t.prototype.add_button_event_listener = function() {};
+t.prototype.add_protocol_delegate = function() {
+s.default.getInstance().add_protocol_delegate(this, this.on_recv_server_message.bind(this));
+};
+t.prototype.remove_protocol_delegate = function() {
+s.default.getInstance().remove_protocol_delegate(this);
+};
+t.prototype.on_recv_server_message = function(e, t, o) {
+console.log("hcc>>on_recv_server_message: stype ", e, " ,ctype:", t, " ,body: ", o);
 };
 t.prototype.add_script = function(e) {
 return this.node.addComponent(e);
@@ -6839,12 +7527,32 @@ return r.default.getInstance().get_visible(e);
 t.prototype.seek_child_by_name = function(e, t) {
 return r.default.getInstance().seek_widget_by_name(e, t);
 };
+t.prototype.set_headimg_url = function(e, t, o) {
+r.default.getInstance().set_headimg_url(e, t, o);
+};
+t.prototype.set_posX = function(e, t) {
+e && cc.isValid(e) && (e.x = t);
+};
+t.prototype.set_posY = function(e, t) {
+e && cc.isValid(e) && (e.y = t);
+};
+t.prototype.set_pos = function(e, t, o) {
+if (e && cc.isValid(e)) {
+e.x = t;
+e.y = o;
+}
+};
+t.prototype.get_res = function(e, t) {
+return i.ResourceManager.getInstance().getRes(e, t);
+};
 return t;
 }(cc.Component);
-o.default = i;
+o.default = a;
 cc._RF.pop();
 }, {
-"../common/UIFunciton": "UIFunciton"
+"../common/UIFunciton": "UIFunciton",
+"../manager/ResourceManager": "ResourceManager",
+"../network/NetWork": "NetWork"
 } ],
 UIDialog: [ function(e, t, o) {
 "use strict";
@@ -6884,7 +7592,9 @@ t.prototype.onLoad = function() {
 e.prototype.onLoad.call(this);
 cc.sys.os === cc.sys.OS_WINDOWS && cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this);
 };
-t.prototype.start = function() {};
+t.prototype.start = function() {
+e.prototype.start.call(this);
+};
 t.prototype.close = function() {
 s.default.getInstance().remove_dialog_from_map(this.node);
 this.node && this.node.destroy();
@@ -6930,23 +7640,26 @@ e.node.emit("resize");
 };
 e.prototype.node_exist = function(e) {
 var t = e && cc.isValid(e);
-0 == t && cc.error(e.name, "is null");
+0 == t && console.error(e.name, "is null");
 return t;
 };
 e.prototype.add_click_event = function(e, t, o) {
 if (this.node_exist(e)) {
 var n = e.getComponent(cc.Button);
 if (n) {
+if (cc.isValid(o)) {
 o.isBtnClick = !1;
 e.on("click", function() {
-if (!o.isBtnClick) {
+if (o && cc.isValid(o)) {
+if (o.isBtnClick) return;
 o.isBtnClick = !0;
 setTimeout(function() {
-o.isBtnClick = !1;
+o && cc.isValid(o) && (o.isBtnClick = !1);
 }, 1);
 t.call(o, n);
 }
 }, o);
+}
 }
 }
 };
@@ -6963,9 +7676,9 @@ s.component = i[1];
 s.handler = t;
 n && (s.customEventData = n);
 r.clickEvents.push(s);
-} else cc.error("add_click_evenet_with_data>> " + t + " , matchStr is not exist");
-} else cc.error("add_click_evenet_with_data>>component is not exist");
-} else cc.error("add_click_evenet_with_data>>target node is not exist"); else cc.error("add_click_evenet_with_data>>callbackName is not string");
+} else console.error("add_click_evenet_with_data>> " + t + " , matchStr is not exist");
+} else console.error("add_click_evenet_with_data>>component is not exist");
+} else console.error("add_click_evenet_with_data>>target node is not exist"); else console.error("add_click_evenet_with_data>>callbackName is not string");
 };
 e.prototype.clear_btn_click_event = function(e) {
 if (this.node_exist(e)) {
@@ -7011,7 +7724,7 @@ var r = n.ResourceManager.getInstance().getRes(t, cc.SpriteFrame);
 if (r) try {
 1 == r.isValid && (o.spriteFrame = r);
 } catch (e) {
-cc.error(e);
+console.error(e);
 } else console.warn("load SpriteFrame " + t + " failed");
 }
 }
@@ -7023,7 +7736,7 @@ o && n.ResourceManager.getInstance().loadResAsyc(t, cc.SpriteFrame, function(e, 
 if (n) try {
 1 == n.isValid && (o.spriteFrame = n);
 } catch (e) {
-cc.error(e);
+console.error(e);
 } else console.warn("load SpriteFrame " + t + " failed");
 });
 }
@@ -7168,6 +7881,23 @@ if (null != i) return i;
 }
 return null;
 };
+e.prototype.set_headimg_url = function(e, t, o) {
+if (this.node_exist(e)) {
+var n = e.getComponent(cc.Sprite);
+if (n) {
+cc.loader.load({
+url: t + "?file=a.jpg",
+type: "jpg"
+}, function(e, t) {
+n.spriteFrame = new cc.SpriteFrame(t);
+});
+if (o) {
+var r = e.getContentSize();
+e.setScale(o / r.width, o / r.height);
+}
+}
+}
+};
 e.instance = new e();
 return e;
 }();
@@ -7188,9 +7918,9 @@ e.set_uinfo = function(e) {
 var t = null;
 try {
 t = JSON.parse(e);
-cc.log("uinfo: ", t);
+console.log("uinfo: ", t);
 } catch (e) {
-cc.error(e);
+console.error(e);
 }
 this._uinfo = t;
 };
@@ -7221,6 +7951,9 @@ return this._ugame_info;
 e.get_uchip = function() {
 return this._ugame_info.uchip;
 };
+e.get_avatrurl = function() {
+return this._uinfo.avatarurl;
+};
 e._uinfo = {};
 e._ugame_info = {};
 return e;
@@ -7228,6 +7961,133 @@ return e;
 o.default = n;
 cc._RF.pop();
 }, {} ],
+WeChatLogin: [ function(e, t, o) {
+"use strict";
+cc._RF.push(t, "87bca7XQFdFgp0zg5HB1rPY", "WeChatLogin");
+Object.defineProperty(o, "__esModule", {
+value: !0
+});
+var n = e("../../gamebase/scene/LoginScene/sendMsg/LoginSendAuthMsg"), r = e("../config/PlatForm"), i = function() {
+function e() {}
+e.do_wechat_auth_login = function() {
+r.default.isWeChatGame() && wx.getSetting({
+success: function(t) {
+t.authSetting["scope.userInfo"] ? e.get_wechat_user_info_and_login() : wx.authorize({
+scope: "scope.userInfo",
+success: function() {
+e.get_wechat_user_info_and_login();
+},
+fail: function() {
+wx.showModal({
+title: "提示",
+content: "《弹珠王者》是一款在线对战游戏，需要您的用户信息登录游戏~",
+success: function(t) {
+t.confirm ? e.do_wechat_auth_login() : t.cancel;
+}
+});
+}
+});
+}
+});
+};
+e.get_wechat_user_info_and_login = function() {
+r.default.isWeChatGame() && wx.login({
+success: function(e) {
+wx.getUserInfo({
+success: function(t) {
+if (e.code) {
+var o = e.code, r = JSON.stringify(t);
+console.log("hcc>>login_code: ", o);
+console.log("hcc>>wechatuserinfo: ", r);
+n.default.send_wechat_login(String(o), r);
+} else console.log("hcc>>login failed！", e.errMsg);
+},
+fail: function(e) {
+console.log("hcc>>wx.getUserInfo>>fail", e);
+}
+});
+}
+});
+};
+e.create_authorize_btn = function(t) {
+if (r.default.isWeChatGame() && cc.isValid(t)) if (e._auth_btn) e._auth_btn.show(); else {
+var o = cc.size(t.width + 10, t.height + 10), n = cc.view.getFrameSize(), i = cc.director.getWinSize();
+console.log("hcc>>create_authorize_btn>>winSize: ", i);
+console.log("hcc>>create_authorize_btn>>frameSize: ", n);
+var s = (.5 * i.width + t.x - .5 * o.width) / i.width * n.width, a = (.5 * i.height - t.y - .5 * o.height) / i.height * n.height, c = o.width / i.width * n.width, u = o.height / i.height * n.height;
+e._auth_btn = wx.createUserInfoButton({
+type: "text",
+text: "",
+style: {
+left: s,
+top: a,
+width: c,
+height: u,
+lineHeight: 40,
+backgroundColor: "",
+color: "#ffffff",
+textAlign: "center",
+fontSize: 12,
+borderRadius: 4
+}
+});
+e._auth_btn.onTap(function(t) {
+if (t.userInfo) {
+console.log("hcc>>wxLogin auth success, uinfo:", t.userInfo);
+e.get_wechat_user_info_and_login();
+} else {
+console.log("hcc>>wxLogin auth fail");
+wx.showModal({
+title: "提示",
+content: "《弹珠王者》是一款在线对战游戏，需要您的用户信息登录游戏~",
+showCancel: !1,
+success: function(e) {
+e.confirm || e.cancel;
+}
+});
+}
+});
+}
+};
+e.hide_auth_btn = function() {
+e._auth_btn && e._auth_btn.hide();
+};
+e.get_share_info = function() {
+if (r.default.isWeChatGame()) {
+var e = {}, t = wx.getLaunchOptionsSync();
+for (var o in t.query) {
+console.log("hcc>>share>>obj.query: ", t.query[o]);
+"roomid" == o && (e.roomid = t.query[o]);
+"invite_unick" == o && (e.invite_unick = t.query[o]);
+}
+return e;
+}
+};
+e.on_wx_foreground = function(e) {
+if (r.default.isWeChatGame()) {
+wx.onShow(function(t) {
+var o = t.query, n = {};
+if (o) for (var r in o) {
+console.log("hcc>>on_wx_show>>value: ", r, ":", o[r]);
+if ("roomid" == r) {
+var i = o[r];
+n.roomid = i;
+} else "invite_unick" == r && (n.invite_unick = o[r]);
+}
+e && e(n);
+console.log("hcc>>on_wx_show: ", t);
+});
+}
+};
+e._auth_btn = null;
+return e;
+}();
+o.default = i;
+cc._RF.pop();
+}, {
+"../../gamebase/scene/LoginScene/sendMsg/LoginSendAuthMsg": "LoginSendAuthMsg",
+"../config/PlatForm": "PlatForm"
+} ],
 WeakHintDialog: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "ad69cHLk61CyZoLaMj/ljpp", "WeakHintDialog");
@@ -7284,7 +8144,6 @@ this.node.active = !0;
 t.prototype.move = function() {
 this.node.runAction(cc.moveBy(.1, new cc.Vec2(0, 100)));
 };
-t.prototype.onDestroy = function() {};
 t.prototype.close = function() {
 this.node.destroy();
 i.default.getInstance().dequeue_weakhint();
@@ -7297,18 +8156,1122 @@ cc._RF.pop();
 "../../framework/manager/DialogManager": "DialogManager",
 "../../framework/uibase/UIController": "UIController"
 } ],
-map_Level1: [ function(e, t, o) {
+minimal: [ function(require, module, exports) {
+(function(global) {
 "use strict";
-cc._RF.push(t, "55c59SyrW5EGLGhzIhGHNQy", "map_Level1");
-t.exports = {
-data: [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ],
-height: 40,
-item_size: 16,
-name: "Level1",
-width: 60
+cc._RF.push(module, "6f86892CWtNQ7aaqpCWFxUt", "minimal");
+var _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(e) {
+return typeof e;
+} : function(e) {
+return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
 };
-cc._RF.pop();
+(function(undefined) {
+(function(e, t, o) {
+var n = function o(n) {
+var r = t[n];
+r || e[n][0].call(r = t[n] = {
+exports: {}
+}, o, r, r.exports);
+return r.exports;
+}(o[0]);
+n.util.global.protobuf = n;
+"function" == typeof define && define.amd && define([ "long" ], function(e) {
+if (e && e.isLong) {
+n.util.Long = e;
+n.configure();
+}
+return n;
+});
+"object" === ("undefined" == typeof module ? "undefined" : _typeof(module)) && module && module.exports && (module.exports = n);
+})({
+1: [ function(e, t, o) {
+t.exports = function(e, t) {
+var o = new Array(arguments.length - 1), n = 0, r = 2, i = !0;
+for (;r < arguments.length; ) o[n++] = arguments[r++];
+return new Promise(function(r, s) {
+o[n] = function(e) {
+if (i) {
+i = !1;
+if (e) s(e); else {
+for (var t = new Array(arguments.length - 1), o = 0; o < t.length; ) t[o++] = arguments[o];
+r.apply(null, t);
+}
+}
+};
+try {
+e.apply(t || null, o);
+} catch (e) {
+if (i) {
+i = !1;
+s(e);
+}
+}
+});
+};
 }, {} ],
+2: [ function(e, t, o) {
+var n = o;
+n.length = function(e) {
+var t = e.length;
+if (!t) return 0;
+for (var o = 0; --t % 4 > 1 && "=" === e.charAt(t); ) ++o;
+return Math.ceil(3 * e.length) / 4 - o;
+};
+for (var r = new Array(64), i = new Array(123), s = 0; s < 64; ) i[r[s] = s < 26 ? s + 65 : s < 52 ? s + 71 : s < 62 ? s - 4 : s - 59 | 43] = s++;
+n.encode = function(e, t, o) {
+for (var n, i = null, s = [], a = 0, c = 0; t < o; ) {
+var u = e[t++];
+switch (c) {
+case 0:
+s[a++] = r[u >> 2];
+n = (3 & u) << 4;
+c = 1;
+break;
+
+case 1:
+s[a++] = r[n | u >> 4];
+n = (15 & u) << 2;
+c = 2;
+break;
+
+case 2:
+s[a++] = r[n | u >> 6];
+s[a++] = r[63 & u];
+c = 0;
+}
+if (a > 8191) {
+(i || (i = [])).push(String.fromCharCode.apply(String, s));
+a = 0;
+}
+}
+if (c) {
+s[a++] = r[n];
+s[a++] = 61;
+1 === c && (s[a++] = 61);
+}
+if (i) {
+a && i.push(String.fromCharCode.apply(String, s.slice(0, a)));
+return i.join("");
+}
+return String.fromCharCode.apply(String, s.slice(0, a));
+};
+n.decode = function(e, t, o) {
+for (var n, r = o, s = 0, a = 0; a < e.length; ) {
+var c = e.charCodeAt(a++);
+if (61 === c && s > 1) break;
+if ((c = i[c]) === undefined) throw Error("invalid encoding");
+switch (s) {
+case 0:
+n = c;
+s = 1;
+break;
+
+case 1:
+t[o++] = n << 2 | (48 & c) >> 4;
+n = c;
+s = 2;
+break;
+
+case 2:
+t[o++] = (15 & n) << 4 | (60 & c) >> 2;
+n = c;
+s = 3;
+break;
+
+case 3:
+t[o++] = (3 & n) << 6 | c;
+s = 0;
+}
+}
+if (1 === s) throw Error("invalid encoding");
+return o - r;
+};
+n.test = function(e) {
+return /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(e);
+};
+}, {} ],
+3: [ function(e, t, o) {
+t.exports = n;
+function n() {
+this._listeners = {};
+}
+n.prototype.on = function(e, t, o) {
+(this._listeners[e] || (this._listeners[e] = [])).push({
+fn: t,
+ctx: o || this
+});
+return this;
+};
+n.prototype.off = function(e, t) {
+if (e === undefined) this._listeners = {}; else if (t === undefined) this._listeners[e] = []; else for (var o = this._listeners[e], n = 0; n < o.length; ) o[n].fn === t ? o.splice(n, 1) : ++n;
+return this;
+};
+n.prototype.emit = function(e) {
+var t = this._listeners[e];
+if (t) {
+for (var o = [], n = 1; n < arguments.length; ) o.push(arguments[n++]);
+for (n = 0; n < t.length; ) t[n].fn.apply(t[n++].ctx, o);
+}
+return this;
+};
+}, {} ],
+4: [ function(e, t, o) {
+t.exports = n(n);
+function n(e) {
+"undefined" != typeof Float32Array ? function() {
+var t = new Float32Array([ -0 ]), o = new Uint8Array(t.buffer), n = 128 === o[3];
+function r(e, n, r) {
+t[0] = e;
+n[r] = o[0];
+n[r + 1] = o[1];
+n[r + 2] = o[2];
+n[r + 3] = o[3];
+}
+function i(e, n, r) {
+t[0] = e;
+n[r] = o[3];
+n[r + 1] = o[2];
+n[r + 2] = o[1];
+n[r + 3] = o[0];
+}
+e.writeFloatLE = n ? r : i;
+e.writeFloatBE = n ? i : r;
+function s(e, n) {
+o[0] = e[n];
+o[1] = e[n + 1];
+o[2] = e[n + 2];
+o[3] = e[n + 3];
+return t[0];
+}
+function a(e, n) {
+o[3] = e[n];
+o[2] = e[n + 1];
+o[1] = e[n + 2];
+o[0] = e[n + 3];
+return t[0];
+}
+e.readFloatLE = n ? s : a;
+e.readFloatBE = n ? a : s;
+}() : function() {
+function t(e, t, o, n) {
+var r = t < 0 ? 1 : 0;
+r && (t = -t);
+if (0 === t) e(1 / t > 0 ? 0 : 2147483648, o, n); else if (isNaN(t)) e(2143289344, o, n); else if (t > 3.4028234663852886e38) e((r << 31 | 2139095040) >>> 0, o, n); else if (t < 1.1754943508222875e-38) e((r << 31 | Math.round(t / 1.401298464324817e-45)) >>> 0, o, n); else {
+var i = Math.floor(Math.log(t) / Math.LN2);
+e((r << 31 | i + 127 << 23 | 8388607 & Math.round(t * Math.pow(2, -i) * 8388608)) >>> 0, o, n);
+}
+}
+e.writeFloatLE = t.bind(null, r);
+e.writeFloatBE = t.bind(null, i);
+function o(e, t, o) {
+var n = e(t, o), r = 2 * (n >> 31) + 1, i = n >>> 23 & 255, s = 8388607 & n;
+return 255 === i ? s ? NaN : Infinity * r : 0 === i ? 1.401298464324817e-45 * r * s : r * Math.pow(2, i - 150) * (s + 8388608);
+}
+e.readFloatLE = o.bind(null, s);
+e.readFloatBE = o.bind(null, a);
+}();
+"undefined" != typeof Float64Array ? function() {
+var t = new Float64Array([ -0 ]), o = new Uint8Array(t.buffer), n = 128 === o[7];
+function r(e, n, r) {
+t[0] = e;
+n[r] = o[0];
+n[r + 1] = o[1];
+n[r + 2] = o[2];
+n[r + 3] = o[3];
+n[r + 4] = o[4];
+n[r + 5] = o[5];
+n[r + 6] = o[6];
+n[r + 7] = o[7];
+}
+function i(e, n, r) {
+t[0] = e;
+n[r] = o[7];
+n[r + 1] = o[6];
+n[r + 2] = o[5];
+n[r + 3] = o[4];
+n[r + 4] = o[3];
+n[r + 5] = o[2];
+n[r + 6] = o[1];
+n[r + 7] = o[0];
+}
+e.writeDoubleLE = n ? r : i;
+e.writeDoubleBE = n ? i : r;
+function s(e, n) {
+o[0] = e[n];
+o[1] = e[n + 1];
+o[2] = e[n + 2];
+o[3] = e[n + 3];
+o[4] = e[n + 4];
+o[5] = e[n + 5];
+o[6] = e[n + 6];
+o[7] = e[n + 7];
+return t[0];
+}
+function a(e, n) {
+o[7] = e[n];
+o[6] = e[n + 1];
+o[5] = e[n + 2];
+o[4] = e[n + 3];
+o[3] = e[n + 4];
+o[2] = e[n + 5];
+o[1] = e[n + 6];
+o[0] = e[n + 7];
+return t[0];
+}
+e.readDoubleLE = n ? s : a;
+e.readDoubleBE = n ? a : s;
+}() : function() {
+function t(e, t, o, n, r, i) {
+var s = n < 0 ? 1 : 0;
+s && (n = -n);
+if (0 === n) {
+e(0, r, i + t);
+e(1 / n > 0 ? 0 : 2147483648, r, i + o);
+} else if (isNaN(n)) {
+e(0, r, i + t);
+e(2146959360, r, i + o);
+} else if (n > 1.7976931348623157e308) {
+e(0, r, i + t);
+e((s << 31 | 2146435072) >>> 0, r, i + o);
+} else {
+var a;
+if (n < 2.2250738585072014e-308) {
+e((a = n / 5e-324) >>> 0, r, i + t);
+e((s << 31 | a / 4294967296) >>> 0, r, i + o);
+} else {
+var c = Math.floor(Math.log(n) / Math.LN2);
+1024 === c && (c = 1023);
+e(4503599627370496 * (a = n * Math.pow(2, -c)) >>> 0, r, i + t);
+e((s << 31 | c + 1023 << 20 | 1048576 * a & 1048575) >>> 0, r, i + o);
+}
+}
+}
+e.writeDoubleLE = t.bind(null, r, 0, 4);
+e.writeDoubleBE = t.bind(null, i, 4, 0);
+function o(e, t, o, n, r) {
+var i = e(n, r + t), s = e(n, r + o), a = 2 * (s >> 31) + 1, c = s >>> 20 & 2047, u = 4294967296 * (1048575 & s) + i;
+return 2047 === c ? u ? NaN : Infinity * a : 0 === c ? 5e-324 * a * u : a * Math.pow(2, c - 1075) * (u + 4503599627370496);
+}
+e.readDoubleLE = o.bind(null, s, 0, 4);
+e.readDoubleBE = o.bind(null, a, 4, 0);
+}();
+return e;
+}
+function r(e, t, o) {
+t[o] = 255 & e;
+t[o + 1] = e >>> 8 & 255;
+t[o + 2] = e >>> 16 & 255;
+t[o + 3] = e >>> 24;
+}
+function i(e, t, o) {
+t[o] = e >>> 24;
+t[o + 1] = e >>> 16 & 255;
+t[o + 2] = e >>> 8 & 255;
+t[o + 3] = 255 & e;
+}
+function s(e, t) {
+return (e[t] | e[t + 1] << 8 | e[t + 2] << 16 | e[t + 3] << 24) >>> 0;
+}
+function a(e, t) {
+return (e[t] << 24 | e[t + 1] << 16 | e[t + 2] << 8 | e[t + 3]) >>> 0;
+}
+}, {} ],
+5: [ function(require, module, exports) {
+module.exports = inquire;
+function inquire(moduleName) {
+try {
+var mod = eval("quire".replace(/^/, "re"))(moduleName);
+if (mod && (mod.length || Object.keys(mod).length)) return mod;
+} catch (e) {}
+return null;
+}
+}, {} ],
+6: [ function(e, t, o) {
+t.exports = function(e, t, o) {
+var n = o || 8192, r = n >>> 1, i = null, s = n;
+return function(o) {
+if (o < 1 || o > r) return e(o);
+if (s + o > n) {
+i = e(n);
+s = 0;
+}
+var a = t.call(i, s, s += o);
+7 & s && (s = 1 + (7 | s));
+return a;
+};
+};
+}, {} ],
+7: [ function(e, t, o) {
+var n = o;
+n.length = function(e) {
+for (var t = 0, o = 0, n = 0; n < e.length; ++n) if ((o = e.charCodeAt(n)) < 128) t += 1; else if (o < 2048) t += 2; else if (55296 == (64512 & o) && 56320 == (64512 & e.charCodeAt(n + 1))) {
+++n;
+t += 4;
+} else t += 3;
+return t;
+};
+n.read = function(e, t, o) {
+if (o - t < 1) return "";
+for (var n, r = null, i = [], s = 0; t < o; ) {
+if ((n = e[t++]) < 128) i[s++] = n; else if (n > 191 && n < 224) i[s++] = (31 & n) << 6 | 63 & e[t++]; else if (n > 239 && n < 365) {
+n = ((7 & n) << 18 | (63 & e[t++]) << 12 | (63 & e[t++]) << 6 | 63 & e[t++]) - 65536;
+i[s++] = 55296 + (n >> 10);
+i[s++] = 56320 + (1023 & n);
+} else i[s++] = (15 & n) << 12 | (63 & e[t++]) << 6 | 63 & e[t++];
+if (s > 8191) {
+(r || (r = [])).push(String.fromCharCode.apply(String, i));
+s = 0;
+}
+}
+if (r) {
+s && r.push(String.fromCharCode.apply(String, i.slice(0, s)));
+return r.join("");
+}
+return String.fromCharCode.apply(String, i.slice(0, s));
+};
+n.write = function(e, t, o) {
+for (var n, r, i = o, s = 0; s < e.length; ++s) if ((n = e.charCodeAt(s)) < 128) t[o++] = n; else if (n < 2048) {
+t[o++] = n >> 6 | 192;
+t[o++] = 63 & n | 128;
+} else if (55296 == (64512 & n) && 56320 == (64512 & (r = e.charCodeAt(s + 1)))) {
+n = 65536 + ((1023 & n) << 10) + (1023 & r);
+++s;
+t[o++] = n >> 18 | 240;
+t[o++] = n >> 12 & 63 | 128;
+t[o++] = n >> 6 & 63 | 128;
+t[o++] = 63 & n | 128;
+} else {
+t[o++] = n >> 12 | 224;
+t[o++] = n >> 6 & 63 | 128;
+t[o++] = 63 & n | 128;
+}
+return o - i;
+};
+}, {} ],
+8: [ function(e, t, o) {
+var n = o;
+n.build = "minimal";
+n.Writer = e(16);
+n.BufferWriter = e(17);
+n.Reader = e(9);
+n.BufferReader = e(10);
+n.util = e(15);
+n.rpc = e(12);
+n.roots = e(11);
+n.configure = r;
+function r() {
+n.Reader._configure(n.BufferReader);
+n.util._configure();
+}
+n.Writer._configure(n.BufferWriter);
+r();
+}, {
+10: 10,
+11: 11,
+12: 12,
+15: 15,
+16: 16,
+17: 17,
+9: 9
+} ],
+9: [ function(e, t, o) {
+t.exports = c;
+var n, r = e(15), i = r.LongBits, s = r.utf8;
+function a(e, t) {
+return RangeError("index out of range: " + e.pos + " + " + (t || 1) + " > " + e.len);
+}
+function c(e) {
+this.buf = e;
+this.pos = 0;
+this.len = e.length;
+}
+var u = "undefined" != typeof Uint8Array ? function(e) {
+if (e instanceof Uint8Array || Array.isArray(e)) return new c(e);
+throw Error("illegal buffer");
+} : function(e) {
+if (Array.isArray(e)) return new c(e);
+throw Error("illegal buffer");
+};
+c.create = r.Buffer ? function(e) {
+return (c.create = function(e) {
+return r.Buffer.isBuffer(e) ? new n(e) : u(e);
+})(e);
+} : u;
+c.prototype._slice = r.Array.prototype.subarray || r.Array.prototype.slice;
+c.prototype.uint32 = function() {
+var e = 4294967295;
+return function() {
+e = (127 & this.buf[this.pos]) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+e = (e | (127 & this.buf[this.pos]) << 7) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+e = (e | (127 & this.buf[this.pos]) << 14) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+e = (e | (127 & this.buf[this.pos]) << 21) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+e = (e | (15 & this.buf[this.pos]) << 28) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+if ((this.pos += 5) > this.len) {
+this.pos = this.len;
+throw a(this, 10);
+}
+return e;
+};
+}();
+c.prototype.int32 = function() {
+return 0 | this.uint32();
+};
+c.prototype.sint32 = function() {
+var e = this.uint32();
+return e >>> 1 ^ -(1 & e) | 0;
+};
+function l() {
+var e = new i(0, 0), t = 0;
+if (!(this.len - this.pos > 4)) {
+for (;t < 3; ++t) {
+if (this.pos >= this.len) throw a(this);
+e.lo = (e.lo | (127 & this.buf[this.pos]) << 7 * t) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+}
+e.lo = (e.lo | (127 & this.buf[this.pos++]) << 7 * t) >>> 0;
+return e;
+}
+for (;t < 4; ++t) {
+e.lo = (e.lo | (127 & this.buf[this.pos]) << 7 * t) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+}
+e.lo = (e.lo | (127 & this.buf[this.pos]) << 28) >>> 0;
+e.hi = (e.hi | (127 & this.buf[this.pos]) >> 4) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+t = 0;
+if (this.len - this.pos > 4) for (;t < 5; ++t) {
+e.hi = (e.hi | (127 & this.buf[this.pos]) << 7 * t + 3) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+} else for (;t < 5; ++t) {
+if (this.pos >= this.len) throw a(this);
+e.hi = (e.hi | (127 & this.buf[this.pos]) << 7 * t + 3) >>> 0;
+if (this.buf[this.pos++] < 128) return e;
+}
+throw Error("invalid varint encoding");
+}
+c.prototype.bool = function() {
+return 0 !== this.uint32();
+};
+function f(e, t) {
+return (e[t - 4] | e[t - 3] << 8 | e[t - 2] << 16 | e[t - 1] << 24) >>> 0;
+}
+c.prototype.fixed32 = function() {
+if (this.pos + 4 > this.len) throw a(this, 4);
+return f(this.buf, this.pos += 4);
+};
+c.prototype.sfixed32 = function() {
+if (this.pos + 4 > this.len) throw a(this, 4);
+return 0 | f(this.buf, this.pos += 4);
+};
+function d() {
+if (this.pos + 8 > this.len) throw a(this, 8);
+return new i(f(this.buf, this.pos += 4), f(this.buf, this.pos += 4));
+}
+c.prototype.float = function() {
+if (this.pos + 4 > this.len) throw a(this, 4);
+var e = r.float.readFloatLE(this.buf, this.pos);
+this.pos += 4;
+return e;
+};
+c.prototype.double = function() {
+if (this.pos + 8 > this.len) throw a(this, 4);
+var e = r.float.readDoubleLE(this.buf, this.pos);
+this.pos += 8;
+return e;
+};
+c.prototype.bytes = function() {
+var e = this.uint32(), t = this.pos, o = this.pos + e;
+if (o > this.len) throw a(this, e);
+this.pos += e;
+return Array.isArray(this.buf) ? this.buf.slice(t, o) : t === o ? new this.buf.constructor(0) : this._slice.call(this.buf, t, o);
+};
+c.prototype.string = function() {
+var e = this.bytes();
+return s.read(e, 0, e.length);
+};
+c.prototype.skip = function(e) {
+if ("number" == typeof e) {
+if (this.pos + e > this.len) throw a(this, e);
+this.pos += e;
+} else do {
+if (this.pos >= this.len) throw a(this);
+} while (128 & this.buf[this.pos++]);
+return this;
+};
+c.prototype.skipType = function(e) {
+switch (e) {
+case 0:
+this.skip();
+break;
+
+case 1:
+this.skip(8);
+break;
+
+case 2:
+this.skip(this.uint32());
+break;
+
+case 3:
+for (;4 != (e = 7 & this.uint32()); ) this.skipType(e);
+break;
+
+case 5:
+this.skip(4);
+break;
+
+default:
+throw Error("invalid wire type " + e + " at offset " + this.pos);
+}
+return this;
+};
+c._configure = function(e) {
+n = e;
+var t = r.Long ? "toLong" : "toNumber";
+r.merge(c.prototype, {
+int64: function() {
+return l.call(this)[t](!1);
+},
+uint64: function() {
+return l.call(this)[t](!0);
+},
+sint64: function() {
+return l.call(this).zzDecode()[t](!1);
+},
+fixed64: function() {
+return d.call(this)[t](!0);
+},
+sfixed64: function() {
+return d.call(this)[t](!1);
+}
+});
+};
+}, {
+15: 15
+} ],
+10: [ function(e, t, o) {
+t.exports = i;
+var n = e(9);
+(i.prototype = Object.create(n.prototype)).constructor = i;
+var r = e(15);
+function i(e) {
+n.call(this, e);
+}
+r.Buffer && (i.prototype._slice = r.Buffer.prototype.slice);
+i.prototype.string = function() {
+var e = this.uint32();
+return this.buf.utf8Slice(this.pos, this.pos = Math.min(this.pos + e, this.len));
+};
+}, {
+15: 15,
+9: 9
+} ],
+11: [ function(e, t, o) {
+t.exports = {};
+}, {} ],
+12: [ function(e, t, o) {
+o.Service = e(13);
+}, {
+13: 13
+} ],
+13: [ function(e, t, o) {
+t.exports = r;
+var n = e(15);
+(r.prototype = Object.create(n.EventEmitter.prototype)).constructor = r;
+function r(e, t, o) {
+if ("function" != typeof e) throw TypeError("rpcImpl must be a function");
+n.EventEmitter.call(this);
+this.rpcImpl = e;
+this.requestDelimited = Boolean(t);
+this.responseDelimited = Boolean(o);
+}
+r.prototype.rpcCall = function e(t, o, r, i, s) {
+if (!i) throw TypeError("request must be specified");
+var a = this;
+if (!s) return n.asPromise(e, a, t, o, r, i);
+if (!a.rpcImpl) {
+setTimeout(function() {
+s(Error("already ended"));
+}, 0);
+return undefined;
+}
+try {
+return a.rpcImpl(t, o[a.requestDelimited ? "encodeDelimited" : "encode"](i).finish(), function(e, o) {
+if (e) {
+a.emit("error", e, t);
+return s(e);
+}
+if (null === o) {
+a.end(!0);
+return undefined;
+}
+if (!(o instanceof r)) try {
+o = r[a.responseDelimited ? "decodeDelimited" : "decode"](o);
+} catch (e) {
+a.emit("error", e, t);
+return s(e);
+}
+a.emit("data", o, t);
+return s(null, o);
+});
+} catch (e) {
+a.emit("error", e, t);
+setTimeout(function() {
+s(e);
+}, 0);
+return undefined;
+}
+};
+r.prototype.end = function(e) {
+if (this.rpcImpl) {
+e || this.rpcImpl(null, null, null);
+this.rpcImpl = null;
+this.emit("end").off();
+}
+return this;
+};
+}, {
+15: 15
+} ],
+14: [ function(e, t, o) {
+t.exports = r;
+var n = e(15);
+function r(e, t) {
+this.lo = e >>> 0;
+this.hi = t >>> 0;
+}
+var i = r.zero = new r(0, 0);
+i.toNumber = function() {
+return 0;
+};
+i.zzEncode = i.zzDecode = function() {
+return this;
+};
+i.length = function() {
+return 1;
+};
+var s = r.zeroHash = "\0\0\0\0\0\0\0\0";
+r.fromNumber = function(e) {
+if (0 === e) return i;
+var t = e < 0;
+t && (e = -e);
+var o = e >>> 0, n = (e - o) / 4294967296 >>> 0;
+if (t) {
+n = ~n >>> 0;
+o = ~o >>> 0;
+if (++o > 4294967295) {
+o = 0;
+++n > 4294967295 && (n = 0);
+}
+}
+return new r(o, n);
+};
+r.from = function(e) {
+if ("number" == typeof e) return r.fromNumber(e);
+if (n.isString(e)) {
+if (!n.Long) return r.fromNumber(parseInt(e, 10));
+e = n.Long.fromString(e);
+}
+return e.low || e.high ? new r(e.low >>> 0, e.high >>> 0) : i;
+};
+r.prototype.toNumber = function(e) {
+if (!e && this.hi >>> 31) {
+var t = 1 + ~this.lo >>> 0, o = ~this.hi >>> 0;
+t || (o = o + 1 >>> 0);
+return -(t + 4294967296 * o);
+}
+return this.lo + 4294967296 * this.hi;
+};
+r.prototype.toLong = function(e) {
+return n.Long ? new n.Long(0 | this.lo, 0 | this.hi, Boolean(e)) : {
+low: 0 | this.lo,
+high: 0 | this.hi,
+unsigned: Boolean(e)
+};
+};
+var a = String.prototype.charCodeAt;
+r.fromHash = function(e) {
+return e === s ? i : new r((a.call(e, 0) | a.call(e, 1) << 8 | a.call(e, 2) << 16 | a.call(e, 3) << 24) >>> 0, (a.call(e, 4) | a.call(e, 5) << 8 | a.call(e, 6) << 16 | a.call(e, 7) << 24) >>> 0);
+};
+r.prototype.toHash = function() {
+return String.fromCharCode(255 & this.lo, this.lo >>> 8 & 255, this.lo >>> 16 & 255, this.lo >>> 24, 255 & this.hi, this.hi >>> 8 & 255, this.hi >>> 16 & 255, this.hi >>> 24);
+};
+r.prototype.zzEncode = function() {
+var e = this.hi >> 31;
+this.hi = ((this.hi << 1 | this.lo >>> 31) ^ e) >>> 0;
+this.lo = (this.lo << 1 ^ e) >>> 0;
+return this;
+};
+r.prototype.zzDecode = function() {
+var e = -(1 & this.lo);
+this.lo = ((this.lo >>> 1 | this.hi << 31) ^ e) >>> 0;
+this.hi = (this.hi >>> 1 ^ e) >>> 0;
+return this;
+};
+r.prototype.length = function() {
+var e = this.lo, t = (this.lo >>> 28 | this.hi << 4) >>> 0, o = this.hi >>> 24;
+return 0 === o ? 0 === t ? e < 16384 ? e < 128 ? 1 : 2 : e < 2097152 ? 3 : 4 : t < 16384 ? t < 128 ? 5 : 6 : t < 2097152 ? 7 : 8 : o < 128 ? 9 : 10;
+};
+}, {
+15: 15
+} ],
+15: [ function(e, t, o) {
+var n = o;
+n.asPromise = e(1);
+n.base64 = e(2);
+n.EventEmitter = e(3);
+n.float = e(4);
+n.inquire = e(5);
+n.utf8 = e(7);
+n.pool = e(6);
+n.LongBits = e(14);
+n.global = "undefined" != typeof window && window || "undefined" != typeof global && global || "undefined" != typeof self && self || this;
+n.emptyArray = Object.freeze ? Object.freeze([]) : [];
+n.emptyObject = Object.freeze ? Object.freeze({}) : {};
+n.isNode = Boolean(n.global.process && n.global.process.versions && n.global.process.versions.node);
+n.isInteger = Number.isInteger || function(e) {
+return "number" == typeof e && isFinite(e) && Math.floor(e) === e;
+};
+n.isString = function(e) {
+return "string" == typeof e || e instanceof String;
+};
+n.isObject = function(e) {
+return e && "object" === ("undefined" == typeof e ? "undefined" : _typeof(e));
+};
+n.isset = n.isSet = function(e, t) {
+var o = e[t];
+return !(null == o || !e.hasOwnProperty(t)) && ("object" !== ("undefined" == typeof o ? "undefined" : _typeof(o)) || (Array.isArray(o) ? o.length : Object.keys(o).length) > 0);
+};
+n.Buffer = function() {
+try {
+var e = n.inquire("buffer").Buffer;
+return e.prototype.utf8Write ? e : null;
+} catch (e) {
+return null;
+}
+}();
+n._Buffer_from = null;
+n._Buffer_allocUnsafe = null;
+n.newBuffer = function(e) {
+return "number" == typeof e ? n.Buffer ? n._Buffer_allocUnsafe(e) : new n.Array(e) : n.Buffer ? n._Buffer_from(e) : "undefined" == typeof Uint8Array ? e : new Uint8Array(e);
+};
+n.Array = "undefined" != typeof Uint8Array ? Uint8Array : Array;
+n.Long = n.global.dcodeIO && n.global.dcodeIO.Long || n.global.Long || n.inquire("long");
+n.key2Re = /^true|false|0|1$/;
+n.key32Re = /^-?(?:0|[1-9][0-9]*)$/;
+n.key64Re = /^(?:[\\x00-\\xff]{8}|-?(?:0|[1-9][0-9]*))$/;
+n.longToHash = function(e) {
+return e ? n.LongBits.from(e).toHash() : n.LongBits.zeroHash;
+};
+n.longFromHash = function(e, t) {
+var o = n.LongBits.fromHash(e);
+return n.Long ? n.Long.fromBits(o.lo, o.hi, t) : o.toNumber(Boolean(t));
+};
+function r(e, t, o) {
+for (var n = Object.keys(t), r = 0; r < n.length; ++r) e[n[r]] !== undefined && o || (e[n[r]] = t[n[r]]);
+return e;
+}
+n.merge = r;
+n.lcFirst = function(e) {
+return e.charAt(0).toLowerCase() + e.substring(1);
+};
+function i(e) {
+function t(e, o) {
+if (!(this instanceof t)) return new t(e, o);
+Object.defineProperty(this, "message", {
+get: function() {
+return e;
+}
+});
+Error.captureStackTrace ? Error.captureStackTrace(this, t) : Object.defineProperty(this, "stack", {
+value: new Error().stack || ""
+});
+o && r(this, o);
+}
+(t.prototype = Object.create(Error.prototype)).constructor = t;
+Object.defineProperty(t.prototype, "name", {
+get: function() {
+return e;
+}
+});
+t.prototype.toString = function() {
+return this.name + ": " + this.message;
+};
+return t;
+}
+n.newError = i;
+n.ProtocolError = i("ProtocolError");
+n.oneOfGetter = function(e) {
+for (var t = {}, o = 0; o < e.length; ++o) t[e[o]] = 1;
+return function() {
+for (var e = Object.keys(this), o = e.length - 1; o > -1; --o) if (1 === t[e[o]] && this[e[o]] !== undefined && null !== this[e[o]]) return e[o];
+};
+};
+n.oneOfSetter = function(e) {
+return function(t) {
+for (var o = 0; o < e.length; ++o) e[o] !== t && delete this[e[o]];
+};
+};
+n.toJSONOptions = {
+longs: String,
+enums: String,
+bytes: String,
+json: !0
+};
+n._configure = function() {
+var e = n.Buffer;
+if (e) {
+n._Buffer_from = e.from !== Uint8Array.from && e.from || function(t, o) {
+return new e(t, o);
+};
+n._Buffer_allocUnsafe = e.allocUnsafe || function(t) {
+return new e(t);
+};
+} else n._Buffer_from = n._Buffer_allocUnsafe = null;
+};
+}, {
+1: 1,
+14: 14,
+2: 2,
+3: 3,
+4: 4,
+5: 5,
+6: 6,
+7: 7
+} ],
+16: [ function(e, t, o) {
+t.exports = f;
+var n, r = e(15), i = r.LongBits, s = r.base64, a = r.utf8;
+function c(e, t, o) {
+this.fn = e;
+this.len = t;
+this.next = undefined;
+this.val = o;
+}
+function u() {}
+function l(e) {
+this.head = e.head;
+this.tail = e.tail;
+this.len = e.len;
+this.next = e.states;
+}
+function f() {
+this.len = 0;
+this.head = new c(u, 0, 0);
+this.tail = this.head;
+this.states = null;
+}
+f.create = r.Buffer ? function() {
+return (f.create = function() {
+return new n();
+})();
+} : function() {
+return new f();
+};
+f.alloc = function(e) {
+return new r.Array(e);
+};
+r.Array !== Array && (f.alloc = r.pool(f.alloc, r.Array.prototype.subarray));
+f.prototype._push = function(e, t, o) {
+this.tail = this.tail.next = new c(e, t, o);
+this.len += t;
+return this;
+};
+function d(e, t, o) {
+t[o] = 255 & e;
+}
+function p(e, t) {
+this.len = e;
+this.next = undefined;
+this.val = t;
+}
+p.prototype = Object.create(c.prototype);
+p.prototype.fn = function(e, t, o) {
+for (;e > 127; ) {
+t[o++] = 127 & e | 128;
+e >>>= 7;
+}
+t[o] = e;
+};
+f.prototype.uint32 = function(e) {
+this.len += (this.tail = this.tail.next = new p((e >>>= 0) < 128 ? 1 : e < 16384 ? 2 : e < 2097152 ? 3 : e < 268435456 ? 4 : 5, e)).len;
+return this;
+};
+f.prototype.int32 = function(e) {
+return e < 0 ? this._push(h, 10, i.fromNumber(e)) : this.uint32(e);
+};
+f.prototype.sint32 = function(e) {
+return this.uint32((e << 1 ^ e >> 31) >>> 0);
+};
+function h(e, t, o) {
+for (;e.hi; ) {
+t[o++] = 127 & e.lo | 128;
+e.lo = (e.lo >>> 7 | e.hi << 25) >>> 0;
+e.hi >>>= 7;
+}
+for (;e.lo > 127; ) {
+t[o++] = 127 & e.lo | 128;
+e.lo = e.lo >>> 7;
+}
+t[o++] = e.lo;
+}
+f.prototype.uint64 = function(e) {
+var t = i.from(e);
+return this._push(h, t.length(), t);
+};
+f.prototype.int64 = f.prototype.uint64;
+f.prototype.sint64 = function(e) {
+var t = i.from(e).zzEncode();
+return this._push(h, t.length(), t);
+};
+f.prototype.bool = function(e) {
+return this._push(d, 1, e ? 1 : 0);
+};
+function _(e, t, o) {
+t[o] = 255 & e;
+t[o + 1] = e >>> 8 & 255;
+t[o + 2] = e >>> 16 & 255;
+t[o + 3] = e >>> 24;
+}
+f.prototype.fixed32 = function(e) {
+return this._push(_, 4, e >>> 0);
+};
+f.prototype.sfixed32 = f.prototype.fixed32;
+f.prototype.fixed64 = function(e) {
+var t = i.from(e);
+return this._push(_, 4, t.lo)._push(_, 4, t.hi);
+};
+f.prototype.sfixed64 = f.prototype.fixed64;
+f.prototype.float = function(e) {
+return this._push(r.float.writeFloatLE, 4, e);
+};
+f.prototype.double = function(e) {
+return this._push(r.float.writeDoubleLE, 8, e);
+};
+var g = r.Array.prototype.set ? function(e, t, o) {
+t.set(e, o);
+} : function(e, t, o) {
+for (var n = 0; n < e.length; ++n) t[o + n] = e[n];
+};
+f.prototype.bytes = function(e) {
+var t = e.length >>> 0;
+if (!t) return this._push(d, 1, 0);
+if (r.isString(e)) {
+var o = f.alloc(t = s.length(e));
+s.decode(e, o, 0);
+e = o;
+}
+return this.uint32(t)._push(g, t, e);
+};
+f.prototype.string = function(e) {
+var t = a.length(e);
+return t ? this.uint32(t)._push(a.write, t, e) : this._push(d, 1, 0);
+};
+f.prototype.fork = function() {
+this.states = new l(this);
+this.head = this.tail = new c(u, 0, 0);
+this.len = 0;
+return this;
+};
+f.prototype.reset = function() {
+if (this.states) {
+this.head = this.states.head;
+this.tail = this.states.tail;
+this.len = this.states.len;
+this.states = this.states.next;
+} else {
+this.head = this.tail = new c(u, 0, 0);
+this.len = 0;
+}
+return this;
+};
+f.prototype.ldelim = function() {
+var e = this.head, t = this.tail, o = this.len;
+this.reset().uint32(o);
+if (o) {
+this.tail.next = e.next;
+this.tail = t;
+this.len += o;
+}
+return this;
+};
+f.prototype.finish = function() {
+for (var e = this.head.next, t = this.constructor.alloc(this.len), o = 0; e; ) {
+e.fn(e.val, t, o);
+o += e.len;
+e = e.next;
+}
+return t;
+};
+f._configure = function(e) {
+n = e;
+};
+}, {
+15: 15
+} ],
+17: [ function(e, t, o) {
+t.exports = s;
+var n = e(16);
+(s.prototype = Object.create(n.prototype)).constructor = s;
+var r = e(15), i = r.Buffer;
+function s() {
+n.call(this);
+}
+s.alloc = function(e) {
+return (s.alloc = r._Buffer_allocUnsafe)(e);
+};
+var a = i && i.prototype instanceof Uint8Array && "set" === i.prototype.set.name ? function(e, t, o) {
+t.set(e, o);
+} : function(e, t, o) {
+if (e.copy) e.copy(t, o, 0, e.length); else for (var n = 0; n < e.length; ) t[o++] = e[n++];
+};
+s.prototype.bytes = function(e) {
+r.isString(e) && (e = r._Buffer_from(e, "base64"));
+var t = e.length >>> 0;
+this.uint32(t);
+t && this._push(a, t, e);
+return this;
+};
+function c(e, t, o) {
+e.length < 40 ? r.utf8.write(e, t, o) : t.utf8Write(e, o);
+}
+s.prototype.string = function(e) {
+var t = i.byteLength(e);
+this.uint32(t);
+t && this._push(c, t, e);
+return this;
+};
+}, {
+15: 15,
+16: 16
+} ]
+}, {}, [ 8 ]);
+})();
+cc._RF.pop();
+}).call(this, "undefined" != typeof global ? global : "undefined" != typeof self ? self : "undefined" != typeof window ? window : {});
+}, {
+1: void 0,
+10: void 0,
+11: void 0,
+12: void 0,
+13: void 0,
+14: void 0,
+15: void 0,
+16: void 0,
+17: void 0,
+2: void 0,
+3: void 0,
+4: void 0,
+5: void 0,
+6: void 0,
+7: void 0,
+9: void 0
+} ],
 protobufMsg: [ function(e, t, o) {
 "use strict";
 cc._RF.push(t, "f3621CcljlP/Jh72Beg++DY", "protobufMsg");
@@ -7316,7 +9279,7 @@ var n = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? func
 return typeof e;
 } : function(e) {
 return e && "function" == typeof Symbol && e.constructor === Symbol && e !== Symbol.prototype ? "symbol" : typeof e;
-}, r = e("protobuf"), i = r.Reader, s = r.Writer, a = r.util, c = r.roots.default || (r.roots.default = {});
+}, r = e("protobufjs/minimal"), i = r.Reader, s = r.Writer, a = r.util, c = r.roots.default || (r.roots.default = {});
 c.AuthProto = function() {
 var e = {};
 e.Cmd = function() {
@@ -7345,6 +9308,10 @@ t[e[20] = "eAccountUpgradeRes"] = 20;
 t[e[21] = "eGetUserCenterInfoReq"] = 21;
 t[e[22] = "eGetUserCenterInfoRes"] = 22;
 t[e[23] = "eReloginRes"] = 23;
+t[e[24] = "eWeChatLoginReq"] = 24;
+t[e[25] = "eWeChatLoginRes"] = 25;
+t[e[26] = "eWeChatSessionLoginReq"] = 26;
+t[e[27] = "eWeChatSessionLoginRes"] = 27;
 return t;
 }();
 e.UnameLoginReq = function() {
@@ -8611,6 +10578,296 @@ return this.constructor.toObject(this, r.util.toJSONOptions);
 };
 return e;
 }();
+e.WeChatLoginReq = function() {
+function e(e) {
+if (e) for (var t = Object.keys(e), o = 0; o < t.length; ++o) null != e[t[o]] && (this[t[o]] = e[t[o]]);
+}
+e.prototype.logincode = "";
+e.prototype.userlogininfo = "";
+e.create = function(t) {
+return new e(t);
+};
+e.encode = function(e, t) {
+t || (t = s.create());
+t.uint32(10).string(e.logincode);
+t.uint32(18).string(e.userlogininfo);
+return t;
+};
+e.encodeDelimited = function(e, t) {
+return this.encode(e, t).ldelim();
+};
+e.decode = function(e, t) {
+e instanceof i || (e = i.create(e));
+for (var o = void 0 === t ? e.len : e.pos + t, n = new c.AuthProto.WeChatLoginReq(); e.pos < o; ) {
+var r = e.uint32();
+switch (r >>> 3) {
+case 1:
+n.logincode = e.string();
+break;
+
+case 2:
+n.userlogininfo = e.string();
+break;
+
+default:
+e.skipType(7 & r);
+}
+}
+if (!n.hasOwnProperty("logincode")) throw a.ProtocolError("missing required 'logincode'", {
+instance: n
+});
+if (!n.hasOwnProperty("userlogininfo")) throw a.ProtocolError("missing required 'userlogininfo'", {
+instance: n
+});
+return n;
+};
+e.decodeDelimited = function(e) {
+e instanceof i || (e = new i(e));
+return this.decode(e, e.uint32());
+};
+e.verify = function(e) {
+return "object" !== ("undefined" == typeof e ? "undefined" : n(e)) || null === e ? "object expected" : a.isString(e.logincode) ? a.isString(e.userlogininfo) ? null : "userlogininfo: string expected" : "logincode: string expected";
+};
+e.fromObject = function(e) {
+if (e instanceof c.AuthProto.WeChatLoginReq) return e;
+var t = new c.AuthProto.WeChatLoginReq();
+null != e.logincode && (t.logincode = String(e.logincode));
+null != e.userlogininfo && (t.userlogininfo = String(e.userlogininfo));
+return t;
+};
+e.toObject = function(e, t) {
+t || (t = {});
+var o = {};
+if (t.defaults) {
+o.logincode = "";
+o.userlogininfo = "";
+}
+null != e.logincode && e.hasOwnProperty("logincode") && (o.logincode = e.logincode);
+null != e.userlogininfo && e.hasOwnProperty("userlogininfo") && (o.userlogininfo = e.userlogininfo);
+return o;
+};
+e.prototype.toJSON = function() {
+return this.constructor.toObject(this, r.util.toJSONOptions);
+};
+return e;
+}();
+e.WeChatLoginRes = function() {
+function e(e) {
+if (e) for (var t = Object.keys(e), o = 0; o < t.length; ++o) null != e[t[o]] && (this[t[o]] = e[t[o]]);
+}
+e.prototype.status = 0;
+e.prototype.uid = 0;
+e.prototype.userlogininfo = "";
+e.create = function(t) {
+return new e(t);
+};
+e.encode = function(e, t) {
+t || (t = s.create());
+t.uint32(8).sint32(e.status);
+null != e.uid && e.hasOwnProperty("uid") && t.uint32(16).int32(e.uid);
+null != e.userlogininfo && e.hasOwnProperty("userlogininfo") && t.uint32(26).string(e.userlogininfo);
+return t;
+};
+e.encodeDelimited = function(e, t) {
+return this.encode(e, t).ldelim();
+};
+e.decode = function(e, t) {
+e instanceof i || (e = i.create(e));
+for (var o = void 0 === t ? e.len : e.pos + t, n = new c.AuthProto.WeChatLoginRes(); e.pos < o; ) {
+var r = e.uint32();
+switch (r >>> 3) {
+case 1:
+n.status = e.sint32();
+break;
+
+case 2:
+n.uid = e.int32();
+break;
+
+case 3:
+n.userlogininfo = e.string();
+break;
+
+default:
+e.skipType(7 & r);
+}
+}
+if (!n.hasOwnProperty("status")) throw a.ProtocolError("missing required 'status'", {
+instance: n
+});
+return n;
+};
+e.decodeDelimited = function(e) {
+e instanceof i || (e = new i(e));
+return this.decode(e, e.uint32());
+};
+e.verify = function(e) {
+return "object" !== ("undefined" == typeof e ? "undefined" : n(e)) || null === e ? "object expected" : a.isInteger(e.status) ? null != e.uid && e.hasOwnProperty("uid") && !a.isInteger(e.uid) ? "uid: integer expected" : null != e.userlogininfo && e.hasOwnProperty("userlogininfo") && !a.isString(e.userlogininfo) ? "userlogininfo: string expected" : null : "status: integer expected";
+};
+e.fromObject = function(e) {
+if (e instanceof c.AuthProto.WeChatLoginRes) return e;
+var t = new c.AuthProto.WeChatLoginRes();
+null != e.status && (t.status = 0 | e.status);
+null != e.uid && (t.uid = 0 | e.uid);
+null != e.userlogininfo && (t.userlogininfo = String(e.userlogininfo));
+return t;
+};
+e.toObject = function(e, t) {
+t || (t = {});
+var o = {};
+if (t.defaults) {
+o.status = 0;
+o.uid = 0;
+o.userlogininfo = "";
+}
+null != e.status && e.hasOwnProperty("status") && (o.status = e.status);
+null != e.uid && e.hasOwnProperty("uid") && (o.uid = e.uid);
+null != e.userlogininfo && e.hasOwnProperty("userlogininfo") && (o.userlogininfo = e.userlogininfo);
+return o;
+};
+e.prototype.toJSON = function() {
+return this.constructor.toObject(this, r.util.toJSONOptions);
+};
+return e;
+}();
+e.WeChatSessionLoginReq = function() {
+function e(e) {
+if (e) for (var t = Object.keys(e), o = 0; o < t.length; ++o) null != e[t[o]] && (this[t[o]] = e[t[o]]);
+}
+e.prototype.wechatsessionkey = "";
+e.create = function(t) {
+return new e(t);
+};
+e.encode = function(e, t) {
+t || (t = s.create());
+t.uint32(10).string(e.wechatsessionkey);
+return t;
+};
+e.encodeDelimited = function(e, t) {
+return this.encode(e, t).ldelim();
+};
+e.decode = function(e, t) {
+e instanceof i || (e = i.create(e));
+for (var o = void 0 === t ? e.len : e.pos + t, n = new c.AuthProto.WeChatSessionLoginReq(); e.pos < o; ) {
+var r = e.uint32();
+switch (r >>> 3) {
+case 1:
+n.wechatsessionkey = e.string();
+break;
+
+default:
+e.skipType(7 & r);
+}
+}
+if (!n.hasOwnProperty("wechatsessionkey")) throw a.ProtocolError("missing required 'wechatsessionkey'", {
+instance: n
+});
+return n;
+};
+e.decodeDelimited = function(e) {
+e instanceof i || (e = new i(e));
+return this.decode(e, e.uint32());
+};
+e.verify = function(e) {
+return "object" !== ("undefined" == typeof e ? "undefined" : n(e)) || null === e ? "object expected" : a.isString(e.wechatsessionkey) ? null : "wechatsessionkey: string expected";
+};
+e.fromObject = function(e) {
+if (e instanceof c.AuthProto.WeChatSessionLoginReq) return e;
+var t = new c.AuthProto.WeChatSessionLoginReq();
+null != e.wechatsessionkey && (t.wechatsessionkey = String(e.wechatsessionkey));
+return t;
+};
+e.toObject = function(e, t) {
+t || (t = {});
+var o = {};
+t.defaults && (o.wechatsessionkey = "");
+null != e.wechatsessionkey && e.hasOwnProperty("wechatsessionkey") && (o.wechatsessionkey = e.wechatsessionkey);
+return o;
+};
+e.prototype.toJSON = function() {
+return this.constructor.toObject(this, r.util.toJSONOptions);
+};
+return e;
+}();
+e.WeChatSessionLoginRes = function() {
+function e(e) {
+if (e) for (var t = Object.keys(e), o = 0; o < t.length; ++o) null != e[t[o]] && (this[t[o]] = e[t[o]]);
+}
+e.prototype.status = 0;
+e.prototype.uid = 0;
+e.prototype.userlogininfo = "";
+e.create = function(t) {
+return new e(t);
+};
+e.encode = function(e, t) {
+t || (t = s.create());
+t.uint32(8).sint32(e.status);
+null != e.uid && e.hasOwnProperty("uid") && t.uint32(16).int32(e.uid);
+null != e.userlogininfo && e.hasOwnProperty("userlogininfo") && t.uint32(26).string(e.userlogininfo);
+return t;
+};
+e.encodeDelimited = function(e, t) {
+return this.encode(e, t).ldelim();
+};
+e.decode = function(e, t) {
+e instanceof i || (e = i.create(e));
+for (var o = void 0 === t ? e.len : e.pos + t, n = new c.AuthProto.WeChatSessionLoginRes(); e.pos < o; ) {
+var r = e.uint32();
+switch (r >>> 3) {
+case 1:
+n.status = e.sint32();
+break;
+
+case 2:
+n.uid = e.int32();
+break;
+
+case 3:
+n.userlogininfo = e.string();
+break;
+
+default:
+e.skipType(7 & r);
+}
+}
+if (!n.hasOwnProperty("status")) throw a.ProtocolError("missing required 'status'", {
+instance: n
+});
+return n;
+};
+e.decodeDelimited = function(e) {
+e instanceof i || (e = new i(e));
+return this.decode(e, e.uint32());
+};
+e.verify = function(e) {
+return "object" !== ("undefined" == typeof e ? "undefined" : n(e)) || null === e ? "object expected" : a.isInteger(e.status) ? null != e.uid && e.hasOwnProperty("uid") && !a.isInteger(e.uid) ? "uid: integer expected" : null != e.userlogininfo && e.hasOwnProperty("userlogininfo") && !a.isString(e.userlogininfo) ? "userlogininfo: string expected" : null : "status: integer expected";
+};
+e.fromObject = function(e) {
+if (e instanceof c.AuthProto.WeChatSessionLoginRes) return e;
+var t = new c.AuthProto.WeChatSessionLoginRes();
+null != e.status && (t.status = 0 | e.status);
+null != e.uid && (t.uid = 0 | e.uid);
+null != e.userlogininfo && (t.userlogininfo = String(e.userlogininfo));
+return t;
+};
+e.toObject = function(e, t) {
+t || (t = {});
+var o = {};
+if (t.defaults) {
+o.status = 0;
+o.uid = 0;
+o.userlogininfo = "";
+}
+null != e.status && e.hasOwnProperty("status") && (o.status = e.status);
+null != e.uid && e.hasOwnProperty("uid") && (o.uid = e.uid);
+null != e.userlogininfo && e.hasOwnProperty("userlogininfo") && (o.userlogininfo = e.userlogininfo);
+return o;
+};
+e.prototype.toJSON = function() {
+return this.constructor.toObject(this, r.util.toJSONOptions);
+};
+return e;
+}();
 return e;
 }();
 c.TalkProto = function() {
@@ -9233,6 +11490,10 @@ t[e[47] = "eStoreListReq"] = 47;
 t[e[48] = "eStoreListRes"] = 48;
 t[e[49] = "eBuyThingsReq"] = 49;
 t[e[50] = "eBuyThingsRes"] = 50;
+t[e[51] = "eUseHoodleBallReq"] = 51;
+t[e[52] = "eUseHoodleBallRes"] = 52;
+t[e[53] = "eUserConfigReq"] = 53;
+t[e[54] = "eUserConfigRes"] = 54;
 return t;
 }();
 e.CreateRoomReq = function() {
@@ -13050,12 +15311,251 @@ return this.constructor.toObject(this, r.util.toJSONOptions);
 };
 return e;
 }();
+e.UseHoodleBallReq = function() {
+function e(e) {
+if (e) for (var t = Object.keys(e), o = 0; o < t.length; ++o) null != e[t[o]] && (this[t[o]] = e[t[o]]);
+}
+e.prototype.balllevel = 0;
+e.create = function(t) {
+return new e(t);
+};
+e.encode = function(e, t) {
+t || (t = s.create());
+t.uint32(8).sint32(e.balllevel);
+return t;
+};
+e.encodeDelimited = function(e, t) {
+return this.encode(e, t).ldelim();
+};
+e.decode = function(e, t) {
+e instanceof i || (e = i.create(e));
+for (var o = void 0 === t ? e.len : e.pos + t, n = new c.GameHoodleProto.UseHoodleBallReq(); e.pos < o; ) {
+var r = e.uint32();
+switch (r >>> 3) {
+case 1:
+n.balllevel = e.sint32();
+break;
+
+default:
+e.skipType(7 & r);
+}
+}
+if (!n.hasOwnProperty("balllevel")) throw a.ProtocolError("missing required 'balllevel'", {
+instance: n
+});
+return n;
+};
+e.decodeDelimited = function(e) {
+e instanceof i || (e = new i(e));
+return this.decode(e, e.uint32());
+};
+e.verify = function(e) {
+return "object" !== ("undefined" == typeof e ? "undefined" : n(e)) || null === e ? "object expected" : a.isInteger(e.balllevel) ? null : "balllevel: integer expected";
+};
+e.fromObject = function(e) {
+if (e instanceof c.GameHoodleProto.UseHoodleBallReq) return e;
+var t = new c.GameHoodleProto.UseHoodleBallReq();
+null != e.balllevel && (t.balllevel = 0 | e.balllevel);
+return t;
+};
+e.toObject = function(e, t) {
+t || (t = {});
+var o = {};
+t.defaults && (o.balllevel = 0);
+null != e.balllevel && e.hasOwnProperty("balllevel") && (o.balllevel = e.balllevel);
+return o;
+};
+e.prototype.toJSON = function() {
+return this.constructor.toObject(this, r.util.toJSONOptions);
+};
+return e;
+}();
+e.UseHoodleBallRes = function() {
+function e(e) {
+if (e) for (var t = Object.keys(e), o = 0; o < t.length; ++o) null != e[t[o]] && (this[t[o]] = e[t[o]]);
+}
+e.prototype.status = 0;
+e.prototype.balllevel = 0;
+e.create = function(t) {
+return new e(t);
+};
+e.encode = function(e, t) {
+t || (t = s.create());
+t.uint32(8).sint32(e.status);
+null != e.balllevel && e.hasOwnProperty("balllevel") && t.uint32(16).sint32(e.balllevel);
+return t;
+};
+e.encodeDelimited = function(e, t) {
+return this.encode(e, t).ldelim();
+};
+e.decode = function(e, t) {
+e instanceof i || (e = i.create(e));
+for (var o = void 0 === t ? e.len : e.pos + t, n = new c.GameHoodleProto.UseHoodleBallRes(); e.pos < o; ) {
+var r = e.uint32();
+switch (r >>> 3) {
+case 1:
+n.status = e.sint32();
+break;
+
+case 2:
+n.balllevel = e.sint32();
+break;
+
+default:
+e.skipType(7 & r);
+}
+}
+if (!n.hasOwnProperty("status")) throw a.ProtocolError("missing required 'status'", {
+instance: n
+});
+return n;
+};
+e.decodeDelimited = function(e) {
+e instanceof i || (e = new i(e));
+return this.decode(e, e.uint32());
+};
+e.verify = function(e) {
+return "object" !== ("undefined" == typeof e ? "undefined" : n(e)) || null === e ? "object expected" : a.isInteger(e.status) ? null != e.balllevel && e.hasOwnProperty("balllevel") && !a.isInteger(e.balllevel) ? "balllevel: integer expected" : null : "status: integer expected";
+};
+e.fromObject = function(e) {
+if (e instanceof c.GameHoodleProto.UseHoodleBallRes) return e;
+var t = new c.GameHoodleProto.UseHoodleBallRes();
+null != e.status && (t.status = 0 | e.status);
+null != e.balllevel && (t.balllevel = 0 | e.balllevel);
+return t;
+};
+e.toObject = function(e, t) {
+t || (t = {});
+var o = {};
+if (t.defaults) {
+o.status = 0;
+o.balllevel = 0;
+}
+null != e.status && e.hasOwnProperty("status") && (o.status = e.status);
+null != e.balllevel && e.hasOwnProperty("balllevel") && (o.balllevel = e.balllevel);
+return o;
+};
+e.prototype.toJSON = function() {
+return this.constructor.toObject(this, r.util.toJSONOptions);
+};
+return e;
+}();
+e.UserConfigReq = function() {
+function e(e) {
+if (e) for (var t = Object.keys(e), o = 0; o < t.length; ++o) null != e[t[o]] && (this[t[o]] = e[t[o]]);
+}
+e.create = function(t) {
+return new e(t);
+};
+e.encode = function(e, t) {
+t || (t = s.create());
+return t;
+};
+e.encodeDelimited = function(e, t) {
+return this.encode(e, t).ldelim();
+};
+e.decode = function(e, t) {
+e instanceof i || (e = i.create(e));
+for (var o = void 0 === t ? e.len : e.pos + t, n = new c.GameHoodleProto.UserConfigReq(); e.pos < o; ) {
+var r = e.uint32();
+e.skipType(7 & r);
+}
+return n;
+};
+e.decodeDelimited = function(e) {
+e instanceof i || (e = new i(e));
+return this.decode(e, e.uint32());
+};
+e.verify = function(e) {
+return "object" !== ("undefined" == typeof e ? "undefined" : n(e)) || null === e ? "object expected" : null;
+};
+e.fromObject = function(e) {
+return e instanceof c.GameHoodleProto.UserConfigReq ? e : new c.GameHoodleProto.UserConfigReq();
+};
+e.toObject = function() {
+return {};
+};
+e.prototype.toJSON = function() {
+return this.constructor.toObject(this, r.util.toJSONOptions);
+};
+return e;
+}();
+e.UserConfigRes = function() {
+function e(e) {
+if (e) for (var t = Object.keys(e), o = 0; o < t.length; ++o) null != e[t[o]] && (this[t[o]] = e[t[o]]);
+}
+e.prototype.status = 0;
+e.prototype.userconfigstring = "";
+e.create = function(t) {
+return new e(t);
+};
+e.encode = function(e, t) {
+t || (t = s.create());
+t.uint32(8).sint32(e.status);
+null != e.userconfigstring && e.hasOwnProperty("userconfigstring") && t.uint32(18).string(e.userconfigstring);
+return t;
+};
+e.encodeDelimited = function(e, t) {
+return this.encode(e, t).ldelim();
+};
+e.decode = function(e, t) {
+e instanceof i || (e = i.create(e));
+for (var o = void 0 === t ? e.len : e.pos + t, n = new c.GameHoodleProto.UserConfigRes(); e.pos < o; ) {
+var r = e.uint32();
+switch (r >>> 3) {
+case 1:
+n.status = e.sint32();
+break;
+
+case 2:
+n.userconfigstring = e.string();
+break;
+
+default:
+e.skipType(7 & r);
+}
+}
+if (!n.hasOwnProperty("status")) throw a.ProtocolError("missing required 'status'", {
+instance: n
+});
+return n;
+};
+e.decodeDelimited = function(e) {
+e instanceof i || (e = new i(e));
+return this.decode(e, e.uint32());
+};
+e.verify = function(e) {
+return "object" !== ("undefined" == typeof e ? "undefined" : n(e)) || null === e ? "object expected" : a.isInteger(e.status) ? null != e.userconfigstring && e.hasOwnProperty("userconfigstring") && !a.isString(e.userconfigstring) ? "userconfigstring: string expected" : null : "status: integer expected";
+};
+e.fromObject = function(e) {
+if (e instanceof c.GameHoodleProto.UserConfigRes) return e;
+var t = new c.GameHoodleProto.UserConfigRes();
+null != e.status && (t.status = 0 | e.status);
+null != e.userconfigstring && (t.userconfigstring = String(e.userconfigstring));
+return t;
+};
+e.toObject = function(e, t) {
+t || (t = {});
+var o = {};
+if (t.defaults) {
+o.status = 0;
+o.userconfigstring = "";
+}
+null != e.status && e.hasOwnProperty("status") && (o.status = e.status);
+null != e.userconfigstring && e.hasOwnProperty("userconfigstring") && (o.userconfigstring = e.userconfigstring);
+return o;
+};
+e.prototype.toJSON = function() {
+return this.constructor.toObject(this, r.util.toJSONOptions);
+};
+return e;
+}();
 return e;
 }();
 t.exports = c;
 cc._RF.pop();
 }, {
-protobuf: "protobuf"
+"protobufjs/minimal": void 0
 } ],
 protobuf: [ function(require, module, exports) {
 (function(global) {
@@ -14179,4 +16679,4 @@ cc._RF.push(t, "838fecj9gRM9Y8tUCXSVhgM", "use_v2.1.x_cc.Action");
 cc.macro.ROTATE_ACTION_CCW = !0;
 cc._RF.pop();
 }, {} ]
-}, {}, [ "map_Level1", "use_v2.1.x_cc.Action", "protobuf", "UIFunciton", "UserInfo", "EventDefine", "GameAppConfig", "GameHoodleConfig", "LSDefine", "PlatForm", "HotUpdateNew", "AudioManager", "DialogManager", "EventManager", "ProtoManager", "ResourceManager", "SceneManager", "TimerManager", "NetWork", "ProtoTools", "Socket", "SocketDelegate", "AuthProto", "CommonProto", "GameHoodleProto", "ProtoCmd", "Response", "Stype", "SystemProto", "TalkProto", "protobufMsg", "AutoComponent", "BaseScene", "UIController", "UIDialog", "TableView", "TableViewCell", "ArrayUtil", "Base64", "BezierMaker", "DataViewUtil", "DateUtil", "HttpUtil", "Log", "Queue", "SDKAdapter", "Storage", "StringUtil", "BallCenterDialog", "CommonDialog", "GameResultDialog", "JoinRoomDialog", "MatchDialog", "MyCenterDialog", "SettingDialog", "StoreDialog", "WeakHintDialog", "GameApp", "Player", "RoomData", "State", "LoginScene", "LoginSceneCtrl", "LoginSceneInit", "LoginSceneRecvMsg", "LoginSceneShowUI", "LoginSceneTouchEvent", "LoginSendAuthMsg", "EnablePhysics", "GameHoodleCtrl", "GameHoodleData", "GameHoodleRecvMsg", "GameHoodleShowUI", "GameHoodleTouchEvent", "HoodleBallCtrl", "HoodleBallManager", "GameScene", "GameSceneCtrl", "GameSceneInit", "GameSceneRecvAuthMsg", "GameSceneRecvGameMsg", "GameSceneShowUI", "GameSceneTouchEvent", "GameSendGameHoodle", "HotFixScene", "HotFixSceneCtrl", "LobbyScene", "LobbySceneCtrl", "LobbySceneInit", "LobbySceneRecvAuthMsg", "LobbySceneRecvGameHoodleMsg", "LobbySceneShowUI", "LobbySceneTouchEvent", "LobbySendAuthMsg", "LobbySendGameHoodle" ]);
+}, {}, [ "use_v2.1.x_cc.Action", "protobuf", "minimal", "Cell", "UIFunciton", "UserInfo", "EventDefine", "GameAppConfig", "GameHoodleConfig", "LSDefine", "PlatForm", "HotUpdateNew", "AudioManager", "CellManager", "DialogManager", "EventManager", "ProtoManager", "ResourceManager", "SceneManager", "TimerManager", "NetWork", "ProtoTools", "Socket", "SocketDelegate", "AuthProto", "CommonProto", "GameHoodleProto", "ProtoCmd", "Response", "Stype", "SystemProto", "TalkProto", "protobufMsg", "AutoComponent", "BaseScene", "UIController", "UIDialog", "TableView", "TableViewCell", "ArrayUtil", "Base64", "BezierMaker", "DataViewUtil", "DateUtil", "HttpUtil", "Log", "Queue", "SDKAdapter", "Storage", "StringUtil", "WeChatLogin", "BallCenterDialog", "BallListDialog", "CommonDialog", "GameResultDialog", "JoinRoomDialog", "MatchDialog", "MyCenterDialog", "SettingDialog", "StoreDialog", "WeakHintDialog", "GameApp", "CellJoinRoom", "Player", "RoomData", "State", "LoginScene", "LoginSceneCtrl", "LoginSceneInit", "LoginSceneRecvMsg", "LoginSceneShowUI", "LoginSceneTouchEvent", "LoginSendAuthMsg", "EnablePhysics", "GameHoodleCtrl", "GameHoodleData", "GameHoodleRecvMsg", "GameHoodleShowUI", "GameHoodleTouchEvent", "HoodleBallCtrl", "HoodleBallManager", "GameScene", "GameSceneCtrl", "GameSceneInit", "GameSceneRecvAuthMsg", "GameSceneRecvGameMsg", "GameSceneShowUI", "GameSceneTouchEvent", "GameSendGameHoodle", "HotFixScene", "HotFixSceneCtrl", "LobbyScene", "LobbySceneCtrl", "LobbySceneInit", "LobbySceneRecvAuthMsg", "LobbySceneRecvGameHoodleMsg", "LobbySceneShowUI", "LobbySceneTouchEvent", "LobbySendAuthMsg", "LobbySendGameHoodle" ]);
