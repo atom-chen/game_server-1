@@ -22,10 +22,13 @@ class Player{
 
     //居内数据
     _user_state:any                 = UserState.InView; //玩家状态
-    _user_pos:any                   = {posx:0,posy:0} //玩家位置 
-    _user_power:number              = 0; // 玩家权限
-    _user_score:number              = 0; //玩家得分
-    _user_ball_info:string          = ""; //json串，玩家小球信息
+    _user_pos:any                   = {posx:0,posy:0}   //玩家位置 
+    _user_power:number              = 0;                //玩家权限
+    _user_score:number              = 0;                //玩家得分
+    _user_ball_info:string          = "";               //json串，玩家小球信息
+
+    //玩家配置（身上的装备，弹珠等级，等等）
+    _user_config:any                = {};
 
     constructor(){
         //test
@@ -115,27 +118,21 @@ class Player{
         this._user_ball_info = info;
     }
 
-    //玩家信息汇总
-    get_player_info(){
-        let info = ArrayUtil.ObjCat(this._ugame_info,this._ucenter_info);
-        info.isoffline          = this._is_off_line;
-        info.ishost             = this._is_host;
-        info.seatid             = this._seat_id;
-        info.userstate          = this._user_state;
-        info.userpos            = this._user_pos;
-        info.userpower          = this._user_power;
-        // Log.info("hcc>>get_player_info: " , info)
-        return info;
+    //当前使用小球等级
+    get_uball_level(){
+        return this._user_config["user_ball_level"];
     }
 
-    //重连后拷贝老玩家的信息
-    set_player_info(uinfo:any){
-        this._is_off_line       = uinfo.isoffline;
-        this._is_host           = uinfo.ishost;
-        this._seat_id           = uinfo.seatid;
-        this._user_state        = uinfo.userstate;
-        this._user_pos          = uinfo.userpos;
-        this._user_power        = uinfo.userpower;
+    set_uball_level(level:number){
+        this._user_config["user_ball_level"] = level;
+    }
+
+    set_user_config(config:any){
+        this._user_config = config;
+    }
+
+    get_user_config(){
+        return this._user_config;
     }
 
     //设置是否掉线
@@ -202,6 +199,30 @@ class Player{
 
     get_user_score(){
         return this._user_score;
+    }
+
+    //玩家信息汇总
+    get_player_info() {
+        let info = ArrayUtil.ObjCat(this._ugame_info, this._ucenter_info);
+        info.isoffline = this._is_off_line;
+        info.ishost = this._is_host;
+        info.seatid = this._seat_id;
+        info.userstate = this._user_state;
+        info.userpos = this._user_pos;
+        info.userpower = this._user_power;
+        info.userconfig = this._user_config;
+        return info;
+    }
+
+    //重连后拷贝老玩家的信息
+    set_player_info(uinfo: any) {
+        this._is_off_line = uinfo.isoffline;
+        this._is_host = uinfo.ishost;
+        this._seat_id = uinfo.seatid;
+        this._user_state = uinfo.userstate;
+        this._user_pos = uinfo.userpos;
+        this._user_power = uinfo.userpower;
+        this._user_config = uinfo.userconfig;
     }
 
     //清除玩家在房间内的相关信息

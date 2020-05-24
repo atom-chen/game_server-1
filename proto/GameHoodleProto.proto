@@ -77,6 +77,10 @@ enum Cmd {
 	eStoreListRes				= 48;
 	eBuyThingsReq 				= 49; 				// 购买
 	eBuyThingsRes				= 50;
+	eUseHoodleBallReq			= 51;				//使用小球
+	eUseHoodleBallRes			= 52;
+	eUserConfigReq				= 53;				//玩家配置
+	eUserConfigRes				= 54;
 }
 
 ///////////////////////////////////
@@ -363,4 +367,22 @@ message BuyThingsRes {
 	optional sint32 propcount = 4;
 	optional sint32 propprice = 5;
 	optional string propinfo = 6;
+}
+
+//使用小球
+message UseHoodleBallReq {
+	required sint32 balllevel = 1;
+}
+
+message UseHoodleBallRes {
+	required sint32 status = 1;
+	optional sint32 balllevel = 2;
+}
+
+message UserConfigReq {
+}
+
+message UserConfigRes {
+	required sint32 status = 1;
+	optional string userconfigstring = 2;
 }

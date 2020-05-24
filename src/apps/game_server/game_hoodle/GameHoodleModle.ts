@@ -42,6 +42,8 @@ class GameHoodleModle {
             [Cmd.eUpdateUserBallReq]:               this.on_player_update_ball_info,
             [Cmd.eStoreListReq]:                    this.on_player_store_list,
             [Cmd.eBuyThingsReq]:                    this.on_player_buy_things,
+            [Cmd.eUserConfigReq]:                   this.on_player_get_config,
+            [Cmd.eUseHoodleBallReq]:                this.on_player_use_hoodleball,
         }
     }
 
@@ -242,6 +244,23 @@ class GameHoodleModle {
         GameInfoInterface.do_player_buy_things(utag, proto_type, raw_cmd);
     }
 
+    on_player_use_hoodleball(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            GameSendMsg.send(session, Cmd.eUseHoodleBallRes, utag, proto_type, { status: Response.INVALIDI_OPT })
+            Log.warn("on_player_use_hoodlebal error player is not exist!")
+            return;
+        }
+        GameInfoInterface.do_player_use_hoodleball(utag, proto_type, raw_cmd);
+    }
+
+    on_player_get_config(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            GameSendMsg.send(session, Cmd.eUserConfigRes, utag, proto_type, { status: Response.INVALIDI_OPT })
+            Log.warn("on_player_config error player is not exist!")
+            return;
+        }
+        GameInfoInterface.do_player_get_user_config(utag);
+    }
 }
 
 export default GameHoodleModle;

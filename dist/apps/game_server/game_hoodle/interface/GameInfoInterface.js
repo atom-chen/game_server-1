@@ -255,6 +255,58 @@ var GameInfoInterface = /** @class */ (function () {
             }
         }
     };
+    //获取玩家配置
+    GameInfoInterface.do_player_get_user_config = function (utag) {
+        var player = playerMgr.get_player(utag);
+        MySqlGame_1["default"].get_ugame_config_by_uid(player.get_uid(), function (status, ret) {
+            if (status == Response_1["default"].OK) {
+                Log_1["default"].info("hcc>>do_player_get_user_config: ", ret);
+                var conf_obj = JSON.parse(ret);
+                if (!conf_obj["user_ball_level"]) {
+                    conf_obj["user_ball_level"] = 1;
+                }
+                var body = {
+                    status: Response_1["default"].OK,
+                    userconfigstring: JSON.stringify(conf_obj)
+                };
+                player.send_cmd(GameHoodleProto_1.Cmd.eUserConfigRes, body);
+                player.set_user_config(conf_obj);
+            }
+            else {
+                player.send_cmd(GameHoodleProto_1.Cmd.eUserConfigRes, { status: Response_1["default"].INVALIDI_OPT });
+            }
+        });
+    };
+    //使用弹珠
+    GameInfoInterface.do_player_use_hoodleball = function (utag, proto_type, raw_cmd) {
+        var player = playerMgr.get_player(utag);
+        var req_body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
+        if (req_body) {
+            var balllevel = req_body.balllevel;
+            var ball_obj = JSON.parse(player.get_uball_info());
+            if (balllevel) {
+                var keyStr = GameHoodleConfig_1["default"].BALL_SAVE_KEY_STR + balllevel;
+                if (ball_obj[keyStr] && Number(ball_obj[keyStr]) > 0) {
+                    var userConfig = player.get_user_config();
+                    userConfig["user_ball_level"] = balllevel;
+                    player.set_user_config(userConfig);
+                    var body = {
+                        status: Response_1["default"].OK,
+                        balllevel: Number(balllevel)
+                    };
+                    player.send_cmd(GameHoodleProto_1.Cmd.eUseHoodleBallRes, body);
+                    //更新数据库
+                    MySqlGame_1["default"].update_ugame_user_config(player.get_uid(), JSON.stringify(player.get_user_config()), function name(status, ret) {
+                        if (status == Response_1["default"].OK) {
+                            Log_1["default"].info("hcc>>update_ugame_user_config success ,ret: ", ret);
+                        }
+                    });
+                    return;
+                }
+            }
+        }
+        player.send_cmd(GameHoodleProto_1.Cmd.eUseHoodleBallRes, { status: Response_1["default"].INVALIDI_OPT });
+    };
     return GameInfoInterface;
 }());
 exports["default"] = GameInfoInterface;

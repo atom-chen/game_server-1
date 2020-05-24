@@ -25,9 +25,11 @@ var Player = /** @class */ (function () {
         //居内数据
         this._user_state = State_1.UserState.InView; //玩家状态
         this._user_pos = { posx: 0, posy: 0 }; //玩家位置 
-        this._user_power = 0; // 玩家权限
+        this._user_power = 0; //玩家权限
         this._user_score = 0; //玩家得分
         this._user_ball_info = ""; //json串，玩家小球信息
+        //玩家配置（身上的装备，弹珠等级，等等）
+        this._user_config = {};
         //test
         // this._ugame_info["test_gameinfo"] = "info_test";
         // this._ugame_info["test_gameinfo2"] = "info_test2";
@@ -101,26 +103,18 @@ var Player = /** @class */ (function () {
     Player.prototype.set_uball_info = function (info) {
         this._user_ball_info = info;
     };
-    //玩家信息汇总
-    Player.prototype.get_player_info = function () {
-        var info = ArrayUtil_1["default"].ObjCat(this._ugame_info, this._ucenter_info);
-        info.isoffline = this._is_off_line;
-        info.ishost = this._is_host;
-        info.seatid = this._seat_id;
-        info.userstate = this._user_state;
-        info.userpos = this._user_pos;
-        info.userpower = this._user_power;
-        // Log.info("hcc>>get_player_info: " , info)
-        return info;
+    //当前使用小球等级
+    Player.prototype.get_uball_level = function () {
+        return this._user_config["user_ball_level"];
     };
-    //重连后拷贝老玩家的信息
-    Player.prototype.set_player_info = function (uinfo) {
-        this._is_off_line = uinfo.isoffline;
-        this._is_host = uinfo.ishost;
-        this._seat_id = uinfo.seatid;
-        this._user_state = uinfo.userstate;
-        this._user_pos = uinfo.userpos;
-        this._user_power = uinfo.userpower;
+    Player.prototype.set_uball_level = function (level) {
+        this._user_config["user_ball_level"] = level;
+    };
+    Player.prototype.set_user_config = function (config) {
+        this._user_config = config;
+    };
+    Player.prototype.get_user_config = function () {
+        return this._user_config;
     };
     //设置是否掉线
     Player.prototype.set_offline = function (is_offline) {
@@ -173,6 +167,28 @@ var Player = /** @class */ (function () {
     };
     Player.prototype.get_user_score = function () {
         return this._user_score;
+    };
+    //玩家信息汇总
+    Player.prototype.get_player_info = function () {
+        var info = ArrayUtil_1["default"].ObjCat(this._ugame_info, this._ucenter_info);
+        info.isoffline = this._is_off_line;
+        info.ishost = this._is_host;
+        info.seatid = this._seat_id;
+        info.userstate = this._user_state;
+        info.userpos = this._user_pos;
+        info.userpower = this._user_power;
+        info.userconfig = this._user_config;
+        return info;
+    };
+    //重连后拷贝老玩家的信息
+    Player.prototype.set_player_info = function (uinfo) {
+        this._is_off_line = uinfo.isoffline;
+        this._is_host = uinfo.ishost;
+        this._seat_id = uinfo.seatid;
+        this._user_state = uinfo.userstate;
+        this._user_pos = uinfo.userpos;
+        this._user_power = uinfo.userpower;
+        this._user_config = uinfo.userconfig;
     };
     //清除玩家在房间内的相关信息
     Player.prototype.clear_room_info = function () {

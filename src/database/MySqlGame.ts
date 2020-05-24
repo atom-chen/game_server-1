@@ -144,6 +144,62 @@ class MySqlGame {
 		})
     }
 
+    //查找玩家游戏配置
+    static get_ugame_config_by_uid(uid: number, callback: Function) {
+        var sql = "select user_config from ugame where uid = %d limit 1";
+        var sql_cmd = util.format(sql, uid);
+        MySqlGame.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
+            if (err) {
+                callback(Response.SYSTEM_ERR, err);
+                return;
+            } else {
+                let ret_len = ArrayUtil.GetArrayLen(sql_ret);
+                if (ret_len > 0) {
+                    try {
+                        let info = sql_ret[0];
+                        let user_config_obj = querystring.decode(info.user_config);
+                        let user_config_json = JSON.stringify(user_config_obj);
+                        callback(Response.OK, user_config_json);
+                    } catch (error) {
+                        callback(Response.SYSTEM_ERR);
+                        Log.error(error);
+                        return;
+                    }
+                } else {
+                    callback(Response.SYSTEM_ERR);
+                }
+            }
+        });
+    }
+
+    //更新玩家配置
+    static update_ugame_user_config(uid: number, user_config_json: string, callback: Function) {
+        let uconfig_qstring = "";
+        try {
+            uconfig_qstring = querystring.encode(JSON.parse(user_config_json));
+        } catch (error) {
+            Log.error(error);
+            callback(Response.SYSTEM_ERR);
+            return;
+        }
+
+        if (uconfig_qstring == "") {
+            Log.warn("update_ugame_user_config quertstring error");
+            callback(Response.SYSTEM_ERR);
+            return;
+        }
+
+        var sql = "update ugame set user_config = \"%s\" where uid = %d";
+        var sql_cmd = util.format(sql, uconfig_qstring, uid);
+        MySqlGame.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
+            if (err) {
+                callback(Response.SYSTEM_ERR, err);
+                return;
+            }
+            callback(Response.OK, sql_ret);
+        })
+    }
+
 }
 
 export default MySqlGame;

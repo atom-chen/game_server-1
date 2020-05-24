@@ -147,6 +147,62 @@ var MySqlGame = /** @class */ (function () {
             callback(Response_1["default"].OK, sql_ret);
         });
     };
+    //查找玩家游戏配置
+    MySqlGame.get_ugame_config_by_uid = function (uid, callback) {
+        var sql = "select user_config from ugame where uid = %d limit 1";
+        var sql_cmd = util.format(sql, uid);
+        MySqlGame.query(sql_cmd, function (err, sql_ret, fields_desic) {
+            if (err) {
+                callback(Response_1["default"].SYSTEM_ERR, err);
+                return;
+            }
+            else {
+                var ret_len = ArrayUtil_1["default"].GetArrayLen(sql_ret);
+                if (ret_len > 0) {
+                    try {
+                        var info = sql_ret[0];
+                        var user_config_obj = querystring_1["default"].decode(info.user_config);
+                        var user_config_json = JSON.stringify(user_config_obj);
+                        callback(Response_1["default"].OK, user_config_json);
+                    }
+                    catch (error) {
+                        callback(Response_1["default"].SYSTEM_ERR);
+                        Log_1["default"].error(error);
+                        return;
+                    }
+                }
+                else {
+                    callback(Response_1["default"].SYSTEM_ERR);
+                }
+            }
+        });
+    };
+    //更新玩家配置
+    MySqlGame.update_ugame_user_config = function (uid, user_config_json, callback) {
+        var uconfig_qstring = "";
+        try {
+            uconfig_qstring = querystring_1["default"].encode(JSON.parse(user_config_json));
+        }
+        catch (error) {
+            Log_1["default"].error(error);
+            callback(Response_1["default"].SYSTEM_ERR);
+            return;
+        }
+        if (uconfig_qstring == "") {
+            Log_1["default"].warn("update_ugame_user_config quertstring error");
+            callback(Response_1["default"].SYSTEM_ERR);
+            return;
+        }
+        var sql = "update ugame set user_config = \"%s\" where uid = %d";
+        var sql_cmd = util.format(sql, uconfig_qstring, uid);
+        MySqlGame.query(sql_cmd, function (err, sql_ret, fields_desic) {
+            if (err) {
+                callback(Response_1["default"].SYSTEM_ERR, err);
+                return;
+            }
+            callback(Response_1["default"].OK, sql_ret);
+        });
+    };
     MySqlGame.mysqlEngine = new MySqlEngine_1["default"]();
     return MySqlGame;
 }());

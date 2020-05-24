@@ -239,6 +239,59 @@ class GameInfoInterface {
             }
         }
     }
+
+    //获取玩家配置
+    static do_player_get_user_config(utag: number) {
+        let player: Player = playerMgr.get_player(utag);
+        MySqlGame.get_ugame_config_by_uid(player.get_uid(), function (status: number, ret: any) {
+            if (status == Response.OK) {
+                Log.info("hcc>>do_player_get_user_config: ", ret);
+                let conf_obj = JSON.parse(ret);
+                if (!conf_obj["user_ball_level"]){
+                    conf_obj["user_ball_level"] = 1;
+                }
+                let body = {
+                    status: Response.OK,
+                    userconfigstring: JSON.stringify(conf_obj),
+                }
+                player.send_cmd(Cmd.eUserConfigRes, body);
+                player.set_user_config(conf_obj);
+            } else {
+                player.send_cmd(Cmd.eUserConfigRes, { status: Response.INVALIDI_OPT });
+            }
+        })
+    }
+
+    //使用弹珠
+    static do_player_use_hoodleball(utag: number, proto_type: number, raw_cmd: any) {
+        let player: Player = playerMgr.get_player(utag);
+        let req_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
+        if(req_body){
+            let balllevel = req_body.balllevel;
+            let ball_obj = JSON.parse(player.get_uball_info());
+            if (balllevel){
+                let keyStr = GameHoodleConfig.BALL_SAVE_KEY_STR + balllevel;
+                if (ball_obj[keyStr] && Number(ball_obj[keyStr]) > 0){
+                    let userConfig = player.get_user_config();
+                    userConfig["user_ball_level"] = balllevel;
+                    player.set_user_config(userConfig);
+                    let body = {
+                        status: Response.OK,
+                        balllevel: Number(balllevel),
+                    }
+                    player.send_cmd(Cmd.eUseHoodleBallRes,body);
+                    //更新数据库
+                    MySqlGame.update_ugame_user_config(player.get_uid(),JSON.stringify(player.get_user_config()),function name(status:number, ret:any) {
+                        if(status == Response.OK){
+                            Log.info("hcc>>update_ugame_user_config success ,ret: " , ret);
+                        }
+                    })
+                    return;
+                }
+            }
+        }
+        player.send_cmd(Cmd.eUseHoodleBallRes, { status: Response.INVALIDI_OPT });
+    }
 }
 
 export default GameInfoInterface;

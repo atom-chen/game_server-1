@@ -41,6 +41,8 @@ var GameHoodleModle = /** @class */ (function () {
             _a[GameHoodleProto_1.Cmd.eUpdateUserBallReq] = this.on_player_update_ball_info,
             _a[GameHoodleProto_1.Cmd.eStoreListReq] = this.on_player_store_list,
             _a[GameHoodleProto_1.Cmd.eBuyThingsReq] = this.on_player_buy_things,
+            _a[GameHoodleProto_1.Cmd.eUserConfigReq] = this.on_player_get_config,
+            _a[GameHoodleProto_1.Cmd.eUseHoodleBallReq] = this.on_player_use_hoodleball,
             _a);
     }
     GameHoodleModle.getInstance = function () {
@@ -221,6 +223,22 @@ var GameHoodleModle = /** @class */ (function () {
             return;
         }
         GameInfoInterface_1["default"].do_player_buy_things(utag, proto_type, raw_cmd);
+    };
+    GameHoodleModle.prototype.on_player_use_hoodleball = function (session, utag, proto_type, raw_cmd) {
+        if (!GameCheck_1["default"].check_player(utag)) {
+            GameSendMsg_1["default"].send(session, GameHoodleProto_1.Cmd.eUseHoodleBallRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+            Log_1["default"].warn("on_player_use_hoodlebal error player is not exist!");
+            return;
+        }
+        GameInfoInterface_1["default"].do_player_use_hoodleball(utag, proto_type, raw_cmd);
+    };
+    GameHoodleModle.prototype.on_player_get_config = function (session, utag, proto_type, raw_cmd) {
+        if (!GameCheck_1["default"].check_player(utag)) {
+            GameSendMsg_1["default"].send(session, GameHoodleProto_1.Cmd.eUserConfigRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+            Log_1["default"].warn("on_player_config error player is not exist!");
+            return;
+        }
+        GameInfoInterface_1["default"].do_player_get_user_config(utag);
     };
     GameHoodleModle.Instance = new GameHoodleModle();
     return GameHoodleModle;
