@@ -16,6 +16,8 @@ var GameMatchInterface_1 = __importDefault(require("./interface/GameMatchInterfa
 var GameProcessInterface_1 = __importDefault(require("./interface/GameProcessInterface"));
 var GameLogicInterface_1 = __importDefault(require("./interface/GameLogicInterface"));
 var GameCheck_1 = __importDefault(require("./interface/GameCheck"));
+var GameEmojInterface_1 = __importDefault(require("./interface/GameEmojInterface"));
+var GamePlayAgainInterface_1 = __importDefault(require("./interface/GamePlayAgainInterface"));
 var GameHoodleModle = /** @class */ (function () {
     function GameHoodleModle() {
         var _a;
@@ -43,6 +45,9 @@ var GameHoodleModle = /** @class */ (function () {
             _a[GameHoodleProto_1.Cmd.eBuyThingsReq] = this.on_player_buy_things,
             _a[GameHoodleProto_1.Cmd.eUserConfigReq] = this.on_player_get_config,
             _a[GameHoodleProto_1.Cmd.eUseHoodleBallReq] = this.on_player_use_hoodleball,
+            _a[GameHoodleProto_1.Cmd.eUserEmojReq] = this.on_player_use_emoj,
+            _a[GameHoodleProto_1.Cmd.eUserPlayAgainReq] = this.on_player_play_again_req,
+            _a[GameHoodleProto_1.Cmd.eUserPlayAgainAnswerReq] = this.on_player_play_again_answer,
             _a);
     }
     GameHoodleModle.getInstance = function () {
@@ -239,6 +244,30 @@ var GameHoodleModle = /** @class */ (function () {
             return;
         }
         GameInfoInterface_1["default"].do_player_get_user_config(utag);
+    };
+    GameHoodleModle.prototype.on_player_use_emoj = function (session, utag, proto_type, raw_cmd) {
+        if (!GameCheck_1["default"].check_player(utag)) {
+            GameSendMsg_1["default"].send(session, GameHoodleProto_1.Cmd.eUserEmojRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+            Log_1["default"].warn("on_player_use_emoj error player is not exist!");
+            return;
+        }
+        GameEmojInterface_1["default"].do_player_use_emoj(utag, proto_type, raw_cmd);
+    };
+    GameHoodleModle.prototype.on_player_play_again_req = function (session, utag, proto_type, raw_cmd) {
+        if (!GameCheck_1["default"].check_player(utag)) {
+            GameSendMsg_1["default"].send(session, GameHoodleProto_1.Cmd.eUserPlayAgainRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+            Log_1["default"].warn("on_player_play_again_req error player is not exist!");
+            return;
+        }
+        GamePlayAgainInterface_1["default"].do_player_play_again_req(utag, proto_type, raw_cmd);
+    };
+    GameHoodleModle.prototype.on_player_play_again_answer = function (session, utag, proto_type, raw_cmd) {
+        if (!GameCheck_1["default"].check_player(utag)) {
+            GameSendMsg_1["default"].send(session, GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+            Log_1["default"].warn("on_player_play_again_answer error player is not exist!");
+            return;
+        }
+        GamePlayAgainInterface_1["default"].do_player_play_again_answer(utag, proto_type, raw_cmd);
     };
     GameHoodleModle.Instance = new GameHoodleModle();
     return GameHoodleModle;

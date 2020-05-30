@@ -125,7 +125,9 @@ var GameRoomInterface = /** @class */ (function () {
         //start game
         if (room.get_game_state() != State_1.GameState.InView) {
             Log_1["default"].warn(player.get_unick(), " exit_room error, game is start !");
-            player.send_cmd(GameHoodleProto_1.Cmd.eExitRoomRes, { status: Response_1["default"].INVALIDI_OPT });
+            player.set_offline(true);
+            GameFunction_1["default"].broadcast_player_info_in_rooom(room, player);
+            player.send_cmd(GameHoodleProto_1.Cmd.eExitRoomRes, { status: Response_1["default"].OK });
             return;
         }
         if (room.get_is_match_room()) {

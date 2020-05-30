@@ -11,6 +11,8 @@ import GameMatchInterface from './interface/GameMatchInterface';
 import GameProcessInterface from './interface/GameProcessInterface';
 import GameLogicInterface from './interface/GameLogicInterface';
 import GameCheck from './interface/GameCheck';
+import GameEmojInterface from './interface/GameEmojInterface';
+import GamePlayAgainInterface from './interface/GamePlayAgainInterface';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -44,6 +46,9 @@ class GameHoodleModle {
             [Cmd.eBuyThingsReq]:                    this.on_player_buy_things,
             [Cmd.eUserConfigReq]:                   this.on_player_get_config,
             [Cmd.eUseHoodleBallReq]:                this.on_player_use_hoodleball,
+            [Cmd.eUserEmojReq]:                     this.on_player_use_emoj,
+            [Cmd.eUserPlayAgainReq]:                this.on_player_play_again_req,
+            [Cmd.eUserPlayAgainAnswerReq]:          this.on_player_play_again_answer,
         }
     }
 
@@ -260,6 +265,33 @@ class GameHoodleModle {
             return;
         }
         GameInfoInterface.do_player_get_user_config(utag);
+    }
+
+    on_player_use_emoj(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            GameSendMsg.send(session, Cmd.eUserEmojRes, utag, proto_type, { status: Response.INVALIDI_OPT })
+            Log.warn("on_player_use_emoj error player is not exist!")
+            return;
+        }
+        GameEmojInterface.do_player_use_emoj(utag, proto_type, raw_cmd);
+    }
+
+    on_player_play_again_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            GameSendMsg.send(session, Cmd.eUserPlayAgainRes, utag, proto_type, { status: Response.INVALIDI_OPT })
+            Log.warn("on_player_play_again_req error player is not exist!")
+            return;
+        }
+        GamePlayAgainInterface.do_player_play_again_req(utag, proto_type, raw_cmd);
+    }
+
+    on_player_play_again_answer(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            GameSendMsg.send(session, Cmd.eUserPlayAgainAnswerRes, utag, proto_type, { status: Response.INVALIDI_OPT })
+            Log.warn("on_player_play_again_answer error player is not exist!")
+            return;
+        }
+        GamePlayAgainInterface.do_player_play_again_answer(utag, proto_type, raw_cmd);
     }
 }
 

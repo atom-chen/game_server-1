@@ -68,6 +68,12 @@ var Cmd;
     Cmd[Cmd["eUseHoodleBallRes"] = 52] = "eUseHoodleBallRes";
     Cmd[Cmd["eUserConfigReq"] = 53] = "eUserConfigReq";
     Cmd[Cmd["eUserConfigRes"] = 54] = "eUserConfigRes";
+    Cmd[Cmd["eUserEmojReq"] = 55] = "eUserEmojReq";
+    Cmd[Cmd["eUserEmojRes"] = 56] = "eUserEmojRes";
+    Cmd[Cmd["eUserPlayAgainReq"] = 57] = "eUserPlayAgainReq";
+    Cmd[Cmd["eUserPlayAgainRes"] = 58] = "eUserPlayAgainRes";
+    Cmd[Cmd["eUserPlayAgainAnswerReq"] = 59] = "eUserPlayAgainAnswerReq";
+    Cmd[Cmd["eUserPlayAgainAnswerRes"] = 60] = "eUserPlayAgainAnswerRes";
 })(Cmd = exports.Cmd || (exports.Cmd = {}));
 exports.CmdName = (_a = {},
     ///////////////////////////////////
@@ -134,5 +140,11 @@ exports.CmdName = (_a = {},
     _a[52] = "UseHoodleBallRes",
     _a[53] = "UserConfigReq",
     _a[54] = "UserConfigRes",
+    _a[55] = "UserEmojReq",
+    _a[56] = "UserEmojRes",
+    _a[57] = "UserPlayAgainReq",
+    _a[58] = "UserPlayAgainRes",
+    _a[59] = "UserPlayAgainAnswerReq",
+    _a[60] = "UserPlayAgainAnswerRes",
     _a);
 //# sourceMappingURL=GameHoodleProto.js.map

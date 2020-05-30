@@ -137,7 +137,9 @@ class GameRoomInterface {
         //start game
         if (room.get_game_state() != GameState.InView) {
             Log.warn(player.get_unick()," exit_room error, game is start !");
-            player.send_cmd(Cmd.eExitRoomRes, { status: Response.INVALIDI_OPT })
+            player.set_offline(true);
+            GameFunction.broadcast_player_info_in_rooom(room,player);
+            player.send_cmd(Cmd.eExitRoomRes, { status: Response.OK})
             return;
         }
 
