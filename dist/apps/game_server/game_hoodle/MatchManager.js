@@ -55,7 +55,7 @@ var MatchManager = /** @class */ (function () {
             else { //从匹配列表中查找正在匹配中的人
                 _this.do_match_player();
             }
-            _this.log_match_list();
+            //    _this.log_match_list()
         }.bind(this), GameHoodleConfig_1["default"].MATCH_INTERVAL);
     };
     MatchManager.prototype.do_match_player = function () {
