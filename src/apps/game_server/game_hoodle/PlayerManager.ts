@@ -38,10 +38,8 @@ class PlayerManager {
         if(this._player_set[uid]){
             this._player_set[uid] = null;
             delete this._player_set[uid];
-            // Log.info("delete player uid: " , uid ," success, playercount: " , this.get_player_count())
             return true;
         }
-        // Log.warn("delete_player error:", uid, "is not in game server!!!!");
         return false;
     }
 

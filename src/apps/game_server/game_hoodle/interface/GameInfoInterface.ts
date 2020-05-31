@@ -8,6 +8,7 @@ import Response from '../../../protocol/Response';
 import ArrayUtil from "../../../../utils/ArrayUtil";
 import PlayerManager from '../PlayerManager';
 import ProtoManager from '../../../../netbus/ProtoManager';
+import StoreConfig from '../config/StoreConfig';
 
 let playerMgr: PlayerManager = PlayerManager.getInstance();
 
@@ -180,7 +181,7 @@ class GameInfoInterface {
         let player: Player = playerMgr.get_player(utag);
         let res_body = {
             status: Response.OK,
-            storeprops: GameHoodleConfig.KW_STORE_LIST_CONFIG,
+            storeprops: StoreConfig.getInstance().get_store_config(),
         }
         player.send_cmd(Cmd.eStoreListRes, res_body);
     }
@@ -190,9 +191,10 @@ class GameInfoInterface {
         let player: Player = playerMgr.get_player(utag);
         let req_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (req_body) {
+            let storeConfig = StoreConfig.getInstance().get_store_config();
             let propsvrindex = req_body.propsvrindex;
-            for (let key in GameHoodleConfig.KW_STORE_LIST_CONFIG) {
-                let shopInfo = GameHoodleConfig.KW_STORE_LIST_CONFIG[key];
+            for (let key in storeConfig) {
+                let shopInfo = storeConfig[key];
                 if (shopInfo.propsvrindex == propsvrindex) {
                     let propprice   = shopInfo.propprice;
                     let propcount   = shopInfo.propcount;

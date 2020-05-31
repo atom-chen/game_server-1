@@ -11,6 +11,7 @@ var Response_1 = __importDefault(require("../../../protocol/Response"));
 var ArrayUtil_1 = __importDefault(require("../../../../utils/ArrayUtil"));
 var PlayerManager_1 = __importDefault(require("../PlayerManager"));
 var ProtoManager_1 = __importDefault(require("../../../../netbus/ProtoManager"));
+var StoreConfig_1 = __importDefault(require("../config/StoreConfig"));
 var playerMgr = PlayerManager_1["default"].getInstance();
 var GameInfoInterface = /** @class */ (function () {
     function GameInfoInterface() {
@@ -189,7 +190,7 @@ var GameInfoInterface = /** @class */ (function () {
         var player = playerMgr.get_player(utag);
         var res_body = {
             status: Response_1["default"].OK,
-            storeprops: GameHoodleConfig_1["default"].KW_STORE_LIST_CONFIG
+            storeprops: StoreConfig_1["default"].getInstance().get_store_config()
         };
         player.send_cmd(GameHoodleProto_1.Cmd.eStoreListRes, res_body);
     };
@@ -198,9 +199,10 @@ var GameInfoInterface = /** @class */ (function () {
         var player = playerMgr.get_player(utag);
         var req_body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
         if (req_body) {
+            var storeConfig = StoreConfig_1["default"].getInstance().get_store_config();
             var propsvrindex = req_body.propsvrindex;
             var _loop_1 = function (key) {
-                var shopInfo = GameHoodleConfig_1["default"].KW_STORE_LIST_CONFIG[key];
+                var shopInfo = storeConfig[key];
                 if (shopInfo.propsvrindex == propsvrindex) {
                     var propprice_1 = shopInfo.propprice;
                     var propcount_1 = shopInfo.propcount;
@@ -248,7 +250,7 @@ var GameInfoInterface = /** @class */ (function () {
                     return "break";
                 }
             };
-            for (var key in GameHoodleConfig_1["default"].KW_STORE_LIST_CONFIG) {
+            for (var key in storeConfig) {
                 var state_1 = _loop_1(key);
                 if (state_1 === "break")
                     break;
