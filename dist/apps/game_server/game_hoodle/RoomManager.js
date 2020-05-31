@@ -65,6 +65,9 @@ var RoomManager = /** @class */ (function () {
         }
         return null;
     };
+    RoomManager.prototype.get_all_room = function () {
+        return this._room_set;
+    };
     RoomManager.Instance = new RoomManager();
     return RoomManager;
 }());

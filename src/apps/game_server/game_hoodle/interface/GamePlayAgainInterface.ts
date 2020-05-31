@@ -50,7 +50,9 @@ class GamePlayAgainInterface {
                 responsecode: responsecode,
             }
             let invitePlayer: Player = playerMgr.get_player(requseruid); //请求玩家
-            let player_list = [player, invitePlayer];
+            let player_list = [];
+            player_list.push(player);
+            player_list.push(invitePlayer);
             if (invitePlayer) {
                 invitePlayer.send_cmd(Cmd.eUserPlayAgainRes, resBody);
                 if(responsecode == Response.OK){

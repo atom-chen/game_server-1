@@ -2,11 +2,12 @@ import Room from './Room';
 import ArrayUtil from '../../../utils/ArrayUtil';
 import Player from './Player';
 import Log from '../../../utils/Log';
-import { UserState, PlayerPower } from './config/State';
+import { UserState, PlayerPower, GameState } from './config/State';
 import RoomManager from './RoomManager';
 import { Cmd } from '../../protocol/GameHoodleProto';
 import GameHoodleConfig from './config/GameHoodleConfig';
 import Response from '../../protocol/Response';
+import GameFunction from './interface/GameFunction';
 
 class MatchManager {
     private static readonly Instance: MatchManager = new MatchManager();
@@ -24,28 +25,61 @@ class MatchManager {
     //开始匹配
     start_match(){
         let _this = this;
+        //先找没满人的房间，再找匹配列表中的人
         setInterval(function() {
-           let player = _this.get_matching_player(); //待匹配列表，还没正式进入匹配
-           if(player){
-                let match_count = ArrayUtil.GetArrayLen(_this._in_match_list);
-               if (match_count < GameHoodleConfig.MATCH_GAME_RULE.playerCount){
-                    let ret = _this.add_player_to_in_match_list(player);//加入正式匹配列表
-                    if(ret){
-                        let tmp_in_match_list = _this._in_match_list
-                        let match_count = ArrayUtil.GetArrayLen(_this._in_match_list);
-                        _this.send_match_player(tmp_in_match_list);//匹配到一个玩家 ，发送到客户端
-                        Log.info("hcc>>get_in_match_player_count>> " , match_count);
-                        if (match_count >= GameHoodleConfig.MATCH_GAME_RULE.playerCount){ //匹配完成
-                            Log.info("hcc>>match success")
-                            _this.on_server_match_success(tmp_in_match_list);//发送到客户端，服务端已经匹配完成
-                            _this.del_match_success_player_from_math_list(tmp_in_match_list);//从待匹配列表删除
-                            _this.del_in_match_player(tmp_in_match_list); //从匹配完成列表中删除
+            let not_full_room = _this.get_not_full_room();
+            if(not_full_room){//查找人没满的房间
+                let player = _this.get_matching_player();
+                if (!player){
+                    player = _this.get_in_matching_player();
+                }
+                if(player){
+                    let is_success = not_full_room.add_player(player);
+                    if(is_success){
+                        _this.send_match_player(not_full_room.get_all_player());
+                        player.set_offline(false);
+                        _this.set_room_host(not_full_room);
+                        let body = {
+                            status: Response.OK,
+                            matchsuccess: true,
                         }
+                        player.send_cmd(Cmd.eUserMatchRes,body);
+                        GameFunction.broadcast_player_info_in_rooom(not_full_room, player);
+                        let tmp_match_list:any = {}
+                        tmp_match_list[player.get_uid()] = player;
+                        _this.del_match_success_player_from_math_list(tmp_match_list);//从待匹配列表删除
+                        _this.del_in_match_player(tmp_match_list);
+                    }
+                }else{
+                    _this.do_match_player();
+                }
+            }else{//从匹配列表中查找正在匹配中的人
+                _this.do_match_player();
+            }
+           _this.log_match_list()
+        }.bind(this), GameHoodleConfig.MATCH_INTERVAL);
+    }
+
+    do_match_player(){
+        let player = this.get_matching_player(); //待匹配列表，还没正式进入匹配
+        if (player) {
+            let match_count = ArrayUtil.GetArrayLen(this._in_match_list);
+            if (match_count < GameHoodleConfig.MATCH_GAME_RULE.playerCount) {
+                let ret = this.add_player_to_in_match_list(player);//加入正式匹配列表
+                if (ret) {
+                    let tmp_in_match_list = this._in_match_list
+                    let match_count = ArrayUtil.GetArrayLen(this._in_match_list);
+                    this.send_match_player(tmp_in_match_list);//匹配到一个玩家 ，发送到客户端
+                    Log.info("hcc>>get_in_match_player_count>> ", match_count);
+                    if (match_count >= GameHoodleConfig.MATCH_GAME_RULE.playerCount) { //匹配完成
+                        Log.info("hcc>>match success")
+                        this.on_server_match_success(tmp_in_match_list);//发送到客户端，服务端已经匹配完成
+                        this.del_match_success_player_from_math_list(tmp_in_match_list);//从待匹配列表删除
+                        this.del_in_match_player(tmp_in_match_list); //从匹配完成列表中删除
                     }
                 }
-           }
-        //    _this.log_match_list()
-        }, GameHoodleConfig.MATCH_INTERVAL);
+            }
+        }
     }
 
     //创建房间，进入玩家，发送到发送到客户端
@@ -57,8 +91,7 @@ class MatchManager {
         let room:Room = RoomManager.getInstance().alloc_room();
         room.set_game_rule(JSON.stringify(GameHoodleConfig.MATCH_GAME_RULE));
         room.set_is_match_room(true);
-        this.set_room_host(room);
-        Log.info("hcc>>in_match_list len: " , ArrayUtil.GetArrayLen(in_match_list))
+        // Log.info("hcc>>in_match_list len: " , ArrayUtil.GetArrayLen(in_match_list))
         for(let key in in_match_list){
             let player = in_match_list[key];
             player.set_offline(false);
@@ -69,6 +102,7 @@ class MatchManager {
                 return;
             }
         }
+        this.set_room_host(room);
         let body = {
             status: Response.OK,
             matchsuccess: true,
@@ -77,23 +111,25 @@ class MatchManager {
     }
 
     //设置房主: 匹配成功后，选择先匹配的玩家是房主
-    //in_match_list:匹配成功玩家
-    //room房间
-    set_room_host(room:Room){
-        let in_match_list = this._match_list;
-        if(ArrayUtil.GetArrayLen(in_match_list) <= 0){
+    //设置房主:room房间
+    private set_room_host(room: Room) {
+        let player_list = room.get_all_player();
+        if (ArrayUtil.GetArrayLen(player_list) <= 0) {
             return;
         }
         let index = 0;
-        for(let key in in_match_list){
+        for (let key in player_list) {
             index++;
-            if(index == 1){
-                let player:Player = in_match_list[key];
-                if(player){
+            let player: Player = player_list[key];
+            if (index == 1) {
+                if (player) {
                     player.set_ishost(true);
                     room.set_room_host_uid(player.get_uid())
                 }
-                break;
+            }else{
+                if(player){
+                    player.set_ishost(false);
+                }
             }
         }
     }
@@ -136,7 +172,16 @@ class MatchManager {
             if(p.get_user_state() == UserState.InView){
                 return p;
             }
-        }   
+        }
+    }
+
+    get_in_matching_player(){
+        for (let key in this._in_match_list) {
+            let p: Player = this._in_match_list[key];
+            if (p.get_user_state() == UserState.MatchIng) {
+                return p;
+            }
+        }
     }
 
     //匹配中的列表人数 Matching 
@@ -267,6 +312,21 @@ class MatchManager {
             name_str = "none"
         }
         Log.info( "matchlist_len: " + this.count_match_list() + " ,user:" , name_str);
+    }
+
+    /////////////////////////////////////////
+    //查找房间逻辑,只找匹配房间，不找自建房
+    get_not_full_room() {
+        let room_list = RoomManager.getInstance().get_all_room();
+        for (let key in room_list) {
+            let room:Room = room_list[key];
+            if (room.get_is_match_room() && room.get_player_count() < room.get_conf_player_count()) {
+                if(room.get_game_state() == GameState.InView){
+                    return room;
+                }
+            }
+        }
+        return null;
     }
 
 }

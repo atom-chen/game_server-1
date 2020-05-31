@@ -70,6 +70,10 @@ class RoomManager {
         }
         return null;
     }
+
+    get_all_room(){
+        return this._room_set;
+    }
 }
 
 export default RoomManager;

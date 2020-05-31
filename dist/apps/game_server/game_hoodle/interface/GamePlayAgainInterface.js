@@ -50,7 +50,9 @@ var GamePlayAgainInterface = /** @class */ (function () {
                 responsecode: responsecode
             };
             var invitePlayer = playerMgr.get_player(requseruid); //请求玩家
-            var player_list = [player, invitePlayer];
+            var player_list = [];
+            player_list.push(player);
+            player_list.push(invitePlayer);
             if (invitePlayer) {
                 invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainRes, resBody);
                 if (responsecode == Response_1["default"].OK) {
