@@ -11,7 +11,9 @@ var ProtoManager_1 = __importDefault(require("../../../../netbus/ProtoManager"))
 var RoomManager_1 = __importDefault(require("../RoomManager"));
 var ArrayUtil_1 = __importDefault(require("../../../../utils/ArrayUtil"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
+var State_1 = require("../config/State");
 var playerMgr = PlayerManager_1["default"].getInstance();
+var roomMgr = RoomManager_1["default"].getInstance();
 var GamePlayAgainInterface = /** @class */ (function () {
     function GamePlayAgainInterface() {
     }
@@ -30,17 +32,37 @@ var GamePlayAgainInterface = /** @class */ (function () {
                 ansconfig: JSON.stringify(configObj)
             };
             otheruids.forEach(function (uid) {
-                var invitePlayer = playerMgr.get_player(uid);
+                var invitePlayer = playerMgr.get_player(uid); //被邀请人
                 if (invitePlayer) {
-                    invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, resBody_1);
+                    var uroom = roomMgr.get_room_by_uid(invitePlayer.get_uid());
+                    if (invitePlayer.get_user_state() == State_1.UserState.InView && uroom == null) { //空闲状态,没有在其他房间,才能发邀请给他
+                        invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, resBody_1);
+                        player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainRes, { status: Response_1["default"].OK });
+                    }
+                    else {
+                        player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainRes, { status: Response_1["default"].INVALIDI_OPT });
+                    }
+                }
+                else {
+                    player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainRes, { status: Response_1["default"].INVALIDI_OPT });
                 }
             });
         }
-        player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainRes, { status: Response_1["default"].OK });
     };
     //玩家回应邀请
     GamePlayAgainInterface.do_player_play_again_answer = function (utag, proto_type, raw_cmd) {
         var player = playerMgr.get_player(utag); //回应玩家
+        if (player.get_user_state() != State_1.UserState.InView) { //非空闲状态
+            player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
+            Log_1["default"].warn("hcc>>do_player_play_again_answer error111");
+            return;
+        }
+        var uroom = roomMgr.get_room_by_uid(player.get_uid()); //自己已经在另外一个房间内了
+        if (uroom != null) {
+            player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
+            Log_1["default"].warn("hcc>>do_player_play_again_answer error222");
+            return;
+        }
         var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
         if (body) {
             var requseruid = body.requseruid;
@@ -50,11 +72,22 @@ var GamePlayAgainInterface = /** @class */ (function () {
                 responsecode: responsecode
             };
             var invitePlayer = playerMgr.get_player(requseruid); //请求玩家
+            if (invitePlayer.get_user_state() != State_1.UserState.InView) { //非空闲状态
+                Log_1["default"].warn("hcc>>do_player_play_again_answer error333");
+                invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
+                return;
+            }
+            if (roomMgr.get_room_by_uid(invitePlayer.get_uid()) != null) { //已经在房间内了
+                Log_1["default"].warn("hcc>>do_player_play_again_answer error444");
+                invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
+                return;
+            }
             var player_list = [];
             player_list.push(player);
             player_list.push(invitePlayer);
             if (invitePlayer) {
                 invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainRes, resBody);
+                //玩家同意再次游戏
                 if (responsecode == Response_1["default"].OK) {
                     GamePlayAgainInterface.player_play_again(player_list);
                 }
