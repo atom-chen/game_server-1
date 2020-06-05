@@ -7,6 +7,8 @@ import PlayerManager from '../PlayerManager';
 import RoomManager from '../RoomManager';
 import MatchManager from '../MatchManager';
 import GameHoodleConfig from '../config/GameHoodleConfig';
+import ProtoManager from '../../../../netbus/ProtoManager';
+import { RoomListConfig } from '../config/RoomListConfig';
 
 let playerMgr: PlayerManager = PlayerManager.getInstance();
 let roomMgr: RoomManager     = RoomManager.getInstance();
@@ -14,7 +16,7 @@ let matchMgr: MatchManager   = MatchManager.getInstance();
 
 class GameMatchInterface {
 
-    static do_player_match(utag:number){
+    static do_player_match(utag:number,proto_type:number, raw_cmd:any){
         let player: Player = playerMgr.get_player(utag);
         //如果在房间内，不能匹配
         let room = roomMgr.get_room_by_uid(player.get_uid())
@@ -26,9 +28,28 @@ class GameMatchInterface {
 
         //是否金币不足
         if (GameHoodleConfig.KW_IS_GOLD_LIMIT) {
-            if (player.get_uchip() < GameHoodleConfig.KW_MIN_GOLD_ENTER_ROOM) {
-                player.send_cmd(Cmd.eUserMatchRes, { status: Response.INVALIDI_OPT })
-                Log.warn(player.get_unick(), "do_player_match error, gold is not enough")
+            let reqBody = ProtoManager.decode_cmd(proto_type, raw_cmd);
+            Log.info("hcc>>do_player_match>>reqBody: ", reqBody);
+            let limitCoin = null;
+            if(reqBody){
+                let roomlevel = reqBody.roomlevel;
+                if (roomlevel){
+                    let roomConf = RoomListConfig[roomlevel];
+                    if (roomConf){
+                        let baseScore = roomConf.baseScore;
+                        limitCoin = roomConf.minLimitCoin;
+                    }
+                }
+            }
+            if (limitCoin && limitCoin > 0){
+                if (player.get_uchip() < limitCoin) {
+                    player.send_cmd(Cmd.eUserMatchRes, { status: Response.INVALIDI_OPT });
+                    Log.warn(player.get_unick(), "do_player_match error, gold is not enough")
+                    return;
+                }
+            }else{
+                player.send_cmd(Cmd.eUserMatchRes, { status: Response.INVALIDI_OPT });
+                Log.warn(player.get_unick(), "do_player_match error, config is not find")
                 return;
             }
         }

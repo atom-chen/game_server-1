@@ -9,7 +9,7 @@ var GameHoodleConfig = /** @class */ (function () {
     GameHoodleConfig.KW_BORN_USER_BALL = "lv_1=3&lv_2=3&lv_3=3&lv_4=3&lv_5=3&lv_6=2&lv_7=2&lv_8=2&lv_9=2"; //出生小球个数
     GameHoodleConfig.KW_WIN_RATE = 100; //输赢分数* 金币数
     GameHoodleConfig.KW_MIN_GOLD_ENTER_ROOM = 300; //最少进入房间金币
-    GameHoodleConfig.KW_IS_GOLD_LIMIT = false; //是否金币不足，禁止加入房间
+    GameHoodleConfig.KW_IS_GOLD_LIMIT = true; //是否金币不足，禁止加入房间
     //小球转换类型
     GameHoodleConfig.BALL_UPDATE_TYPE = {
         SELL_TYPE: 0,

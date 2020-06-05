@@ -6,7 +6,7 @@ class GameHoodleConfig {
     static KW_BORN_USER_BALL: string        = "lv_1=3&lv_2=3&lv_3=3&lv_4=3&lv_5=3&lv_6=2&lv_7=2&lv_8=2&lv_9=2"; 		//出生小球个数
     static KW_WIN_RATE: number              = 100; 		//输赢分数* 金币数
     static KW_MIN_GOLD_ENTER_ROOM: number   = 300;      //最少进入房间金币
-    static KW_IS_GOLD_LIMIT: boolean        = false; 	//是否金币不足，禁止加入房间
+    static KW_IS_GOLD_LIMIT: boolean        = true; 	//是否金币不足，禁止加入房间
 
     //小球转换类型
     static BALL_UPDATE_TYPE = {

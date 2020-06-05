@@ -49,7 +49,7 @@ class GamePlayAgainInterface {
 
     //玩家回应邀请
     static do_player_play_again_answer(utag: number, proto_type: number, raw_cmd: any) {//回应玩家utag
-        let player: Player = playerMgr.get_player(utag); //回应玩家
+        let player: Player = playerMgr.get_player(utag); //被邀请的玩家
         if (player.get_user_state() != UserState.InView) {//非空闲状态
             player.send_cmd(Cmd.eUserPlayAgainAnswerRes, { status: Response.INVALIDI_OPT });
             Log.warn("hcc>>do_player_play_again_answer error111");
@@ -71,7 +71,7 @@ class GamePlayAgainInterface {
                 status:Response.OK,
                 responsecode: responsecode,
             }
-            let invitePlayer: Player = playerMgr.get_player(requseruid); //请求玩家
+            let invitePlayer: Player = playerMgr.get_player(requseruid); //邀请的玩家
             if (invitePlayer.get_user_state() != UserState.InView){ //非空闲状态
                 Log.warn("hcc>>do_player_play_again_answer error333");
                 invitePlayer.send_cmd(Cmd.eUserPlayAgainAnswerRes, { status: Response.INVALIDI_OPT});

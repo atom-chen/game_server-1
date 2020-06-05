@@ -51,7 +51,7 @@ var GamePlayAgainInterface = /** @class */ (function () {
     };
     //玩家回应邀请
     GamePlayAgainInterface.do_player_play_again_answer = function (utag, proto_type, raw_cmd) {
-        var player = playerMgr.get_player(utag); //回应玩家
+        var player = playerMgr.get_player(utag); //被邀请的玩家
         if (player.get_user_state() != State_1.UserState.InView) { //非空闲状态
             player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
             Log_1["default"].warn("hcc>>do_player_play_again_answer error111");
@@ -71,7 +71,7 @@ var GamePlayAgainInterface = /** @class */ (function () {
                 status: Response_1["default"].OK,
                 responsecode: responsecode
             };
-            var invitePlayer = playerMgr.get_player(requseruid); //请求玩家
+            var invitePlayer = playerMgr.get_player(requseruid); //邀请的玩家
             if (invitePlayer.get_user_state() != State_1.UserState.InView) { //非空闲状态
                 Log_1["default"].warn("hcc>>do_player_play_again_answer error333");
                 invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });

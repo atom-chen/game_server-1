@@ -13,6 +13,7 @@ import GameLogicInterface from './interface/GameLogicInterface';
 import GameCheck from './interface/GameCheck';
 import GameEmojInterface from './interface/GameEmojInterface';
 import GamePlayAgainInterface from './interface/GamePlayAgainInterface';
+import GameConfigInterface from './interface/GameConfigInterface';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -49,6 +50,7 @@ class GameHoodleModle {
             [Cmd.eUserEmojReq]:                     this.on_player_use_emoj,
             [Cmd.eUserPlayAgainReq]:                this.on_player_play_again_req,
             [Cmd.eUserPlayAgainAnswerReq]:          this.on_player_play_again_answer,
+            [Cmd.eRoomListConfigReq]:               this.on_player_room_list_req,
         }
     }
 
@@ -188,7 +190,7 @@ class GameHoodleModle {
             Log.warn("on_player_match player is not exist!")
             return;
         }
-        GameMatchInterface.do_player_match(utag);
+        GameMatchInterface.do_player_match(utag, proto_type, raw_cmd);
     }
 
     on_player_stop_match(session:any, utag:number, proto_type:number, raw_cmd:any){
@@ -292,6 +294,15 @@ class GameHoodleModle {
             return;
         }
         GamePlayAgainInterface.do_player_play_again_answer(utag, proto_type, raw_cmd);
+    }
+
+    on_player_room_list_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            GameSendMsg.send(session, Cmd.eRoomListConfigRes, utag, proto_type, { status: Response.INVALIDI_OPT })
+            Log.warn("on_player_room_list_req error player is not exist!")
+            return;
+        }
+        GameConfigInterface.do_player_room_list_req(utag, proto_type, raw_cmd);
     }
 }
 

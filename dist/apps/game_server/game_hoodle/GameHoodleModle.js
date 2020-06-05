@@ -18,6 +18,7 @@ var GameLogicInterface_1 = __importDefault(require("./interface/GameLogicInterfa
 var GameCheck_1 = __importDefault(require("./interface/GameCheck"));
 var GameEmojInterface_1 = __importDefault(require("./interface/GameEmojInterface"));
 var GamePlayAgainInterface_1 = __importDefault(require("./interface/GamePlayAgainInterface"));
+var GameConfigInterface_1 = __importDefault(require("./interface/GameConfigInterface"));
 var GameHoodleModle = /** @class */ (function () {
     function GameHoodleModle() {
         var _a;
@@ -48,6 +49,7 @@ var GameHoodleModle = /** @class */ (function () {
             _a[GameHoodleProto_1.Cmd.eUserEmojReq] = this.on_player_use_emoj,
             _a[GameHoodleProto_1.Cmd.eUserPlayAgainReq] = this.on_player_play_again_req,
             _a[GameHoodleProto_1.Cmd.eUserPlayAgainAnswerReq] = this.on_player_play_again_answer,
+            _a[GameHoodleProto_1.Cmd.eRoomListConfigReq] = this.on_player_room_list_req,
             _a);
     }
     GameHoodleModle.getInstance = function () {
@@ -175,7 +177,7 @@ var GameHoodleModle = /** @class */ (function () {
             Log_1["default"].warn("on_player_match player is not exist!");
             return;
         }
-        GameMatchInterface_1["default"].do_player_match(utag);
+        GameMatchInterface_1["default"].do_player_match(utag, proto_type, raw_cmd);
     };
     GameHoodleModle.prototype.on_player_stop_match = function (session, utag, proto_type, raw_cmd) {
         if (!GameCheck_1["default"].check_player(utag)) {
@@ -268,6 +270,14 @@ var GameHoodleModle = /** @class */ (function () {
             return;
         }
         GamePlayAgainInterface_1["default"].do_player_play_again_answer(utag, proto_type, raw_cmd);
+    };
+    GameHoodleModle.prototype.on_player_room_list_req = function (session, utag, proto_type, raw_cmd) {
+        if (!GameCheck_1["default"].check_player(utag)) {
+            GameSendMsg_1["default"].send(session, GameHoodleProto_1.Cmd.eRoomListConfigRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+            Log_1["default"].warn("on_player_room_list_req error player is not exist!");
+            return;
+        }
+        GameConfigInterface_1["default"].do_player_room_list_req(utag, proto_type, raw_cmd);
     };
     GameHoodleModle.Instance = new GameHoodleModle();
     return GameHoodleModle;

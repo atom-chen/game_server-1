@@ -10,13 +10,15 @@ var PlayerManager_1 = __importDefault(require("../PlayerManager"));
 var RoomManager_1 = __importDefault(require("../RoomManager"));
 var MatchManager_1 = __importDefault(require("../MatchManager"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
+var ProtoManager_1 = __importDefault(require("../../../../netbus/ProtoManager"));
+var RoomListConfig_1 = require("../config/RoomListConfig");
 var playerMgr = PlayerManager_1["default"].getInstance();
 var roomMgr = RoomManager_1["default"].getInstance();
 var matchMgr = MatchManager_1["default"].getInstance();
 var GameMatchInterface = /** @class */ (function () {
     function GameMatchInterface() {
     }
-    GameMatchInterface.do_player_match = function (utag) {
+    GameMatchInterface.do_player_match = function (utag, proto_type, raw_cmd) {
         var player = playerMgr.get_player(utag);
         //如果在房间内，不能匹配
         var room = roomMgr.get_room_by_uid(player.get_uid());
@@ -27,9 +29,29 @@ var GameMatchInterface = /** @class */ (function () {
         }
         //是否金币不足
         if (GameHoodleConfig_1["default"].KW_IS_GOLD_LIMIT) {
-            if (player.get_uchip() < GameHoodleConfig_1["default"].KW_MIN_GOLD_ENTER_ROOM) {
+            var reqBody = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
+            Log_1["default"].info("hcc>>do_player_match>>reqBody: ", reqBody);
+            var limitCoin = null;
+            if (reqBody) {
+                var roomlevel = reqBody.roomlevel;
+                if (roomlevel) {
+                    var roomConf = RoomListConfig_1.RoomListConfig[roomlevel];
+                    if (roomConf) {
+                        var baseScore = roomConf.baseScore;
+                        limitCoin = roomConf.minLimitCoin;
+                    }
+                }
+            }
+            if (limitCoin && limitCoin > 0) {
+                if (player.get_uchip() < limitCoin) {
+                    player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, { status: Response_1["default"].INVALIDI_OPT });
+                    Log_1["default"].warn(player.get_unick(), "do_player_match error, gold is not enough");
+                    return;
+                }
+            }
+            else {
                 player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, { status: Response_1["default"].INVALIDI_OPT });
-                Log_1["default"].warn(player.get_unick(), "do_player_match error, gold is not enough");
+                Log_1["default"].warn(player.get_unick(), "do_player_match error, config is not find");
                 return;
             }
         }
