@@ -375,6 +375,7 @@ class MatchManager {
         let room_list = RoomManager.getInstance().get_all_room();
         for (let key in room_list) {
             let room:Room = room_list[key];
+            Log.info("playercount: ", room.get_player_count(), " ,confplayercount: ", room.get_conf_player_count());
             if (room.get_is_match_room() && room.get_player_count() < room.get_conf_player_count() && room.get_match_roomlevel() == roomlevel) {
                 if(room.get_game_state() == GameState.InView){
                     return room;

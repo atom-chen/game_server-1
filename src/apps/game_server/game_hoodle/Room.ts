@@ -153,7 +153,13 @@ class Room {
 
     //当前房间内人数
     get_player_count(){
-        return ArrayUtil.GetArrayLen(this._player_set)
+        let count = 0;
+        for(let key in this._player_set){
+            if (this._player_set[key]){
+                count++;
+            }
+        }
+        return count;
     }
 
     //房间在线人数

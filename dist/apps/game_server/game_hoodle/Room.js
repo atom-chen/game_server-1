@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var State_1 = require("./config/State");
 var Room = /** @class */ (function () {
@@ -142,7 +141,13 @@ var Room = /** @class */ (function () {
     };
     //当前房间内人数
     Room.prototype.get_player_count = function () {
-        return ArrayUtil_1["default"].GetArrayLen(this._player_set);
+        var count = 0;
+        for (var key in this._player_set) {
+            if (this._player_set[key]) {
+                count++;
+            }
+        }
+        return count;
     };
     //房间在线人数
     Room.prototype.get_online_player_count = function () {

@@ -349,6 +349,7 @@ var MatchManager = /** @class */ (function () {
         var room_list = RoomManager_1["default"].getInstance().get_all_room();
         for (var key in room_list) {
             var room = room_list[key];
+            Log_1["default"].info("playercount: ", room.get_player_count(), " ,confplayercount: ", room.get_conf_player_count());
             if (room.get_is_match_room() && room.get_player_count() < room.get_conf_player_count() && room.get_match_roomlevel() == roomlevel) {
                 if (room.get_game_state() == State_1.GameState.InView) {
                     return room;
