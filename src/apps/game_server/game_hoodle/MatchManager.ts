@@ -10,6 +10,8 @@ import Response from '../../protocol/Response';
 import GameFunction from './interface/GameFunction';
 import { RoomListConfig } from './config/RoomListConfig';
 
+let roomMgr: RoomManager = RoomManager.getInstance();
+
 class MatchManager {
     private static readonly Instance: MatchManager = new MatchManager();
     private _zoom_list:any      = {}        //区间列表
@@ -64,6 +66,9 @@ class MatchManager {
                         player = _this.get_in_matching_player(zoom);
                     }
                     if(player){
+                        if (roomMgr.get_room_by_uid(player.get_uid())){
+                            continue;
+                        }
                         Log.info("not_full_room222, player: " , player.get_unick());
                         let is_success = not_full_room.add_player(player);
                         if (is_success) {
@@ -86,7 +91,7 @@ class MatchManager {
                     }
                 }
             }
-            Log.info("is_match_room_success: ", is_match_room_success);
+            // Log.info("is_match_room_success: ", is_match_room_success);
             if (is_match_room_success == false){
                 _this.do_match_player();
             }
@@ -100,6 +105,9 @@ class MatchManager {
             let zoom = this._zoom_list[roomlevel];
             let player = this.get_matching_player(zoom);
             if(player){
+                if (roomMgr.get_room_by_uid(player.get_uid())) {
+                    continue;
+                }
                 Log.info("do_match_player222");
                 let match_count = ArrayUtil.GetArrayLen(zoom.in_match_list);
                 if (match_count < GameHoodleConfig.MATCH_GAME_RULE.playerCount) {
@@ -201,9 +209,9 @@ class MatchManager {
     //获取正在等待列表中，未进入匹配的玩家  inview状态
     get_matching_player(zoom:any){
         for (let key in zoom.match_list){
-            let p: Player = zoom.match_list[key];
-            if(p.get_user_state() == UserState.InView){
-                return p;
+            let player: Player = zoom.match_list[key];
+            if (player.get_user_state() == UserState.InView){
+                return player;
             }
         }
     }
@@ -259,6 +267,7 @@ class MatchManager {
     //添加到待匹配列表 Inview
     add_player_to_match_list(player: Player, match_room_conf:any){
         Log.info("hcc>>match_room_conf:", match_room_conf);
+
         let roomlevel = match_room_conf.roomlevel;
         if(!roomlevel){
             return false;
@@ -270,9 +279,15 @@ class MatchManager {
         }
 
         if (zoom.match_list[player.get_uid()]){
-            Log.info("hcc>>player uid: " + player.get_uid() + " is already in match")
+            Log.info("hcc>>player uid: " + player.get_uid() + " is already in match");
             return false;
         }
+        
+        if (roomMgr.get_room_by_uid(player.get_uid())) {
+            Log.info("hcc>>player uid: " + player.get_uid() + " is already in room");
+            return false;
+        }
+
         zoom.match_list[player.get_uid()] = player;
         player.set_user_state(UserState.InView);
         return true;
@@ -285,6 +300,11 @@ class MatchManager {
         }
 
         if(player.get_user_state() != UserState.InView){
+            return false;
+        }
+
+        if (roomMgr.get_room_by_uid(player.get_uid())) {
+            Log.info("hcc>>player uid: " + player.get_uid() + " is already in room");
             return false;
         }
 

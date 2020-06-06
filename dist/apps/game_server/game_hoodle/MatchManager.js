@@ -12,6 +12,7 @@ var GameHoodleConfig_1 = __importDefault(require("./config/GameHoodleConfig"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var GameFunction_1 = __importDefault(require("./interface/GameFunction"));
 var RoomListConfig_1 = require("./config/RoomListConfig");
+var roomMgr = RoomManager_1["default"].getInstance();
 var MatchManager = /** @class */ (function () {
     /*
         _zoom_list:{
@@ -62,6 +63,9 @@ var MatchManager = /** @class */ (function () {
                         player = _this.get_in_matching_player(zoom);
                     }
                     if (player) {
+                        if (roomMgr.get_room_by_uid(player.get_uid())) {
+                            continue;
+                        }
                         Log_1["default"].info("not_full_room222, player: ", player.get_unick());
                         var is_success = not_full_room.add_player(player);
                         if (is_success) {
@@ -84,7 +88,7 @@ var MatchManager = /** @class */ (function () {
                     }
                 }
             }
-            Log_1["default"].info("is_match_room_success: ", is_match_room_success);
+            // Log.info("is_match_room_success: ", is_match_room_success);
             if (is_match_room_success == false) {
                 _this.do_match_player();
             }
@@ -97,6 +101,9 @@ var MatchManager = /** @class */ (function () {
             var zoom = this._zoom_list[roomlevel];
             var player = this.get_matching_player(zoom);
             if (player) {
+                if (roomMgr.get_room_by_uid(player.get_uid())) {
+                    continue;
+                }
                 Log_1["default"].info("do_match_player222");
                 var match_count = ArrayUtil_1["default"].GetArrayLen(zoom.in_match_list);
                 if (match_count < GameHoodleConfig_1["default"].MATCH_GAME_RULE.playerCount) {
@@ -193,9 +200,9 @@ var MatchManager = /** @class */ (function () {
     //获取正在等待列表中，未进入匹配的玩家  inview状态
     MatchManager.prototype.get_matching_player = function (zoom) {
         for (var key in zoom.match_list) {
-            var p = zoom.match_list[key];
-            if (p.get_user_state() == State_1.UserState.InView) {
-                return p;
+            var player = zoom.match_list[key];
+            if (player.get_user_state() == State_1.UserState.InView) {
+                return player;
             }
         }
     };
@@ -258,6 +265,10 @@ var MatchManager = /** @class */ (function () {
             Log_1["default"].info("hcc>>player uid: " + player.get_uid() + " is already in match");
             return false;
         }
+        if (roomMgr.get_room_by_uid(player.get_uid())) {
+            Log_1["default"].info("hcc>>player uid: " + player.get_uid() + " is already in room");
+            return false;
+        }
         zoom.match_list[player.get_uid()] = player;
         player.set_user_state(State_1.UserState.InView);
         return true;
@@ -268,6 +279,10 @@ var MatchManager = /** @class */ (function () {
             return false;
         }
         if (player.get_user_state() != State_1.UserState.InView) {
+            return false;
+        }
+        if (roomMgr.get_room_by_uid(player.get_uid())) {
+            Log_1["default"].info("hcc>>player uid: " + player.get_uid() + " is already in room");
             return false;
         }
         if (this.get_in_match_player_count(zoom) >= GameHoodleConfig_1["default"].MATCH_GAME_RULE.playerCount) {
