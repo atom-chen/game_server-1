@@ -26,19 +26,19 @@ class GameMatchInterface {
             return;
         }
 
+        let reqBody = ProtoManager.decode_cmd(proto_type, raw_cmd);
+        if(!reqBody){
+            return;
+        }
         //是否金币不足
         if (GameHoodleConfig.KW_IS_GOLD_LIMIT) {
-            let reqBody = ProtoManager.decode_cmd(proto_type, raw_cmd);
             Log.info("hcc>>do_player_match>>reqBody: ", reqBody);
             let limitCoin = null;
-            if(reqBody){
-                let roomlevel = reqBody.roomlevel;
-                if (roomlevel){
-                    let roomConf = RoomListConfig[roomlevel];
-                    if (roomConf){
-                        let baseScore = roomConf.baseScore;
-                        limitCoin = roomConf.minLimitCoin;
-                    }
+            let roomlevel = reqBody.roomlevel;
+            if (roomlevel){
+                let roomConf = RoomListConfig[roomlevel];
+                if (roomConf){
+                    limitCoin = roomConf.minLimitCoin;
                 }
             }
             if (limitCoin && limitCoin > 0){
@@ -54,8 +54,9 @@ class GameMatchInterface {
             }
         }
 
+        let match_room_conf = RoomListConfig[reqBody.roomlevel];
         //加入匹配等待列表
-        let ret = matchMgr.add_player_to_match_list(player);
+        let ret = matchMgr.add_player_to_match_list(player, match_room_conf);
         if (!ret) {
             Log.warn(player.get_unick(), "do_player_match error user is in matching!")
             player.send_cmd(Cmd.eUserMatchRes, { status: Response.NOT_YOUR_TURN });
@@ -88,7 +89,7 @@ class GameMatchInterface {
             return;
         }
         player.send_cmd(Cmd.eUserStopMatchRes, { status: Response.OK });
-        matchMgr.send_match_player();
+        // matchMgr.send_match_player();
         Log.info(uname, "do_player_stop_match success!")
     }
 

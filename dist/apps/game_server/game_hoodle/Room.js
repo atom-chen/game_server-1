@@ -13,6 +13,7 @@ var Room = /** @class */ (function () {
         this._player_set = {}; //玩家信息，uid->player
         this._host_player_uid = -1; //房主uid
         this._is_match_room = false; //是否匹配房间，默认false
+        this._match_roomlevel = 1; //匹配房间等级
         ///////
         this._game_state = State_1.GameState.InView; //游戏状态
         this._play_count = -1; //总的配置局数
@@ -192,6 +193,12 @@ var Room = /** @class */ (function () {
     };
     Room.prototype.get_is_match_room = function () {
         return this._is_match_room;
+    };
+    Room.prototype.set_match_roomlevel = function (roomlevel) {
+        this._match_roomlevel = roomlevel;
+    };
+    Room.prototype.get_match_roomlevel = function () {
+        return this._match_roomlevel;
     };
     Room.prototype.broadcast_in_room = function (ctype, body, not_to_player) {
         if (!ctype) {

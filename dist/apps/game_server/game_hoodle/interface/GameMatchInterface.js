@@ -27,19 +27,19 @@ var GameMatchInterface = /** @class */ (function () {
             player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, { status: Response_1["default"].INVALIDI_OPT });
             return;
         }
+        var reqBody = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
+        if (!reqBody) {
+            return;
+        }
         //是否金币不足
         if (GameHoodleConfig_1["default"].KW_IS_GOLD_LIMIT) {
-            var reqBody = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
             Log_1["default"].info("hcc>>do_player_match>>reqBody: ", reqBody);
             var limitCoin = null;
-            if (reqBody) {
-                var roomlevel = reqBody.roomlevel;
-                if (roomlevel) {
-                    var roomConf = RoomListConfig_1.RoomListConfig[roomlevel];
-                    if (roomConf) {
-                        var baseScore = roomConf.baseScore;
-                        limitCoin = roomConf.minLimitCoin;
-                    }
+            var roomlevel = reqBody.roomlevel;
+            if (roomlevel) {
+                var roomConf = RoomListConfig_1.RoomListConfig[roomlevel];
+                if (roomConf) {
+                    limitCoin = roomConf.minLimitCoin;
                 }
             }
             if (limitCoin && limitCoin > 0) {
@@ -55,8 +55,9 @@ var GameMatchInterface = /** @class */ (function () {
                 return;
             }
         }
+        var match_room_conf = RoomListConfig_1.RoomListConfig[reqBody.roomlevel];
         //加入匹配等待列表
-        var ret = matchMgr.add_player_to_match_list(player);
+        var ret = matchMgr.add_player_to_match_list(player, match_room_conf);
         if (!ret) {
             Log_1["default"].warn(player.get_unick(), "do_player_match error user is in matching!");
             player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, { status: Response_1["default"].NOT_YOUR_TURN });
@@ -87,7 +88,7 @@ var GameMatchInterface = /** @class */ (function () {
             return;
         }
         player.send_cmd(GameHoodleProto_1.Cmd.eUserStopMatchRes, { status: Response_1["default"].OK });
-        matchMgr.send_match_player();
+        // matchMgr.send_match_player();
         Log_1["default"].info(uname, "do_player_stop_match success!");
     };
     return GameMatchInterface;

@@ -9,7 +9,7 @@ class Room {
     _player_set:any             = {};       //玩家信息，uid->player
     _host_player_uid:number     = -1;       //房主uid
     _is_match_room:boolean      = false;    //是否匹配房间，默认false
-
+    _match_roomlevel:number     = 1;        //匹配房间等级
     ///////
     _game_state:number          = GameState.InView; //游戏状态
     _play_count:number          = -1; //总的配置局数
@@ -216,6 +216,14 @@ class Room {
 
     get_is_match_room():boolean{
         return this._is_match_room;
+    }
+
+    set_match_roomlevel(roomlevel:number){
+        this._match_roomlevel = roomlevel;
+    }
+
+    get_match_roomlevel(){
+        return this._match_roomlevel;
     }
 
     broadcast_in_room(ctype:number, body:any ,not_to_player?:Player){
