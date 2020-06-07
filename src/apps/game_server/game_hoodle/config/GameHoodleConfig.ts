@@ -3,11 +3,11 @@ class GameHoodleConfig {
     static KW_PROP_ID_BALL                  = 10001;    //弹珠道具ID
     static KW_PROP_ID_COIN                  = 10002;    //金币道具ID
     static KW_BORN_EXP: number              = 0;		//出生经验
-    static KW_BORN_CHIP: number             = 10000; 	//出生金币
+    static KW_BORN_CHIP: number             = 2500; 	//出生金币
     // static KW_BORN_USER_BALL: string = "lv_1=3&lv_2=3&lv_3=3&lv_4=3&lv_5=3&lv_6=2&lv_7=2&lv_8=2&lv_9=2"; 		//新玩家弹珠个数
     static KW_BORN_USER_BALL: string        = "lv_1=3&lv_2=3&lv_3=3&lv_4=3";
     static KW_WIN_RATE: number              = 500; 		//输赢比例, 输赢金币 = 输赢分数(底分)* 比例
-    static KW_MIN_GOLD_ENTER_ROOM: number   = 300;      //最少进入房间金币
+    static KW_MIN_GOLD_ENTER_ROOM: number   = 500;      //最少进入房间金币
     static KW_IS_GOLD_LIMIT: boolean        = true; 	//是否金币不足，禁止加入房间
 
     //小球转换类型
@@ -23,7 +23,7 @@ class GameHoodleConfig {
     static BALL_SAVE_KEY_STR                = "lv_";
 
     //小球合成所需个数
-    static BALL_COPOSE_NUM                  = 3;
+    static BALL_COPOSE_NUM                  = 2;
 
     //房间匹配轮询次数
     static MATCH_INTERVAL                   = 1000;     //1秒匹配一次
