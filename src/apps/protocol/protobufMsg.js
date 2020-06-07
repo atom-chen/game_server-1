@@ -17045,6 +17045,7 @@ $root.GameHoodleProto = (function() {
          * @interface IUpdateUserBallRes
          * @property {number} status UpdateUserBallRes status
          * @property {string|null} [userballinfostring] UpdateUserBallRes userballinfostring
+         * @property {string|null} [resultinfo] UpdateUserBallRes resultinfo
          */
 
         /**
@@ -17079,6 +17080,14 @@ $root.GameHoodleProto = (function() {
         UpdateUserBallRes.prototype.userballinfostring = "";
 
         /**
+         * UpdateUserBallRes resultinfo.
+         * @member {string} resultinfo
+         * @memberof GameHoodleProto.UpdateUserBallRes
+         * @instance
+         */
+        UpdateUserBallRes.prototype.resultinfo = "";
+
+        /**
          * Creates a new UpdateUserBallRes instance using the specified properties.
          * @function create
          * @memberof GameHoodleProto.UpdateUserBallRes
@@ -17105,6 +17114,8 @@ $root.GameHoodleProto = (function() {
             writer.uint32(/* id 1, wireType 0 =*/8).sint32(message.status);
             if (message.userballinfostring != null && message.hasOwnProperty("userballinfostring"))
                 writer.uint32(/* id 2, wireType 2 =*/18).string(message.userballinfostring);
+            if (message.resultinfo != null && message.hasOwnProperty("resultinfo"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.resultinfo);
             return writer;
         };
 
@@ -17144,6 +17155,9 @@ $root.GameHoodleProto = (function() {
                     break;
                 case 2:
                     message.userballinfostring = reader.string();
+                    break;
+                case 3:
+                    message.resultinfo = reader.string();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -17187,6 +17201,9 @@ $root.GameHoodleProto = (function() {
             if (message.userballinfostring != null && message.hasOwnProperty("userballinfostring"))
                 if (!$util.isString(message.userballinfostring))
                     return "userballinfostring: string expected";
+            if (message.resultinfo != null && message.hasOwnProperty("resultinfo"))
+                if (!$util.isString(message.resultinfo))
+                    return "resultinfo: string expected";
             return null;
         };
 
@@ -17206,6 +17223,8 @@ $root.GameHoodleProto = (function() {
                 message.status = object.status | 0;
             if (object.userballinfostring != null)
                 message.userballinfostring = String(object.userballinfostring);
+            if (object.resultinfo != null)
+                message.resultinfo = String(object.resultinfo);
             return message;
         };
 
@@ -17225,11 +17244,14 @@ $root.GameHoodleProto = (function() {
             if (options.defaults) {
                 object.status = 0;
                 object.userballinfostring = "";
+                object.resultinfo = "";
             }
             if (message.status != null && message.hasOwnProperty("status"))
                 object.status = message.status;
             if (message.userballinfostring != null && message.hasOwnProperty("userballinfostring"))
                 object.userballinfostring = message.userballinfostring;
+            if (message.resultinfo != null && message.hasOwnProperty("resultinfo"))
+                object.resultinfo = message.resultinfo;
             return object;
         };
 

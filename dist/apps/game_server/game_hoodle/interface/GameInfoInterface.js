@@ -160,15 +160,17 @@ var GameInfoInterface = /** @class */ (function () {
         var up_type = data_body.updatetype;
         var level = data_body.level;
         var count = data_body.count;
-        if (up_type == GameHoodleConfig_1["default"].BALL_UPDATE_TYPE.SELL_TYPE) { //卖出TODO, 需要定义价格表,暂时还不做
+        if (up_type == GameHoodleConfig_1["default"].BALL_UPDATE_TYPE.SELL_TYPE) { //卖出, 需要定义价格表,暂时还不做 TODO
         }
         else if (up_type == GameHoodleConfig_1["default"].BALL_UPDATE_TYPE.COMPOSE_TYPE) { //合成
             var is_success = GameInfoInterface.user_update_ball_info(player, up_type, level, count);
             if (is_success) {
+                var resultObj = { level: level + 1 };
                 var tmp_ball_json_1 = player.get_uball_info();
                 var body_ball_1 = {
                     status: Response_1["default"].OK,
-                    userballinfostring: tmp_ball_json_1
+                    userballinfostring: tmp_ball_json_1,
+                    resultinfo: JSON.stringify(resultObj)
                 };
                 MySqlGame_1["default"].update_ugame_uball_info(player.get_uid(), tmp_ball_json_1, function (status, ret) {
                     if (status == Response_1["default"].OK) {

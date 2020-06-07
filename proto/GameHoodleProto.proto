@@ -336,7 +336,8 @@ message UpdateUserBallReq {
 
 message UpdateUserBallRes {
 	required sint32 status = 1;
-	optional string userballinfostring = 2;  //小球个数,querystring格式："lv_1=0&lv_2=1&lv_3=3&lv_4=4&lv_5=10"
+	optional string userballinfostring = 2;  //小球信息,querystring格式："lv_1=0&lv_2=1&lv_3=3&lv_4=4&lv_5=10"
+	optional string resultinfo = 3; //操作结果通知客户端
 }
 
 //某一种商品的信息

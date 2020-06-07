@@ -152,15 +152,17 @@ class GameInfoInterface {
         let up_type: number = data_body.updatetype;
         let level: number   = data_body.level;
         let count: number   = data_body.count;
-        if (up_type == GameHoodleConfig.BALL_UPDATE_TYPE.SELL_TYPE){//卖出TODO, 需要定义价格表,暂时还不做
+        if (up_type == GameHoodleConfig.BALL_UPDATE_TYPE.SELL_TYPE){//卖出, 需要定义价格表,暂时还不做 TODO
             
         } else if (up_type == GameHoodleConfig.BALL_UPDATE_TYPE.COMPOSE_TYPE){ //合成
             let is_success: boolean = GameInfoInterface.user_update_ball_info(player, up_type, level, count);
             if (is_success) {
+                let resultObj = { level: level + 1}
                 let tmp_ball_json = player.get_uball_info();
                 let body_ball = {
                     status: Response.OK,
                     userballinfostring: tmp_ball_json,
+                    resultinfo:JSON.stringify(resultObj),
                 }
                 MySqlGame.update_ugame_uball_info(player.get_uid(), tmp_ball_json, function (status: number, ret: any) {
                     if (status == Response.OK) {
