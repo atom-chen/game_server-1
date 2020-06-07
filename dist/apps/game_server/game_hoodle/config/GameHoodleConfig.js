@@ -4,10 +4,12 @@ var GameHoodleConfig = /** @class */ (function () {
     function GameHoodleConfig() {
     }
     GameHoodleConfig.KW_PROP_ID_BALL = 10001; //弹珠道具ID
+    GameHoodleConfig.KW_PROP_ID_COIN = 10002; //金币道具ID
     GameHoodleConfig.KW_BORN_EXP = 0; //出生经验
     GameHoodleConfig.KW_BORN_CHIP = 10000; //出生金币
-    GameHoodleConfig.KW_BORN_USER_BALL = "lv_1=3&lv_2=3&lv_3=3&lv_4=3&lv_5=3&lv_6=2&lv_7=2&lv_8=2&lv_9=2"; //出生小球个数
-    GameHoodleConfig.KW_WIN_RATE = 100; //输赢分数* 金币数
+    // static KW_BORN_USER_BALL: string = "lv_1=3&lv_2=3&lv_3=3&lv_4=3&lv_5=3&lv_6=2&lv_7=2&lv_8=2&lv_9=2"; 		//新玩家弹珠个数
+    GameHoodleConfig.KW_BORN_USER_BALL = "lv_1=3&lv_2=3&lv_3=3&lv_4=3";
+    GameHoodleConfig.KW_WIN_RATE = 500; //输赢比例, 输赢金币 = 输赢分数(底分)* 比例
     GameHoodleConfig.KW_MIN_GOLD_ENTER_ROOM = 300; //最少进入房间金币
     GameHoodleConfig.KW_IS_GOLD_LIMIT = true; //是否金币不足，禁止加入房间
     //小球转换类型

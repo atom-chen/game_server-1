@@ -53,4 +53,5 @@ Thumbs.db
 #//////////////////////////
 
 .vscode/
+.VSCodeCounter/
 src/web_server/www_root/hotupdate/

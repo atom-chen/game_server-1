@@ -222,6 +222,8 @@ var GameHoodleModle = /** @class */ (function () {
             return;
         }
         GameInfoInterface_1["default"].do_player_store_list(utag);
+        //test
+        // GameSendMsg.send_simulate_client(Cmd.eCreateRoomReq, utag, proto_type, { gamerule: JSON.stringify(GameHoodleConfig.MATCH_GAME_RULE)});
     };
     GameHoodleModle.prototype.on_player_buy_things = function (session, utag, proto_type, raw_cmd) {
         if (!GameCheck_1["default"].check_player(utag)) {

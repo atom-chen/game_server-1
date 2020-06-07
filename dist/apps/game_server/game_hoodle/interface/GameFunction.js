@@ -119,7 +119,7 @@ var GameFunction = /** @class */ (function () {
         }
     };
     //计算玩家金币，设置到player，写入数据库
-    //考虑不够减的情况
+    //考虑不够减的情况(扣除只够扣的金币)
     GameFunction.cal_player_chip_and_write = function (room) {
         if (!room) {
             return;

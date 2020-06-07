@@ -1,4 +1,5 @@
 "use strict";
+//网关服务
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||

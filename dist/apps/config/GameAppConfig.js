@@ -43,13 +43,13 @@ var GameAppConfig = /** @class */ (function () {
     GameAppConfig.game_system_server = {
         host: LOCAL_HOST,
         port: 6087,
-        stypes: [Stype_1.Stype.GameSystem]
+        stype: Stype_1.Stype.GameSystem
     };
     //游戏服务
     GameAppConfig.game_server = {
         host: LOCAL_HOST,
         port: 6088,
-        stypes: [Stype_1.Stype.GameHoodle]
+        stype: Stype_1.Stype.GameHoodle
     };
     //游戏数据库服务
     GameAppConfig.game_database = {
@@ -63,7 +63,7 @@ var GameAppConfig = /** @class */ (function () {
     GameAppConfig.auth_server = {
         host: LOCAL_HOST,
         port: 6086,
-        stypes: [Stype_1.Stype.Auth]
+        stype: Stype_1.Stype.Auth
     };
     //用户中心数据库
     GameAppConfig.auth_database = {
@@ -96,6 +96,11 @@ var GameAppConfig = /** @class */ (function () {
             stype: Stype_1.Stype.GameHoodle,
             host: LOCAL_HOST,
             port: 6088
+        },
+        _a[3] = {
+            stype: Stype_1.Stype.GameSystem,
+            host: LOCAL_HOST,
+            port: 6087
         },
         _a);
     return GameAppConfig;

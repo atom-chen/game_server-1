@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
+var GameHoodleConfig_1 = __importDefault(require("./GameHoodleConfig"));
 //商城配置
 var StoreConfig = /** @class */ (function () {
     function StoreConfig() {
@@ -8,8 +12,6 @@ var StoreConfig = /** @class */ (function () {
         this._store_price_config = [
             0, 10, 20, 40, 70, 90, 140, 200, 270, 350, 440,
             540, 650, 770, 900, 1040, 1190, 1350, 1410, 1590, 1780,
-            1980, 2190, 2410, 2640, 2880, 3130, 3390, 3660, 3940, 4230,
-            4530, 4840, 5160, 5490, 5830, 6180, 6540, 6910, 7290, 7680,
         ];
         this.cal_store_config();
     }
@@ -20,7 +22,7 @@ var StoreConfig = /** @class */ (function () {
         for (var index = 1; index < this._store_price_config.length; index++) {
             var configObj = {
                 propsvrindex: 10000 + index,
-                propid: 10001,
+                propid: GameHoodleConfig_1["default"].KW_PROP_ID_BALL,
                 propcount: 1,
                 propprice: this._store_price_config[index],
                 propinfo: JSON.stringify({ level: index })

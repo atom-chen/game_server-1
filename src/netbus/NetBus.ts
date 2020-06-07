@@ -7,18 +7,18 @@ import { Stype, StypeName} from '../apps/protocol/Stype';
 import ArrayUtil from '../utils/ArrayUtil';
 import Log from '../utils/Log';
 
-var StickPackage    = require("stickpackage")
+let StickPackage    = require("stickpackage")
 
-var global_session_list:any         = {}; 	//客户端session
-var global_seesion_key:number 	    = 1; 	//客户端session key
-var server_connect_list:any         = {}; 	//当前作为客户端，连接到的其他服务器的session
-var IS_USE_STICKPACKAGE:boolean     = true; //是否使用stickpackage处理粘包
+let global_session_list:any         = {}; 	//客户端session
+let global_seesion_key:number 	    = 1; 	//客户端session key
+let server_connect_list:any         = {}; 	//当前作为客户端，连接到的其他服务器的session
+let IS_USE_STICKPACKAGE:boolean     = true; //是否使用stickpackage处理粘包
 
 class NetBus {
     //开启webserver
     static start_ws_server(ip:string, port:number, is_encrypt:boolean) {
         Log.info("start ws server:", ip, port);
-        var server:WebSocket.Server = new WebSocket.Server({ host: ip, port: port,});
+        let server:WebSocket.Server = new WebSocket.Server({ host: ip, port: port,});
         server.on("connection", function(client_session:WebSocket){
             NetBus.on_session_enter(client_session, true, is_encrypt);
             NetBus.ws_add_client_session_event(client_session);
@@ -34,7 +34,7 @@ class NetBus {
     //开启tcpserver
     static start_tcp_server(ip:string, port:number, is_encrypt:boolean) {
         Log.info("start tcp server:", ip, port);
-        var server = TcpSocket.createServer(function(client_session:TcpSocket.Socket) { 
+        let server = TcpSocket.createServer(function(client_session:TcpSocket.Socket) { 
             NetBus.on_session_enter(client_session, false, is_encrypt);
             NetBus.tcp_add_client_session_event(client_session);
         });
@@ -55,7 +55,7 @@ class NetBus {
     }
     //连接到其他服务器
     static connect_tcp_server(stype:number, host:string, port:number, is_encrypt:boolean) {
-        var session:any = TcpSocket.connect({
+        let session:any = TcpSocket.connect({
             port: port,
             host: host,
         });
@@ -97,7 +97,7 @@ class NetBus {
                 }
             }else{
                 //TODO 数据包不对，会一直堆积
-                var last_pkg = NetBus.handle_package_data(session.last_pkg, data,function(cmd_buf:Buffer){
+                let last_pkg = NetBus.handle_package_data(session.last_pkg, data,function(cmd_buf:Buffer){
                     NetBus.on_recv_cmd_server_return(session, cmd_buf)
                 })
                 session.last_pkg = last_pkg;
@@ -121,7 +121,7 @@ class NetBus {
         session.is_encrypt 		= is_encrypt; 			// 是否数据加密
 
         if(!is_websocket){
-            var option = {bigEndian:false}
+            let option = {bigEndian:false}
             session.msgCenter = new StickPackage.msgCenter(option) //粘包处理工具
         }
         //加入到serssion 列表
@@ -172,7 +172,7 @@ class NetBus {
             }else{
                 // Log.info("data recv: " , data)
                 //TODO 数据包不对，会一直堆积
-                var last_pkg = NetBus.handle_package_data(session.last_pkg, data, function(cmd_buf:Buffer){
+                let last_pkg = NetBus.handle_package_data(session.last_pkg, data, function(cmd_buf:Buffer){
                     // Log.info("handle_package_data888: " ,cmd_buf)
                     NetBus.on_session_recv_cmd(session, cmd_buf);
                 })
@@ -222,7 +222,7 @@ class NetBus {
         if (!session.is_connected){
             return
         }
-        var encode_cmd = ProtoManager.encode_cmd(stype, ctype, utag, proto_type, body);
+        let encode_cmd = ProtoManager.encode_cmd(stype, ctype, utag, proto_type, body);
         if (encode_cmd) {
             NetBus.send_encoded_cmd(session,encode_cmd)
         }
@@ -241,7 +241,7 @@ class NetBus {
         if (session.is_websocket) {//websocket
             session.send(encode_cmd);
         }else {//tcp
-            var data = null;
+            let data = null;
             if (IS_USE_STICKPACKAGE == true){
                 if (session.msgCenter){
                     data = session.msgCenter.publish(encode_cmd);
@@ -262,8 +262,8 @@ class NetBus {
             return null;
         }
         // Log.info("handle_package_data111")
-        var last_pkg:any = last_package;
-        var data 	 = recv_data;
+        let last_pkg:any = last_package;
+        let data 	 = recv_data;
         if (last_pkg != null) { //上一次剩余没有处理完的半包;
             last_pkg = Buffer.concat([last_pkg, data], last_pkg.length + data.length);
         }
@@ -271,16 +271,16 @@ class NetBus {
             last_pkg = data
         }
         // Log.info("handle_package_data222")
-        var pkg_len = TcpPkg.read_pkg_size(last_pkg, 0);
+        let pkg_len = TcpPkg.read_pkg_size(last_pkg, 0);
         if (pkg_len <= 2 || pkg_len <= 0) {
             return null;
         }
-        var offset      = 0;
-        var HEAD_LEN    = 2; //2个长度信息
+        let offset      = 0;
+        let HEAD_LEN    = 2; //2个长度信息
         // Log.info("handle_package_data333,offset: "+ offset , "pkg_len: "+ pkg_len ,"last_pkg_len: " + last_pkg.length)
         while(offset + pkg_len <= last_pkg.length) { //判断是否有完整的包;
             // 根据长度信息来读取数据
-            var cmd_buf = null; 
+            let cmd_buf = null; 
             // 收到了一个完整的数据包
             cmd_buf = Buffer.allocUnsafe(pkg_len - HEAD_LEN); 
             last_pkg.copy(cmd_buf, 0, offset + HEAD_LEN, offset + pkg_len);	
@@ -305,7 +305,7 @@ class NetBus {
             last_pkg = null;
         }
         else {
-            var buf = Buffer.allocUnsafe(last_pkg.length - offset);
+            let buf = Buffer.allocUnsafe(last_pkg.length - offset);
             last_pkg.copy(buf, 0, offset, last_pkg.length);
             last_pkg = buf;
         }
@@ -336,7 +336,7 @@ class NetBus {
         session.is_connected 	= true;
         session.is_encrypt 		= is_encrypt;
         if(!is_websocket){
-            var option = {bigEndian:false}
+            let option = {bigEndian:false}
             session.msgCenter = new StickPackage.msgCenter(option) //粘包处理工具
         }
 
@@ -357,7 +357,7 @@ class NetBus {
     //当前作为客户端，其他服务器断开链接
     static on_session_disconnect(session:any) {
         session.is_connected = false;
-        var stype = session.session_key;
+        let stype = session.session_key;
         session.last_pkg = null; 
         session.session_key = null;
 

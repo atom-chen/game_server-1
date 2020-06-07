@@ -17,6 +17,7 @@ var Log_1 = __importDefault(require("../utils/Log"));
 var querystring_1 = __importDefault(require("querystring"));
 var ArrayUtil_1 = __importDefault(require("../utils/ArrayUtil"));
 var GameHoodleConfig_1 = __importDefault(require("../apps/game_server/game_hoodle/config/GameHoodleConfig"));
+var table_name = "ugame";
 var MySqlGame = /** @class */ (function () {
     function MySqlGame() {
     }

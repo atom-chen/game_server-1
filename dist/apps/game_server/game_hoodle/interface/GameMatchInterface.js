@@ -88,7 +88,6 @@ var GameMatchInterface = /** @class */ (function () {
             return;
         }
         player.send_cmd(GameHoodleProto_1.Cmd.eUserStopMatchRes, { status: Response_1["default"].OK });
-        // matchMgr.send_match_player();
         Log_1["default"].info(uname, "do_player_stop_match success!");
     };
     return GameMatchInterface;

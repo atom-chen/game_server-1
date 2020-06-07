@@ -16,6 +16,7 @@ var util = __importStar(require("util"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var Response_1 = __importDefault(require("../apps/protocol/Response"));
 var MAX_NUMBER_ID = 1000000;
+var table_name = "uinfo";
 var MySqlAuth = /** @class */ (function () {
     function MySqlAuth() {
     }

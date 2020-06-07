@@ -16,7 +16,7 @@ exports.RoomListConfig = (_a = {},
     _a[3] = {
         roomlevel: 3,
         baseScore: 3,
-        minLimitCoin: 5000
+        minLimitCoin: 4000
     },
     _a);
 //# sourceMappingURL=RoomListConfig.js.map

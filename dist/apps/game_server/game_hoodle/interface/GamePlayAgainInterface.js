@@ -54,13 +54,13 @@ var GamePlayAgainInterface = /** @class */ (function () {
         var player = playerMgr.get_player(utag); //被邀请的玩家
         if (player.get_user_state() != State_1.UserState.InView) { //非空闲状态
             player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
-            Log_1["default"].warn("hcc>>do_player_play_again_answer error111");
+            // Log.warn("hcc>>do_player_play_again_answer error111");
             return;
         }
         var uroom = roomMgr.get_room_by_uid(player.get_uid()); //自己已经在另外一个房间内了
         if (uroom != null) {
             player.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
-            Log_1["default"].warn("hcc>>do_player_play_again_answer error222");
+            // Log.warn("hcc>>do_player_play_again_answer error222");
             return;
         }
         var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
@@ -73,12 +73,12 @@ var GamePlayAgainInterface = /** @class */ (function () {
             };
             var invitePlayer = playerMgr.get_player(requseruid); //邀请的玩家
             if (invitePlayer.get_user_state() != State_1.UserState.InView) { //非空闲状态
-                Log_1["default"].warn("hcc>>do_player_play_again_answer error333");
+                // Log.warn("hcc>>do_player_play_again_answer error333");
                 invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
                 return;
             }
             if (roomMgr.get_room_by_uid(invitePlayer.get_uid()) != null) { //已经在房间内了
-                Log_1["default"].warn("hcc>>do_player_play_again_answer error444");
+                // Log.warn("hcc>>do_player_play_again_answer error444");
                 invitePlayer.send_cmd(GameHoodleProto_1.Cmd.eUserPlayAgainAnswerRes, { status: Response_1["default"].INVALIDI_OPT });
                 return;
             }

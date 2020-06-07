@@ -89,7 +89,6 @@ class GameMatchInterface {
             return;
         }
         player.send_cmd(Cmd.eUserStopMatchRes, { status: Response.OK });
-        // matchMgr.send_match_player();
         Log.info(uname, "do_player_stop_match success!")
     }
 

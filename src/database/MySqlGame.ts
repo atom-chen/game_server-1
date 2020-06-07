@@ -6,6 +6,8 @@ import querystring from "querystring"
 import ArrayUtil from "../utils/ArrayUtil";
 import GameHoodleConfig from '../apps/game_server/game_hoodle/config/GameHoodleConfig';
 
+let table_name = "ugame";
+
 class MySqlGame {
 	private static mysqlEngine: MySqlEngine = new MySqlEngine();
 

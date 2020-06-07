@@ -42,14 +42,14 @@ class GameAppConfig {
 	static game_system_server:any =  {
 		host: LOCAL_HOST,
 		port: 6087,
-		stypes: [Stype.GameSystem],
+		stype: Stype.GameSystem,
 	}
 
 	//游戏服务
 	static game_server:any =  {
 		host: LOCAL_HOST,
 		port: 6088,
-		stypes: [Stype.GameHoodle],
+		stype: Stype.GameHoodle,
 	}
 
 	//游戏数据库服务
@@ -65,7 +65,7 @@ class GameAppConfig {
 	static auth_server:any =  {
 		host: LOCAL_HOST,
 		port: 6086,
-		stypes: [Stype.Auth],
+		stype: Stype.Auth,
 	}
 
 	//用户中心数据库
@@ -103,6 +103,12 @@ class GameAppConfig {
 			stype: Stype.GameHoodle,
 			host: LOCAL_HOST,
 			port: 6088,
+		},
+
+		[3]: {
+			stype: Stype.GameSystem,
+			host: LOCAL_HOST,
+			port: 6087,
 		},
 	}
 }

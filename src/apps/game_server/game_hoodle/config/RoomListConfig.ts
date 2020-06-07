@@ -13,6 +13,6 @@ export let RoomListConfig: any = {
     [3]: {
         roomlevel: 3,
         baseScore: 3,
-        minLimitCoin: 5000,
+        minLimitCoin: 4000,
     },
 }

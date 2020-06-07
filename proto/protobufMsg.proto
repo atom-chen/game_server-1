@@ -5,3 +5,4 @@ syntax = "proto3";
 import "AuthProto.proto";
 import "TalkProto.proto";
 import "GameHoodleProto.proto";
+import "SystemProto.proto";

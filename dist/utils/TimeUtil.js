@@ -3,7 +3,7 @@ exports.__esModule = true;
 var TimeUtil = /** @class */ (function () {
     function TimeUtil() {
     }
-    // 返回当前的时间戳，单位是秒
+    // 返回当前的时间戳，单位是秒，每次都会随着时间变化
     TimeUtil.timestamp = function () {
         var date = new Date();
         var time = Date.parse(date.toString()); // 1970到现在过去的毫秒数
@@ -22,7 +22,7 @@ var TimeUtil = /** @class */ (function () {
         var time = Date.parse(date.toString());
         return (time / 1000);
     };
-    // 今天00:00:00的时间戳
+    // 今天00:00:00的时间戳，固定值：比如1591459200
     TimeUtil.timestamp_today = function () {
         var date = new Date();
         date.setHours(0);
@@ -32,12 +32,12 @@ var TimeUtil = /** @class */ (function () {
         time = time / 1000;
         return time;
     };
-    //
+    //昨天00:00:00的时间戳，固定值：比如：1591372800
     TimeUtil.timestamp_yesterday = function () {
         var time = TimeUtil.timestamp_today();
         return (time - 24 * 60 * 60);
     };
-    // 获取当前时间(精确到毫秒)
+    // 获取当前时间(精确到毫秒)，如：202067 11：12：4 357
     TimeUtil.get_cur_time = function () {
         var now = new Date();
         // 获取当前完整年份

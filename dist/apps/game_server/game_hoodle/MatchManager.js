@@ -80,7 +80,7 @@ var MatchManager = /** @class */ (function () {
                             player.send_cmd(GameHoodleProto_1.Cmd.eUserMatchRes, body);
                             GameFunction_1["default"].broadcast_player_info_in_rooom(not_full_room, player);
                             _this.del_player_from_match_list_by_uid(player.get_uid(), zoom.match_list); //从待匹配列表删除
-                            _this.del_player_from_in_match_list_by_uid(player.get_uid(), zoom.in_match_list); //匹配完成的人删除
+                            _this.del_player_from_in_match_list_by_uid(player.get_uid(), zoom.in_match_list); //匹配完成的列表删除
                             is_match_room_success = true;
                         }
                     }

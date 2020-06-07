@@ -7,6 +7,7 @@ import { UserState, GameState } from '../config/State';
 import ProtoManager from '../../../../netbus/ProtoManager';
 import GameFunction from './GameFunction';
 import GameCheck from './GameCheck';
+import { RoomListConfig } from '../config/RoomListConfig';
 
 let playerMgr: PlayerManager    = PlayerManager.getInstance();
 let roomMgr: RoomManager        = RoomManager.getInstance();
@@ -110,12 +111,20 @@ class GameLogicInterface {
             let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
             GameFunction.send_player_is_shooted(room, body)
 
+            let baseScore = 1;
+            if (room.get_is_match_room()) {
+                let levelConfig = RoomListConfig[room.get_match_roomlevel()];
+                if (levelConfig){
+                    baseScore = Number(levelConfig.baseScore);
+                }
+            }
+
             //分数计算
             let src_player = room.get_player_by_seatid(body.srcseatid);
             let des_player = room.get_player_by_seatid(body.desseatid);
             if (src_player && des_player) {
-                src_player.set_user_score(src_player.get_user_score() + 1);
-                des_player.set_user_score(des_player.get_user_score() - 1);
+                src_player.set_user_score(src_player.get_user_score() + baseScore);
+                des_player.set_user_score(des_player.get_user_score() - baseScore);
                 Log.info("hcc>>playerScore: src_player:", src_player.get_unick(), "+1", " des_player:", des_player.get_unick(), "-1");
             }
             //发送分数

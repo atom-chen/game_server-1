@@ -5,6 +5,7 @@ import Log from '../utils/Log';
 import Response from '../apps/protocol/Response';
 
 let MAX_NUMBER_ID = 1000000;
+let table_name = "uinfo";
 
 class MySqlAuth {
 	private static mysqlEngine: MySqlEngine = new MySqlEngine();

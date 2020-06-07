@@ -14,6 +14,7 @@ import GameCheck from './interface/GameCheck';
 import GameEmojInterface from './interface/GameEmojInterface';
 import GamePlayAgainInterface from './interface/GamePlayAgainInterface';
 import GameConfigInterface from './interface/GameConfigInterface';
+import GameHoodleConfig from './config/GameHoodleConfig';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -240,6 +241,8 @@ class GameHoodleModle {
             return;
         }
         GameInfoInterface.do_player_store_list(utag);
+        //test
+        // GameSendMsg.send_simulate_client(Cmd.eCreateRoomReq, utag, proto_type, { gamerule: JSON.stringify(GameHoodleConfig.MATCH_GAME_RULE)});
     }
     
     on_player_buy_things(session: any, utag: number, proto_type: number, raw_cmd: any) {

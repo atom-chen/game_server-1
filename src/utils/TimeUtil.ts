@@ -1,5 +1,5 @@
 class TimeUtil{
-    // 返回当前的时间戳，单位是秒
+    // 返回当前的时间戳，单位是秒，每次都会随着时间变化
     static timestamp() {
         var date = new Date();
         var time = Date.parse(date.toString()); // 1970到现在过去的毫秒数
@@ -21,7 +21,7 @@ class TimeUtil{
         return (time / 1000);
     }
 
-    // 今天00:00:00的时间戳
+    // 今天00:00:00的时间戳，固定值：比如1591459200
     static timestamp_today() {
         var date = new Date();
         date.setHours(0);
@@ -31,13 +31,14 @@ class TimeUtil{
         time = time / 1000;
         return time;
     }
-    //
+
+    //昨天00:00:00的时间戳，固定值：比如：1591372800
     static timestamp_yesterday() {
         var time = TimeUtil.timestamp_today();
         return (time - 24 * 60 * 60)
     }
 
-    // 获取当前时间(精确到毫秒)
+    // 获取当前时间(精确到毫秒)，如：202067 11：12：4 357
     static get_cur_time() {
         var now = new Date();
         // 获取当前完整年份

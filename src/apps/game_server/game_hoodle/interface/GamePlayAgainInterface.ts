@@ -52,14 +52,14 @@ class GamePlayAgainInterface {
         let player: Player = playerMgr.get_player(utag); //被邀请的玩家
         if (player.get_user_state() != UserState.InView) {//非空闲状态
             player.send_cmd(Cmd.eUserPlayAgainAnswerRes, { status: Response.INVALIDI_OPT });
-            Log.warn("hcc>>do_player_play_again_answer error111");
+            // Log.warn("hcc>>do_player_play_again_answer error111");
             return;
         }
 
         let uroom = roomMgr.get_room_by_uid(player.get_uid()); //自己已经在另外一个房间内了
         if(uroom != null){
             player.send_cmd(Cmd.eUserPlayAgainAnswerRes, { status: Response.INVALIDI_OPT });
-            Log.warn("hcc>>do_player_play_again_answer error222");
+            // Log.warn("hcc>>do_player_play_again_answer error222");
             return;
         }
 
@@ -73,13 +73,13 @@ class GamePlayAgainInterface {
             }
             let invitePlayer: Player = playerMgr.get_player(requseruid); //邀请的玩家
             if (invitePlayer.get_user_state() != UserState.InView){ //非空闲状态
-                Log.warn("hcc>>do_player_play_again_answer error333");
+                // Log.warn("hcc>>do_player_play_again_answer error333");
                 invitePlayer.send_cmd(Cmd.eUserPlayAgainAnswerRes, { status: Response.INVALIDI_OPT});
                 return;
             }
 
             if (roomMgr.get_room_by_uid(invitePlayer.get_uid()) != null){ //已经在房间内了
-                Log.warn("hcc>>do_player_play_again_answer error444");
+                // Log.warn("hcc>>do_player_play_again_answer error444");
                 invitePlayer.send_cmd(Cmd.eUserPlayAgainAnswerRes, { status: Response.INVALIDI_OPT});
                 return;
             }
