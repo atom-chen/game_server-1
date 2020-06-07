@@ -14,7 +14,6 @@ import GameCheck from './interface/GameCheck';
 import GameEmojInterface from './interface/GameEmojInterface';
 import GamePlayAgainInterface from './interface/GamePlayAgainInterface';
 import GameConfigInterface from './interface/GameConfigInterface';
-import GameHoodleConfig from './config/GameHoodleConfig';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;

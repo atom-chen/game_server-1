@@ -17,8 +17,7 @@ class GameConfigInterface {
             status : Response.OK,
             config : config,
         }
-
-        Log.info("hcc>>do_player_room_list_req: " , body);
+        // Log.info("hcc>>do_player_room_list_req: " , body);
         player.send_cmd(Cmd.eRoomListConfigRes,body);
     }
 }

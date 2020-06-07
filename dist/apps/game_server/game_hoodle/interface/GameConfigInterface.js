@@ -7,7 +7,6 @@ var GameHoodleProto_1 = require("../../../protocol/GameHoodleProto");
 var Response_1 = __importDefault(require("../../../protocol/Response"));
 var PlayerManager_1 = __importDefault(require("../PlayerManager"));
 var RoomListConfig_1 = require("../config/RoomListConfig");
-var Log_1 = __importDefault(require("../../../../utils/Log"));
 var playerMgr = PlayerManager_1["default"].getInstance();
 var GameConfigInterface = /** @class */ (function () {
     function GameConfigInterface() {
@@ -19,7 +18,7 @@ var GameConfigInterface = /** @class */ (function () {
             status: Response_1["default"].OK,
             config: config
         };
-        Log_1["default"].info("hcc>>do_player_room_list_req: ", body);
+        // Log.info("hcc>>do_player_room_list_req: " , body);
         player.send_cmd(GameHoodleProto_1.Cmd.eRoomListConfigRes, body);
     };
     return GameConfigInterface;
