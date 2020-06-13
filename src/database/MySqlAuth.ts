@@ -2,7 +2,6 @@ import MySqlEngine from "./MySqlEngine"
 import TimeUtil from '../utils/TimeUtil';
 import * as util from "util"
 import Log from '../utils/Log';
-import Response from '../apps/protocol/Response';
 
 let MAX_NUMBER_ID = 1000000;
 let table_name = "uinfo";
@@ -22,383 +21,194 @@ class MySqlAuth {
 		MySqlAuth.engine().mysql_query(sql, callback);
 	}
 
-	static login_by_uname_upwd(uname:string, upwd:string, callback:Function){
-		var sql = "select uname, upwd ,uid from uinfo where uname = \"%s\" and upwd = \"%s\" and is_guest = 0 limit 1";
-		var sql_cmd = util.format(sql, uname, upwd);
-		// Log.info("sql: " , sql_cmd)
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
-			}
-			callback(Response.OK, sql_ret);
-		});
+	static async async_query(sql: string) {
+		return await MySqlAuth.engine().async_query(sql);
 	}
 
-	static login_by_guestkey(guestkey:string, callback:Function){
-		var sql = "select guest_key , uid from uinfo where guest_key = \"%s\" limit 1";
-		var sql_cmd = util.format(sql, guestkey);
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
-			}
-			callback(Response.OK, sql_ret);
-		});
+	static async login_by_uname_upwd(uname:string, upwd:string){
+		let sql = "select uname, upwd ,uid from uinfo where uname = \"%s\" and upwd = \"%s\" and is_guest = 0 limit 1";
+		let sql_cmd = util.format(sql, uname, upwd);
+		Log.info("sql: " , sql_cmd)
+		return await MySqlAuth.async_query(sql_cmd);
+	}
+
+	static async login_by_guestkey(guestkey:string){
+		let sql = "select guest_key , uid from uinfo where guest_key = \"%s\" limit 1";
+		let sql_cmd = util.format(sql, guestkey);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 
 	//wechat login
-	static login_by_wechat_unionid(unionid:string, callback:Function){
-		var sql = "select unionid , uid from uinfo where unionid = \"%s\" limit 1";
-		var sql_cmd = util.format(sql, unionid);
-		MySqlAuth.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
-			}
-			callback(Response.OK, sql_ret);
-		});
+	static async login_by_wechat_unionid(unionid:string){
+		let sql = "select unionid , uid from uinfo where unionid = \"%s\" limit 1";
+		let sql_cmd = util.format(sql, unionid);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 	
-	static get_uinfo_by_uname_upwd(uname:string, upwd:string, callback:Function) {
+	static async get_uinfo_by_uname_upwd(uname:string, upwd:string) {
 		if(uname && upwd && uname != "" && upwd != ""){
 			let sql = "select * from uinfo where uname = \"%s\" and upwd = \"%s\" and is_guest = 0 limit 1";
 			let sql_cmd = util.format(sql, uname, upwd);
-			MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-				if (err) {
-					callback(Response.SYSTEM_ERR, err);
-					return;
-				}
-				callback(Response.OK, sql_ret);
-			});
+			return await MySqlAuth.async_query(sql_cmd);
 		}
 	}
 
-	static get_uinfo_by_uid(uid:number,callback:Function){
-		var sql = "select * from uinfo where uid = %d limit 1";
-		var sql_cmd = util.format(sql, uid);
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
-			}
-			callback(Response.OK, sql_ret);
-		});
+	static async get_uinfo_by_uid(uid:number){
+		let sql = "select * from uinfo where uid = %d limit 1";
+		let sql_cmd = util.format(sql, uid);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 
-	static insert_wechat_user(unick: string, usex: number, address:string, unionid:string , avatarurl:string, callback: Function) {
-		let max_numid = MAX_NUMBER_ID;
-		MySqlAuth.get_max_uid(function (status: number, maxuid: number) {
-			if (status == Response.OK) {
-				max_numid = max_numid + maxuid + 1;
-				Log.info("insert_uname_upwd_user>> numid: ", max_numid)
-				var sql = "insert into uinfo(`unick`, `usex`, `address` ,`numberid`, `unionid`, `avatarurl`)values(\"%s\", %d, \"%s\", %d, \"%s\",\"%s\")";
-				var sql_cmd = util.format(sql, unick, usex, address, max_numid, unionid, avatarurl);
-				// Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
-				MySqlAuth.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
-					if (err) {
-						callback(Response.SYSTEM_ERR, err);
-						return;
-					}
-					callback(Response.OK, sql_ret);
-				});
-			} else {
-				callback(Response.SYSTEM_ERR);
-			}
-		})
+	static async insert_wechat_user(unick: string, usex: number, address:string, unionid:string , avatarurl:string) {
+		let maxuid = await MySqlAuth.get_max_uid();
+		if (!util.isNullOrUndefined(maxuid)){
+			let max_numid = MAX_NUMBER_ID + maxuid + 1;
+			Log.info("insert_uname_upwd_user>> numid: ", max_numid);
+			let sql = "insert into uinfo(`unick`, `usex`, `address` ,`numberid`, `unionid`, `avatarurl`)values(\"%s\", %d, \"%s\", %d, \"%s\",\"%s\")";
+			let sql_cmd = util.format(sql, unick, usex, address, max_numid, unionid, avatarurl);
+			Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
+			return await MySqlAuth.async_query(sql_cmd);
+		}
 	}
 
-	static insert_uname_upwd_user(uname:string , upwdmd5:string ,unick:string, uface:number, usex:number, callback:Function){
-		let max_numid = MAX_NUMBER_ID;
-		MySqlAuth.get_max_uid(function (status:number, maxuid: number) {
-			if(status == Response.OK){
-				max_numid = max_numid + maxuid + 1;
-				unick = unick + String(max_numid);
-				Log.info("insert_uname_upwd_user>> numid: " , max_numid)
-				var sql = "insert into uinfo(`uname`, `upwd` ,`unick`, `uface`, `usex`, `numberid`, `guest_key`)values(\"%s\", \"%s\", \"%s\", %d, %d, %d,0)";
-				var sql_cmd = util.format(sql, uname, upwdmd5, unick, uface, usex, max_numid);
-				Log.info("insert_uname_upwd_user>> sql: " , sql_cmd);
-				MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-					if (err) {
-						Log.info("insert_uname_upwd_user error111");
-						callback(Response.SYSTEM_ERR, err);
-						return;
-					}
-					
-					Log.info("insert_uname_upwd_user success!!!");
-					callback(Response.OK,sql_ret);
-				});	
-			}else{
-				Log.info("insert_uname_upwd_user error333");
-				callback(Response.SYSTEM_ERR);
-			}
-		})
+	static async insert_uname_upwd_user(uname:string , upwdmd5:string ,unick:string, uface:number, usex:number){
+		let maxuid = await MySqlAuth.get_max_uid();
+		if (!util.isNullOrUndefined(maxuid)) {
+			let max_numid = MAX_NUMBER_ID + maxuid + 1;
+			unick = unick + String(max_numid);
+			Log.info("insert_uname_upwd_user>> numid: ", max_numid)
+			let sql = "insert into uinfo(`uname`, `upwd` ,`unick`, `uface`, `usex`, `numberid`, `guest_key`)values(\"%s\", \"%s\", \"%s\", %d, %d, %d,0)";
+			let sql_cmd = util.format(sql, uname, upwdmd5, unick, uface, usex, max_numid);
+			Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
+			return await MySqlAuth.async_query(sql_cmd);
+		}
 	}
 
-	static insert_guest_user(unick:string, uface:number, usex:number, ukey:string, callback:Function) {
-		let max_numid = MAX_NUMBER_ID;
-		MySqlAuth.get_max_uid(function (status:number, maxuid: number) {
-			if(status == Response.OK){
-				max_numid = max_numid + maxuid + 1;
-				unick = unick + String(max_numid);
-				var sql = "insert into uinfo(`guest_key`, `unick`, `uface`, `usex`, `numberid`, `is_guest`)values(\"%s\", \"%s\", %d, %d, %d,1)";
-				var sql_cmd = util.format(sql, ukey, unick, uface, usex, max_numid);
-				MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-					if (err) {
-						callback(Response.SYSTEM_ERR, err);
-						return;
-					}
-					callback(Response.OK,sql_ret);
-				});
-			}else{
-				callback(Response.SYSTEM_ERR);
-			}
-		})
+	static async insert_guest_user(unick:string, uface:number, usex:number, ukey:string) {
+		let maxuid = await MySqlAuth.get_max_uid();
+		if (!util.isNullOrUndefined(maxuid)) {
+			let max_numid = MAX_NUMBER_ID + maxuid + 1;
+			unick = unick + String(max_numid);
+			let sql = "insert into uinfo(`guest_key`, `unick`, `uface`, `usex`, `numberid`, `is_guest`)values(\"%s\", \"%s\", %d, %d, %d,1)";
+			let sql_cmd = util.format(sql, ukey, unick, uface, usex, max_numid);
+			return await MySqlAuth.async_query(sql_cmd);
+		}
 	}
 
-	static check_uname_exist(uname:string, callback:Function){
+	static async check_uname_exist(uname:string){
 		let sql = "select uid from uinfo where binary uname = \"%s\""
-		var sql_cmd = util.format(sql, uname);
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
-			}
-			
-			if(sql_ret.length <= 0) {
-				callback(Response.INVALID_PARAMS);
-				return;
-			}
-			if (sql_ret[0].uid != undefined) {
-				callback(Response.OK);
-				return;	
-			}
-			callback(Response.INVALID_PARAMS);
-		});
-	}
-
-	static get_max_uid(callback:Function){
-		let sql = "select uid from uinfo order by uid desc"
-		MySqlAuth.query(sql,function (err:any, sql_ret:any, fields_desic:any) {
-			if(err){
-				callback(Response.INVALIDI_OPT,err);
-				return;
-			}
-
-			if(sql_ret.length <= 0 ){
-				callback(Response.OK , 0)
-				return;
-			}
-			callback(Response.OK , sql_ret[0].uid);
-		})
-	}
-
-	static update_wechat_user_info(uid:number, unick: string, usex: number, address: string, unionid: string, avatarurl: string, callback?: Function){
-		var sql = "update uinfo set unick = \"%s\", usex = %d, address = \"%s\", unionid = \"%s\" ,avatarurl = \"%s\" where uid = %d";
-		var sql_cmd = util.format(sql, unick, usex, address, unionid, avatarurl, uid);
-		MySqlAuth.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
-			if (err) {
-				if (callback){
-					callback(Response.SYSTEM_ERR, err);
+		let sql_cmd = util.format(sql, uname);
+		let sql_ret =  await MySqlAuth.async_query(sql_cmd);
+		if (sql_ret){
+			if(sql_ret.length <= 0){
+				return false;
+			}else{
+				if(!util.isNullOrUndefined(sql_ret[0].uid)){
+					return true;
 				}
-				return;
 			}
-			if (callback) {
-				callback(Response.OK, sql_ret);
-			}
-		})
+		}
 	}
 
-	////////////////////////////////////
-
-	static get_guest_uinfo_by_guestkey(guestkey:string, callback:Function) {
-		var sql = "select * from uinfo where guest_key = \"%s\" limit 1";
-		var sql_cmd = util.format(sql, guestkey);
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
+	static async get_max_uid(){
+		let sql_cmd = "select uid from uinfo order by uid desc"
+		let sql_ret:any = await MySqlAuth.async_query(sql_cmd);
+		if (sql_ret){
+			if (sql_ret.length <= 0){
+				return 0;
+			}else{
+				return sql_ret[0].uid;
 			}
-			callback(Response.OK, sql_ret);
-		});
+		}
 	}
 
-	static insert_phone_account_user(unick:string, uface:number, usex:number, phone:string, pwd_md5:string, callback:Function) {
-		var sql = "insert into uinfo(`uname`, `upwd`, `unick`, `uface`, `usex`, `is_guest`)values(\"%s\", \"%s\", \"%s\", %d, %d, 0)";
-		var sql_cmd = util.format(sql, phone, pwd_md5, unick, uface, usex);
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
-			}
-			callback(Response.OK,sql_ret);
-		});
+	static async update_wechat_user_info(uid:number, unick: string, usex: number, address: string, unionid: string, avatarurl: string){
+		let sql = "update uinfo set unick = \"%s\", usex = %d, address = \"%s\", unionid = \"%s\" ,avatarurl = \"%s\" where uid = %d";
+		let sql_cmd = util.format(sql, unick, usex, address, unionid, avatarurl, uid);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 
-	static edit_profile(uid:number, unick:string, usex:number, uface:number, callback:Function) {
-		var sql = "update uinfo set unick = \"%s\", usex = %d, uface = %d where uid = %d";
-		var sql_cmd = util.format(sql, unick, usex, uid, uface);
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
-			}
-			callback(Response.OK,sql_ret);
-		})
+	static async get_guest_uinfo_by_guestkey(guestkey:string) {
+		let sql = "select * from uinfo where guest_key = \"%s\" limit 1";
+		let sql_cmd = util.format(sql, guestkey);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 
-	static is_exist_guest(uid:number, callback:Function) {
-		var sql = "select is_guest, status from uinfo where uid = %d limit 1";
-		var sql_cmd = util.format(sql, uid);
-	
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR, err);
-				return;
-			}
-	
-			if(sql_ret.length <= 0) {
-				callback(Response.INVALID_PARAMS);
-				return;
-			}
-	
-			if (sql_ret[0].is_guest === 1 && sql_ret[0].status === 0) {
-				callback(Response.OK);
-				return;	
-			}
-			callback(Response.INVALID_PARAMS);
-		});
-	}
-	//TODO 手机号不能作为账号
-	static check_phone_code_valid(phone:string, phone_code:number, opt_type:number, callback:Function) {
-		var sql = "select id from phone_chat where phone = \"%s\" and opt_type = %d and code = \"%s\" and end_time >= %d limit 1";
-		var t = TimeUtil.timestamp();
-		var sql_cmd = util.format(sql, phone, opt_type, phone_code, t);
-	
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR,err);
-				return;
-			}
-	
-			if(sql_ret.length <= 0) { // 找不到，才是验证码不对
-				callback(Response.PHONE_CODE_ERR);
-				return;
-			}
-			callback(Response.OK);
-			
-		});
+	static async insert_phone_account_user(unick:string, uface:number, usex:number, phone:string, pwd_md5:string) {
+		let sql = "insert into uinfo(`uname`, `upwd`, `unick`, `uface`, `usex`, `is_guest`)values(\"%s\", \"%s\", \"%s\", %d, %d, 0)";
+		let sql_cmd = util.format(sql, phone, pwd_md5, unick, uface, usex);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 
-	static check_phone_unuse(phone_num:string, callback:Function) {
-		var sql = "select uid from uinfo where uname = %s limit 1";
-		var sql_cmd = util.format(sql, phone_num);
-	
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR,err);
-				return;
-			}
-	
-			if(sql_ret.length <= 0) {
-				callback(Response.OK);
-				return;
-			}
-			callback(Response.PHONE_IS_REG);
-		});
+	static async edit_profile(uid:number, unick:string, usex:number, uface:number) {
+		let sql = "update uinfo set unick = \"%s\", usex = %d, uface = %d where uid = %d";
+		let sql_cmd = util.format(sql, unick, usex, uid, uface);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 
-	static check_phone_is_reged(phone_num:string, callback:Function) {
-		var sql = "select uid from uinfo where uname = %s limit 1";
-		var sql_cmd = util.format(sql, phone_num);
-	
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR,err);
-				return;
+	static async is_exist_guest(uid:number) {
+		let sql = "select is_guest, status from uinfo where uid = %d limit 1";
+		let sql_cmd = util.format(sql, uid);
+		let sql_ret:any = await MySqlAuth.async_query(sql_cmd);
+		if (sql_ret){
+			if (sql_ret.length <= 0){
+				return false;
+			}else{
+				if (sql_ret[0].is_guest === 1 && sql_ret[0].status === 0) {
+					return true;
+				}
 			}
-			if(sql_ret.length <= 0) {
-				callback(Response.PHONE_IS_NOT_REG);
-				return;
-			}
-			callback(Response.OK);
-		});
+		}
+		return false;
 	}
 
-	static _is_phone_indentify_exist(phone:string, opt:number, callback:Function) {
-		var sql = "select id from phone_chat where phone = \"%s\" and opt_type = %d";
-		var sql_cmd = util.format(sql, phone, opt);
-	
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(false);
-				return;
+	static async _is_phone_indentify_exist(phone:string, opt:number) {
+		let sql = "select id from phone_chat where phone = \"%s\" and opt_type = %d";
+		let sql_cmd = util.format(sql, phone, opt);
+		let sql_ret: any = await MySqlAuth.async_query(sql_cmd);
+		if (sql_ret){
+			if (sql_ret.length <= 0){
+				return false;
+			}else{
+				return true;
 			}
-	
-			if(sql_ret.length <= 0) {
-				callback(false);
-				return;
-			}
-			callback(true);
-		});
+		}
+		return false;
 	}
 
-	static _update_phone_indentify_time(code:string, phone:string, opt:number, end_duration:number) {
-		var end_time = TimeUtil.timestamp() + end_duration;
-		var sql = "update phone_chat set code = \"%s\", end_time=%d, count=count+1 where phone = \"%s\" and opt_type = %d";
-		var sql_cmd = util.format(sql, code, end_time, phone, opt);
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-		})
+	static async _update_phone_indentify_time(code:string, phone:string, opt:number, end_duration:number) {
+		let end_time = TimeUtil.timestamp() + end_duration;
+		let sql = "update phone_chat set code = \"%s\", end_time=%d, count=count+1 where phone = \"%s\" and opt_type = %d";
+		let sql_cmd = util.format(sql, code, end_time, phone, opt);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 	
-	static _insert_phone_indentify(code:string, phone:string, opt:number, end_duration:number) {
-		var end_time = TimeUtil.timestamp() + end_duration;
-		var sql = "insert into phone_chat(`code`, `phone`, `opt_type`, `end_time`, `count`)values(\"%s\", \"%s\", %d, %d, 1)";
-		var sql_cmd = util.format(sql, code, phone, opt, end_time);
-	
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-		})
+	static async _insert_phone_indentify(code:string, phone:string, opt:number, end_duration:number) {
+		let end_time = TimeUtil.timestamp() + end_duration;
+		let sql = "insert into phone_chat(`code`, `phone`, `opt_type`, `end_time`, `count`)values(\"%s\", \"%s\", %d, %d, 1)";
+		let sql_cmd = util.format(sql, code, phone, opt, end_time);
+		return await MySqlAuth.async_query(sql_cmd);
 	}	
 	
-	// callback(Respons.OK)
-	static update_phone_indentify(code:string, phone:string, opt:number, end_duration:number, callback:Function) {
-		MySqlAuth._is_phone_indentify_exist(phone, opt, function(b_exisit:boolean) {
-			if (b_exisit) {
-				// 更新时间和操作次数
-				MySqlAuth._update_phone_indentify_time(code, phone, opt, end_duration);
-			}
-			else { // 插入一条记录
-				MySqlAuth._insert_phone_indentify(code, phone, opt, end_duration);
-			}
-			callback(Response.OK);
-		});
+	static async update_phone_indentify(code:string, phone:string, opt:number, end_duration:number, callback:Function) {
+		let b_exisit = await MySqlAuth._is_phone_indentify_exist(phone, opt);
+		if (b_exisit){
+			 await MySqlAuth._update_phone_indentify_time(code, phone, opt, end_duration);
+		}else{
+			await MySqlAuth._insert_phone_indentify(code, phone, opt, end_duration);
+		}
 	}
 
-	static do_upgrade_guest_account(uid:number, uname:string, upwd:string, callback:Function) {
-		var sql = "update uinfo set uname = \"%s\", upwd = \"%s\", is_guest = 0 where uid = %d";
-		var sql_cmd = util.format(sql, uname, upwd, uid);
-		
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR,err);
-			}
-			else {
-				callback(Response.OK);
-			}
-		})
+	static async do_upgrade_guest_account(uid:number, uname:string, upwd:string, callback:Function) {
+		let sql = "update uinfo set uname = \"%s\", upwd = \"%s\", is_guest = 0 where uid = %d";
+		let sql_cmd = util.format(sql, uname, upwd, uid);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 	
-	static reset_account_pwd(uname:string, upwd:string, callback:Function) {
-		var sql = "update uinfo set upwd = \"%s\" where uname = \"%s\"";
-		var sql_cmd = util.format(sql, upwd, uname);
-		MySqlAuth.query(sql_cmd, function(err:any, sql_ret:any, fields_desic:any) {
-			if (err) {
-				callback(Response.SYSTEM_ERR,err);
-			}
-			else {
-				callback(Response.OK);
-			}
-		})
+	static async reset_account_pwd(uname:string, upwd:string, callback:Function) {
+		let sql = "update uinfo set upwd = \"%s\" where uname = \"%s\"";
+		let sql_cmd = util.format(sql, upwd, uname);
+		return await MySqlAuth.async_query(sql_cmd);
 	}
 
 }

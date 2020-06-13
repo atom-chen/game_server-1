@@ -1,20 +1,20 @@
 import MySqlAuth from '../database/MySqlAuth';
 import GameAppConfig from '../apps/config/GameAppConfig';
 import Log from '../utils/Log';
+import * as util from 'util';
 
 var db = GameAppConfig.auth_database;
 MySqlAuth.connect(db.host, db.port, db.db_name, db.uname, db.upwd)
 
 // setInterval(function(){
-    MySqlAuth.get_uinfo_by_uname_upwd("hccfun","111111",function(err:any,ret:any){
-        if(err){
-            Log.error("hcc>>err: " , err)
-            return;
-        }
-        Log.info("hcc>>info: " ,ret)
-    })
-
 // },2000)
+
+async function test_asnyc() {
+    let info: any = MySqlAuth.get_uinfo_by_uname_upwd("test1111", "111111");
+    Log.info("1111" , info);
+}
+
+test_asnyc();
 
 // MySqlAuth.get_guest_uinfo_by_ukey("2",function(err:any,ret:any){
 //     if(err){
@@ -39,3 +39,4 @@ MySqlAuth.connect(db.host, db.port, db.db_name, db.uname, db.upwd)
 //     }
 //     Log.info("success ret: ",ret)
 // })
+ 

@@ -9,6 +9,7 @@ import ArrayUtil from "../../../../utils/ArrayUtil";
 import PlayerManager from '../PlayerManager';
 import ProtoManager from '../../../../netbus/ProtoManager';
 import StoreConfig from '../config/StoreConfig';
+import querystring from 'querystring';
 
 let playerMgr: PlayerManager = PlayerManager.getInstance();
 
@@ -78,75 +79,73 @@ class GameInfoInterface {
     ////////////////////////////////////////
     
     //获取有游戏服务信息
-    static do_player_get_ugame_info(utag:number){
+    static async do_player_get_ugame_info(utag:number){
         let player: Player = playerMgr.get_player(utag);
-        MySqlGame.get_ugame_uchip_by_uid(utag, function (status: number, data_game: any) {
-            if (status == Response.OK) {
-                let data_game_len = ArrayUtil.GetArrayLen(data_game);
-                if (data_game_len > 0) {
-                    Log.info("hcc>>on_user_get_ugame_info1111>>", data_game[0] , "data_game: " , data_game);
-                    let ugameInfo = data_game[0];
-                    let ugameInfoStr = JSON.stringify(ugameInfo);
-                    let body = {
-                        status: Response.OK,
-                        userinfostring: ugameInfoStr,
-                    }
-                    player.set_ugame_info(ugameInfo);
-                    player.send_cmd(Cmd.eUserGameInfoRes, body);
-                } else {
-                    MySqlGame.insert_ugame_user(utag, GameHoodleConfig.KW_BORN_EXP, GameHoodleConfig.KW_BORN_CHIP, function (status_game_ins: number, data_game_ins: any) {
-                        Log.info("hcc>>on_user_get_ugame_info2222");
-                        if (status_game_ins == Response.OK) {
-                            MySqlGame.get_ugame_uchip_by_uid(utag, function (status_game_ins_get: number, data_game_ins_get: any) {
-                                if (status_game_ins_get == Response.OK) {
-                                    Log.info("hcc>>on_user_get_ugame_info3333>>", data_game_ins_get[0]);
-                                    let ugameInfo = data_game_ins_get[0];
-                                    let ugameInfoStr = JSON.stringify(ugameInfo);
-                                    let body = {
-                                        status: Response.OK,
-                                        userinfostring: ugameInfoStr,
-                                    }
-                                    player.set_ugame_info(ugameInfo);
-                                    player.send_cmd(Cmd.eUserGameInfoRes, body);
-                                } else {
-                                    Log.info("hcc>>on_user_get_ugame_info4444>>error");
-                                    player.send_cmd(Cmd.eUserGameInfoRes, { status: Response.INVALIDI_OPT });
-                                }
-                            })
-                        } else {
-                            Log.info("hcc>>on_user_get_ugame_info5555>>error");
-                            player.send_cmd(Cmd.eUserGameInfoRes, { status: Response.INVALIDI_OPT });
-                        }
-                    })
+        let data_game:any = await MySqlGame.get_ugame_uchip_by_uid(utag);
+        if (data_game){
+            let data_game_len = ArrayUtil.GetArrayLen(data_game);
+            if (data_game_len > 0) {
+                Log.info("hcc>>on_user_get_ugame_info1111>>", data_game[0], "data_game: ", data_game);
+                let ugameInfo = data_game[0];
+                let ugameInfoStr = JSON.stringify(ugameInfo);
+                let body = {
+                    status: Response.OK,
+                    userinfostring: ugameInfoStr,
                 }
-            } else {
-                Log.info("hcc>>on_user_get_ugame_info6666>>error");
-                player.send_cmd(Cmd.eUserGameInfoRes, { status: Response.INVALIDI_OPT });
+                player.set_ugame_info(ugameInfo);
+                player.send_cmd(Cmd.eUserGameInfoRes, body);
+                return;
+            }else{
+                let ret_insert:any = await MySqlGame.insert_ugame_user(utag, GameHoodleConfig.KW_BORN_EXP, GameHoodleConfig.KW_BORN_CHIP);
+                if (ret_insert){
+                    let data_game_ins_get:any = await MySqlGame.get_ugame_uchip_by_uid(utag);
+                    if (data_game_ins_get && data_game_ins_get.length > 0){
+                        Log.info("hcc>>on_user_get_ugame_info3333>>", data_game_ins_get[0]);
+                        let ugameInfo = data_game_ins_get[0];
+                        let ugameInfoStr = JSON.stringify(ugameInfo);
+                        let body = {
+                            status: Response.OK,
+                            userinfostring: ugameInfoStr,
+                        }
+                        player.set_ugame_info(ugameInfo);
+                        player.send_cmd(Cmd.eUserGameInfoRes, body);
+                        return;
+                    }
+                }
             }
-        })
+        }
+        player.send_cmd(Cmd.eUserGameInfoRes, { status: Response.INVALIDI_OPT });
     }
 
     //获取弹珠信息
-    static do_player_get_ball_info(utag:number) {
+    static async do_player_get_ball_info(utag:number) {
         let player:Player = playerMgr.get_player(utag);
-        MySqlGame.get_ugame_uball_info(player.get_uid(), function (status: number, ret: any) {
-            if (status == Response.OK) {
-                let uball_json = ret;
-                let body = {
-                    status: Response.OK,
-                    userballinfostring: uball_json,
+        let sql_ret:any = await MySqlGame.get_ugame_uball_info(player.get_uid());
+        if (sql_ret){
+            let ret_len = ArrayUtil.GetArrayLen(sql_ret);
+            if (ret_len > 0){
+                try {
+                    let info = sql_ret[0];
+                    let uball_info_obj = querystring.decode(info.uball_info);
+                    let uball_json = JSON.stringify(uball_info_obj);
+                    let body = {
+                        status: Response.OK,
+                        userballinfostring: uball_json,
+                    }
+                    Log.info("hcc>>on_ser_ball_info: ", uball_json);
+                    player.send_cmd(Cmd.eUserBallInfoRes, body);
+                    player.set_uball_info(uball_json);
+                    return;
+                } catch (error) {
+                    Log.error(error);
                 }
-                Log.info("hcc>>on_ser_ball_info: ", uball_json);
-                player.send_cmd(Cmd.eUserBallInfoRes, body);
-                player.set_uball_info(uball_json);
-            } else {
-                player.send_cmd(Cmd.eUserBallInfoRes, { status: Response.INVALIDI_OPT });
             }
-        })
+        }
+        player.send_cmd(Cmd.eUserBallInfoRes, { status: Response.INVALIDI_OPT });
     }
 
     //兑换，卖出，等更新弹珠
-    static do_player_update_ball_info(utag: number, proto_type: number, raw_cmd: any){
+    static async do_player_update_ball_info(utag: number, proto_type: number, raw_cmd: any){
         let player: Player = playerMgr.get_player(utag);
         let data_body:any = ProtoManager.decode_cmd(proto_type, raw_cmd);
         let up_type: number = data_body.updatetype;
@@ -164,17 +163,15 @@ class GameInfoInterface {
                     userballinfostring: tmp_ball_json,
                     resultinfo:JSON.stringify(resultObj),
                 }
-                MySqlGame.update_ugame_uball_info(player.get_uid(), tmp_ball_json, function (status: number, ret: any) {
-                    if (status == Response.OK) {
-                        player.send_cmd(Cmd.eUpdateUserBallRes, body_ball);
-                        player.set_uball_info(tmp_ball_json);
-                    } else {
-                        player.send_cmd(Cmd.eUpdateUserBallRes, { status: Response.INVALIDI_OPT });
-                    }
-                })
-            } else {
-                player.send_cmd(Cmd.eUpdateUserBallRes, { status: Response.INVALIDI_OPT });
-            }
+                
+                let ret: any = await MySqlGame.update_ugame_uball_info(player.get_uid(), tmp_ball_json);
+                if(ret){
+                    player.send_cmd(Cmd.eUpdateUserBallRes, body_ball);
+                    player.set_uball_info(tmp_ball_json);
+                    return;
+                }
+            } 
+            player.send_cmd(Cmd.eUpdateUserBallRes, { status: Response.INVALIDI_OPT });
         }
     }
 
@@ -189,7 +186,7 @@ class GameInfoInterface {
     }
 
     //玩家购买
-    static do_player_buy_things(utag:number, proto_type:number, raw_cmd:any){
+    static async do_player_buy_things(utag:number, proto_type:number, raw_cmd:any){
         let player: Player = playerMgr.get_player(utag);
         let req_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (req_body) {
@@ -202,72 +199,68 @@ class GameInfoInterface {
                     let propcount   = shopInfo.propcount;
                     let propinfo    = JSON.parse(shopInfo.propinfo);
                     if (Number(player.get_uchip()) >= propprice) {
-                        
-                        MySqlGame.add_ugame_uchip(player.get_uid(), propprice * (-1), function (status: number, ret: any) {
-                            if (status == Response.OK) {
-                                //减去金币
-                                player.set_uchip(player.get_uchip() - propprice);
-                                Log.info("hcc>>write_player_chip success", player.get_unick());
-                                //加上道具
-                                let is_success: boolean = GameInfoInterface.user_update_ball_info(player, GameHoodleConfig.BALL_UPDATE_TYPE.ADD_TYPE, propinfo.level, propcount);
-                                if (is_success) {
-                                    MySqlGame.update_ugame_uball_info(player.get_uid(), player.get_uball_info(), function (status: number, ret: any) {
-                                        if (status == Response.OK) {
-                                            Log.info("hcc>>write_player_ball success", player.get_unick());
-                                            let res_body = {
-                                                status: Response.OK,
-                                                propsvrindex: shopInfo.propsvrindex,
-                                                propid: shopInfo.propid,
-                                                propcount: shopInfo.propcount,
-                                                propprice: shopInfo.propprice,
-                                                propinfo: shopInfo.propinfo,
-                                            }
-                                            player.send_cmd(Cmd.eBuyThingsRes,res_body);
-                                        }else{
-                                            player.send_cmd(Cmd.eBuyThingsRes, { status: Response.INVALIDI_OPT });
-                                        }
-                                    })
-                                }else{
-                                    player.send_cmd(Cmd.eBuyThingsRes, { status: Response.INVALIDI_OPT });
+                        let ret:any = await MySqlGame.add_ugame_uchip(player.get_uid(), propprice * (-1));
+                        if (ret){
+                            player.set_uchip(player.get_uchip() - propprice);
+                            Log.info("hcc>>write_player_chip success", player.get_unick());
+                            let is_success: boolean = GameInfoInterface.user_update_ball_info(player, GameHoodleConfig.BALL_UPDATE_TYPE.ADD_TYPE, propinfo.level, propcount);
+                            if (is_success){
+                                let update_ret: any = await MySqlGame.update_ugame_uball_info(player.get_uid(), player.get_uball_info());
+                                if (update_ret){
+                                    Log.info("hcc>>write_player_ball success", player.get_unick());
+                                    let res_body = {
+                                        status: Response.OK,
+                                        propsvrindex: shopInfo.propsvrindex,
+                                        propid: shopInfo.propid,
+                                        propcount: shopInfo.propcount,
+                                        propprice: shopInfo.propprice,
+                                        propinfo: shopInfo.propinfo,
+                                    }
+                                    player.send_cmd(Cmd.eBuyThingsRes, res_body);
+                                    return;
                                 }
-                            }else{
-                                player.send_cmd(Cmd.eBuyThingsRes, { status: Response.INVALIDI_OPT });
                             }
-                        });
-                    } else {
-                        //金币不够
-                        player.send_cmd(Cmd.eBuyThingsRes, {status: Response.INVALIDI_OPT});
+                        }
                     }
                     break;
                 }
             }
         }
+        player.send_cmd(Cmd.eBuyThingsRes, { status: Response.INVALIDI_OPT });
     }
 
     //获取玩家配置
-    static do_player_get_user_config(utag: number) {
+    static async do_player_get_user_config(utag: number) {
         let player: Player = playerMgr.get_player(utag);
-        MySqlGame.get_ugame_config_by_uid(player.get_uid(), function (status: number, ret: any) {
-            if (status == Response.OK) {
-                Log.info("hcc>>do_player_get_user_config: ", ret);
-                let conf_obj = JSON.parse(ret);
-                if (!conf_obj["user_ball_level"]){
-                    conf_obj["user_ball_level"] = 1;
+        let sql_ret:any = await MySqlGame.get_ugame_config_by_uid(player.get_uid());
+        if (sql_ret){
+            let ret_len = ArrayUtil.GetArrayLen(sql_ret);
+            if (ret_len > 0) {
+                try {
+                    let info = sql_ret[0];
+                    let user_config_obj:any = querystring.decode(info.user_config);
+                    Log.info("hcc>>do_player_get_user_config: ", user_config_obj);
+                    if (!user_config_obj["user_ball_level"]){
+                        user_config_obj["user_ball_level"] = 1;
+                    }
+                    let body = {
+                        status: Response.OK,
+                        userconfigstring: JSON.stringify(user_config_obj),
+                    }
+                    player.send_cmd(Cmd.eUserConfigRes, body);
+                    player.set_user_config(user_config_obj);
+                    return;
+                } catch (error) {
+                    Log.error(error);
+                    return;
                 }
-                let body = {
-                    status: Response.OK,
-                    userconfigstring: JSON.stringify(conf_obj),
-                }
-                player.send_cmd(Cmd.eUserConfigRes, body);
-                player.set_user_config(conf_obj);
-            } else {
-                player.send_cmd(Cmd.eUserConfigRes, { status: Response.INVALIDI_OPT });
-            }
-        })
+            } 
+        }
+        player.send_cmd(Cmd.eUserConfigRes, { status: Response.INVALIDI_OPT });
     }
 
     //使用弹珠
-    static do_player_use_hoodleball(utag: number, proto_type: number, raw_cmd: any) {
+    static async do_player_use_hoodleball(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = playerMgr.get_player(utag);
         let req_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if(req_body){
@@ -286,12 +279,11 @@ class GameInfoInterface {
                     }
                     player.send_cmd(Cmd.eUseHoodleBallRes,body);
                     //更新数据库
-                    MySqlGame.update_ugame_user_config(player.get_uid(),JSON.stringify(player.get_user_config()),function name(status:number, ret:any) {
-                        if(status == Response.OK){
-                            Log.info("hcc>>update_ugame_user_config success ,ret: " , ret);
-                        }
-                    })
-                    return;
+                    let result:any = await MySqlGame.update_ugame_user_config(player.get_uid(), JSON.stringify(player.get_user_config()));
+                    if (result){
+                        Log.info("hcc>>update_ugame_user_config success ,ret: " , result);
+                        return;
+                    }
                 }
             }
         }

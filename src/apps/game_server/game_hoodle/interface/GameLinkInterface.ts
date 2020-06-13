@@ -64,43 +64,37 @@ class GameLinkInterface {
     }
 
     //玩家登录逻辑服务
-    static do_player_login_logic_server(session: any, utag: number, proto_type: number){
+    static async do_player_login_logic_server(session: any, utag: number, proto_type: number){
         let player: Player = playerMgr.get_player(utag)
         if (player) {
             Log.info("player is exist, uid: ", utag)
-            player.init_session(session, utag, proto_type, function (status: number, data: any) {
-                if (status == Response.OK) {
-                    //如果是重连进来，需要重新获取老玩家的信息
-                    let room = roomMgr.get_room_by_uid(utag);
-                    if (room) {
+            let data:any =  await player.init_session(session, utag, proto_type);
+            if(data){
+                let room = roomMgr.get_room_by_uid(utag);
+                if (room) {
                         let oldPlayer: Player = room.get_player(utag);
                         if (oldPlayer) {
                             player.set_player_info(oldPlayer.get_player_info())
                         }
                     }
-                    GameSendMsg.send(session, Cmd.eLoginLogicRes, utag, proto_type, { status: Response.OK })
-                } else {
-                    GameSendMsg.send(session, Cmd.eLoginLogicRes, utag, proto_type, { status: Response.SYSTEM_ERR })
+                    player.send_cmd(Cmd.eLoginLogicRes, { status: Response.OK })
+                }else{
+                player.send_cmd(Cmd.eLoginLogicRes, { status: Response.SYSTEM_ERR })
                 }
-            })
-        } else {
-            Log.info("player is not exist , new player uid: ", utag)
-            playerMgr.alloc_player(session, utag, proto_type, function (status: number, data: any) {
-                if (status == Response.OK) {
-                    //如果是重连进来，需要重新获取老玩家的信息
-                    let newPlayer: Player = playerMgr.get_player(utag);
-                    let room = roomMgr.get_room_by_uid(utag);
-                    if (room) {
-                        let oldPlayer: Player = room.get_player(utag);
-                        if (oldPlayer) {
-                            newPlayer.set_player_info(oldPlayer.get_player_info())
-                        }
+        }else{
+            let newPlayer:Player = await playerMgr.alloc_player(session, utag, proto_type);
+            if (newPlayer){
+                let room = roomMgr.get_room_by_uid(utag);
+                if (room) {
+                    let oldPlayer: Player = room.get_player(utag);
+                    if (oldPlayer) {
+                        newPlayer.set_player_info(oldPlayer.get_player_info())
                     }
-                    GameSendMsg.send(session, Cmd.eLoginLogicRes, utag, proto_type, { status: Response.OK })
-                } else {
-                    GameSendMsg.send(session, Cmd.eLoginLogicRes, utag, proto_type, { status: Response.SYSTEM_ERR })
                 }
-            })
+                newPlayer.send_cmd(Cmd.eLoginLogicRes, { status: Response.OK })
+            }else{
+                GameSendMsg.send(session, Cmd.eLoginLogicRes, utag, proto_type, { status: Response.SYSTEM_ERR })
+            }
         }
     }
 }

@@ -87,7 +87,7 @@ class GameLogicInterface {
         }
     }
 
-    static do_player_is_shooted(utag: number, proto_type: number, raw_cmd: any) {
+    static async do_player_is_shooted(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = playerMgr.get_player(utag);
         if (!GameCheck.check_room(utag)) {
             Log.warn(player.get_unick(), "on_player_is_shooted room is not exist!")
@@ -143,7 +143,7 @@ class GameLogicInterface {
             GameFunction.send_game_result(room);
             //大结算: 踢出所有玩家，房间解散
             if (room.get_play_count() == room.get_conf_play_count()) {
-                GameFunction.cal_player_chip_and_write(room); //计算金币
+                await GameFunction.cal_player_chip_and_write(room); //计算金币
                 GameFunction.send_game_total_result(room);
                 room.kick_all_player();
                 roomMgr.delete_room(room.get_room_id());

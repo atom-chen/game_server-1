@@ -63,7 +63,7 @@ class GameHoodleModle {
     }
 
     public recv_cmd_msg(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:Buffer){
-        Log.info("recv_cmd_msg: ",stype, ctype, utag, proto_type, this.decode_cmd(proto_type,raw_cmd))
+        Log.info("recv_cmd_msg: ",stype, ctype, utag);
         if (this._cmd_handler_map[ctype]){
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }
@@ -77,8 +77,8 @@ class GameHoodleModle {
         GameLinkInterface.do_player_lost_connect(utag);
     }
     //登录逻辑服务
-    private on_player_login_logic_server(session:any, utag:number, proto_type:number, raw_cmd:any){
-        GameLinkInterface.do_player_login_logic_server(session, utag, proto_type);
+    private async on_player_login_logic_server(session:any, utag:number, proto_type:number, raw_cmd:any){
+        await GameLinkInterface.do_player_login_logic_server(session, utag, proto_type);
     }
 
     //创建房间
@@ -203,33 +203,33 @@ class GameHoodleModle {
     }
 
     //游戏服信息,没有去创建，有就返回原来数据
-    on_player_get_ugame_info(session:any, utag:number, proto_type:number, raw_cmd:any){
+    async on_player_get_ugame_info(session:any, utag:number, proto_type:number, raw_cmd:any){
         if (!GameCheck.check_player(utag)){
             GameSendMsg.send(session, Cmd.eUserGameInfoRes, utag, proto_type, {status: Response.INVALIDI_OPT})
             Log.warn("on_user_match player is not exist!")
             return;
         }
-        GameInfoInterface.do_player_get_ugame_info(utag);
+        await GameInfoInterface.do_player_get_ugame_info(utag);
     }
 
     //获取小球信息
-    on_player_get_ball_info(session:any, utag:number, proto_type:number, raw_cmd:any){
+    async on_player_get_ball_info(session:any, utag:number, proto_type:number, raw_cmd:any){
         if (!GameCheck.check_player(utag)){
             GameSendMsg.send(session, Cmd.eUserBallInfoRes, utag, proto_type, {status: Response.INVALIDI_OPT})
             Log.warn("on_player_get_ball_info error player is not exist!")
             return;
         }
-        GameInfoInterface.do_player_get_ball_info(utag);
+        await GameInfoInterface.do_player_get_ball_info(utag);
     }
 
     //更新小球信息,合成，卖掉，赠送等
-    on_player_update_ball_info(session:any, utag:number, proto_type:number, raw_cmd:any){
+    async on_player_update_ball_info(session:any, utag:number, proto_type:number, raw_cmd:any){
         if (!GameCheck.check_player(utag)){
             GameSendMsg.send(session, Cmd.eUpdateUserBallRes, utag, proto_type, {status: Response.INVALIDI_OPT})
             Log.warn("on_player_update_ball_info error player is not exist!")
             return;
         }
-        GameInfoInterface.do_player_update_ball_info(utag, proto_type, raw_cmd);
+        await GameInfoInterface.do_player_update_ball_info(utag, proto_type, raw_cmd);
     }
     
     //请求商城列表
@@ -244,31 +244,31 @@ class GameHoodleModle {
         // GameSendMsg.send_simulate_client(Cmd.eCreateRoomReq, utag, proto_type, { gamerule: JSON.stringify(GameHoodleConfig.MATCH_GAME_RULE)});
     }
     
-    on_player_buy_things(session: any, utag: number, proto_type: number, raw_cmd: any) {
+    async on_player_buy_things(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (!GameCheck.check_player(utag)) {
             GameSendMsg.send(session, Cmd.eUpdateUserBallRes, utag, proto_type, { status: Response.INVALIDI_OPT })
             Log.warn("on_player_buy_things error player is not exist!")
             return;
         }
-        GameInfoInterface.do_player_buy_things(utag, proto_type, raw_cmd);
+        await GameInfoInterface.do_player_buy_things(utag, proto_type, raw_cmd);
     }
 
-    on_player_use_hoodleball(session: any, utag: number, proto_type: number, raw_cmd: any) {
+    async on_player_use_hoodleball(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (!GameCheck.check_player(utag)) {
             GameSendMsg.send(session, Cmd.eUseHoodleBallRes, utag, proto_type, { status: Response.INVALIDI_OPT })
             Log.warn("on_player_use_hoodlebal error player is not exist!")
             return;
         }
-        GameInfoInterface.do_player_use_hoodleball(utag, proto_type, raw_cmd);
+        await GameInfoInterface.do_player_use_hoodleball(utag, proto_type, raw_cmd);
     }
 
-    on_player_get_config(session: any, utag: number, proto_type: number, raw_cmd: any) {
+    async on_player_get_config(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (!GameCheck.check_player(utag)) {
             GameSendMsg.send(session, Cmd.eUserConfigRes, utag, proto_type, { status: Response.INVALIDI_OPT })
             Log.warn("on_player_config error player is not exist!")
             return;
         }
-        GameInfoInterface.do_player_get_user_config(utag);
+        await GameInfoInterface.do_player_get_user_config(utag);
     }
 
     on_player_use_emoj(session: any, utag: number, proto_type: number, raw_cmd: any) {

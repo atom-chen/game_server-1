@@ -20,45 +20,38 @@ class MySqlSystem {
         MySqlSystem.engine().mysql_query(sql, callback);
     }
 
-    static get_login_bonues_info_by_uid(uid: number, callback: Function) {
-        var sql = "select bonues, bonues_time, days, status from login_bonues where uid = %d limit 1";
-        var sql_cmd = util.format(sql, uid);
-        MySqlSystem.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
-            if (err) {
-                callback(Response.SYSTEM_ERR, err);
-                return;
-            }
-            callback(Response.OK, sql_ret);
-        });
+    static async async_query(sql: string){
+         return await MySqlSystem.engine().async_query(sql);
     }
 
-    static insert_login_bonues_info(uid:number, bonues:number, bonues_time:number, days:number, status:number, callback: Function) {
-        var sql = "insert into login_bonues(`uid`, `bonues`, `bonues_time`, `days`, `status`)values(%d, %d, %d, %d, %d)";
-        var sql_cmd = util.format(sql, uid, bonues, bonues_time, days, status);
+    static async get_login_bonues_info_by_uid(uid: number) {
+        let sql = "select bonues, bonues_time, days, status from login_bonues where uid = %d limit 1";
+        let sql_cmd = util.format(sql, uid);
+        return await MySqlSystem.async_query(sql_cmd);
+    }
+    
+    static async insert_login_bonues_info(uid: number, bonues: number, bonues_time: number, days: number, status: number) {
+        let sql = "insert into login_bonues(`uid`, `bonues`, `bonues_time`, `days`, `status`)values(%d, %d, %d, %d, %d)";
+        let sql_cmd = util.format(sql, uid, bonues, bonues_time, days, status);
         Log.info("hcc>>insert: ", sql_cmd)
-        MySqlSystem.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
-            if (err) {
-                callback(Response.SYSTEM_ERR, err);
-                return;
-            }
-            callback(Response.OK);
-        });
+        return await MySqlSystem.async_query(sql_cmd);
     }
 
-    static update_login_bonues_info(uid: number, bonues: number, bonues_time: number, days: number, status: number, callback: Function){
-        var sql = "update login_bonues set bonues = %d, bonues_time = %d, days = %d, status = %d where uid = %d";
-        var sql_cmd = util.format(sql, bonues, bonues_time, days, status, uid);
-        MySqlSystem.query(sql_cmd, function (err: any, sql_ret: any, fields_desic: any) {
-            if (err) {
-                if (callback) {
-                    callback(Response.SYSTEM_ERR, err);
-                }
-                return;
-            }
-            if (callback) {
-                callback(Response.OK)
-            }
-        })
+    static async update_login_bonues_info(uid: number, bonues: number, bonues_time: number, days: number, status: number) {
+        let sql = "update login_bonues set bonues = %d, bonues_time = %d, days = %d, status = %d where uid = %d";
+        let sql_cmd = util.format(sql, bonues, bonues_time, days, status, uid);
+        return await MySqlSystem.async_query(sql_cmd);
+    }
+
+    //test async 函数
+    static async test_func(uid: number){
+        // let sql = "select * from login_bonues where uid = %d limit 1";
+        // let sql = "select fuck from login_bonues where uid = %d limit 1";
+        // let sql_cmd = util.format(sql, uid);
+        // return await MySqlSystem.async_query(sql_cmd);
+        // let ret_insert = await MySqlSystem.insert_login_bonues_info(uid, 0, 0, 0, 0);
+        let ret_update = await MySqlSystem.update_login_bonues_info(uid, 0, 100, 0, 0);
+        return ret_update;
     }
 
 }

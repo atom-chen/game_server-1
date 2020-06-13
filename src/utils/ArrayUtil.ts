@@ -12,6 +12,9 @@ class ArrayUtil {
     }
     //获取对象{},或者数组[],的长度
     static GetArrayLen(array:any){
+        if(!array){
+            return 0;
+        }
         let count = 0;
         for (const key in array) {
             count++;

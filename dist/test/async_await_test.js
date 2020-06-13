@@ -39,59 +39,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var Player_1 = __importDefault(require("./Player"));
-var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
-var PlayerManager = /** @class */ (function () {
-    function PlayerManager() {
-        this._player_set = {}; //uid-->Player
+var GameAppConfig_1 = __importDefault(require("../apps/config/GameAppConfig"));
+var Log_1 = __importDefault(require("../utils/Log"));
+var MysqlSystem_1 = __importDefault(require("../database/MysqlSystem"));
+var game_database = GameAppConfig_1["default"].game_database;
+MysqlSystem_1["default"].connect(game_database.host, game_database.port, game_database.db_name, game_database.uname, game_database.upwd);
+var testAsyc = /** @class */ (function () {
+    function testAsyc() {
     }
-    PlayerManager.getInstance = function () {
-        return PlayerManager.Instance;
-    };
-    PlayerManager.prototype.alloc_player = function (session, uid, proto_type) {
+    testAsyc.testfunc = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var player, player_info, player2, player2_info;
+            var result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        player = this._player_set[uid];
-                        if (!player) return [3 /*break*/, 2];
-                        return [4 /*yield*/, player.init_session(session, uid, proto_type)];
+                    case 0: return [4 /*yield*/, MysqlSystem_1["default"].test_func(0)];
                     case 1:
-                        player_info = _a.sent();
-                        // Log.info("alloc_player>> user: ", uid, " is exist!, info: " , player_info);
-                        return [2 /*return*/, player];
-                    case 2:
-                        player2 = new Player_1["default"]();
-                        this._player_set[uid] = player2;
-                        return [4 /*yield*/, player2.init_session(session, uid, proto_type)];
-                    case 3:
-                        player2_info = _a.sent();
-                        // Log.info("alloc_player>> user: ", uid, " is not exist!, info: ", player2_info);
-                        return [2 /*return*/, player2];
+                        result = _a.sent();
+                        Log_1["default"].info("hcc>>result: ", result);
+                        Log_1["default"].info("hcc>>result222");
+                        return [2 /*return*/];
                 }
             });
         });
     };
-    PlayerManager.prototype.get_player = function (uid) {
-        if (this._player_set[uid]) {
-            return this._player_set[uid];
-        }
-        return null;
-    };
-    PlayerManager.prototype.delete_player = function (uid) {
-        if (this._player_set[uid]) {
-            this._player_set[uid] = null;
-            delete this._player_set[uid];
-            return true;
-        }
-        return false;
-    };
-    PlayerManager.prototype.get_player_count = function () {
-        return ArrayUtil_1["default"].GetArrayLen(this._player_set);
-    };
-    PlayerManager.Instance = new PlayerManager();
-    return PlayerManager;
+    return testAsyc;
 }());
-exports["default"] = PlayerManager;
-//# sourceMappingURL=PlayerManager.js.map
+exports["default"] = testAsyc;
+testAsyc.testfunc();
+//# sourceMappingURL=async_await_test.js.map

@@ -5,6 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a;
 exports.__esModule = true;
+/**
+ * async await 使用陷阱：
+ * 1. async await 使用，一定要配对使用，不然会报错，编译不过
+ * 2. 外部函数B，调用asnyc函数A, 如果B本身是一个函数，那么也要加async和await,否则会在执行到A的时候跳过A的，先执行A后面的代码，待A执行异步返回后再执行A的代码， 执行过程就不对了。
+ * 3. async，await的函数，如果调用的函数不加await,那么返回值将会是一个Promise,不是你想要的值
+ * 5. 简单的说，async函数是异步函数，会等待，但是不会阻塞后面的代码。
+ */
 var Platform_1 = __importDefault(require("../../utils/Platform"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var Stype_1 = require("../protocol/Stype");

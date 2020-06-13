@@ -15,16 +15,18 @@ class PlayerManager {
         return PlayerManager.Instance;
     }
 
-    alloc_player(session:any, uid:number, proto_type:number, callback?:Function){
+    async alloc_player(session:any, uid:number, proto_type:number){
         let player:Player = this._player_set[uid]
         if(player){
-            Log.warn("alloc_player>> user: ", uid, " is exist!!!!");
-            player.init_session(session, uid, proto_type,callback);
-            return;
+            let player_info: any = await player.init_session(session, uid, proto_type);
+            // Log.info("alloc_player>> user: ", uid, " is exist!, info: " , player_info);
+            return player;
         }
-        let p:Player = new Player();
-        this._player_set[uid] = p;
-        p.init_session(session, uid, proto_type, callback);
+        let player2:Player = new Player();
+        this._player_set[uid] = player2;
+        let player2_info: any = await player2.init_session(session, uid, proto_type);
+        // Log.info("alloc_player>> user: ", uid, " is not exist!, info: ", player2_info);
+        return player2;
     }
 
     get_player(uid:number){

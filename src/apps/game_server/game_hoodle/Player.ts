@@ -38,27 +38,18 @@ class Player{
     }
 
     //中心数据，游戏数据 auth_center->uinfo
-    init_session(session:any, uid:number, proto_type:number, callback?:Function){
+    async init_session(session:any, uid:number, proto_type:number){
         this._session = session;
         this._uid = uid;        
         this._proto_type = proto_type;
-
-        let _this = this;
         //用户中心服数据
-        MySqlAuth.get_uinfo_by_uid(uid, function(status:number, data:any) {
-            if(status == Response.OK)
-            {
-                let sql_info = data[0];
-                _this._ucenter_info = sql_info;
-                if(callback){
-                    callback(Response.OK, _this.get_player_info());
-                }
-            }else{
-                if(callback){
-                    callback(Response.SYSTEM_ERR);
-                }
-            }
-        })
+        let data:any = await MySqlAuth.get_uinfo_by_uid(uid);
+        // Log.info("hcc>>init_session: " , data);
+        if (data && data.length > 0){
+            let sql_info = data[0];
+            this._ucenter_info = sql_info;
+            return sql_info;
+        }
     }
 
     //获取uid

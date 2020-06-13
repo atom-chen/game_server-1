@@ -44,20 +44,20 @@ class SystemModel {
         Log.info("on_player_lost_connect utag:", utag, body)
     }
 
-    on_user_login_reward_config(session: any, utag: number, proto_type: number, raw_cmd: any) {
+    async on_user_login_reward_config(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (utag == 0) {
             SystemSend.send(session, Cmd.eLoginRewardConfigRes, utag, proto_type,{status: Response.INVALIDI_OPT});
             return;
         }
-        LoginRewardInterface.do_user_login_reward_config(session, utag, proto_type, raw_cmd);
+        await LoginRewardInterface.do_user_login_reward_config(session, utag, proto_type, raw_cmd);
     }
 
-    on_user_login_reward_sign(session: any, utag: number, proto_type: number, raw_cmd: any) {
+    async on_user_login_reward_sign(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (utag == 0) {
             SystemSend.send(session, Cmd.eLoginRewardSignRes, utag, proto_type, { status: Response.INVALIDI_OPT });
             return;
         }
-        LoginRewardInterface.do_user_login_reward_sign(session, utag, proto_type, raw_cmd);
+        await LoginRewardInterface.do_user_login_reward_sign(session, utag, proto_type, raw_cmd);
     }
 }
 

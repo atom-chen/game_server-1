@@ -8,7 +8,7 @@ import StringUtil from "../../../utils/StringUtil";
 
 class AuthRegistInterface {
 
-    static do_uname_regist_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+    static async do_uname_regist_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         // Log.info("uname_regist cmd: ", body)
 
@@ -33,22 +33,15 @@ class AuthRegistInterface {
         let unick = "user";
         var usex = StringUtil.random_int(0, 1);
         var uface = StringUtil.random_int(1, 9);
-        MySqlAuth.check_uname_exist(body.uname, function (status: number, data: any) {
-            if (status == Response.OK) {
-                Log.warn("uname_regist error, uname: ", body.uname, "is exist!!")
-                AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
+        let ret = await MySqlAuth.check_uname_exist(body.uname);
+        if(ret == false){
+            let insert_ret = await MySqlAuth.insert_uname_upwd_user(body.uname, body.upwdmd5, unick, uface, usex);
+            if (insert_ret){
+                AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: 1 })
                 return;
             }
-            MySqlAuth.insert_uname_upwd_user(body.uname, body.upwdmd5, unick, uface, usex, function (status: number, data: any) {
-                if (status == Response.OK) {
-                    Log.info("uname_regist success!!! , uname: ", body.uname, " ,upwdmd5: ", body.upwdmd5);
-                    AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: 1 })
-                } else {
-                    Log.info("uname_regist failed!!! ");
-                    AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
-                }
-            })
-        })
+        }
+        AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT });
     }
 
 }

@@ -16,6 +16,9 @@ var ArrayUtil = /** @class */ (function () {
     };
     //获取对象{},或者数组[],的长度
     ArrayUtil.GetArrayLen = function (array) {
+        if (!array) {
+            return 0;
+        }
         var count = 0;
         for (var key in array) {
             count++;
