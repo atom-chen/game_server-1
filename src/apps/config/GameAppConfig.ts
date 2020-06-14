@@ -55,10 +55,16 @@ class GameAppConfig {
 		wbsocket_port: WSS_WEBSOCKET_PORT, 
 	}
 
-	//web服务
-	static webserver:any = {
+	//web热更新服务
+	static hotupdate_webserver:any = {
 		host: LOCAL_HOST,
 		port: 7000,
+	}
+
+	//web配置服务
+	static config_webserver: any = {
+		host: LOCAL_HOST,
+		port: 6070,
 	}
 
 	//系统服务
