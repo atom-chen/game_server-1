@@ -51,6 +51,7 @@ class MySqlSystem {
         // return await MySqlSystem.async_query(sql_cmd);
         // let ret_insert = await MySqlSystem.insert_login_bonues_info(uid, 0, 0, 0, 0);
         let ret_update = await MySqlSystem.update_login_bonues_info(uid, 0, 100, 0, 0);
+        Log.info("test_func.........");
         return ret_update;
     }
 

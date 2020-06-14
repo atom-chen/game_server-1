@@ -173,7 +173,7 @@ var GameLogicInterface = /** @class */ (function () {
                         if (!(room.get_play_count() == room.get_conf_play_count())) return [3 /*break*/, 2];
                         return [4 /*yield*/, GameFunction_1["default"].cal_player_chip_and_write(room)];
                     case 1:
-                        _a.sent(); //计算金币
+                        _a.sent(); //计算金币,需要加await，不然会先执行下面的
                         GameFunction_1["default"].send_game_total_result(room);
                         room.kick_all_player();
                         roomMgr.delete_room(room.get_room_id());

@@ -143,7 +143,7 @@ class GameLogicInterface {
             GameFunction.send_game_result(room);
             //大结算: 踢出所有玩家，房间解散
             if (room.get_play_count() == room.get_conf_play_count()) {
-                await GameFunction.cal_player_chip_and_write(room); //计算金币
+                await GameFunction.cal_player_chip_and_write(room); //计算金币,需要加await，不然会先执行下面的
                 GameFunction.send_game_total_result(room);
                 room.kick_all_player();
                 roomMgr.delete_room(room.get_room_id());

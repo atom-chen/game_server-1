@@ -162,7 +162,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                         if (util.isNullOrUndefined(gender)) {
                             return [2 /*return*/];
                         }
-                        if (!avatarUrl || !nickName || !unionId) {
+                        if (util.isNullOrUndefined(avatarUrl) || util.isNullOrUndefined(nickName) || util.isNullOrUndefined(unionId)) {
                             Log_1["default"].warn("hcc>>do_login_by_wechat_unionid>>1111");
                             return [2 /*return*/];
                         }

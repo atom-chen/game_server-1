@@ -124,6 +124,7 @@ var MySqlSystem = /** @class */ (function () {
                     case 0: return [4 /*yield*/, MySqlSystem.update_login_bonues_info(uid, 0, 100, 0, 0)];
                     case 1:
                         ret_update = _a.sent();
+                        Log_1["default"].info("test_func.........");
                         return [2 /*return*/, ret_update];
                 }
             });

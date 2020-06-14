@@ -5,7 +5,22 @@
  * 1. async await 使用，一定要配对使用，不然会报错，编译不过
  * 2. 外部函数B，调用asnyc函数A, 如果B本身是一个函数，那么也要加async和await,否则会在执行到A的时候跳过A的，先执行A后面的代码，待A执行异步返回后再执行A的代码， 执行过程就不对了。
  * 3. async，await的函数，如果调用的函数不加await,那么返回值将会是一个Promise,不是你想要的值
- * 5. 简单的说，async函数是异步函数，会等待，但是不会阻塞后面的代码。
+ * 5. 简单的说，await函数，会等待结果后再执行下面的方法(前提是await等待的是一个Promise返回值的函数，不然不会生效)
+ *
+
+加了await:
+await会等待await 执行完成后再执行下面(await必须等待一个Promise,不然不会生效)
+
+不加await:
+会先执行await下面的，再执行await
+
+加了async:
+函数返回值会变成promise
+
+不加async:
+函数返回值不变
+
+外部B调用 async await函数A， B函数的await，加在需要严格执行顺序的方法中，否则不用
  */
 
 import Platform from "../../utils/Platform"

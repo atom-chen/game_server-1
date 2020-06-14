@@ -156,7 +156,7 @@ class GameFunction {
                     }
                     Log.info(player.get_unick(),"hcc>>cal_player_chip_and_write: score: " , score, " ,gold_win: " , gold_win, " ,cur_chip: " , player.get_uchip()," ,after add: " , (player.get_uchip() + gold_win));
                     player.set_uchip(player.get_uchip() + gold_win);
-                    let ret = await MySqlGame.add_ugame_uchip(player.get_uid(),gold_win); //这里加await会阻塞，玩家会先被踢了
+                    let ret = await MySqlGame.add_ugame_uchip(player.get_uid(),gold_win); //这里加await会阻塞，玩家会先被踢了,所以在外面也要加await
                     if (ret){
                         Log.info("hcc>> name: ", player.get_unick(), "add ", gold_win  ," coin success!!");
                     }

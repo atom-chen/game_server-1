@@ -100,7 +100,7 @@ class AuthWeChatLoginInterface {
             return;
         }
 
-        if (!avatarUrl || !nickName || !unionId){
+        if (util.isNullOrUndefined(avatarUrl) || util.isNullOrUndefined(nickName) || util.isNullOrUndefined(unionId)){
             Log.warn("hcc>>do_login_by_wechat_unionid>>1111");
             return;
         }
@@ -134,42 +134,6 @@ class AuthWeChatLoginInterface {
             }
         }
         AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
-        // MySqlAuth.login_by_wechat_unionid(unionId, function (status: number, data: any) {
-        //     if (status == Response.OK) {
-        //         if (data.length <= 0) {
-        //             Log.warn("hcc>>do_login_by_wechat_unionid>>2222");
-        //             MySqlAuth.insert_wechat_user(nickName, gender, address, unionId, avatarUrl, function(status:number, data:any) {
-        //                 if (status == Response.OK) {
-        //                     Log.warn("hcc>>do_login_by_wechat_unionid>>3333");
-        //                     AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
-        //                 }else{
-        //                     AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, {status:Response.INVALID_PARAMS});
-        //                     Log.warn("hcc>>do_login_by_wechat_unionid>>4444");
-        //                 }
-        //             })
-        //         }else{
-        //             let sql_info = data[0]
-        //             let resbody = {
-        //                 status: 1,
-        //                 uid: sql_info.uid,
-        //                 userlogininfo: JSON.stringify(sql_info)
-        //             }
-        //             Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
-        //             AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, resbody)
-        //             //登录成功后，立即更新玩家微信数据，可能会耗费IO，但是为了同步微信信息没办法
-        //             let login_uid = sql_info.uid;
-        //             if(login_uid){
-        //                 MySqlAuth.update_wechat_user_info(login_uid, nickName, gender, address, unionId, avatarUrl,function(status:number, data:any) {
-        //                     if(status == Response.OK){
-        //                         Log.info("hcc>>wechat login >> update user info success!!");
-        //                     }
-        //                 });
-        //             }
-        //         }
-        //     }else{
-        //         AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
-        //     }
-        // });
     }
 
     //微信session登录(其实就是unionid登录)
@@ -193,27 +157,6 @@ class AuthWeChatLoginInterface {
                 }
             }
             AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
-            // if (wechatsessionkey){
-            //     MySqlAuth.login_by_wechat_unionid(wechatsessionkey, function (status: number, data: any) {
-            //         if (status == Response.OK) {
-            //             if (data.length <= 0) {
-            //                 Log.warn("hcc>>do_wechat_session_login_req>>2222");
-            //                 AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })   
-            //             } else {
-            //                 let sql_info = data[0]
-            //                 let resbody = {
-            //                     status: 1,
-            //                     uid: sql_info.uid,
-            //                     userlogininfo: JSON.stringify(sql_info)
-            //                 }
-            //                 Log.info("hcc>>do_wechat_session_login_req: ", resbody)
-            //                 AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, resbody)
-            //             }
-            //         } else {
-            //             AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
-            //         }
-            //     });
-            // }
         }
     }
 }

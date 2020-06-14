@@ -47,17 +47,34 @@ MysqlSystem_1["default"].connect(game_database.host, game_database.port, game_da
 var testAsyc = /** @class */ (function () {
     function testAsyc() {
     }
+    testAsyc.timeout_fun = function () {
+        return new Promise(function (resolve, reject) {
+            setTimeout(function () {
+                Log_1["default"].info("timeout_func>>>>>>>>>>>11111");
+                resolve("this is timeout func.........");
+            }, 3000);
+        });
+    };
     testAsyc.testfunc = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, MysqlSystem_1["default"].test_func(0)];
+                    case 0: 
+                    // let result = await MySqlSystem.test_func(1918);
+                    // let result = MySqlSystem.test_func(0);
+                    // Log.info("hcc>>result: ", result);
+                    return [4 /*yield*/, this.timeout_fun()];
                     case 1:
-                        result = _a.sent();
-                        Log_1["default"].info("hcc>>result: ", result);
-                        Log_1["default"].info("hcc>>result222");
-                        return [2 /*return*/];
+                        // let result = await MySqlSystem.test_func(1918);
+                        // let result = MySqlSystem.test_func(0);
+                        // Log.info("hcc>>result: ", result);
+                        _a.sent();
+                        Log_1["default"].info("hcc>>result222: ");
+                        // try {
+                        // } catch ( error) {
+                        //     Log.error("hcc>>error: " , error);
+                        // }
+                        return [2 /*return*/, 0];
                 }
             });
         });
@@ -65,5 +82,21 @@ var testAsyc = /** @class */ (function () {
     return testAsyc;
 }());
 exports["default"] = testAsyc;
-testAsyc.testfunc();
+/*
+await 必须和async配对使用
+
+加了await:
+await会等待await 执行完成后再执行下面(await必须等待一个Promise,不然不会生效)
+
+不加await:
+会先执行await下面的，再执行await
+
+加了async:
+函数返回值会变成promise
+
+不加async:
+函数返回值不变
+*/
+var ret = testAsyc.testfunc();
+// Log.info("ret33333: " , ret);
 //# sourceMappingURL=async_await_test.js.map
