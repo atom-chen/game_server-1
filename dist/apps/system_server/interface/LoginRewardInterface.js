@@ -83,7 +83,7 @@ var LoginRewardInterface = /** @class */ (function () {
                                 config_obj["isget"] = true;
                                 config_obj["canget"] = false;
                             }
-                            if ((day_index == (bonues_days + 1) % bonues_max_days) || day_index == bonues_max_days) {
+                            if ((day_index == (bonues_days + 1) % bonues_max_days) || (day_index == bonues_max_days && bonues_days == bonues_max_days - 1)) {
                                 if (bonues_time == 0 || bonues_time != TimeUtil_1["default"].timestamp_today()) {
                                     config_obj["isget"] = false;
                                     config_obj["canget"] = true;
