@@ -130,7 +130,7 @@ var LoginRewardInterface = /** @class */ (function () {
                         days = data_obj.days;
                         days_now = (days + 1) % bonues_max_days;
                         Log_1["default"].info("hcc>>do_user_login_reward_sign bonues_info: ", data);
-                        if (!(bonues_time != time_now && signofday == days_now)) return [3 /*break*/, 4];
+                        if (!(bonues_time != time_now && ((signofday == days_now) || (signofday == bonues_max_days)))) return [3 /*break*/, 4];
                         return [4 /*yield*/, MysqlSystem_1["default"].update_login_bonues_info(utag, 0, time_now, days_now, 1)];
                     case 2:
                         ret_update = _a.sent();

@@ -71,7 +71,7 @@ class LoginRewardInterface {
                     let days = data_obj.days;
                     let days_now = (days + 1) % bonues_max_days;
                     Log.info("hcc>>do_user_login_reward_sign bonues_info: ", data);
-                    if (bonues_time != time_now && signofday == days_now) { // can sign
+                    if (bonues_time != time_now && ((signofday == days_now) || (signofday == bonues_max_days))) { // can sign
                         let ret_update = await MySqlSystem.update_login_bonues_info(utag, 0, time_now, days_now, 1);
                         if (ret_update) {
                             //增加玩家金币
