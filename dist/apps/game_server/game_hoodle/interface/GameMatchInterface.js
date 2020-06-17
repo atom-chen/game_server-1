@@ -33,7 +33,7 @@ var GameMatchInterface = /** @class */ (function () {
         }
         //是否金币不足
         if (GameHoodleConfig_1["default"].KW_IS_GOLD_LIMIT) {
-            Log_1["default"].info("hcc>>do_player_match>>reqBody: ", reqBody);
+            // Log.info("hcc>>do_player_match>>reqBody: ", reqBody);
             var limitCoin = null;
             var roomlevel = reqBody.roomlevel;
             if (roomlevel) {

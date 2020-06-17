@@ -41,7 +41,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
-var Log_1 = __importDefault(require("../../../utils/Log"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
 var AuthProto_1 = require("../../protocol/AuthProto");
 var AuthInfoInterface = /** @class */ (function () {
@@ -61,7 +60,7 @@ var AuthInfoInterface = /** @class */ (function () {
                                 status: 1,
                                 usercenterinfostring: JSON.stringify(sql_info)
                             };
-                            Log_1["default"].info("get_user_center_info:", resbody);
+                            // Log.info("get_user_center_info:", resbody)
                             AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGetUserCenterInfoRes, utag, proto_type, resbody);
                             return [2 /*return*/];
                         }

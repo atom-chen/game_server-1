@@ -74,10 +74,17 @@ class GameAppConfig {
 		stype: Stype.GameSystem,
 	}
 
-	//游戏服务
+	//游戏服务1
 	static game_server:any =  {
 		host: LOCAL_HOST,
 		port: 6088,
+		stype: Stype.GameHoodle,
+	}
+
+	//游戏服务2
+	static game_server_2: any = {
+		host: LOCAL_HOST,
+		port: 6089,
 		stype: Stype.GameHoodle,
 	}
 
@@ -139,6 +146,12 @@ class GameAppConfig {
 			host: LOCAL_HOST,
 			port: 6087,
 		},
+
+		// [4]: {
+		// 	stype: Stype.GameHoodle,
+		// 	host: LOCAL_HOST,
+		// 	port: 6089,
+		// },
 	}
 }
 

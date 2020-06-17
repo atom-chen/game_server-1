@@ -72,10 +72,16 @@ var GameAppConfig = /** @class */ (function () {
         port: 6087,
         stype: Stype_1.Stype.GameSystem
     };
-    //游戏服务
+    //游戏服务1
     GameAppConfig.game_server = {
         host: LOCAL_HOST,
         port: 6088,
+        stype: Stype_1.Stype.GameHoodle
+    };
+    //游戏服务2
+    GameAppConfig.game_server_2 = {
+        host: LOCAL_HOST,
+        port: 6089,
         stype: Stype_1.Stype.GameHoodle
     };
     //游戏数据库服务

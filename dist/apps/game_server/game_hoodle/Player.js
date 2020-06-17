@@ -53,6 +53,7 @@ var Player = /** @class */ (function () {
         this._proto_type = -1;
         this._ugame_info = {};
         this._ucenter_info = {};
+        this._is_robot = false;
         //房间相关
         this._is_off_line = false;
         this._is_host = false;
@@ -205,6 +206,12 @@ var Player = /** @class */ (function () {
     Player.prototype.get_user_score = function () {
         return this._user_score;
     };
+    Player.prototype.is_robot = function () {
+        return this._is_robot;
+    };
+    Player.prototype.set_robot = function (is_robot) {
+        this._is_robot = is_robot;
+    };
     //玩家信息汇总
     Player.prototype.get_player_info = function () {
         var info = ArrayUtil_1["default"].ObjCat(this._ugame_info, this._ucenter_info);
@@ -239,6 +246,10 @@ var Player = /** @class */ (function () {
     };
     //发送消息
     Player.prototype.send_cmd = function (ctype, body) {
+        if (this.is_robot()) {
+            Log_1["default"].warn("send to robot!!");
+            return;
+        }
         if (!this._session) {
             Log_1["default"].error("send_cmd error, session is null!!");
             return;

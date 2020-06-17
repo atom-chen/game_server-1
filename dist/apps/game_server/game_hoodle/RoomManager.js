@@ -7,9 +7,27 @@ var Room_1 = __importDefault(require("./Room"));
 var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
 var StringUtil_1 = __importDefault(require("../../../utils/StringUtil"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
+var GameHoodleConfig_1 = __importDefault(require("./config/GameHoodleConfig"));
+var GameHoodleProto_1 = require("../../protocol/GameHoodleProto");
+var Response_1 = __importDefault(require("../../protocol/Response"));
 var RoomManager = /** @class */ (function () {
     function RoomManager() {
         this._room_set = {}; //roomid-->room
+        //删除创建超过10分钟的房间
+        var _this = this;
+        setInterval(function () {
+            for (var idx in _this._room_set) {
+                var room = _this._room_set[idx];
+                room.set_tick_count(room.get_tick_count() + 1);
+                var tick_count = room.get_tick_count();
+                // Log.info("tick count: roomid: " , room.get_room_id() , " count: ", tick_count);
+                if (tick_count >= GameHoodleConfig_1["default"].ROOM_MAX_DISMISS_TIME) {
+                    room.broadcast_in_room(GameHoodleProto_1.Cmd.eDessolveRes, { status: Response_1["default"].OK });
+                    room.kick_all_player();
+                    _this.delete_room(room.get_room_id());
+                }
+            }
+        }, 1000);
     }
     RoomManager.getInstance = function () {
         return RoomManager.Instance;

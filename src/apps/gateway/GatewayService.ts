@@ -34,13 +34,13 @@ class GatewayService extends ServiceBase {
 		}
 		ProtoTools.write_utag_inbuf(raw_cmd, utag);
 		NetBus.send_encoded_cmd(server_session,raw_cmd);
-		Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype), ",utag:", utag);
+		// Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype), ",utag:", utag);
 	}
 	
 	//服务器发到网关，网关转发到客户端
 	static on_recv_server_player_cmd (session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:any) {
 		// Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag, " ,body:", ProtoManager.decode_cmd(proto_type, raw_cmd));
-		Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
+		// Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
 		let client_session = null;
 		if (GatewayFunction.is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
 			client_session = NetBus.get_client_session(utag);

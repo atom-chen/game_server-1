@@ -56,7 +56,7 @@ class AuthWeChatLoginInterface {
                             try {
                                 let wxCrypt = new WXBizDataCrypt(WECHAT_APPID, d_result.session_key)
                                 let decode_data = wxCrypt.decryptData(obj_encryptedData, obj_iv);
-                                Log.info("hcc>>real>>res:", decode_data);
+                                // Log.info("hcc>>real>>res:", decode_data);
                                 await AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data);
                             } catch (error) {
                                 Log.error("error1" , error);
@@ -101,7 +101,7 @@ class AuthWeChatLoginInterface {
         }
 
         if (util.isNullOrUndefined(avatarUrl) || util.isNullOrUndefined(nickName) || util.isNullOrUndefined(unionId)){
-            Log.warn("hcc>>do_login_by_wechat_unionid>>1111");
+            // Log.warn("hcc>>do_login_by_wechat_unionid>>1111");
             return;
         }
 
@@ -120,7 +120,7 @@ class AuthWeChatLoginInterface {
                     uid: sql_info.uid,
                     userlogininfo: JSON.stringify(sql_info)
                 }
-                Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
+                // Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
                 AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, resbody)
                 //登录成功后，立即更新玩家微信数据，可能会耗费IO，但是为了同步微信信息没办法
                 let login_uid = sql_info.uid;
@@ -139,7 +139,7 @@ class AuthWeChatLoginInterface {
     //微信session登录(其实就是unionid登录)
     static async do_wechat_session_login_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-        Log.info("hcc>>do_wechat_session_login_req111,body:  " , body);
+        // Log.info("hcc>>do_wechat_session_login_req111,body:  " , body);
         if(body){
             let wechatsessionkey = body.wechatsessionkey;
             if (wechatsessionkey) {

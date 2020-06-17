@@ -113,9 +113,10 @@ var MySqlGame = /** @class */ (function () {
                     case 0:
                         sql = "insert into ugame(`uid`, `uexp`, `uchip`, `uball_info`)values(%d, %d, %d, \"%s\")";
                         sql_cmd = util.format(sql, uid, uexp, uchip, GameHoodleConfig_1["default"].KW_BORN_USER_BALL);
-                        Log_1["default"].info("hcc>>insert: ", sql_cmd);
                         return [4 /*yield*/, MySqlGame.async_query(sql_cmd)];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 1: 
+                    // Log.info("hcc>>insert: ", sql_cmd)
+                    return [2 /*return*/, _a.sent()];
                 }
             });
         });

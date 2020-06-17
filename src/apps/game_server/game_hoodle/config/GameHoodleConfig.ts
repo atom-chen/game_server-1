@@ -27,8 +27,12 @@ class GameHoodleConfig {
 
     //房间匹配轮询次数
     static MATCH_INTERVAL                   = 1000;     //1秒匹配一次
+
     //匹配房间规则
     static MATCH_GAME_RULE                  = { playerCount: 2, playCount: 3 }       //坐满人数，局数
+    
+    //房间解散最长时间，单位秒，默认10分钟
+    static ROOM_MAX_DISMISS_TIME            = 600;   
 
 }
 

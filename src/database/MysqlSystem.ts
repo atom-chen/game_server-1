@@ -33,7 +33,7 @@ class MySqlSystem {
     static async insert_login_bonues_info(uid: number, bonues: number, bonues_time: number, days: number, status: number) {
         let sql = "insert into login_bonues(`uid`, `bonues`, `bonues_time`, `days`, `status`)values(%d, %d, %d, %d, %d)";
         let sql_cmd = util.format(sql, uid, bonues, bonues_time, days, status);
-        Log.info("hcc>>insert: ", sql_cmd)
+        // Log.info("hcc>>insert: ", sql_cmd)
         return await MySqlSystem.async_query(sql_cmd);
     }
 
@@ -51,7 +51,7 @@ class MySqlSystem {
         // return await MySqlSystem.async_query(sql_cmd);
         // let ret_insert = await MySqlSystem.insert_login_bonues_info(uid, 0, 0, 0, 0);
         let ret_update = await MySqlSystem.update_login_bonues_info(uid, 0, 100, 0, 0);
-        Log.info("test_func.........");
+        // Log.info("test_func.........");
         return ret_update;
     }
 

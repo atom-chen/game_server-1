@@ -18,6 +18,8 @@ var Room = /** @class */ (function () {
         this._play_count = -1; //总的配置局数
         this._player_count = -1; //总的配置玩家数量
         this._cur_play_count = 0; //当前局数
+        //////
+        this._tick_count = 0; //包厢最长解散时间
         this._roomid = roomid;
     }
     Room.prototype.get_room_id = function () {
@@ -204,6 +206,21 @@ var Room = /** @class */ (function () {
     };
     Room.prototype.get_match_roomlevel = function () {
         return this._match_roomlevel;
+    };
+    Room.prototype.set_tick_count = function (count) {
+        this._tick_count = count;
+    };
+    Room.prototype.get_tick_count = function () {
+        return this._tick_count;
+    };
+    Room.prototype.have_robot_player = function () {
+        for (var idx in this._player_set) {
+            var player = this._player_set[idx];
+            if (player.is_robot()) {
+                return true;
+            }
+        }
+        return false;
     };
     Room.prototype.broadcast_in_room = function (ctype, body, not_to_player) {
         if (!ctype) {

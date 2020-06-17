@@ -67,7 +67,7 @@ class GameLinkInterface {
     static async do_player_login_logic_server(session: any, utag: number, proto_type: number){
         let player: Player = playerMgr.get_player(utag)
         if (player) {
-            Log.info("player is exist, uid: ", utag)
+            // Log.info("player is exist, uid: ", utag)
             let data:any =  await player.init_session(session, utag, proto_type);
             if(data){
                 let room = roomMgr.get_room_by_uid(utag);

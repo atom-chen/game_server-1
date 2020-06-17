@@ -125,7 +125,7 @@ class GameLogicInterface {
             if (src_player && des_player) {
                 src_player.set_user_score(src_player.get_user_score() + baseScore);
                 des_player.set_user_score(des_player.get_user_score() - baseScore);
-                Log.info("hcc>>playerScore: src_player:", src_player.get_unick(), "+1", " des_player:", des_player.get_unick(), "-1");
+                // Log.info("hcc>>playerScore: src_player:", src_player.get_unick(), "+1", " des_player:", des_player.get_unick(), "-1");
             }
             //发送分数
             GameFunction.send_player_score(room);

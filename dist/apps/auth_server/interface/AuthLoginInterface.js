@@ -41,7 +41,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
-var Log_1 = __importDefault(require("../../../utils/Log"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
 var AuthProto_1 = require("../../protocol/AuthProto");
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
@@ -130,7 +129,7 @@ var AuthLoginInterface = /** @class */ (function () {
                             uid: sql_info.uid,
                             userlogininfo: JSON.stringify(sql_info)
                         };
-                        Log_1["default"].info("hcc>>login_by_guestkey: ", resbody);
+                        // Log.info("hcc>>login_by_guestkey: ", resbody)
                         AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGuestLoginRes, utag, proto_type, resbody);
                         return [2 /*return*/];
                     case 4:

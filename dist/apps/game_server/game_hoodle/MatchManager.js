@@ -47,6 +47,7 @@ var MatchManager = /** @class */ (function () {
     };
     //开始匹配
     MatchManager.prototype.start_match = function () {
+        // 匹配逻辑
         var _this = this;
         //先找没满人的房间，再找匹配列表中的人
         var is_match_room_success = false;
@@ -64,6 +65,9 @@ var MatchManager = /** @class */ (function () {
                     }
                     if (player) {
                         if (roomMgr.get_room_by_uid(player.get_uid())) {
+                            continue;
+                        }
+                        if (player.is_robot() && not_full_room.have_robot_player()) {
                             continue;
                         }
                         // Log.info("not_full_room222, player: " , player.get_unick());
@@ -89,6 +93,15 @@ var MatchManager = /** @class */ (function () {
             if (is_match_room_success == false) {
                 _this.do_match_player();
             }
+            //////////// 
+            //增加机器人
+            ////////////
+            /*
+            let robot_player = RobotManager.getInstance().get_free_robot_player();
+            if (robot_player){
+                _this.add_player_to_match_list(robot_player, RoomListConfig[1]);
+            }
+            */
             //    _this.log_match_list();
         }, GameHoodleConfig_1["default"].MATCH_INTERVAL);
     };
@@ -287,6 +300,16 @@ var MatchManager = /** @class */ (function () {
         }
         if (ArrayUtil_1["default"].GetArrayLen(zoom.in_match_list) >= GameHoodleConfig_1["default"].MATCH_GAME_RULE.playerCount) {
             return false;
+        }
+        //不能同时匹配两个机器人
+        if (player.is_robot()) {
+            for (var idx in zoom.in_match_list) {
+                var in_player = zoom.in_match_list[idx];
+                if (in_player.is_robot()) {
+                    Log_1["default"].info("both two player is robot!!!");
+                    return false;
+                }
+            }
         }
         zoom.in_match_list[player.get_uid()] = player;
         player.set_user_state(State_1.UserState.MatchIng);

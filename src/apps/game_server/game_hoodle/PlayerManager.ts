@@ -1,6 +1,7 @@
 import Player from './Player';
 import ArrayUtil from '../../../utils/ArrayUtil';
 import Log from '../../../utils/Log';
+import RobotPlayer from './RobotPlayer';
 
 class PlayerManager {
     private static readonly Instance: PlayerManager = new PlayerManager();
@@ -47,6 +48,14 @@ class PlayerManager {
 
     get_player_count(){
         return ArrayUtil.GetArrayLen(this._player_set);
+    }
+
+    add_robot_player(player:RobotPlayer){
+        this._player_set[player.get_uid()] = player;
+    }
+
+    get_player_set(){
+        return this._player_set;
     }
 
 }

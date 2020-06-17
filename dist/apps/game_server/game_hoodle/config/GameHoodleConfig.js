@@ -28,6 +28,8 @@ var GameHoodleConfig = /** @class */ (function () {
     GameHoodleConfig.MATCH_INTERVAL = 1000; //1秒匹配一次
     //匹配房间规则
     GameHoodleConfig.MATCH_GAME_RULE = { playerCount: 2, playCount: 3 }; //坐满人数，局数
+    //房间解散最长时间，单位秒，默认10分钟
+    GameHoodleConfig.ROOM_MAX_DISMISS_TIME = 600;
     return GameHoodleConfig;
 }());
 exports["default"] = GameHoodleConfig;

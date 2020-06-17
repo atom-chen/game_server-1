@@ -16,6 +16,9 @@ class Room {
     _player_count:number        = -1; //总的配置玩家数量
     _cur_play_count:number      = 0; //当前局数
 
+    //////
+    _tick_count:number          = 0; //包厢最长解散时间
+
     constructor(roomid:string){
         this._roomid = roomid;
     }
@@ -230,6 +233,24 @@ class Room {
 
     get_match_roomlevel(){
         return this._match_roomlevel;
+    }
+
+    set_tick_count(count:number){
+        this._tick_count = count;
+    }
+
+    get_tick_count(){
+        return this._tick_count;
+    }
+
+    have_robot_player(){
+        for(let idx in this._player_set){
+            let player:Player = this._player_set[idx];
+            if (player.is_robot()){
+                return true;
+            }
+        }
+        return false;
     }
 
     broadcast_in_room(ctype:number, body:any ,not_to_player?:Player){

@@ -90,6 +90,12 @@ var PlayerManager = /** @class */ (function () {
     PlayerManager.prototype.get_player_count = function () {
         return ArrayUtil_1["default"].GetArrayLen(this._player_set);
     };
+    PlayerManager.prototype.add_robot_player = function (player) {
+        this._player_set[player.get_uid()] = player;
+    };
+    PlayerManager.prototype.get_player_set = function () {
+        return this._player_set;
+    };
     PlayerManager.Instance = new PlayerManager();
     return PlayerManager;
 }());

@@ -32,7 +32,7 @@ class GameMatchInterface {
         }
         //是否金币不足
         if (GameHoodleConfig.KW_IS_GOLD_LIMIT) {
-            Log.info("hcc>>do_player_match>>reqBody: ", reqBody);
+            // Log.info("hcc>>do_player_match>>reqBody: ", reqBody);
             let limitCoin = null;
             let roomlevel = reqBody.roomlevel;
             if (roomlevel){

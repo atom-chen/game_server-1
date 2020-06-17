@@ -93,7 +93,7 @@ class GameFunction {
             return false;
         }
         player.set_user_power(PlayerPower.canPlay);
-        Log.info("hcc>>set_player_start_power seatid: " + player.get_seat_id() , " ,power: " + player.get_user_power());
+        // Log.info("hcc>>set_player_start_power seatid: " + player.get_seat_id() , " ,power: " + player.get_user_power());
         return true;
     }
 
@@ -111,8 +111,8 @@ class GameFunction {
                  if(next_power_seatid > room.get_player_count()){
                     next_power_seatid = next_power_seatid % room.get_player_count();
                  }
-                 Log.info("hcc>> cur power seat: " , player.get_seat_id());
-                 Log.info("hcc>> next power seat: " , next_power_seatid);
+                //  Log.info("hcc>> cur power seat: " , player.get_seat_id());
+                //  Log.info("hcc>> next power seat: " , next_power_seatid);
                  break;
               }
             }
@@ -154,7 +154,7 @@ class GameFunction {
                             gold_win = (-1)*player_cur_chip;
                         }
                     }
-                    Log.info(player.get_unick(),"hcc>>cal_player_chip_and_write: score: " , score, " ,gold_win: " , gold_win, " ,cur_chip: " , player.get_uchip()," ,after add: " , (player.get_uchip() + gold_win));
+                    // Log.info(player.get_unick(),"hcc>>cal_player_chip_and_write: score: " , score, " ,gold_win: " , gold_win, " ,cur_chip: " , player.get_uchip()," ,after add: " , (player.get_uchip() + gold_win));
                     player.set_uchip(player.get_uchip() + gold_win);
                     let ret = await MySqlGame.add_ugame_uchip(player.get_uid(),gold_win); //这里加await会阻塞，玩家会先被踢了,所以在外面也要加await
                     if (ret){
@@ -259,7 +259,7 @@ class GameFunction {
             let player:Player = player_set[key];
             if (player){
                 let pos = GameFunction.generate_start_pos(pos_index);
-                Log.info("hcc>>send_player_first_pos: ", pos);
+                // Log.info("hcc>>send_player_first_pos: ", pos);
                 player.set_user_pos(pos);
                 let player_pos = {
                     seatid : Number(player.get_seat_id()),
@@ -270,7 +270,7 @@ class GameFunction {
                 pos_index++;
             }
         }
-        Log.info("hcc>>send_player_first_pos array: ", player_pos_array);
+        // Log.info("hcc>>send_player_first_pos array: ", player_pos_array);
         if(only_player){
             only_player.send_cmd(Cmd.ePlayerFirstBallPosRes,{positions: player_pos_array});
         }else{

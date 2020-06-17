@@ -43,7 +43,7 @@ class MySqlGame {
     static async insert_ugame_user(uid:number, uexp:number, uchip:number) {
         let sql = "insert into ugame(`uid`, `uexp`, `uchip`, `uball_info`)values(%d, %d, %d, \"%s\")";
         let sql_cmd = util.format(sql, uid, uexp, uchip, GameHoodleConfig.KW_BORN_USER_BALL);
-        Log.info("hcc>>insert: ", sql_cmd)
+        // Log.info("hcc>>insert: ", sql_cmd)
         return await MySqlGame.async_query(sql_cmd);
     }
 

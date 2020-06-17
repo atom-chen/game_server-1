@@ -27,6 +27,8 @@ var db_auth = GameAppConfig_1["default"].auth_database;
 MySqlAuth_1["default"].connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db_auth.upwd);
 //匹配场
 MatchManager_1["default"].getInstance().start_match();
+//生产机器人,用于匹配场
+// RobotManager.getInstance().generate_robot();
 //内存使用打印
 function print_memery() {
     var memUsage = process.memoryUsage();

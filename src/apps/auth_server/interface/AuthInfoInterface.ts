@@ -14,7 +14,7 @@ class AuthInfoInterface {
                 status: 1,
                 usercenterinfostring: JSON.stringify(sql_info),
             }
-            Log.info("get_user_center_info:", resbody)
+            // Log.info("get_user_center_info:", resbody)
             AuthSendMsg.send(session, Cmd.eGetUserCenterInfoRes, utag, proto_type, resbody);
             return;
         }

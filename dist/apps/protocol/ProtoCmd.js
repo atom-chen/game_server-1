@@ -8,7 +8,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 var _a;
 exports.__esModule = true;
-var TalkRoom = __importStar(require("./TalkProto"));
+var RobotProto = __importStar(require("./RobotProto"));
 var Auth = __importStar(require("./AuthProto"));
 var GameSystem = __importStar(require("./SystemProto"));
 var GameHoodleProto = __importStar(require("./GameHoodleProto"));
@@ -21,21 +21,19 @@ var ProtoCmd = /** @class */ (function () {
         if (ProtoCmd.StypeProtos[stype]) {
             return ProtoCmd.StypeProtos[stype].protoName;
         }
-        return null;
     };
     //字段名称
     ProtoCmd.getCmdName = function (stype, ctype) {
         if (ProtoCmd.StypeProtos[stype]) {
             return ProtoCmd.StypeProtos[stype].CmdName[ctype];
         }
-        return null;
     };
     //服务器下标->协议脚本
     ProtoCmd.StypeProtos = (_a = {},
         _a[Stype_1.Stype.Auth] = Auth,
         _a[Stype_1.Stype.GameSystem] = GameSystem,
         _a[Stype_1.Stype.GameHoodle] = GameHoodleProto,
-        _a[Stype_1.Stype.TalkRoom] = TalkRoom,
+        _a[Stype_1.Stype.Robot] = RobotProto,
         _a);
     return ProtoCmd;
 }());

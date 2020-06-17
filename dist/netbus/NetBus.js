@@ -127,7 +127,7 @@ var NetBus = /** @class */ (function () {
         //加入到serssion 列表
         global_session_list[global_seesion_key] = session;
         session.session_key = global_seesion_key;
-        Log_1["default"].info("client session enter, client count: ", ArrayUtil_1["default"].GetArrayLen(global_session_list));
+        Log_1["default"].warn("client session enter, client count: ", ArrayUtil_1["default"].GetArrayLen(global_session_list));
         global_seesion_key++;
     };
     //websocket 客户端session事件
@@ -196,7 +196,7 @@ var NetBus = /** @class */ (function () {
             delete global_session_list[session.session_key];
             session.session_key = null;
         }
-        Log_1["default"].info("client session exit, client count: ", ArrayUtil_1["default"].GetArrayLen(global_session_list));
+        Log_1["default"].warn("client session exit, client count: ", ArrayUtil_1["default"].GetArrayLen(global_session_list));
     };
     // 关闭session
     NetBus.session_close = function (session) {

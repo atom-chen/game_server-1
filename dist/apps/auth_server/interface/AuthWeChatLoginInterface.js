@@ -109,9 +109,10 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                                             _a.trys.push([2, 4, , 5]);
                                             wxCrypt = new WXBizDataCrypt_1["default"](WECHAT_APPID, d_result.session_key);
                                             decode_data = wxCrypt.decryptData(obj_encryptedData_1, obj_iv_1);
-                                            Log_1["default"].info("hcc>>real>>res:", decode_data);
+                                            // Log.info("hcc>>real>>res:", decode_data);
                                             return [4 /*yield*/, AuthWeChatLoginInterface.do_login_by_wechat_unionid(session, utag, proto_type, decode_data)];
                                         case 3:
+                                            // Log.info("hcc>>real>>res:", decode_data);
                                             _a.sent();
                                             return [3 /*break*/, 5];
                                         case 4:
@@ -163,7 +164,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                             return [2 /*return*/];
                         }
                         if (util.isNullOrUndefined(avatarUrl) || util.isNullOrUndefined(nickName) || util.isNullOrUndefined(unionId)) {
-                            Log_1["default"].warn("hcc>>do_login_by_wechat_unionid>>1111");
+                            // Log.warn("hcc>>do_login_by_wechat_unionid>>1111");
                             return [2 /*return*/];
                         }
                         address = country + "-" + province + "-" + city;
@@ -186,7 +187,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                             uid: sql_info.uid,
                             userlogininfo: JSON.stringify(sql_info)
                         };
-                        Log_1["default"].info("hcc>>do_login_by_wechat_unionid: ", resbody);
+                        // Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
                         AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, resbody);
                         login_uid = sql_info.uid;
                         if (!login_uid) return [3 /*break*/, 5];
@@ -213,7 +214,6 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
-                        Log_1["default"].info("hcc>>do_wechat_session_login_req111,body:  ", body);
                         if (!body) return [3 /*break*/, 3];
                         wechatsessionkey = body.wechatsessionkey;
                         if (!wechatsessionkey) return [3 /*break*/, 2];

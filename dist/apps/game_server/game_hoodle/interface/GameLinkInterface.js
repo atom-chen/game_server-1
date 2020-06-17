@@ -104,7 +104,6 @@ var GameLinkInterface = /** @class */ (function () {
                     case 0:
                         player = playerMgr.get_player(utag);
                         if (!player) return [3 /*break*/, 2];
-                        Log_1["default"].info("player is exist, uid: ", utag);
                         return [4 /*yield*/, player.init_session(session, utag, proto_type)];
                     case 1:
                         data = _a.sent();

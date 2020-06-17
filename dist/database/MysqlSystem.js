@@ -48,7 +48,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 exports.__esModule = true;
 var MySqlEngine_1 = __importDefault(require("./MySqlEngine"));
 var util = __importStar(require("util"));
-var Log_1 = __importDefault(require("../utils/Log"));
 var table_name = "login_bonues";
 var MySqlSystem = /** @class */ (function () {
     function MySqlSystem() {
@@ -94,9 +93,10 @@ var MySqlSystem = /** @class */ (function () {
                     case 0:
                         sql = "insert into login_bonues(`uid`, `bonues`, `bonues_time`, `days`, `status`)values(%d, %d, %d, %d, %d)";
                         sql_cmd = util.format(sql, uid, bonues, bonues_time, days, status);
-                        Log_1["default"].info("hcc>>insert: ", sql_cmd);
                         return [4 /*yield*/, MySqlSystem.async_query(sql_cmd)];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 1: 
+                    // Log.info("hcc>>insert: ", sql_cmd)
+                    return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -124,7 +124,7 @@ var MySqlSystem = /** @class */ (function () {
                     case 0: return [4 /*yield*/, MySqlSystem.update_login_bonues_info(uid, 0, 100, 0, 0)];
                     case 1:
                         ret_update = _a.sent();
-                        Log_1["default"].info("test_func.........");
+                        // Log.info("test_func.........");
                         return [2 /*return*/, ret_update];
                 }
             });

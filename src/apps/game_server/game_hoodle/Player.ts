@@ -2,7 +2,6 @@ import NetBus from '../../../netbus/NetBus';
 import MySqlAuth from '../../../database/MySqlAuth';
 import ArrayUtil from '../../../utils/ArrayUtil';
 import Log from '../../../utils/Log';
-import Response from '../../protocol/Response';
 import { Stype } from '../../protocol/Stype';
 import { UserState } from './config/State';
 
@@ -14,6 +13,7 @@ class Player{
     _proto_type:number              = -1;
     _ugame_info:any                 = {};
     _ucenter_info:any               = {};
+    _is_robot:boolean               = false;
 
     //房间相关
     _is_off_line:boolean            = false;
@@ -192,6 +192,14 @@ class Player{
         return this._user_score;
     }
 
+    is_robot(){
+        return this._is_robot;
+    }
+
+    set_robot(is_robot:boolean){
+        this._is_robot = is_robot;
+    }
+
     //玩家信息汇总
     get_player_info() {
         let info = ArrayUtil.ObjCat(this._ugame_info, this._ucenter_info);
@@ -229,8 +237,12 @@ class Player{
 
     //发送消息
     send_cmd(ctype:number, body:any){
+        if(this.is_robot()){
+            Log.warn("send to robot!!");
+            return;
+        }
         if(!this._session){
-            Log.error("send_cmd error, session is null!!")
+            Log.error("send_cmd error, session is null!!");
             return;
         }
         NetBus.send_cmd(this._session, Stype.GameHoodle, ctype, this._uid, this._proto_type, body);

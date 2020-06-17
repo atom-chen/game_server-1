@@ -127,7 +127,7 @@ class NetBus {
         //加入到serssion 列表
         global_session_list[global_seesion_key] = session;
         session.session_key = global_seesion_key;
-        Log.info("client session enter, client count: " , ArrayUtil.GetArrayLen(global_session_list))
+        Log.warn("client session enter, client count: " , ArrayUtil.GetArrayLen(global_session_list))
         global_seesion_key ++;
     }
 
@@ -204,7 +204,7 @@ class NetBus {
             delete global_session_list[session.session_key];
             session.session_key = null;
         }
-        Log.info("client session exit, client count: " , ArrayUtil.GetArrayLen(global_session_list))
+        Log.warn("client session exit, client count: " , ArrayUtil.GetArrayLen(global_session_list))
     }
 
     // 关闭session

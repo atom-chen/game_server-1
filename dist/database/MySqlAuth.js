@@ -82,9 +82,10 @@ var MySqlAuth = /** @class */ (function () {
                     case 0:
                         sql = "select uname, upwd ,uid from uinfo where uname = \"%s\" and upwd = \"%s\" and is_guest = 0 limit 1";
                         sql_cmd = util.format(sql, uname, upwd);
-                        Log_1["default"].info("sql: ", sql_cmd);
                         return [4 /*yield*/, MySqlAuth.async_query(sql_cmd)];
-                    case 1: return [2 /*return*/, _a.sent()];
+                    case 1: 
+                    // Log.info("sql: " , sql_cmd)
+                    return [2 /*return*/, _a.sent()];
                 }
             });
         });
@@ -161,9 +162,10 @@ var MySqlAuth = /** @class */ (function () {
                         Log_1["default"].info("insert_uname_upwd_user>> numid: ", max_numid);
                         sql = "insert into uinfo(`unick`, `usex`, `address` ,`numberid`, `unionid`, `avatarurl`)values(\"%s\", %d, \"%s\", %d, \"%s\",\"%s\")";
                         sql_cmd = util.format(sql, unick, usex, address, max_numid, unionid, avatarurl);
-                        Log_1["default"].info("insert_uname_upwd_user>> sql: ", sql_cmd);
                         return [4 /*yield*/, MySqlAuth.async_query(sql_cmd)];
-                    case 2: return [2 /*return*/, _a.sent()];
+                    case 2: 
+                    // Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
+                    return [2 /*return*/, _a.sent()];
                     case 3: return [2 /*return*/];
                 }
             });
@@ -180,12 +182,12 @@ var MySqlAuth = /** @class */ (function () {
                         if (!!util.isNullOrUndefined(maxuid)) return [3 /*break*/, 3];
                         max_numid = MAX_NUMBER_ID + maxuid + 1;
                         unick = unick + String(max_numid);
-                        Log_1["default"].info("insert_uname_upwd_user>> numid: ", max_numid);
                         sql = "insert into uinfo(`uname`, `upwd` ,`unick`, `uface`, `usex`, `numberid`, `guest_key`)values(\"%s\", \"%s\", \"%s\", %d, %d, %d,0)";
                         sql_cmd = util.format(sql, uname, upwdmd5, unick, uface, usex, max_numid);
-                        Log_1["default"].info("insert_uname_upwd_user>> sql: ", sql_cmd);
                         return [4 /*yield*/, MySqlAuth.async_query(sql_cmd)];
-                    case 2: return [2 /*return*/, _a.sent()];
+                    case 2: 
+                    // Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
+                    return [2 /*return*/, _a.sent()];
                     case 3: return [2 /*return*/];
                 }
             });

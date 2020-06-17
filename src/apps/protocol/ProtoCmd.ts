@@ -1,4 +1,4 @@
-import * as TalkRoom from "./TalkProto"
+import * as RobotProto from "./RobotProto"
 import * as Auth from "./AuthProto"
 import * as GameSystem from "./SystemProto"
 import * as GameHoodleProto from "./GameHoodleProto"
@@ -10,22 +10,20 @@ class ProtoCmd {
 		  [Stype.Auth] : Auth,
 		  [Stype.GameSystem] : GameSystem,
 		  [Stype.GameHoodle] : GameHoodleProto,
-		  [Stype.TalkRoom] : TalkRoom,
+		  [Stype.Robot]: RobotProto,
 	}
 	
 	//命名空间
-	static getProtoName(stype: number):any{
+	static getProtoName(stype: number){
 		if(ProtoCmd.StypeProtos[stype]){
 			return ProtoCmd.StypeProtos[stype].protoName
 		}
-		return null;
 	}
 	//字段名称
-	static getCmdName(stype:number, ctype:number):any{
+	static getCmdName(stype:number, ctype:number){
 		if(ProtoCmd.StypeProtos[stype]){
 			return ProtoCmd.StypeProtos[stype].CmdName[ctype]
 		}
-		return null;
 	}
 }
 

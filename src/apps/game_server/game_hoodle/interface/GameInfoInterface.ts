@@ -85,7 +85,7 @@ class GameInfoInterface {
         if (data_game){
             let data_game_len = ArrayUtil.GetArrayLen(data_game);
             if (data_game_len > 0) {
-                Log.info("hcc>>on_user_get_ugame_info1111>>", data_game[0], "data_game: ", data_game);
+                // Log.info("hcc>>on_user_get_ugame_info1111>>", data_game[0], "data_game: ", data_game);
                 let ugameInfo = data_game[0];
                 let ugameInfoStr = JSON.stringify(ugameInfo);
                 let body = {
@@ -100,7 +100,7 @@ class GameInfoInterface {
                 if (ret_insert){
                     let data_game_ins_get:any = await MySqlGame.get_ugame_uchip_by_uid(utag);
                     if (data_game_ins_get && data_game_ins_get.length > 0){
-                        Log.info("hcc>>on_user_get_ugame_info3333>>", data_game_ins_get[0]);
+                        // Log.info("hcc>>on_user_get_ugame_info3333>>", data_game_ins_get[0]);
                         let ugameInfo = data_game_ins_get[0];
                         let ugameInfoStr = JSON.stringify(ugameInfo);
                         let body = {
@@ -132,7 +132,7 @@ class GameInfoInterface {
                         status: Response.OK,
                         userballinfostring: uball_json,
                     }
-                    Log.info("hcc>>on_ser_ball_info: ", uball_json);
+                    // Log.info("hcc>>on_ser_ball_info: ", uball_json);
                     player.send_cmd(Cmd.eUserBallInfoRes, body);
                     player.set_uball_info(uball_json);
                     return;
@@ -202,12 +202,12 @@ class GameInfoInterface {
                         let ret:any = await MySqlGame.add_ugame_uchip(player.get_uid(), propprice * (-1));
                         if (ret){
                             player.set_uchip(player.get_uchip() - propprice);
-                            Log.info("hcc>>write_player_chip success", player.get_unick());
+                            // Log.info("hcc>>write_player_chip success", player.get_unick());
                             let is_success: boolean = GameInfoInterface.user_update_ball_info(player, GameHoodleConfig.BALL_UPDATE_TYPE.ADD_TYPE, propinfo.level, propcount);
                             if (is_success){
                                 let update_ret: any = await MySqlGame.update_ugame_uball_info(player.get_uid(), player.get_uball_info());
                                 if (update_ret){
-                                    Log.info("hcc>>write_player_ball success", player.get_unick());
+                                    // Log.info("hcc>>write_player_ball success", player.get_unick());
                                     let res_body = {
                                         status: Response.OK,
                                         propsvrindex: shopInfo.propsvrindex,
@@ -239,7 +239,7 @@ class GameInfoInterface {
                 try {
                     let info = sql_ret[0];
                     let user_config_obj:any = querystring.decode(info.user_config);
-                    Log.info("hcc>>do_player_get_user_config: ", user_config_obj);
+                    // Log.info("hcc>>do_player_get_user_config: ", user_config_obj);
                     if (!user_config_obj["user_ball_level"]){
                         user_config_obj["user_ball_level"] = 1;
                     }
@@ -281,7 +281,7 @@ class GameInfoInterface {
                     //更新数据库
                     let result:any = await MySqlGame.update_ugame_user_config(player.get_uid(), JSON.stringify(player.get_user_config()));
                     if (result){
-                        Log.info("hcc>>update_ugame_user_config success ,ret: " , result);
+                        // Log.info("hcc>>update_ugame_user_config success ,ret: " , result);
                         return;
                     }
                 }

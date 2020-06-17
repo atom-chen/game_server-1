@@ -19,14 +19,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var NetBus_1 = __importDefault(require("../../netbus/NetBus"));
 var ProtoTools_1 = __importDefault(require("../../netbus/ProtoTools"));
-var ProtoCmd_1 = __importDefault(require("../protocol/ProtoCmd"));
 var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
 var Response_1 = __importDefault(require("../protocol/Response"));
 var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
 var Stype_1 = require("../protocol/Stype");
 var AuthProto_1 = require("../protocol/AuthProto");
 var CommonProto_1 = __importDefault(require("../protocol/CommonProto"));
-var Log_1 = __importDefault(require("../../utils/Log"));
 var GatewayFunction_1 = __importDefault(require("./GatewayFunction"));
 var GatewayService = /** @class */ (function (_super) {
     __extends(GatewayService, _super);
@@ -55,12 +53,12 @@ var GatewayService = /** @class */ (function (_super) {
         }
         ProtoTools_1["default"].write_utag_inbuf(raw_cmd, utag);
         NetBus_1["default"].send_encoded_cmd(server_session, raw_cmd);
-        Log_1["default"].info("recv_client>>> ", ProtoCmd_1["default"].getProtoName(stype) + ",", ProtoCmd_1["default"].getCmdName(stype, ctype), ",utag:", utag);
+        // Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype), ",utag:", utag);
     };
     //服务器发到网关，网关转发到客户端
     GatewayService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
         // Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag, " ,body:", ProtoManager.decode_cmd(proto_type, raw_cmd));
-        Log_1["default"].info("recv_server>>> ", ProtoCmd_1["default"].getProtoName(stype) + ",", ProtoCmd_1["default"].getCmdName(stype, ctype) + " ,utag:", utag);
+        // Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
         var client_session = null;
         if (GatewayFunction_1["default"].is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
             client_session = NetBus_1["default"].get_client_session(utag);

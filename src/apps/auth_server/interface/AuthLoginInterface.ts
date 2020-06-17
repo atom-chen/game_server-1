@@ -73,7 +73,7 @@ class AuthLoginInterface {
                     uid: sql_info.uid,
                     userlogininfo: JSON.stringify(sql_info)
                 }
-                Log.info("hcc>>login_by_guestkey: ", resbody)
+                // Log.info("hcc>>login_by_guestkey: ", resbody)
                 AuthSendMsg.send(session, Cmd.eGuestLoginRes, utag, proto_type, resbody)
                 return;
             }

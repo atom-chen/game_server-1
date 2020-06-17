@@ -115,7 +115,7 @@ var GameFunction = /** @class */ (function () {
             return false;
         }
         player.set_user_power(State_1.PlayerPower.canPlay);
-        Log_1["default"].info("hcc>>set_player_start_power seatid: " + player.get_seat_id(), " ,power: " + player.get_user_power());
+        // Log.info("hcc>>set_player_start_power seatid: " + player.get_seat_id() , " ,power: " + player.get_user_power());
         return true;
     };
     //计算玩家权限
@@ -132,8 +132,8 @@ var GameFunction = /** @class */ (function () {
                     if (next_power_seatid > room.get_player_count()) {
                         next_power_seatid = next_power_seatid % room.get_player_count();
                     }
-                    Log_1["default"].info("hcc>> cur power seat: ", player.get_seat_id());
-                    Log_1["default"].info("hcc>> next power seat: ", next_power_seatid);
+                    //  Log.info("hcc>> cur power seat: " , player.get_seat_id());
+                    //  Log.info("hcc>> next power seat: " , next_power_seatid);
                     break;
                 }
             }
@@ -185,7 +185,7 @@ var GameFunction = /** @class */ (function () {
                                 gold_win = (-1) * player_cur_chip;
                             }
                         }
-                        Log_1["default"].info(player.get_unick(), "hcc>>cal_player_chip_and_write: score: ", score, " ,gold_win: ", gold_win, " ,cur_chip: ", player.get_uchip(), " ,after add: ", (player.get_uchip() + gold_win));
+                        // Log.info(player.get_unick(),"hcc>>cal_player_chip_and_write: score: " , score, " ,gold_win: " , gold_win, " ,cur_chip: " , player.get_uchip()," ,after add: " , (player.get_uchip() + gold_win));
                         player.set_uchip(player.get_uchip() + gold_win);
                         return [4 /*yield*/, MySqlGame_1["default"].add_ugame_uchip(player.get_uid(), gold_win)];
                     case 2:
@@ -292,7 +292,7 @@ var GameFunction = /** @class */ (function () {
             var player = player_set[key];
             if (player) {
                 var pos = GameFunction.generate_start_pos(pos_index);
-                Log_1["default"].info("hcc>>send_player_first_pos: ", pos);
+                // Log.info("hcc>>send_player_first_pos: ", pos);
                 player.set_user_pos(pos);
                 var player_pos = {
                     seatid: Number(player.get_seat_id()),
@@ -303,7 +303,7 @@ var GameFunction = /** @class */ (function () {
                 pos_index++;
             }
         }
-        Log_1["default"].info("hcc>>send_player_first_pos array: ", player_pos_array);
+        // Log.info("hcc>>send_player_first_pos array: ", player_pos_array);
         if (only_player) {
             only_player.send_cmd(GameHoodleProto_1.Cmd.ePlayerFirstBallPosRes, { positions: player_pos_array });
         }

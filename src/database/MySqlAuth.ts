@@ -28,7 +28,7 @@ class MySqlAuth {
 	static async login_by_uname_upwd(uname:string, upwd:string){
 		let sql = "select uname, upwd ,uid from uinfo where uname = \"%s\" and upwd = \"%s\" and is_guest = 0 limit 1";
 		let sql_cmd = util.format(sql, uname, upwd);
-		Log.info("sql: " , sql_cmd)
+		// Log.info("sql: " , sql_cmd)
 		return await MySqlAuth.async_query(sql_cmd);
 	}
 
@@ -66,7 +66,7 @@ class MySqlAuth {
 			Log.info("insert_uname_upwd_user>> numid: ", max_numid);
 			let sql = "insert into uinfo(`unick`, `usex`, `address` ,`numberid`, `unionid`, `avatarurl`)values(\"%s\", %d, \"%s\", %d, \"%s\",\"%s\")";
 			let sql_cmd = util.format(sql, unick, usex, address, max_numid, unionid, avatarurl);
-			Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
+			// Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
 			return await MySqlAuth.async_query(sql_cmd);
 		}
 	}
@@ -76,10 +76,10 @@ class MySqlAuth {
 		if (!util.isNullOrUndefined(maxuid)) {
 			let max_numid = MAX_NUMBER_ID + maxuid + 1;
 			unick = unick + String(max_numid);
-			Log.info("insert_uname_upwd_user>> numid: ", max_numid)
+			// Log.info("insert_uname_upwd_user>> numid: ", max_numid)
 			let sql = "insert into uinfo(`uname`, `upwd` ,`unick`, `uface`, `usex`, `numberid`, `guest_key`)values(\"%s\", \"%s\", \"%s\", %d, %d, %d,0)";
 			let sql_cmd = util.format(sql, uname, upwdmd5, unick, uface, usex, max_numid);
-			Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
+			// Log.info("insert_uname_upwd_user>> sql: ", sql_cmd);
 			return await MySqlAuth.async_query(sql_cmd);
 		}
 	}

@@ -133,7 +133,6 @@ var GameInfoInterface = /** @class */ (function () {
                         if (!data_game) return [3 /*break*/, 5];
                         data_game_len = ArrayUtil_1["default"].GetArrayLen(data_game);
                         if (!(data_game_len > 0)) return [3 /*break*/, 2];
-                        Log_1["default"].info("hcc>>on_user_get_ugame_info1111>>", data_game[0], "data_game: ", data_game);
                         ugameInfo = data_game[0];
                         ugameInfoStr = JSON.stringify(ugameInfo);
                         body = {
@@ -151,7 +150,6 @@ var GameInfoInterface = /** @class */ (function () {
                     case 4:
                         data_game_ins_get = _a.sent();
                         if (data_game_ins_get && data_game_ins_get.length > 0) {
-                            Log_1["default"].info("hcc>>on_user_get_ugame_info3333>>", data_game_ins_get[0]);
                             ugameInfo = data_game_ins_get[0];
                             ugameInfoStr = JSON.stringify(ugameInfo);
                             body = {
@@ -192,7 +190,7 @@ var GameInfoInterface = /** @class */ (function () {
                                         status: Response_1["default"].OK,
                                         userballinfostring: uball_json
                                     };
-                                    Log_1["default"].info("hcc>>on_ser_ball_info: ", uball_json);
+                                    // Log.info("hcc>>on_ser_ball_info: ", uball_json);
                                     player.send_cmd(GameHoodleProto_1.Cmd.eUserBallInfoRes, body);
                                     player.set_uball_info(uball_json);
                                     return [2 /*return*/];
@@ -290,14 +288,12 @@ var GameInfoInterface = /** @class */ (function () {
                         ret = _c.sent();
                         if (!ret) return [3 /*break*/, 4];
                         player.set_uchip(player.get_uchip() - propprice);
-                        Log_1["default"].info("hcc>>write_player_chip success", player.get_unick());
                         is_success = GameInfoInterface.user_update_ball_info(player, GameHoodleConfig_1["default"].BALL_UPDATE_TYPE.ADD_TYPE, propinfo.level, propcount);
                         if (!is_success) return [3 /*break*/, 4];
                         return [4 /*yield*/, MySqlGame_1["default"].update_ugame_uball_info(player.get_uid(), player.get_uball_info())];
                     case 3:
                         update_ret = _c.sent();
                         if (update_ret) {
-                            Log_1["default"].info("hcc>>write_player_ball success", player.get_unick());
                             res_body = {
                                 status: Response_1["default"].OK,
                                 propsvrindex: shopInfo.propsvrindex,
@@ -338,7 +334,7 @@ var GameInfoInterface = /** @class */ (function () {
                                 try {
                                     info = sql_ret[0];
                                     user_config_obj = querystring_1["default"].decode(info.user_config);
-                                    Log_1["default"].info("hcc>>do_player_get_user_config: ", user_config_obj);
+                                    // Log.info("hcc>>do_player_get_user_config: ", user_config_obj);
                                     if (!user_config_obj["user_ball_level"]) {
                                         user_config_obj["user_ball_level"] = 1;
                                     }
@@ -389,7 +385,7 @@ var GameInfoInterface = /** @class */ (function () {
                     case 1:
                         result = _a.sent();
                         if (result) {
-                            Log_1["default"].info("hcc>>update_ugame_user_config success ,ret: ", result);
+                            // Log.info("hcc>>update_ugame_user_config success ,ret: " , result);
                             return [2 /*return*/];
                         }
                         _a.label = 2;
