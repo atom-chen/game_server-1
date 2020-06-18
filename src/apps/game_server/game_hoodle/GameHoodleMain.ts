@@ -12,7 +12,6 @@ import MySqlAuth from '../../../database/MySqlAuth';
 import MatchManager from './MatchManager';
 import GameAppConfig from '../../config/GameAppConfig';
 import Log from '../../../utils/Log';
-import RobotManager from './RobotManager';
 
 let game_server = GameAppConfig.game_server;
 NetBus.start_tcp_server(game_server.host, game_server.port, false);
@@ -29,9 +28,6 @@ MySqlAuth.connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db
 
 //匹配场
 MatchManager.getInstance().start_match();
-
-//生产机器人,用于匹配场
-// RobotManager.getInstance().generate_robot();
 
 //内存使用打印
 function print_memery() {

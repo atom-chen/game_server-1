@@ -9,6 +9,8 @@ import GameFunction from './GameFunction';
 import MatchManager from '../MatchManager';
 import GameSendMsg from '../GameSendMsg';
 import { GameState } from '../config/State';
+import ProtoManager from '../../../../netbus/ProtoManager';
+import RobotManager from '../RobotManager';
 
 let playerMgr: PlayerManager    = PlayerManager.getInstance();
 let roomMgr: RoomManager        = RoomManager.getInstance();
@@ -64,25 +66,32 @@ class GameLinkInterface {
     }
 
     //玩家登录逻辑服务
-    static async do_player_login_logic_server(session: any, utag: number, proto_type: number){
+    static async do_player_login_logic_server(session: any, utag: number, proto_type: number, raw_cmd:any){
         let player: Player = playerMgr.get_player(utag)
         if (player) {
-            // Log.info("player is exist, uid: ", utag)
-            let data:any =  await player.init_session(session, utag, proto_type);
-            if(data){
+            Log.info("player is exist, uid: ", utag , "is rotot: " , player.is_robot());
+            let issuccess:any =  await player.init_session(session, utag, proto_type);
+            if (issuccess){
                 let room = roomMgr.get_room_by_uid(utag);
                 if (room) {
-                        let oldPlayer: Player = room.get_player(utag);
-                        if (oldPlayer) {
-                            player.set_player_info(oldPlayer.get_player_info())
-                        }
+                    let oldPlayer: Player = room.get_player(utag);
+                    if (oldPlayer) {
+                        player.set_player_info(oldPlayer.get_player_info())
                     }
-                    player.send_cmd(Cmd.eLoginLogicRes, { status: Response.OK })
-                }else{
-                player.send_cmd(Cmd.eLoginLogicRes, { status: Response.SYSTEM_ERR })
                 }
+                player.send_cmd(Cmd.eLoginLogicRes, { status: Response.OK })
+            }else{
+                player.send_cmd(Cmd.eLoginLogicRes, { status: Response.SYSTEM_ERR })
+            }
         }else{
-            let newPlayer:Player = await playerMgr.alloc_player(session, utag, proto_type);
+            let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
+            let newPlayer = null; 
+            if (body && body.isrobot == true) {
+                newPlayer = await RobotManager.getInstance().alloc_robot_player(session, utag, proto_type);
+            } else {
+                newPlayer = await playerMgr.alloc_player(session, utag, proto_type);
+            }
+
             if (newPlayer){
                 let room = roomMgr.get_room_by_uid(utag);
                 if (room) {

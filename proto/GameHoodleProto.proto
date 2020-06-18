@@ -202,6 +202,7 @@ message UserOfflineRes {
 }
 
 message LoginLogicReq {
+	optional bool isrobot = 1;
 }
 
 message LoginLogicRes {

@@ -50,7 +50,7 @@ var PlayerManager = /** @class */ (function () {
     };
     PlayerManager.prototype.alloc_player = function (session, uid, proto_type) {
         return __awaiter(this, void 0, void 0, function () {
-            var player, player_info, player2, player2_info;
+            var player, issuccess_1, player2, issuccess;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -58,16 +58,16 @@ var PlayerManager = /** @class */ (function () {
                         if (!player) return [3 /*break*/, 2];
                         return [4 /*yield*/, player.init_session(session, uid, proto_type)];
                     case 1:
-                        player_info = _a.sent();
-                        // Log.info("alloc_player>> user: ", uid, " is exist!, info: " , player_info);
+                        issuccess_1 = _a.sent();
+                        // Log.info("alloc_player>> user: ", uid, " is exist!, issuccess: " , issuccess);
                         return [2 /*return*/, player];
                     case 2:
                         player2 = new Player_1["default"]();
                         this._player_set[uid] = player2;
                         return [4 /*yield*/, player2.init_session(session, uid, proto_type)];
                     case 3:
-                        player2_info = _a.sent();
-                        // Log.info("alloc_player>> user: ", uid, " is not exist!, info: ", player2_info);
+                        issuccess = _a.sent();
+                        // Log.info("alloc_player>> user: ", uid, " is not exist!, issuccess: ", issuccess);
                         return [2 /*return*/, player2];
                 }
             });

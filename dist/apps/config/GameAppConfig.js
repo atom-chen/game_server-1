@@ -84,6 +84,12 @@ var GameAppConfig = /** @class */ (function () {
         port: 6089,
         stype: Stype_1.Stype.GameHoodle
     };
+    //游戏服务2
+    GameAppConfig.robot_server = {
+        host: LOCAL_HOST,
+        port: 6090,
+        stype: Stype_1.Stype.Robot
+    };
     //游戏数据库服务
     GameAppConfig.game_database = {
         host: LOCAL_HOST,

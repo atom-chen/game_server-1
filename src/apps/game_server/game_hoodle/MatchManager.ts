@@ -98,16 +98,6 @@ class MatchManager {
             if (is_match_room_success == false){
                 _this.do_match_player();
             }
-
-            //////////// 
-            //增加机器人
-            ////////////
-            /*
-            let robot_player = RobotManager.getInstance().get_free_robot_player();
-            if (robot_player){
-                _this.add_player_to_match_list(robot_player, RoomListConfig[1]);
-            }
-            */
         //    _this.log_match_list();
         }, GameHoodleConfig.MATCH_INTERVAL);
     }

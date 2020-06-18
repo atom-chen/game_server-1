@@ -29,7 +29,7 @@ class ServiceManager {
         var proto_type 	= cmd[3];
     
         if (!ServiceManager.service_modules[stype]) {
-            Log.error("ServiceManager.service_modules not exist")
+            Log.error("cur as client ServiceManager.service_modules not exist")
             return false;
         }
         
@@ -60,7 +60,7 @@ class ServiceManager {
         var proto_type 	= cmd[3];
     
         if (!ServiceManager.service_modules[stype]) {
-            Log.error("ServiceManager.service_modules not exist")
+            Log.error("cur as server ServiceManager.service_modules not exist")
             return false;
         }
     

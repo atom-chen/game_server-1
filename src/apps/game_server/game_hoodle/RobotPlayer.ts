@@ -1,9 +1,6 @@
 import Player from './Player';
 import MySqlGame from '../../../database/MySqlGame';
 import querystring from 'querystring';
-import Log from '../../../utils/Log';
-import NetBus from '../../../netbus/NetBus';
-import { Stype } from '../../protocol/Stype';
 
 class RobotPlayer extends Player{
 
@@ -13,7 +10,7 @@ class RobotPlayer extends Player{
     }
 
     async init_session(session: any, uid: number, proto_type: number) {
-        await super.init_session(session, uid, proto_type);
+        let issuccess = await super.init_session(session, uid, proto_type);
         let data_game: any = await MySqlGame.get_ugame_uchip_by_uid(uid);
         if(data_game && data_game.length > 0){
             this.set_ugame_info(data_game[0]); 
@@ -27,20 +24,8 @@ class RobotPlayer extends Player{
             }
             this.set_user_config(user_config_obj);
         }
+        return true;
     }
-
-    //发送消息
-    // send_cmd(ctype: number, body: any) {
-    //     if (this.is_robot()) {
-    //         Log.warn("RobotPlayer send to robot!!");
-    //         return;
-    //     }
-    //     if (!this._session) {
-    //         Log.error("send_cmd error, session is null!!");
-    //         return;
-    //     }
-    //     NetBus.send_cmd(this._session, Stype.GameHoodle, ctype, this._uid, this._proto_type, body);
-    // }
 
 }
 

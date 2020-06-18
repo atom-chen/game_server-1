@@ -44,10 +44,9 @@ var Log_1 = __importDefault(require("../../../utils/Log"));
 var PlayerManager_1 = __importDefault(require("./PlayerManager"));
 var RoomManager_1 = __importDefault(require("./RoomManager"));
 var State_1 = require("./config/State");
-var ProtoTools_1 = __importDefault(require("../../../netbus/ProtoTools"));
 var playerMgr = PlayerManager_1["default"].getInstance();
 // let robot_uid = [1921, 1922, 1923];
-var robot_uid = [1921];
+// let robot_uid = [1921];
 var RobotManager = /** @class */ (function () {
     function RobotManager() {
     }
@@ -56,46 +55,35 @@ var RobotManager = /** @class */ (function () {
     };
     RobotManager.prototype.generate_robot = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var _this = this;
             return __generator(this, function (_a) {
-                robot_uid.forEach(function (uid) { return __awaiter(_this, void 0, void 0, function () {
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0: return [4 /*yield*/, this.alloc_robot_player(uid)];
-                            case 1:
-                                _a.sent();
-                                return [2 /*return*/];
-                        }
-                    });
-                }); });
                 return [2 /*return*/];
             });
         });
     };
-    RobotManager.prototype.alloc_robot_player = function (uid) {
+    RobotManager.prototype.alloc_robot_player = function (session, uid, proto_type) {
         return __awaiter(this, void 0, void 0, function () {
-            var player, playerinfo, playerinfo;
+            var player, issuccess, issuccess;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         player = playerMgr.get_player(uid);
                         if (!player) return [3 /*break*/, 2];
-                        return [4 /*yield*/, player.init_session(null, uid, ProtoTools_1["default"].ProtoType.PROTO_BUF)];
+                        return [4 /*yield*/, player.init_session(session, uid, proto_type)];
                     case 1:
-                        playerinfo = _a.sent();
+                        issuccess = _a.sent();
                         player.set_robot(true);
-                        Log_1["default"].info("hcc>>robot playerinfo old: ", playerinfo);
+                        Log_1["default"].info("hcc>>robot >> alloc_robot_player old: ", issuccess);
                         return [3 /*break*/, 4];
                     case 2:
                         player = new RobotPlayer_1["default"]();
-                        return [4 /*yield*/, player.init_session(null, uid, ProtoTools_1["default"].ProtoType.PROTO_BUF)];
+                        return [4 /*yield*/, player.init_session(session, uid, proto_type)];
                     case 3:
-                        playerinfo = _a.sent();
-                        Log_1["default"].info("hcc>>robot playerinfo new: ", playerinfo);
+                        issuccess = _a.sent();
+                        Log_1["default"].info("hcc>>robot >> alloc_robot_player new: ", issuccess);
                         _a.label = 4;
                     case 4:
                         playerMgr.add_robot_player(player);
-                        return [2 /*return*/];
+                        return [2 /*return*/, player];
                 }
             });
         });

@@ -24,16 +24,17 @@ var RobotService = /** @class */ (function (_super) {
     __extends(RobotService, _super);
     function RobotService() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.service_name = "RobltService";
+        _this.service_name = "RobotService";
+        _this.is_transfer = false;
         return _this;
     }
     //收到客户端发来的(当前作为服务端)
     RobotService.on_recv_client_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        RobotModel_1["default"].getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
+        // RobotModel.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
     };
     //收到连接的服务发过来的数据（当前作为客户端）
     RobotService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        Log_1["default"].info("robot on_recv_server_player_cmd");
+        RobotModel_1["default"].getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
     };
     // 收到客户端断开连接;
     RobotService.on_player_disconnect = function (session, stype) {

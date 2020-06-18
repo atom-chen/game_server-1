@@ -48,6 +48,8 @@ var GameFunction_1 = __importDefault(require("./GameFunction"));
 var MatchManager_1 = __importDefault(require("../MatchManager"));
 var GameSendMsg_1 = __importDefault(require("../GameSendMsg"));
 var State_1 = require("../config/State");
+var ProtoManager_1 = __importDefault(require("../../../../netbus/ProtoManager"));
+var RobotManager_1 = __importDefault(require("../RobotManager"));
 var playerMgr = PlayerManager_1["default"].getInstance();
 var roomMgr = RoomManager_1["default"].getInstance();
 var matchMgr = MatchManager_1["default"].getInstance();
@@ -96,18 +98,19 @@ var GameLinkInterface = /** @class */ (function () {
         }
     };
     //玩家登录逻辑服务
-    GameLinkInterface.do_player_login_logic_server = function (session, utag, proto_type) {
+    GameLinkInterface.do_player_login_logic_server = function (session, utag, proto_type, raw_cmd) {
         return __awaiter(this, void 0, void 0, function () {
-            var player, data, room, oldPlayer, newPlayer, room, oldPlayer;
+            var player, issuccess, room, oldPlayer, body, newPlayer, room, oldPlayer;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         player = playerMgr.get_player(utag);
                         if (!player) return [3 /*break*/, 2];
+                        Log_1["default"].info("player is exist, uid: ", utag, "is rotot: ", player.is_robot());
                         return [4 /*yield*/, player.init_session(session, utag, proto_type)];
                     case 1:
-                        data = _a.sent();
-                        if (data) {
+                        issuccess = _a.sent();
+                        if (issuccess) {
                             room = roomMgr.get_room_by_uid(utag);
                             if (room) {
                                 oldPlayer = room.get_player(utag);
@@ -120,10 +123,20 @@ var GameLinkInterface = /** @class */ (function () {
                         else {
                             player.send_cmd(GameHoodleProto_1.Cmd.eLoginLogicRes, { status: Response_1["default"].SYSTEM_ERR });
                         }
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, playerMgr.alloc_player(session, utag, proto_type)];
+                        return [3 /*break*/, 7];
+                    case 2:
+                        body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
+                        newPlayer = null;
+                        if (!(body && body.isrobot == true)) return [3 /*break*/, 4];
+                        return [4 /*yield*/, RobotManager_1["default"].getInstance().alloc_robot_player(session, utag, proto_type)];
                     case 3:
                         newPlayer = _a.sent();
+                        return [3 /*break*/, 6];
+                    case 4: return [4 /*yield*/, playerMgr.alloc_player(session, utag, proto_type)];
+                    case 5:
+                        newPlayer = _a.sent();
+                        _a.label = 6;
+                    case 6:
                         if (newPlayer) {
                             room = roomMgr.get_room_by_uid(utag);
                             if (room) {
@@ -137,8 +150,8 @@ var GameLinkInterface = /** @class */ (function () {
                         else {
                             GameSendMsg_1["default"].send(session, GameHoodleProto_1.Cmd.eLoginLogicRes, utag, proto_type, { status: Response_1["default"].SYSTEM_ERR });
                         }
-                        _a.label = 4;
-                    case 4: return [2 /*return*/];
+                        _a.label = 7;
+                    case 7: return [2 /*return*/];
                 }
             });
         });

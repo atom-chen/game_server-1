@@ -87,6 +87,13 @@ class GameAppConfig {
 		port: 6089,
 		stype: Stype.GameHoodle,
 	}
+	
+	//游戏服务2
+	static robot_server: any = {
+		host: LOCAL_HOST,
+		port: 6090,
+		stype: Stype.Robot,
+	}
 
 	//游戏数据库服务
 	static game_database:any =  {
@@ -148,9 +155,9 @@ class GameAppConfig {
 		},
 
 		// [4]: {
-		// 	stype: Stype.GameHoodle,
+		// 	stype: Stype.Robot,
 		// 	host: LOCAL_HOST,
-		// 	port: 6089,
+		// 	port: 6090,
 		// },
 	}
 }

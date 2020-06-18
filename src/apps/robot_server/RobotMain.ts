@@ -10,18 +10,32 @@ import { Stype, StypeName } from '../protocol/Stype'
 import RobotService from './RobotService';
 import MySqlGame from '../../database/MySqlGame';
 import MySqlAuth from "../../database/MySqlAuth";
+import { Cmd } from "../protocol/GameHoodleProto";
+import ProtoTools from "../../netbus/ProtoTools";
 
-let system_server = GameAppConfig.game_system_server;
-NetBus.start_tcp_server(system_server.host, system_server.port, false);
-ServiceManager.register_service(Stype.GameSystem, RobotService);
+ServiceManager.register_service(Stype.Robot, RobotService);
 
-//游戏服务数据库
-let game_database = GameAppConfig.game_database;
-MySqlGame.connect(game_database.host, game_database.port, game_database.db_name, game_database.uname, game_database.upwd);
+// cur server as client connect to game_server
+NetBus.connect_tcp_server(Stype.GameHoodle, GameAppConfig.game_server.host, GameAppConfig.game_server.port, false);
 
-//账号数据库
-let db_auth = GameAppConfig.auth_database;
-MySqlAuth.connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db_auth.upwd);
+//test robot login logic_server
+setInterval(function() {
+	let game_server_session =  NetBus.get_server_session(Stype.GameHoodle);
+	if (game_server_session){
+		let body = { isrobot : true,}
+		NetBus.send_cmd(game_server_session, Stype.GameHoodle, Cmd.eLoginLogicReq, 1921, ProtoTools.ProtoType.PROTO_BUF, body);
+		NetBus.send_cmd(game_server_session, Stype.GameHoodle, Cmd.eLoginLogicReq, 1922, ProtoTools.ProtoType.PROTO_BUF, body);
+		NetBus.send_cmd(game_server_session, Stype.GameHoodle, Cmd.eLoginLogicReq, 1923, ProtoTools.ProtoType.PROTO_BUF, body);
+	}
+},1000);
+
+// //游戏服务数据库
+// let game_database = GameAppConfig.game_database;
+// MySqlGame.connect(game_database.host, game_database.port, game_database.db_name, game_database.uname, game_database.upwd);
+
+// //账号数据库
+// let db_auth = GameAppConfig.auth_database;
+// MySqlAuth.connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db_auth.upwd);
 
 
 /**

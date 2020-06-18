@@ -1,0 +1,13 @@
+gateway 连接其他服务：
+gateway 里有其他服务的session 通过get_server_session(stype) 获取得到
+保存在：server_connect_list
+gateway 可以通过server_session发消息给其他服务
+
+gata可以收到客户端的连接:
+gataway保存客户端session：通过get_client_session(session_key) 获取得到
+保存在：global_session_list
+gateway可以通过 get_client_session(utag) 给客户端发消息
+
+
+
+其他服务 通过session参数发给gateway 

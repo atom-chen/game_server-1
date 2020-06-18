@@ -29,7 +29,7 @@ var ServiceManager = /** @class */ (function () {
         var utag = cmd[2];
         var proto_type = cmd[3];
         if (!ServiceManager.service_modules[stype]) {
-            Log_1["default"].error("ServiceManager.service_modules not exist");
+            Log_1["default"].error("cur as client ServiceManager.service_modules not exist");
             return false;
         }
         if (stype == null || ctype == null || utag == null || proto_type == null) {
@@ -56,7 +56,7 @@ var ServiceManager = /** @class */ (function () {
         var utag = cmd[2];
         var proto_type = cmd[3];
         if (!ServiceManager.service_modules[stype]) {
-            Log_1["default"].error("ServiceManager.service_modules not exist");
+            Log_1["default"].error("cur as server ServiceManager.service_modules not exist");
             return false;
         }
         if (stype == null || ctype == null || utag == null || proto_type == null) {

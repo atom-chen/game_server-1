@@ -48,8 +48,8 @@ class Player{
         if (data && data.length > 0){
             let sql_info = data[0];
             this._ucenter_info = sql_info;
-            return sql_info;
         }
+        return true;
     }
 
     //获取uid
@@ -239,6 +239,7 @@ class Player{
     send_cmd(ctype:number, body:any){
         if(this.is_robot()){
             Log.warn("send to robot!!");
+            NetBus.send_cmd(this._session, Stype.Robot, ctype, this._uid, this._proto_type, body); 
             return;
         }
         if(!this._session){

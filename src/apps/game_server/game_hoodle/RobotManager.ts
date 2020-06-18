@@ -9,7 +9,7 @@ import ProtoTools from '../../../netbus/ProtoTools';
 let playerMgr = PlayerManager.getInstance();
 
 // let robot_uid = [1921, 1922, 1923];
-let robot_uid = [1921];
+// let robot_uid = [1921];
 
 class RobotManager {
     private static readonly Instance: RobotManager = new RobotManager();
@@ -22,24 +22,19 @@ class RobotManager {
         return RobotManager.Instance;
     }
 
-    async generate_robot(){
-        robot_uid.forEach(async uid => {
-            await this.alloc_robot_player(uid);
-        });
-    }
-
-    async alloc_robot_player(uid: number) {
-        let player: Player = playerMgr.get_player(uid);
+    async alloc_robot_player(session:any, uid: number, proto_type:number) {
+        let player: any = playerMgr.get_player(uid);
         if(player){
-            let playerinfo: any = await player.init_session(null, uid, ProtoTools.ProtoType.PROTO_BUF);
+            let issuccess = await player.init_session(session, uid, proto_type);
             player.set_robot(true);
-            Log.info("hcc>>robot playerinfo old: ", playerinfo);
+            Log.info("hcc>>robot >> alloc_robot_player old: success!! uid: " , uid );
         }else{
             player = new RobotPlayer();
-            let playerinfo: any = await player.init_session(null, uid, ProtoTools.ProtoType.PROTO_BUF);
-            Log.info("hcc>>robot playerinfo new: ", playerinfo);
+            let issuccess = await player.init_session(session, uid, proto_type);
+            Log.info("hcc>>robot >> alloc_robot_player success!! uid:" , uid);
         }
         playerMgr.add_robot_player(player);
+        return player;
     }
 
     get_free_robot_player(){

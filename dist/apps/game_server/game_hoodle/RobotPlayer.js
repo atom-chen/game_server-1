@@ -64,12 +64,12 @@ var RobotPlayer = /** @class */ (function (_super) {
     }
     RobotPlayer.prototype.init_session = function (session, uid, proto_type) {
         return __awaiter(this, void 0, void 0, function () {
-            var data_game, ugame_config, user_config_obj;
+            var issuccess, data_game, ugame_config, user_config_obj;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, _super.prototype.init_session.call(this, session, uid, proto_type)];
                     case 1:
-                        _a.sent();
+                        issuccess = _a.sent();
                         return [4 /*yield*/, MySqlGame_1["default"].get_ugame_uchip_by_uid(uid)];
                     case 2:
                         data_game = _a.sent();
@@ -86,7 +86,7 @@ var RobotPlayer = /** @class */ (function (_super) {
                             }
                             this.set_user_config(user_config_obj);
                         }
-                        return [2 /*return*/];
+                        return [2 /*return*/, true];
                 }
             });
         });

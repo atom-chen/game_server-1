@@ -78,7 +78,7 @@ class GameHoodleModle {
     }
     //登录逻辑服务
     private on_player_login_logic_server(session:any, utag:number, proto_type:number, raw_cmd:any){
-        GameLinkInterface.do_player_login_logic_server(session, utag, proto_type);
+        GameLinkInterface.do_player_login_logic_server(session, utag, proto_type, raw_cmd);
     }
 
     //创建房间

@@ -73,7 +73,7 @@ var GameHoodleModle = /** @class */ (function () {
     };
     //登录逻辑服务
     GameHoodleModle.prototype.on_player_login_logic_server = function (session, utag, proto_type, raw_cmd) {
-        GameLinkInterface_1["default"].do_player_login_logic_server(session, utag, proto_type);
+        GameLinkInterface_1["default"].do_player_login_logic_server(session, utag, proto_type, raw_cmd);
     };
     //创建房间
     GameHoodleModle.prototype.on_player_create_room = function (session, utag, proto_type, raw_cmd) {

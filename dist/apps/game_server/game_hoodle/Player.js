@@ -88,9 +88,8 @@ var Player = /** @class */ (function () {
                         if (data && data.length > 0) {
                             sql_info = data[0];
                             this._ucenter_info = sql_info;
-                            return [2 /*return*/, sql_info];
                         }
-                        return [2 /*return*/];
+                        return [2 /*return*/, true];
                 }
             });
         });
@@ -248,6 +247,7 @@ var Player = /** @class */ (function () {
     Player.prototype.send_cmd = function (ctype, body) {
         if (this.is_robot()) {
             Log_1["default"].warn("send to robot!!");
+            NetBus_1["default"].send_cmd(this._session, Stype_1.Stype.Robot, ctype, this._uid, this._proto_type, body);
             return;
         }
         if (!this._session) {
