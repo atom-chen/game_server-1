@@ -64,7 +64,7 @@ class GameAppConfig {
 	//web配置服务
 	static config_webserver: any = {
 		host: LOCAL_HOST,
-		port: 6070,
+		port: 6091,
 	}
 
 	//系统服务

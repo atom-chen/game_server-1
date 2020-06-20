@@ -64,7 +64,7 @@ var GameAppConfig = /** @class */ (function () {
     //web配置服务
     GameAppConfig.config_webserver = {
         host: LOCAL_HOST,
-        port: 6070
+        port: 6091
     };
     //系统服务
     GameAppConfig.game_system_server = {
