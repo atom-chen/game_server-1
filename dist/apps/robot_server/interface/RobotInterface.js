@@ -37,7 +37,7 @@ var RobotInterface = /** @class */ (function () {
             var robot_uid_list = robot_roomlevel_map[key];
             if (robot_uid_list) {
                 var ret = robot_uid_list.indexOf(utag);
-                if (!util.isNullOrUndefined(ret)) {
+                if (ret > -1) {
                     var body = { roomlevel: Number(key) };
                     RobotSend_1["default"].send_game(GameHoodleProto_1.Cmd.eUserMatchReq, utag, body);
                     break;

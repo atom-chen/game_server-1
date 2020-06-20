@@ -26,7 +26,7 @@ class RobotInterface {
             let robot_uid_list: Array<number> = robot_roomlevel_map[key];
             if (robot_uid_list) {
                 let ret = robot_uid_list.indexOf(utag);
-                if (!util.isNullOrUndefined(ret)) {
+                if (ret > -1) {
                     let body = { roomlevel: Number(key) }
                     RobotSend.send_game(Cmd.eUserMatchReq, utag, body);
                     break;
