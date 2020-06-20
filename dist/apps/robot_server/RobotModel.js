@@ -60,6 +60,8 @@ var RobotModel = /** @class */ (function () {
     // send match to game server
     RobotModel.prototype.on_player_login_logic_res = function (session, utag, proto_type, raw_cmd) {
         Log_1["default"].info("hcc>>on_player_login_logic_res.....,utag: ", utag);
+        RobotSend_1["default"].send_game(RobotProto_1.Cmd.eUserGameInfoReq, utag);
+        RobotSend_1["default"].send_game(RobotProto_1.Cmd.eRoomListConfigReq, utag);
         RobotSend_1["default"].send_game(RobotProto_1.Cmd.eGetRoomStatusReq, utag);
     };
     RobotModel.prototype.on_player_status_res = function (session, utag, proto_type, raw_cmd) {

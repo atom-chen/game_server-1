@@ -60,6 +60,8 @@ class RobotModel {
     // send match to game server
     private on_player_login_logic_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer){
         Log.info("hcc>>on_player_login_logic_res.....,utag: ", utag);
+        RobotSend.send_game(Cmd.eUserGameInfoReq, utag);
+        RobotSend.send_game(Cmd.eRoomListConfigReq, utag);
         RobotSend.send_game(Cmd.eGetRoomStatusReq,utag);
     }
 
