@@ -93,7 +93,7 @@ var MatchManager = /** @class */ (function () {
             if (is_match_room_success == false) {
                 _this.do_match_player();
             }
-            _this.log_match_list();
+            //    _this.log_match_list();
         }, GameHoodleConfig_1["default"].MATCH_INTERVAL);
     };
     MatchManager.prototype.do_match_player = function () {

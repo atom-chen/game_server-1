@@ -97,7 +97,7 @@ class MatchManager {
             if (is_match_room_success == false){
                 _this.do_match_player();
             }
-           _this.log_match_list();
+        //    _this.log_match_list();
         }, GameHoodleConfig.MATCH_INTERVAL);
     }
 
