@@ -10,9 +10,12 @@ var RobotListConfig = /** @class */ (function () {
     }
     //机器人配置:[房间等级]：机器人uid
     RobotListConfig.robot_roomlevel_map = (_a = {},
-        _a[1] = [1917, 1918, 1919, 1920, 1921],
-        _a[2] = [1922, 1923, 1924, 1925, 1926],
-        _a[3] = [1927, 1928, 1929, 1930, 1931],
+        // [1]: [1917, 1918, 1919, 1920, 1921],
+        // [2]: [1922, 1923, 1924, 1925, 1926],
+        // [3]: [1927, 1928, 1929, 1930, 1931],
+        _a[1] = [1917],
+        _a[2] = [1922],
+        _a[3] = [1927],
         _a);
     RobotListConfig.READY_DELAY_TIME = 1500; //准备延迟时间 毫秒
     RobotListConfig.SHOOT_DELAY_TIME = 2000; //射击延迟时间
@@ -23,7 +26,10 @@ var RobotListConfig = /** @class */ (function () {
 exports["default"] = RobotListConfig;
 if (Platform_1["default"].isWin32()) { //测试环境
     RobotListConfig.robot_roomlevel_map = (_b = {},
-        _b[1] = [1921, 1922],
+        // [1]: [1921, 1922],
+        // [1]: [1921, 1922, 1923, 1924],
+        // [2]: [1925, 1926, 1927],
+        _b[2] = [1925,],
         _b);
 }
 //# sourceMappingURL=RobotListConfig.js.map
