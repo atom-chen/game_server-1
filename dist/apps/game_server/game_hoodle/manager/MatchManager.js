@@ -198,7 +198,18 @@ var MatchManager = /** @class */ (function () {
         }
     };
     //获取正在等待列表中，未进入匹配的玩家  inview状态
+    //先找玩家，再找机器人
     MatchManager.prototype.get_matching_player = function (zoom) {
+        //先找玩家
+        for (var key in zoom.match_list) {
+            var player = zoom.match_list[key];
+            if (player.get_user_state() == State_1.UserState.InView) {
+                if (!player.is_robot()) {
+                    return player;
+                }
+            }
+        }
+        //再找机器人
         for (var key in zoom.match_list) {
             var player = zoom.match_list[key];
             if (player.get_user_state() == State_1.UserState.InView) {
@@ -207,7 +218,16 @@ var MatchManager = /** @class */ (function () {
         }
     };
     //获取正在匹配中的玩家，进入匹配状态，matching状态
+    //先找玩家，再找机器人
     MatchManager.prototype.get_in_matching_player = function (zoom) {
+        for (var key in zoom.in_match_list) {
+            var p = zoom.in_match_list[key];
+            if (p.get_user_state() == State_1.UserState.MatchIng) {
+                if (!p.is_robot()) {
+                    return p;
+                }
+            }
+        }
         for (var key in zoom.in_match_list) {
             var p = zoom.in_match_list[key];
             if (p.get_user_state() == State_1.UserState.MatchIng) {
