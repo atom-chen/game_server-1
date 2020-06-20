@@ -54,7 +54,7 @@ class NetBus {
         });
     }
     //连接到其他服务器
-    static connect_tcp_server(stype:number, host:string, port:number, is_encrypt:boolean) {
+    static connect_tcp_server(stype:number, host:string, port:number, is_encrypt:boolean, success_callfunc?:Function) {
         let session:any = TcpSocket.connect({
             port: port,
             host: host,
@@ -68,6 +68,9 @@ class NetBus {
                     NetBus.on_recv_cmd_server_return(session,cmd_buf)
                 });
             }
+            if(success_callfunc){
+                success_callfunc();
+            }
         });
 
         session.on("close", function() {
@@ -78,7 +81,7 @@ class NetBus {
             // 重新连接到服务器
             setTimeout(function() {
                 Log.warn("reconnect:", StypeName[stype], host, port);
-                NetBus.connect_tcp_server(stype, host, port, is_encrypt);
+                NetBus.connect_tcp_server(stype, host, port, is_encrypt, success_callfunc);
             }, 1000);
         });
 

@@ -59,3 +59,10 @@ if (arraytest.indexOf(8) != -1){
 
 Log.info(arraytest.indexOf(0));
 Log.info(arraytest.indexOf(2));
+
+let robot_uid_list: Array<number> = [1921];
+let utag = 1921;
+
+let ret = robot_uid_list.indexOf(utag);
+Log.info("hcc>> ret: ", ret);
+Log.info("hcc>> ret: ", ret);

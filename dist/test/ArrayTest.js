@@ -47,4 +47,9 @@ else {
 }
 Log_1["default"].info(arraytest.indexOf(0));
 Log_1["default"].info(arraytest.indexOf(2));
+var robot_uid_list = [1921];
+var utag = 1921;
+var ret = robot_uid_list.indexOf(utag);
+Log_1["default"].info("hcc>> ret: ", ret);
+Log_1["default"].info("hcc>> ret: ", ret);
 //# sourceMappingURL=ArrayTest.js.map

@@ -1,16 +1,16 @@
 //登录，断线协议处理
-import Player from '../Player';
+import Player from '../cell/Player';
 import { Cmd } from "../../../protocol/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import Response from '../../../protocol/Response';
-import PlayerManager from '../PlayerManager';
-import RoomManager from '../RoomManager';
+import PlayerManager from '../manager/PlayerManager';
+import RoomManager from '../manager/RoomManager';
 import GameFunction from './GameFunction';
-import MatchManager from '../MatchManager';
+import MatchManager from '../manager/MatchManager';
 import GameSendMsg from '../GameSendMsg';
 import { GameState } from '../config/State';
 import ProtoManager from '../../../../netbus/ProtoManager';
-import RobotManager from '../RobotManager';
+import RobotManager from '../manager/RobotManager';
 
 let playerMgr: PlayerManager    = PlayerManager.getInstance();
 let roomMgr: RoomManager        = RoomManager.getInstance();
@@ -45,13 +45,12 @@ class GameLinkInterface {
                 Log.info(uname, "delete from match")
             }
 
-            //如果在匹配房间内游戏还没开始，达到条件房间就解散
+            //如果在匹配房间内游戏还没开始，达到条件房间就解散(在线玩家为0)
             if(room && room.get_is_match_room()){
                 if (room.get_game_state() != GameState.InView){ //游戏已经开始，不能直接解散
                     return;
                 }
                 //游戏还没开始，而且没有在线玩家，房间解散
-
                 let playerCount = room.get_player_count();
                 let onlinePlayerCount = room.get_online_player_count();
                 Log.info("hcc>>do_player_lost_connect: playerCouont: ", playerCount, " ,onlinePlayerCount: ", onlinePlayerCount);
@@ -91,7 +90,7 @@ class GameLinkInterface {
             } else {
                 newPlayer = await playerMgr.alloc_player(session, utag, proto_type);
             }
-
+            Log.info("hcc>> new player success!!! , isrobot: ", newPlayer.is_robot(), " ,uid:", newPlayer.get_uid());
             if (newPlayer){
                 let room = roomMgr.get_room_by_uid(utag);
                 if (room) {

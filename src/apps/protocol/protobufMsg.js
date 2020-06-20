@@ -12881,6 +12881,7 @@ $root.GameHoodleProto = (function() {
          * @memberof GameHoodleProto
          * @interface IGameResultRes
          * @property {Array.<GameHoodleProto.IOnePlayerScore>|null} [scores] GameResultRes scores
+         * @property {boolean|null} [isfinal] GameResultRes isfinal
          */
 
         /**
@@ -12906,6 +12907,14 @@ $root.GameHoodleProto = (function() {
          * @instance
          */
         GameResultRes.prototype.scores = $util.emptyArray;
+
+        /**
+         * GameResultRes isfinal.
+         * @member {boolean} isfinal
+         * @memberof GameHoodleProto.GameResultRes
+         * @instance
+         */
+        GameResultRes.prototype.isfinal = false;
 
         /**
          * Creates a new GameResultRes instance using the specified properties.
@@ -12934,6 +12943,8 @@ $root.GameHoodleProto = (function() {
             if (message.scores != null && message.scores.length)
                 for (var i = 0; i < message.scores.length; ++i)
                     $root.GameHoodleProto.OnePlayerScore.encode(message.scores[i], writer.uint32(/* id 1, wireType 2 =*/10).fork()).ldelim();
+            if (message.isfinal != null && message.hasOwnProperty("isfinal"))
+                writer.uint32(/* id 2, wireType 0 =*/16).bool(message.isfinal);
             return writer;
         };
 
@@ -12972,6 +12983,9 @@ $root.GameHoodleProto = (function() {
                     if (!(message.scores && message.scores.length))
                         message.scores = [];
                     message.scores.push($root.GameHoodleProto.OnePlayerScore.decode(reader, reader.uint32()));
+                    break;
+                case 2:
+                    message.isfinal = reader.bool();
                     break;
                 default:
                     reader.skipType(tag & 7);
@@ -13017,6 +13031,9 @@ $root.GameHoodleProto = (function() {
                         return "scores." + error;
                 }
             }
+            if (message.isfinal != null && message.hasOwnProperty("isfinal"))
+                if (typeof message.isfinal !== "boolean")
+                    return "isfinal: boolean expected";
             return null;
         };
 
@@ -13042,6 +13059,8 @@ $root.GameHoodleProto = (function() {
                     message.scores[i] = $root.GameHoodleProto.OnePlayerScore.fromObject(object.scores[i]);
                 }
             }
+            if (object.isfinal != null)
+                message.isfinal = Boolean(object.isfinal);
             return message;
         };
 
@@ -13060,11 +13079,15 @@ $root.GameHoodleProto = (function() {
             var object = {};
             if (options.arrays || options.defaults)
                 object.scores = [];
+            if (options.defaults)
+                object.isfinal = false;
             if (message.scores && message.scores.length) {
                 object.scores = [];
                 for (var j = 0; j < message.scores.length; ++j)
                     object.scores[j] = $root.GameHoodleProto.OnePlayerScore.toObject(message.scores[j], options);
             }
+            if (message.isfinal != null && message.hasOwnProperty("isfinal"))
+                object.isfinal = message.isfinal;
             return object;
         };
 

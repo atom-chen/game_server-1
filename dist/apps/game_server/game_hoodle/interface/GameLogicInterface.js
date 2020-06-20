@@ -40,8 +40,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var Log_1 = __importDefault(require("../../../../utils/Log"));
-var PlayerManager_1 = __importDefault(require("../PlayerManager"));
-var RoomManager_1 = __importDefault(require("../RoomManager"));
+var PlayerManager_1 = __importDefault(require("../manager/PlayerManager"));
+var RoomManager_1 = __importDefault(require("../manager/RoomManager"));
 var State_1 = require("../config/State");
 var ProtoManager_1 = __importDefault(require("../../../../netbus/ProtoManager"));
 var GameFunction_1 = __importDefault(require("./GameFunction"));

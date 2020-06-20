@@ -1,5 +1,5 @@
-import RoomManager from '../apps/game_server/game_hoodle/RoomManager';
-import Room from '../apps/game_server/game_hoodle/Room';
+import RoomManager from '../apps/game_server/game_hoodle/manager/RoomManager';
+import Room from '../apps/game_server/game_hoodle/cell/Room';
 import StringUtil from '../utils/StringUtil';
 
 let room_set:any = {

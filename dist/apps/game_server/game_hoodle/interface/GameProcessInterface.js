@@ -6,8 +6,8 @@ exports.__esModule = true;
 var GameHoodleProto_1 = require("../../../protocol/GameHoodleProto");
 var Log_1 = __importDefault(require("../../../../utils/Log"));
 var Response_1 = __importDefault(require("../../../protocol/Response"));
-var PlayerManager_1 = __importDefault(require("../PlayerManager"));
-var RoomManager_1 = __importDefault(require("../RoomManager"));
+var PlayerManager_1 = __importDefault(require("../manager/PlayerManager"));
+var RoomManager_1 = __importDefault(require("../manager/RoomManager"));
 var State_1 = require("../config/State");
 var GameFunction_1 = __importDefault(require("./GameFunction"));
 var GameCheck_1 = __importDefault(require("./GameCheck"));
@@ -37,6 +37,16 @@ var GameProcessInterface = /** @class */ (function () {
                 GameFunction_1["default"].send_player_ball_pos(room, undefined, player);
                 GameFunction_1["default"].send_player_power(room, undefined, player);
                 GameFunction_1["default"].send_player_score(room, undefined, player);
+            }
+            //如果有机器人，要发权限给机器人,防止机器人射击之后，别的玩家退出，再进来，卡主了
+            if (room.get_game_state() == State_1.GameState.Gameing) {
+                var player_set = room.get_all_player();
+                for (var idx in player_set) {
+                    var p = player_set[idx];
+                    if (p.is_robot()) {
+                        GameFunction_1["default"].send_player_power(room, undefined, p);
+                    }
+                }
             }
         }
     };

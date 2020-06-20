@@ -69,13 +69,15 @@ var ServiceManager = /** @class */ (function () {
     };
     // 玩家掉线
     ServiceManager.on_client_lost_connect = function (session) {
-        var uid = session.uid;
-        if (uid === 0) {
-            return;
-        }
+        // var uid = session.uid;
+        // if (uid === 0) {
+        //     return;
+        // }
         // 遍历所有的服务模块通知在这个服务上的这个玩家掉线了
         for (var stype in ServiceManager.service_modules) {
-            ServiceManager.service_modules[stype].on_player_disconnect(session, stype);
+            if (ServiceManager.service_modules[stype].on_player_disconnect) {
+                ServiceManager.service_modules[stype].on_player_disconnect(session, stype);
+            }
         }
     };
     ServiceManager.service_modules = {};

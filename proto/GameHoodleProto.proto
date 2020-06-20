@@ -243,7 +243,7 @@ message PlayerFirstBallPosRes {
 }
 
 message PlayerPowerRes {
-	repeated OnePlayerPower powers = 1;
+	repeated OnePlayerPower powers = 1;			//玩家权限
 }
 
 message PlayerShootReq {
@@ -283,6 +283,7 @@ message PlayerIsShootedRes {
 
 message GameResultRes {
 	repeated OnePlayerScore scores = 1; 	//玩家分数
+	optional bool isfinal = 2; //是否大结算
 }
 
 message TotalGameResultRes {

@@ -1,8 +1,8 @@
 //配置信息
-import Player from '../Player';
+import Player from '../cell/Player';
 import { Cmd } from "../../../protocol/GameHoodleProto";
 import Response from '../../../protocol/Response';
-import PlayerManager from '../PlayerManager';
+import PlayerManager from '../manager/PlayerManager';
 import { RoomListConfig } from '../config/RoomListConfig';
 import Log from '../../../../utils/Log';
 

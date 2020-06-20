@@ -1,10 +1,10 @@
 //游戏过程，进房间数据推送，玩家准备协议处理
-import Player from '../Player';
+import Player from '../cell/Player';
 import { Cmd } from "../../../protocol/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import Response from '../../../protocol/Response';
-import PlayerManager from '../PlayerManager';
-import RoomManager from '../RoomManager';
+import PlayerManager from '../manager/PlayerManager';
+import RoomManager from '../manager/RoomManager';
 import { GameState, UserState } from '../config/State';
 import GameFunction from './GameFunction';
 import GameCheck from './GameCheck';
@@ -37,6 +37,17 @@ class GameProcessInterface {
                 GameFunction.send_player_ball_pos(room, undefined, player);
                 GameFunction.send_player_power(room, undefined, player);
                 GameFunction.send_player_score(room, undefined, player);
+            }
+
+            //如果有机器人，要发权限给机器人,防止机器人射击之后，别的玩家退出，再进来，卡主了
+            if (room.get_game_state() == GameState.Gameing) {
+                let player_set = room.get_all_player();
+                for(let idx in player_set){
+                    let p:Player = player_set[idx];
+                    if(p.is_robot()){
+                        GameFunction.send_player_power(room, undefined, p);
+                    }
+                }
             }
         }
     }

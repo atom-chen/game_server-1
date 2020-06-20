@@ -1,6 +1,6 @@
 //游戏相关辅助函数
-import Room from "../Room";
-import Player from "../Player";
+import Room from "../cell/Room";
+import Player from "../cell/Player";
 import { Cmd } from "../../../protocol/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import {PlayerPower} from '../config/State';
@@ -8,7 +8,7 @@ import StringUtil from '../../../../utils/StringUtil';
 import MySqlGame from '../../../../database/MySqlGame';
 import GameHoodleConfig from "../config/GameHoodleConfig";
 import Response from '../../../protocol/Response';
-import RoomManager from "../RoomManager";
+import RoomManager from "../manager/RoomManager";
 import ArrayUtil from "../../../../utils/ArrayUtil";
 
 class GameFunction {
@@ -375,7 +375,11 @@ class GameFunction {
                 player_score_array.push(one_score);
             }
         }
-        room.broadcast_in_room(Cmd.eGameResultRes, {scores:player_score_array});
+        let body = {
+            scores: player_score_array,
+            isfinal: room.get_play_count() == room.get_conf_play_count(),
+        }
+        room.broadcast_in_room(Cmd.eGameResultRes, body);
     }
 
     //发送大结算

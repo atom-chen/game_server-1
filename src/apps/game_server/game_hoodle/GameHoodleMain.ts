@@ -9,7 +9,7 @@ import { Stype } from '../../protocol/Stype';
 import MySqlGame from '../../../database/MySqlGame';
 import GameHoodleService from './GameHoodleService';
 import MySqlAuth from '../../../database/MySqlAuth';
-import MatchManager from './MatchManager';
+import MatchManager from './manager/MatchManager';
 import GameAppConfig from '../../config/GameAppConfig';
 import Log from '../../../utils/Log';
 

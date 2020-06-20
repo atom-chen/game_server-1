@@ -46,7 +46,7 @@ var StringUtil_1 = __importDefault(require("../../../../utils/StringUtil"));
 var MySqlGame_1 = __importDefault(require("../../../../database/MySqlGame"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
 var Response_1 = __importDefault(require("../../../protocol/Response"));
-var RoomManager_1 = __importDefault(require("../RoomManager"));
+var RoomManager_1 = __importDefault(require("../manager/RoomManager"));
 var ArrayUtil_1 = __importDefault(require("../../../../utils/ArrayUtil"));
 var GameFunction = /** @class */ (function () {
     function GameFunction() {
@@ -403,7 +403,11 @@ var GameFunction = /** @class */ (function () {
                 player_score_array.push(one_score);
             }
         }
-        room.broadcast_in_room(GameHoodleProto_1.Cmd.eGameResultRes, { scores: player_score_array });
+        var body = {
+            scores: player_score_array,
+            isfinal: room.get_play_count() == room.get_conf_play_count()
+        };
+        room.broadcast_in_room(GameHoodleProto_1.Cmd.eGameResultRes, body);
     };
     //发送大结算
     GameFunction.send_game_total_result = function (room) {

@@ -1,13 +1,13 @@
 //玩家使用表情
-import Player from '../Player';
+import Player from '../cell/Player';
 import { Cmd } from "../../../protocol/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import Response from '../../../protocol/Response';
-import PlayerManager from '../PlayerManager';
+import PlayerManager from '../manager/PlayerManager';
 import ProtoManager from '../../../../netbus/ProtoManager';
-import RoomManager from '../RoomManager';
+import RoomManager from '../manager/RoomManager';
 import ArrayUtil from '../../../../utils/ArrayUtil';
-import Room from '../Room';
+import Room from '../cell/Room';
 import GameHoodleConfig from '../config/GameHoodleConfig';
 import { UserState } from '../config/State';
 

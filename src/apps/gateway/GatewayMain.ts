@@ -7,10 +7,6 @@ import GameAppConfig from '../config/GameAppConfig';
 import NetBus from "../../netbus/NetBus"
 import GatewayService from "./GatewayService"
 import ServiceManager from "../../netbus/ServiceManager"
-import { Stype } from '../protocol/Stype';
-import { Cmd } from '../protocol/GameHoodleProto';
-import ProtoManager from '../../netbus/ProtoManager';
-import ProtoTools from '../../netbus/ProtoTools';
 
 NetBus.start_tcp_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.tcp_port, false)
 NetBus.start_ws_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.wbsocket_port, false)

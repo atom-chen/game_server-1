@@ -1,13 +1,13 @@
 //房间相关处理逻辑，登录，创建，返回房间相关协议处理
-import Player from '../Player';
+import Player from '../cell/Player';
 import { Cmd } from "../../../protocol/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import GameHoodleConfig from "../config/GameHoodleConfig";
 import Response from '../../../protocol/Response';
-import PlayerManager from '../PlayerManager';
-import RoomManager from '../RoomManager';
+import PlayerManager from '../manager/PlayerManager';
+import RoomManager from '../manager/RoomManager';
 import { UserState, GameState } from '../config/State';
-import Room from '../Room';
+import Room from '../cell/Room';
 import ProtoManager from '../../../../netbus/ProtoManager';
 import GameFunction from './GameFunction';
 

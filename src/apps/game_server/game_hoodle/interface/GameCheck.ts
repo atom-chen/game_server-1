@@ -1,9 +1,9 @@
 //检测接口
-import Player from '../Player';
+import Player from '../cell/Player';
 import Log from '../../../../utils/Log';
-import PlayerManager from '../PlayerManager';
-import RoomManager from '../RoomManager';
-import Room from '../Room';
+import PlayerManager from '../manager/PlayerManager';
+import RoomManager from '../manager/RoomManager';
+import Room from '../cell/Room';
 import { UserState } from '../config/State';
 
 class GameCheck {

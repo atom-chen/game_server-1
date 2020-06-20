@@ -61,7 +61,7 @@ var NetBus = /** @class */ (function () {
         });
     };
     //连接到其他服务器
-    NetBus.connect_tcp_server = function (stype, host, port, is_encrypt) {
+    NetBus.connect_tcp_server = function (stype, host, port, is_encrypt, success_callfunc) {
         var session = TcpSocket.connect({
             port: port,
             host: host
@@ -74,6 +74,9 @@ var NetBus = /** @class */ (function () {
                     NetBus.on_recv_cmd_server_return(session, cmd_buf);
                 });
             }
+            if (success_callfunc) {
+                success_callfunc();
+            }
         });
         session.on("close", function () {
             if (session.is_connected === true) {
@@ -83,7 +86,7 @@ var NetBus = /** @class */ (function () {
             // 重新连接到服务器
             setTimeout(function () {
                 Log_1["default"].warn("reconnect:", Stype_1.StypeName[stype], host, port);
-                NetBus.connect_tcp_server(stype, host, port, is_encrypt);
+                NetBus.connect_tcp_server(stype, host, port, is_encrypt, success_callfunc);
             }, 1000);
         });
         session.on("error", function (err) {

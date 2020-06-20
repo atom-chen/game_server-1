@@ -42,14 +42,14 @@ exports.__esModule = true;
 var GameHoodleProto_1 = require("../../../protocol/GameHoodleProto");
 var Log_1 = __importDefault(require("../../../../utils/Log"));
 var Response_1 = __importDefault(require("../../../protocol/Response"));
-var PlayerManager_1 = __importDefault(require("../PlayerManager"));
-var RoomManager_1 = __importDefault(require("../RoomManager"));
+var PlayerManager_1 = __importDefault(require("../manager/PlayerManager"));
+var RoomManager_1 = __importDefault(require("../manager/RoomManager"));
 var GameFunction_1 = __importDefault(require("./GameFunction"));
-var MatchManager_1 = __importDefault(require("../MatchManager"));
+var MatchManager_1 = __importDefault(require("../manager/MatchManager"));
 var GameSendMsg_1 = __importDefault(require("../GameSendMsg"));
 var State_1 = require("../config/State");
 var ProtoManager_1 = __importDefault(require("../../../../netbus/ProtoManager"));
-var RobotManager_1 = __importDefault(require("../RobotManager"));
+var RobotManager_1 = __importDefault(require("../manager/RobotManager"));
 var playerMgr = PlayerManager_1["default"].getInstance();
 var roomMgr = RoomManager_1["default"].getInstance();
 var matchMgr = MatchManager_1["default"].getInstance();
@@ -79,7 +79,7 @@ var GameLinkInterface = /** @class */ (function () {
             if (ret) {
                 Log_1["default"].info(uname, "delete from match");
             }
-            //如果在匹配房间内游戏还没开始，达到条件房间就解散
+            //如果在匹配房间内游戏还没开始，达到条件房间就解散(在线玩家为0)
             if (room && room.get_is_match_room()) {
                 if (room.get_game_state() != State_1.GameState.InView) { //游戏已经开始，不能直接解散
                     return;
@@ -137,6 +137,7 @@ var GameLinkInterface = /** @class */ (function () {
                         newPlayer = _a.sent();
                         _a.label = 6;
                     case 6:
+                        Log_1["default"].info("hcc>> new player success!!! , isrobot: ", newPlayer.is_robot(), " ,uid:", newPlayer.get_uid());
                         if (newPlayer) {
                             room = roomMgr.get_room_by_uid(utag);
                             if (room) {

@@ -1,11 +1,11 @@
 //匹配协议处理
-import Player from '../Player';
+import Player from '../cell/Player';
 import { Cmd } from "../../../protocol/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import Response from '../../../protocol/Response';
-import PlayerManager from '../PlayerManager';
-import RoomManager from '../RoomManager';
-import MatchManager from '../MatchManager';
+import PlayerManager from '../manager/PlayerManager';
+import RoomManager from '../manager/RoomManager';
+import MatchManager from '../manager/MatchManager';
 import GameHoodleConfig from '../config/GameHoodleConfig';
 import ProtoManager from '../../../../netbus/ProtoManager';
 import { RoomListConfig } from '../config/RoomListConfig';

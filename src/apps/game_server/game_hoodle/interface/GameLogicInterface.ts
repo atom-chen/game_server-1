@@ -1,8 +1,8 @@
 //游戏逻辑协议处理
-import Player from '../Player';
+import Player from '../cell/Player';
 import Log from '../../../../utils/Log';
-import PlayerManager from '../PlayerManager';
-import RoomManager from '../RoomManager';
+import PlayerManager from '../manager/PlayerManager';
+import RoomManager from '../manager/RoomManager';
 import { UserState, GameState } from '../config/State';
 import ProtoManager from '../../../../netbus/ProtoManager';
 import GameFunction from './GameFunction';
