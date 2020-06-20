@@ -97,7 +97,7 @@ class MatchManager {
             if (is_match_room_success == false){
                 _this.do_match_player();
             }
-        //    _this.log_match_list();
+           _this.log_match_list();
         }, GameHoodleConfig.MATCH_INTERVAL);
     }
 
@@ -403,13 +403,13 @@ class MatchManager {
                 let player:Player = zoom.match_list[key];
                 let uname = player.get_unick();
                 let state = player.get_user_state();
-                name_str = name_str + uname + ",lev:" + roomlevel + ",state:" + state +  "  ,"
+                name_str = name_str + "[" + uname + ",lev:" + roomlevel + "] "// ",state:" + state +  "  ,"
             }
             for (let key in zoom.in_match_list) {
                 let player: Player = zoom.in_match_list[key];
                 let uname = player.get_unick();
                 let state = player.get_user_state();
-                in_match_name_str = in_match_name_str + uname + ",lev:" + roomlevel + ",state:" + state + "  ,"
+                in_match_name_str = in_match_name_str + "[" + uname + ",lev:" + roomlevel + "] " //+ ",state:" + state + "  ,"
             }
             
         }
@@ -420,8 +420,9 @@ class MatchManager {
         if (in_match_name_str == ""){
             in_match_name_str = "none";
         }
-        Log.info("matchlist_len: " + this.count_match_list() + " ,user:", name_str);
-        Log.info("in_matchlist_len: " + this.count_in_match_list() + " ,user:", in_match_name_str);
+        Log.info("\n");
+        Log.info("matchlist_len:" + this.count_match_list() + " ==>" + name_str);
+        Log.info("in_matchlist_len:" + this.count_in_match_list() + " ==>" + in_match_name_str);
     }
 
     /////////////////////////////////////////

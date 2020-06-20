@@ -93,7 +93,7 @@ var MatchManager = /** @class */ (function () {
             if (is_match_room_success == false) {
                 _this.do_match_player();
             }
-            //    _this.log_match_list();
+            _this.log_match_list();
         }, GameHoodleConfig_1["default"].MATCH_INTERVAL);
     };
     MatchManager.prototype.do_match_player = function () {
@@ -371,13 +371,13 @@ var MatchManager = /** @class */ (function () {
                 var player = zoom.match_list[key];
                 var uname = player.get_unick();
                 var state = player.get_user_state();
-                name_str = name_str + uname + ",lev:" + roomlevel + ",state:" + state + "  ,";
+                name_str = name_str + "[" + uname + ",lev:" + roomlevel + "] "; // ",state:" + state +  "  ,"
             }
             for (var key in zoom.in_match_list) {
                 var player = zoom.in_match_list[key];
                 var uname = player.get_unick();
                 var state = player.get_user_state();
-                in_match_name_str = in_match_name_str + uname + ",lev:" + roomlevel + ",state:" + state + "  ,";
+                in_match_name_str = in_match_name_str + "[" + uname + ",lev:" + roomlevel + "] "; //+ ",state:" + state + "  ,"
             }
         }
         if (name_str == "") {
@@ -386,8 +386,9 @@ var MatchManager = /** @class */ (function () {
         if (in_match_name_str == "") {
             in_match_name_str = "none";
         }
-        Log_1["default"].info("matchlist_len: " + this.count_match_list() + " ,user:", name_str);
-        Log_1["default"].info("in_matchlist_len: " + this.count_in_match_list() + " ,user:", in_match_name_str);
+        Log_1["default"].info("\n");
+        Log_1["default"].info("matchlist_len:" + this.count_match_list() + " ==>" + name_str);
+        Log_1["default"].info("in_matchlist_len:" + this.count_in_match_list() + " ==>" + in_match_name_str);
     };
     /////////////////////////////////////////
     //查找房间逻辑,只找匹配房间，不找自建房
