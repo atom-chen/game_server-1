@@ -10,7 +10,9 @@ enum Cmd {
   eLoginRewardSignReq         = 3;    //玩家签到
   eLoginRewardSignRes         = 4;
   eUserShareReq 				      = 5;	  //分享记录
-	eUserShareRes 				      = 6;
+  eUserShareRes 				      = 6;
+  eUserAddChipReq             = 7;    //增加道具
+  eUserAddChipRes             = 8;  
 }
 
 message LoginRewardConfigReq {  
@@ -37,4 +39,17 @@ message UserShareReq {
 
 message UserShareRes {
 	required sint32 status = 1;
+}
+
+message UserAddChipReq {
+    required sint32 propid = 1;
+    required sint32 propcount = 2;
+    optional string config = 3;
+}
+
+message UserAddChipRes {
+  required sint32 status = 1;
+  optional sint32 propid = 2;
+  optional sint32 propcount = 3;
+  optional string config = 4;
 }

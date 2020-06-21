@@ -1,5 +1,5 @@
 import ProtoManager from '../../../netbus/ProtoManager';
-import { Cmd } from '../../protocol/GameHoodleProto';
+import { Cmd ,CmdName} from '../../protocol/GameHoodleProto';
 import GameSendMsg from './GameSendMsg';
 import CommonProto from '../../protocol/CommonProto';
 import Response from '../../protocol/Response';
@@ -14,6 +14,9 @@ import GameCheck from './interface/GameCheck';
 import GameEmojInterface from './interface/GameEmojInterface';
 import GamePlayAgainInterface from './interface/GamePlayAgainInterface';
 import GameConfigInterface from './interface/GameConfigInterface';
+import Player from './cell/Player';
+import PlayerManager from './manager/PlayerManager';
+import { StypeName } from '../../protocol/Stype';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -63,7 +66,19 @@ class GameHoodleModle {
     }
 
     public recv_cmd_msg(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:Buffer){
-        Log.info("recv_cmd_msg: ",stype, ctype, utag);
+        let player:Player = PlayerManager.getInstance().get_player(utag);
+        let unick = "none";
+        if(player){
+            unick = player.get_unick();
+        }
+        let cmdname = "";
+        if (ctype == 10000){
+            cmdname = "lostconnect"
+        }else{
+            cmdname = CmdName[ctype];
+        }
+
+        Log.info("recv_cmd_msg: ", StypeName[stype], cmdname, utag, unick);
         if (this._cmd_handler_map[ctype]){
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }

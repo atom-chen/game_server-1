@@ -19,6 +19,8 @@ var GameCheck_1 = __importDefault(require("./interface/GameCheck"));
 var GameEmojInterface_1 = __importDefault(require("./interface/GameEmojInterface"));
 var GamePlayAgainInterface_1 = __importDefault(require("./interface/GamePlayAgainInterface"));
 var GameConfigInterface_1 = __importDefault(require("./interface/GameConfigInterface"));
+var PlayerManager_1 = __importDefault(require("./manager/PlayerManager"));
+var Stype_1 = require("../../protocol/Stype");
 var GameHoodleModle = /** @class */ (function () {
     function GameHoodleModle() {
         var _a;
@@ -59,7 +61,19 @@ var GameHoodleModle = /** @class */ (function () {
         return ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
     };
     GameHoodleModle.prototype.recv_cmd_msg = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        Log_1["default"].info("recv_cmd_msg: ", stype, ctype, utag);
+        var player = PlayerManager_1["default"].getInstance().get_player(utag);
+        var unick = "none";
+        if (player) {
+            unick = player.get_unick();
+        }
+        var cmdname = "";
+        if (ctype == 10000) {
+            cmdname = "lostconnect";
+        }
+        else {
+            cmdname = GameHoodleProto_1.CmdName[ctype];
+        }
+        Log_1["default"].info("recv_cmd_msg: ", Stype_1.StypeName[stype], cmdname, utag, unick);
         if (this._cmd_handler_map[ctype]) {
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }

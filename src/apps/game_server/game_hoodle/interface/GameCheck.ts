@@ -39,8 +39,7 @@ class GameCheck {
         for (let uid in player_set) {
             let player: Player = player_set[uid];
             if (player) {
-                let isready = player.get_user_state() == UserState.Ready;
-                if (isready == true) {
+                if (player.get_user_state() == UserState.Ready) {
                     ready_player_count++;
                 }
             }

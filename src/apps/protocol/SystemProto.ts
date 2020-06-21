@@ -8,6 +8,8 @@ export enum Cmd {
 	eLoginRewardSignRes = 4,
 	eUserShareReq = 5,
 	eUserShareRes = 6,
+	eUserAddChipReq = 7,
+	eUserAddChipRes = 8,
 }
 
 export let CmdName:any = {
@@ -18,4 +20,6 @@ export let CmdName:any = {
 	[4]: "LoginRewardSignRes",
 	[5]: "UserShareReq",
 	[6]: "UserShareRes",
+	[7]: "UserAddChipReq",
+	[8]: "UserAddChipRes",
 }

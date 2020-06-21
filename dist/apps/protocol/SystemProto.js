@@ -11,6 +11,8 @@ var Cmd;
     Cmd[Cmd["eLoginRewardSignRes"] = 4] = "eLoginRewardSignRes";
     Cmd[Cmd["eUserShareReq"] = 5] = "eUserShareReq";
     Cmd[Cmd["eUserShareRes"] = 6] = "eUserShareRes";
+    Cmd[Cmd["eUserAddChipReq"] = 7] = "eUserAddChipReq";
+    Cmd[Cmd["eUserAddChipRes"] = 8] = "eUserAddChipRes";
 })(Cmd = exports.Cmd || (exports.Cmd = {}));
 exports.CmdName = (_a = {},
     _a[0] = "INVALED",
@@ -20,5 +22,7 @@ exports.CmdName = (_a = {},
     _a[4] = "LoginRewardSignRes",
     _a[5] = "UserShareReq",
     _a[6] = "UserShareRes",
+    _a[7] = "UserAddChipReq",
+    _a[8] = "UserAddChipRes",
     _a);
 //# sourceMappingURL=SystemProto.js.map

@@ -116,6 +116,7 @@ var GameLinkInterface = /** @class */ (function () {
                                 oldPlayer = room.get_player(utag);
                                 if (oldPlayer) {
                                     player.set_player_info(oldPlayer.get_player_info());
+                                    room.add_player(player, true);
                                 }
                             }
                             player.send_cmd(GameHoodleProto_1.Cmd.eLoginLogicRes, { status: Response_1["default"].OK });
@@ -144,6 +145,7 @@ var GameLinkInterface = /** @class */ (function () {
                                 oldPlayer = room.get_player(utag);
                                 if (oldPlayer) {
                                     newPlayer.set_player_info(oldPlayer.get_player_info());
+                                    room.add_player(newPlayer, true);
                                 }
                             }
                             newPlayer.send_cmd(GameHoodleProto_1.Cmd.eLoginLogicRes, { status: Response_1["default"].OK });

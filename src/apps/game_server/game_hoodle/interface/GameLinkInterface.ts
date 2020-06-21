@@ -75,7 +75,8 @@ class GameLinkInterface {
                 if (room) {
                     let oldPlayer: Player = room.get_player(utag);
                     if (oldPlayer) {
-                        player.set_player_info(oldPlayer.get_player_info())
+                        player.set_player_info(oldPlayer.get_player_info());
+                        room.add_player(player, true);
                     }
                 }
                 player.send_cmd(Cmd.eLoginLogicRes, { status: Response.OK })
@@ -84,7 +85,7 @@ class GameLinkInterface {
             }
         }else{
             let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-            let newPlayer = null; 
+            let newPlayer = null;
             if (body && body.isrobot == true) {
                 newPlayer = await RobotManager.getInstance().alloc_robot_player(session, utag, proto_type);
             } else {
@@ -96,7 +97,8 @@ class GameLinkInterface {
                 if (room) {
                     let oldPlayer: Player = room.get_player(utag);
                     if (oldPlayer) {
-                        newPlayer.set_player_info(oldPlayer.get_player_info())
+                        newPlayer.set_player_info(oldPlayer.get_player_info());
+                        room.add_player(newPlayer,true);
                     }
                 }
                 newPlayer.send_cmd(Cmd.eLoginLogicRes, { status: Response.OK })

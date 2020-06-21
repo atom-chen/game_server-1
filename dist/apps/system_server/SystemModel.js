@@ -12,6 +12,7 @@ var SystemProto_1 = require("../protocol/SystemProto");
 var SystemSend_1 = __importDefault(require("./SystemSend"));
 var LoginRewardInterface_1 = __importDefault(require("./interface/LoginRewardInterface"));
 var ShareInterface_1 = __importDefault(require("./interface/ShareInterface"));
+var AddUchipInterface_1 = __importDefault(require("./interface/AddUchipInterface"));
 var SystemModel = /** @class */ (function () {
     function SystemModel() {
         var _a;
@@ -21,6 +22,7 @@ var SystemModel = /** @class */ (function () {
             _a[SystemProto_1.Cmd.eLoginRewardConfigReq] = this.on_user_login_reward_config,
             _a[SystemProto_1.Cmd.eLoginRewardSignReq] = this.on_user_login_reward_sign,
             _a[SystemProto_1.Cmd.eUserShareReq] = this.on_user_share_req,
+            _a[SystemProto_1.Cmd.eUserAddChipReq] = this.on_user_add_chip_req,
             _a);
     }
     SystemModel.getInstance = function () {
@@ -60,6 +62,13 @@ var SystemModel = /** @class */ (function () {
             return;
         }
         ShareInterface_1["default"].dn_user_share_req(session, utag, proto_type, raw_cmd);
+    };
+    SystemModel.prototype.on_user_add_chip_req = function (session, utag, proto_type, raw_cmd) {
+        if (utag == 0) {
+            SystemSend_1["default"].send(session, SystemProto_1.Cmd.eUserAddChipRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+            return;
+        }
+        AddUchipInterface_1["default"].do_user_add_chip_req(session, utag, proto_type, raw_cmd);
     };
     SystemModel.Instance = new SystemModel();
     return SystemModel;

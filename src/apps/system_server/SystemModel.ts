@@ -7,6 +7,7 @@ import { Cmd, CmdName } from '../protocol/SystemProto';
 import SystemSend from './SystemSend';
 import LoginRewardInterface from './interface/LoginRewardInterface';
 import ShareInterface from './interface/ShareInterface';
+import AddUchipInterface from './interface/AddUchipInterface';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -22,6 +23,7 @@ class SystemModel {
             [Cmd.eLoginRewardConfigReq]: this.on_user_login_reward_config,
             [Cmd.eLoginRewardSignReq]: this.on_user_login_reward_sign,
             [Cmd.eUserShareReq]: this.on_user_share_req,
+            [Cmd.eUserAddChipReq]: this.on_user_add_chip_req,
         }
     }
 
@@ -68,6 +70,15 @@ class SystemModel {
             return;
         }
         ShareInterface.dn_user_share_req(session, utag, proto_type, raw_cmd);
+    }
+
+    on_user_add_chip_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (utag == 0) {
+            SystemSend.send(session, Cmd.eUserAddChipRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+            return;
+        }
+
+        AddUchipInterface.do_user_add_chip_req(session, utag, proto_type, raw_cmd);
     }
 }
 

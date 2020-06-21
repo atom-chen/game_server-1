@@ -39,8 +39,7 @@ var GameCheck = /** @class */ (function () {
         for (var uid in player_set) {
             var player = player_set[uid];
             if (player) {
-                var isready = player.get_user_state() == State_1.UserState.Ready;
-                if (isready == true) {
+                if (player.get_user_state() == State_1.UserState.Ready) {
                     ready_player_count++;
                 }
             }

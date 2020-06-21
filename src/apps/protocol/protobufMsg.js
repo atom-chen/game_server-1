@@ -19383,6 +19383,8 @@ $root.SystemProto = (function() {
      * @property {number} eLoginRewardSignRes=4 eLoginRewardSignRes value
      * @property {number} eUserShareReq=5 eUserShareReq value
      * @property {number} eUserShareRes=6 eUserShareRes value
+     * @property {number} eUserAddChipReq=7 eUserAddChipReq value
+     * @property {number} eUserAddChipRes=8 eUserAddChipRes value
      */
     SystemProto.Cmd = (function() {
         var valuesById = {}, values = Object.create(valuesById);
@@ -19393,6 +19395,8 @@ $root.SystemProto = (function() {
         values[valuesById[4] = "eLoginRewardSignRes"] = 4;
         values[valuesById[5] = "eUserShareReq"] = 5;
         values[valuesById[6] = "eUserShareRes"] = 6;
+        values[valuesById[7] = "eUserAddChipReq"] = 7;
+        values[valuesById[8] = "eUserAddChipRes"] = 8;
         return values;
     })();
 
@@ -20552,6 +20556,492 @@ $root.SystemProto = (function() {
         };
 
         return UserShareRes;
+    })();
+
+    SystemProto.UserAddChipReq = (function() {
+
+        /**
+         * Properties of a UserAddChipReq.
+         * @memberof SystemProto
+         * @interface IUserAddChipReq
+         * @property {number} propid UserAddChipReq propid
+         * @property {number} propcount UserAddChipReq propcount
+         * @property {string|null} [config] UserAddChipReq config
+         */
+
+        /**
+         * Constructs a new UserAddChipReq.
+         * @memberof SystemProto
+         * @classdesc Represents a UserAddChipReq.
+         * @implements IUserAddChipReq
+         * @constructor
+         * @param {SystemProto.IUserAddChipReq=} [properties] Properties to set
+         */
+        function UserAddChipReq(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UserAddChipReq propid.
+         * @member {number} propid
+         * @memberof SystemProto.UserAddChipReq
+         * @instance
+         */
+        UserAddChipReq.prototype.propid = 0;
+
+        /**
+         * UserAddChipReq propcount.
+         * @member {number} propcount
+         * @memberof SystemProto.UserAddChipReq
+         * @instance
+         */
+        UserAddChipReq.prototype.propcount = 0;
+
+        /**
+         * UserAddChipReq config.
+         * @member {string} config
+         * @memberof SystemProto.UserAddChipReq
+         * @instance
+         */
+        UserAddChipReq.prototype.config = "";
+
+        /**
+         * Creates a new UserAddChipReq instance using the specified properties.
+         * @function create
+         * @memberof SystemProto.UserAddChipReq
+         * @static
+         * @param {SystemProto.IUserAddChipReq=} [properties] Properties to set
+         * @returns {SystemProto.UserAddChipReq} UserAddChipReq instance
+         */
+        UserAddChipReq.create = function create(properties) {
+            return new UserAddChipReq(properties);
+        };
+
+        /**
+         * Encodes the specified UserAddChipReq message. Does not implicitly {@link SystemProto.UserAddChipReq.verify|verify} messages.
+         * @function encode
+         * @memberof SystemProto.UserAddChipReq
+         * @static
+         * @param {SystemProto.IUserAddChipReq} message UserAddChipReq message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserAddChipReq.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            writer.uint32(/* id 1, wireType 0 =*/8).sint32(message.propid);
+            writer.uint32(/* id 2, wireType 0 =*/16).sint32(message.propcount);
+            if (message.config != null && message.hasOwnProperty("config"))
+                writer.uint32(/* id 3, wireType 2 =*/26).string(message.config);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UserAddChipReq message, length delimited. Does not implicitly {@link SystemProto.UserAddChipReq.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof SystemProto.UserAddChipReq
+         * @static
+         * @param {SystemProto.IUserAddChipReq} message UserAddChipReq message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserAddChipReq.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a UserAddChipReq message from the specified reader or buffer.
+         * @function decode
+         * @memberof SystemProto.UserAddChipReq
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {SystemProto.UserAddChipReq} UserAddChipReq
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserAddChipReq.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.SystemProto.UserAddChipReq();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.propid = reader.sint32();
+                    break;
+                case 2:
+                    message.propcount = reader.sint32();
+                    break;
+                case 3:
+                    message.config = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            if (!message.hasOwnProperty("propid"))
+                throw $util.ProtocolError("missing required 'propid'", { instance: message });
+            if (!message.hasOwnProperty("propcount"))
+                throw $util.ProtocolError("missing required 'propcount'", { instance: message });
+            return message;
+        };
+
+        /**
+         * Decodes a UserAddChipReq message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof SystemProto.UserAddChipReq
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {SystemProto.UserAddChipReq} UserAddChipReq
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserAddChipReq.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a UserAddChipReq message.
+         * @function verify
+         * @memberof SystemProto.UserAddChipReq
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UserAddChipReq.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (!$util.isInteger(message.propid))
+                return "propid: integer expected";
+            if (!$util.isInteger(message.propcount))
+                return "propcount: integer expected";
+            if (message.config != null && message.hasOwnProperty("config"))
+                if (!$util.isString(message.config))
+                    return "config: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a UserAddChipReq message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof SystemProto.UserAddChipReq
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {SystemProto.UserAddChipReq} UserAddChipReq
+         */
+        UserAddChipReq.fromObject = function fromObject(object) {
+            if (object instanceof $root.SystemProto.UserAddChipReq)
+                return object;
+            var message = new $root.SystemProto.UserAddChipReq();
+            if (object.propid != null)
+                message.propid = object.propid | 0;
+            if (object.propcount != null)
+                message.propcount = object.propcount | 0;
+            if (object.config != null)
+                message.config = String(object.config);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a UserAddChipReq message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof SystemProto.UserAddChipReq
+         * @static
+         * @param {SystemProto.UserAddChipReq} message UserAddChipReq
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UserAddChipReq.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.propid = 0;
+                object.propcount = 0;
+                object.config = "";
+            }
+            if (message.propid != null && message.hasOwnProperty("propid"))
+                object.propid = message.propid;
+            if (message.propcount != null && message.hasOwnProperty("propcount"))
+                object.propcount = message.propcount;
+            if (message.config != null && message.hasOwnProperty("config"))
+                object.config = message.config;
+            return object;
+        };
+
+        /**
+         * Converts this UserAddChipReq to JSON.
+         * @function toJSON
+         * @memberof SystemProto.UserAddChipReq
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UserAddChipReq.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return UserAddChipReq;
+    })();
+
+    SystemProto.UserAddChipRes = (function() {
+
+        /**
+         * Properties of a UserAddChipRes.
+         * @memberof SystemProto
+         * @interface IUserAddChipRes
+         * @property {number} status UserAddChipRes status
+         * @property {number|null} [propid] UserAddChipRes propid
+         * @property {number|null} [propcount] UserAddChipRes propcount
+         * @property {string|null} [config] UserAddChipRes config
+         */
+
+        /**
+         * Constructs a new UserAddChipRes.
+         * @memberof SystemProto
+         * @classdesc Represents a UserAddChipRes.
+         * @implements IUserAddChipRes
+         * @constructor
+         * @param {SystemProto.IUserAddChipRes=} [properties] Properties to set
+         */
+        function UserAddChipRes(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UserAddChipRes status.
+         * @member {number} status
+         * @memberof SystemProto.UserAddChipRes
+         * @instance
+         */
+        UserAddChipRes.prototype.status = 0;
+
+        /**
+         * UserAddChipRes propid.
+         * @member {number} propid
+         * @memberof SystemProto.UserAddChipRes
+         * @instance
+         */
+        UserAddChipRes.prototype.propid = 0;
+
+        /**
+         * UserAddChipRes propcount.
+         * @member {number} propcount
+         * @memberof SystemProto.UserAddChipRes
+         * @instance
+         */
+        UserAddChipRes.prototype.propcount = 0;
+
+        /**
+         * UserAddChipRes config.
+         * @member {string} config
+         * @memberof SystemProto.UserAddChipRes
+         * @instance
+         */
+        UserAddChipRes.prototype.config = "";
+
+        /**
+         * Creates a new UserAddChipRes instance using the specified properties.
+         * @function create
+         * @memberof SystemProto.UserAddChipRes
+         * @static
+         * @param {SystemProto.IUserAddChipRes=} [properties] Properties to set
+         * @returns {SystemProto.UserAddChipRes} UserAddChipRes instance
+         */
+        UserAddChipRes.create = function create(properties) {
+            return new UserAddChipRes(properties);
+        };
+
+        /**
+         * Encodes the specified UserAddChipRes message. Does not implicitly {@link SystemProto.UserAddChipRes.verify|verify} messages.
+         * @function encode
+         * @memberof SystemProto.UserAddChipRes
+         * @static
+         * @param {SystemProto.IUserAddChipRes} message UserAddChipRes message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserAddChipRes.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            writer.uint32(/* id 1, wireType 0 =*/8).sint32(message.status);
+            if (message.propid != null && message.hasOwnProperty("propid"))
+                writer.uint32(/* id 2, wireType 0 =*/16).sint32(message.propid);
+            if (message.propcount != null && message.hasOwnProperty("propcount"))
+                writer.uint32(/* id 3, wireType 0 =*/24).sint32(message.propcount);
+            if (message.config != null && message.hasOwnProperty("config"))
+                writer.uint32(/* id 4, wireType 2 =*/34).string(message.config);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UserAddChipRes message, length delimited. Does not implicitly {@link SystemProto.UserAddChipRes.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof SystemProto.UserAddChipRes
+         * @static
+         * @param {SystemProto.IUserAddChipRes} message UserAddChipRes message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserAddChipRes.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a UserAddChipRes message from the specified reader or buffer.
+         * @function decode
+         * @memberof SystemProto.UserAddChipRes
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {SystemProto.UserAddChipRes} UserAddChipRes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserAddChipRes.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.SystemProto.UserAddChipRes();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.status = reader.sint32();
+                    break;
+                case 2:
+                    message.propid = reader.sint32();
+                    break;
+                case 3:
+                    message.propcount = reader.sint32();
+                    break;
+                case 4:
+                    message.config = reader.string();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            if (!message.hasOwnProperty("status"))
+                throw $util.ProtocolError("missing required 'status'", { instance: message });
+            return message;
+        };
+
+        /**
+         * Decodes a UserAddChipRes message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof SystemProto.UserAddChipRes
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {SystemProto.UserAddChipRes} UserAddChipRes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserAddChipRes.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a UserAddChipRes message.
+         * @function verify
+         * @memberof SystemProto.UserAddChipRes
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UserAddChipRes.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (!$util.isInteger(message.status))
+                return "status: integer expected";
+            if (message.propid != null && message.hasOwnProperty("propid"))
+                if (!$util.isInteger(message.propid))
+                    return "propid: integer expected";
+            if (message.propcount != null && message.hasOwnProperty("propcount"))
+                if (!$util.isInteger(message.propcount))
+                    return "propcount: integer expected";
+            if (message.config != null && message.hasOwnProperty("config"))
+                if (!$util.isString(message.config))
+                    return "config: string expected";
+            return null;
+        };
+
+        /**
+         * Creates a UserAddChipRes message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof SystemProto.UserAddChipRes
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {SystemProto.UserAddChipRes} UserAddChipRes
+         */
+        UserAddChipRes.fromObject = function fromObject(object) {
+            if (object instanceof $root.SystemProto.UserAddChipRes)
+                return object;
+            var message = new $root.SystemProto.UserAddChipRes();
+            if (object.status != null)
+                message.status = object.status | 0;
+            if (object.propid != null)
+                message.propid = object.propid | 0;
+            if (object.propcount != null)
+                message.propcount = object.propcount | 0;
+            if (object.config != null)
+                message.config = String(object.config);
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a UserAddChipRes message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof SystemProto.UserAddChipRes
+         * @static
+         * @param {SystemProto.UserAddChipRes} message UserAddChipRes
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UserAddChipRes.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults) {
+                object.status = 0;
+                object.propid = 0;
+                object.propcount = 0;
+                object.config = "";
+            }
+            if (message.status != null && message.hasOwnProperty("status"))
+                object.status = message.status;
+            if (message.propid != null && message.hasOwnProperty("propid"))
+                object.propid = message.propid;
+            if (message.propcount != null && message.hasOwnProperty("propcount"))
+                object.propcount = message.propcount;
+            if (message.config != null && message.hasOwnProperty("config"))
+                object.config = message.config;
+            return object;
+        };
+
+        /**
+         * Converts this UserAddChipRes to JSON.
+         * @function toJSON
+         * @memberof SystemProto.UserAddChipRes
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UserAddChipRes.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return UserAddChipRes;
     })();
 
     return SystemProto;
