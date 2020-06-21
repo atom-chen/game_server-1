@@ -335,8 +335,8 @@ var GameInfoInterface = /** @class */ (function () {
                                     info = sql_ret[0];
                                     user_config_obj = querystring_1["default"].decode(info.user_config);
                                     // Log.info("hcc>>do_player_get_user_config: ", user_config_obj);
-                                    if (!user_config_obj["user_ball_level"]) {
-                                        user_config_obj["user_ball_level"] = 1;
+                                    if (!user_config_obj[GameHoodleConfig_1["default"].USER_BALL_LEVEL_STR]) {
+                                        user_config_obj[GameHoodleConfig_1["default"].USER_BALL_LEVEL_STR] = 1;
                                     }
                                     body = {
                                         status: Response_1["default"].OK,
@@ -374,14 +374,14 @@ var GameInfoInterface = /** @class */ (function () {
                         keyStr = GameHoodleConfig_1["default"].BALL_SAVE_KEY_STR + balllevel;
                         if (!ball_obj[keyStr]) return [3 /*break*/, 2];
                         userConfig = player.get_user_config();
-                        userConfig["user_ball_level"] = balllevel;
+                        userConfig[GameHoodleConfig_1["default"].USER_BALL_LEVEL_STR] = balllevel;
                         player.set_user_config(userConfig);
                         body = {
                             status: Response_1["default"].OK,
                             balllevel: Number(balllevel)
                         };
                         player.send_cmd(GameHoodleProto_1.Cmd.eUseHoodleBallRes, body);
-                        return [4 /*yield*/, MySqlGame_1["default"].update_ugame_user_config(player.get_uid(), JSON.stringify(player.get_user_config()))];
+                        return [4 /*yield*/, MySqlGame_1["default"].update_ugame_user_config(player.get_uid(), player.get_user_config())];
                     case 1:
                         result = _a.sent();
                         if (result) {

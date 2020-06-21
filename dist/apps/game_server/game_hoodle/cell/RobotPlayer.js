@@ -55,6 +55,7 @@ exports.__esModule = true;
 var Player_1 = __importDefault(require("./Player"));
 var MySqlGame_1 = __importDefault(require("../../../../database/MySqlGame"));
 var querystring_1 = __importDefault(require("querystring"));
+var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
 var RobotPlayer = /** @class */ (function (_super) {
     __extends(RobotPlayer, _super);
     function RobotPlayer() {
@@ -81,8 +82,8 @@ var RobotPlayer = /** @class */ (function (_super) {
                         ugame_config = _a.sent();
                         if (ugame_config && ugame_config.length > 0) {
                             user_config_obj = querystring_1["default"].decode(ugame_config[0].user_config);
-                            if (!user_config_obj["user_ball_level"]) {
-                                user_config_obj["user_ball_level"] = 1;
+                            if (!user_config_obj[GameHoodleConfig_1["default"].USER_BALL_LEVEL_STR]) {
+                                user_config_obj[GameHoodleConfig_1["default"].USER_BALL_LEVEL_STR] = 1;
                             }
                             this.set_user_config(user_config_obj);
                         }

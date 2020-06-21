@@ -1,6 +1,7 @@
 import Player from './Player';
 import MySqlGame from '../../../../database/MySqlGame';
 import querystring from 'querystring';
+import GameHoodleConfig from '../config/GameHoodleConfig';
 
 class RobotPlayer extends Player{
 
@@ -19,8 +20,8 @@ class RobotPlayer extends Player{
         let ugame_config: any = await MySqlGame.get_ugame_config_by_uid(uid);
         if (ugame_config && ugame_config.length > 0){
             let user_config_obj: any = querystring.decode(ugame_config[0].user_config);
-            if (!user_config_obj["user_ball_level"]) {
-                user_config_obj["user_ball_level"] = 1;
+            if (!user_config_obj[GameHoodleConfig.USER_BALL_LEVEL_STR]) {
+                user_config_obj[GameHoodleConfig.USER_BALL_LEVEL_STR] = 1;
             }
             this.set_user_config(user_config_obj);
         }

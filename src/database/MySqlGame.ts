@@ -98,10 +98,10 @@ class MySqlGame {
     }
 
     //更新玩家配置
-    static async update_ugame_user_config(uid: number, user_config_json: string) {
+    static async update_ugame_user_config(uid: number, user_config_obj: any) {
         let uconfig_qstring = "";
         try {
-            uconfig_qstring = querystring.encode(JSON.parse(user_config_json));
+            uconfig_qstring = querystring.encode(user_config_obj);
         } catch (error) {
             Log.error(error);
             return;

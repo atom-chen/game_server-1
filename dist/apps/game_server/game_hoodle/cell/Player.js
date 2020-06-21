@@ -45,6 +45,7 @@ var ArrayUtil_1 = __importDefault(require("../../../../utils/ArrayUtil"));
 var Log_1 = __importDefault(require("../../../../utils/Log"));
 var Stype_1 = require("../../../protocol/Stype");
 var State_1 = require("../config/State");
+var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
 var Player = /** @class */ (function () {
     function Player() {
         //玩家基础信息
@@ -142,10 +143,10 @@ var Player = /** @class */ (function () {
     };
     //当前使用小球等级
     Player.prototype.get_uball_level = function () {
-        return this._user_config["user_ball_level"];
+        return this._user_config[GameHoodleConfig_1["default"].USER_BALL_LEVEL_STR];
     };
     Player.prototype.set_uball_level = function (level) {
-        this._user_config["user_ball_level"] = level;
+        this._user_config[GameHoodleConfig_1["default"].USER_BALL_LEVEL_STR] = level;
     };
     Player.prototype.set_user_config = function (config) {
         this._user_config = config;

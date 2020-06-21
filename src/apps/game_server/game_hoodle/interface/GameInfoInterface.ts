@@ -240,8 +240,8 @@ class GameInfoInterface {
                     let info = sql_ret[0];
                     let user_config_obj:any = querystring.decode(info.user_config);
                     // Log.info("hcc>>do_player_get_user_config: ", user_config_obj);
-                    if (!user_config_obj["user_ball_level"]){
-                        user_config_obj["user_ball_level"] = 1;
+                    if (!user_config_obj[GameHoodleConfig.USER_BALL_LEVEL_STR]){
+                        user_config_obj[GameHoodleConfig.USER_BALL_LEVEL_STR] = 1;
                     }
                     let body = {
                         status: Response.OK,
@@ -271,7 +271,7 @@ class GameInfoInterface {
                 let keyStr = GameHoodleConfig.BALL_SAVE_KEY_STR + balllevel;
                 if (ball_obj[keyStr]){
                     let userConfig = player.get_user_config();
-                    userConfig["user_ball_level"] = balllevel;
+                    userConfig[GameHoodleConfig.USER_BALL_LEVEL_STR] = balllevel;
                     player.set_user_config(userConfig);
                     let body = {
                         status: Response.OK,
@@ -279,7 +279,7 @@ class GameInfoInterface {
                     }
                     player.send_cmd(Cmd.eUseHoodleBallRes,body);
                     //更新数据库
-                    let result:any = await MySqlGame.update_ugame_user_config(player.get_uid(), JSON.stringify(player.get_user_config()));
+                    let result:any = await MySqlGame.update_ugame_user_config(player.get_uid(), player.get_user_config());
                     if (result){
                         // Log.info("hcc>>update_ugame_user_config success ,ret: " , result);
                         return;

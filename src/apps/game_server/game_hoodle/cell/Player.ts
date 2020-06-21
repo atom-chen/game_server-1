@@ -4,6 +4,7 @@ import ArrayUtil from '../../../../utils/ArrayUtil';
 import Log from '../../../../utils/Log';
 import { Stype } from '../../../protocol/Stype';
 import { UserState } from '../config/State';
+import GameHoodleConfig from '../config/GameHoodleConfig';
 
 class Player{
     
@@ -111,11 +112,11 @@ class Player{
 
     //当前使用小球等级
     get_uball_level(){
-        return this._user_config["user_ball_level"];
+        return this._user_config[GameHoodleConfig.USER_BALL_LEVEL_STR];
     }
 
     set_uball_level(level:number){
-        this._user_config["user_ball_level"] = level;
+        this._user_config[GameHoodleConfig.USER_BALL_LEVEL_STR] = level;
     }
 
     set_user_config(config:any){

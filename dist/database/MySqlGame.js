@@ -202,7 +202,7 @@ var MySqlGame = /** @class */ (function () {
         });
     };
     //更新玩家配置
-    MySqlGame.update_ugame_user_config = function (uid, user_config_json) {
+    MySqlGame.update_ugame_user_config = function (uid, user_config_obj) {
         return __awaiter(this, void 0, void 0, function () {
             var uconfig_qstring, sql, sql_cmd;
             return __generator(this, function (_a) {
@@ -210,7 +210,7 @@ var MySqlGame = /** @class */ (function () {
                     case 0:
                         uconfig_qstring = "";
                         try {
-                            uconfig_qstring = querystring_1["default"].encode(JSON.parse(user_config_json));
+                            uconfig_qstring = querystring_1["default"].encode(user_config_obj);
                         }
                         catch (error) {
                             Log_1["default"].error(error);

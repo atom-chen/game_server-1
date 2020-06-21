@@ -19381,6 +19381,8 @@ $root.SystemProto = (function() {
      * @property {number} eLoginRewardConfigRes=2 eLoginRewardConfigRes value
      * @property {number} eLoginRewardSignReq=3 eLoginRewardSignReq value
      * @property {number} eLoginRewardSignRes=4 eLoginRewardSignRes value
+     * @property {number} eUserShareReq=5 eUserShareReq value
+     * @property {number} eUserShareRes=6 eUserShareRes value
      */
     SystemProto.Cmd = (function() {
         var valuesById = {}, values = Object.create(valuesById);
@@ -19389,6 +19391,8 @@ $root.SystemProto = (function() {
         values[valuesById[2] = "eLoginRewardConfigRes"] = 2;
         values[valuesById[3] = "eLoginRewardSignReq"] = 3;
         values[valuesById[4] = "eLoginRewardSignRes"] = 4;
+        values[valuesById[5] = "eUserShareReq"] = 5;
+        values[valuesById[6] = "eUserShareRes"] = 6;
         return values;
     })();
 
@@ -20201,6 +20205,353 @@ $root.SystemProto = (function() {
         };
 
         return LoginRewardSignRes;
+    })();
+
+    SystemProto.UserShareReq = (function() {
+
+        /**
+         * Properties of a UserShareReq.
+         * @memberof SystemProto
+         * @interface IUserShareReq
+         */
+
+        /**
+         * Constructs a new UserShareReq.
+         * @memberof SystemProto
+         * @classdesc Represents a UserShareReq.
+         * @implements IUserShareReq
+         * @constructor
+         * @param {SystemProto.IUserShareReq=} [properties] Properties to set
+         */
+        function UserShareReq(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * Creates a new UserShareReq instance using the specified properties.
+         * @function create
+         * @memberof SystemProto.UserShareReq
+         * @static
+         * @param {SystemProto.IUserShareReq=} [properties] Properties to set
+         * @returns {SystemProto.UserShareReq} UserShareReq instance
+         */
+        UserShareReq.create = function create(properties) {
+            return new UserShareReq(properties);
+        };
+
+        /**
+         * Encodes the specified UserShareReq message. Does not implicitly {@link SystemProto.UserShareReq.verify|verify} messages.
+         * @function encode
+         * @memberof SystemProto.UserShareReq
+         * @static
+         * @param {SystemProto.IUserShareReq} message UserShareReq message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserShareReq.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UserShareReq message, length delimited. Does not implicitly {@link SystemProto.UserShareReq.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof SystemProto.UserShareReq
+         * @static
+         * @param {SystemProto.IUserShareReq} message UserShareReq message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserShareReq.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a UserShareReq message from the specified reader or buffer.
+         * @function decode
+         * @memberof SystemProto.UserShareReq
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {SystemProto.UserShareReq} UserShareReq
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserShareReq.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.SystemProto.UserShareReq();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            return message;
+        };
+
+        /**
+         * Decodes a UserShareReq message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof SystemProto.UserShareReq
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {SystemProto.UserShareReq} UserShareReq
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserShareReq.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a UserShareReq message.
+         * @function verify
+         * @memberof SystemProto.UserShareReq
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UserShareReq.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            return null;
+        };
+
+        /**
+         * Creates a UserShareReq message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof SystemProto.UserShareReq
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {SystemProto.UserShareReq} UserShareReq
+         */
+        UserShareReq.fromObject = function fromObject(object) {
+            if (object instanceof $root.SystemProto.UserShareReq)
+                return object;
+            return new $root.SystemProto.UserShareReq();
+        };
+
+        /**
+         * Creates a plain object from a UserShareReq message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof SystemProto.UserShareReq
+         * @static
+         * @param {SystemProto.UserShareReq} message UserShareReq
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UserShareReq.toObject = function toObject() {
+            return {};
+        };
+
+        /**
+         * Converts this UserShareReq to JSON.
+         * @function toJSON
+         * @memberof SystemProto.UserShareReq
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UserShareReq.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return UserShareReq;
+    })();
+
+    SystemProto.UserShareRes = (function() {
+
+        /**
+         * Properties of a UserShareRes.
+         * @memberof SystemProto
+         * @interface IUserShareRes
+         * @property {number} status UserShareRes status
+         */
+
+        /**
+         * Constructs a new UserShareRes.
+         * @memberof SystemProto
+         * @classdesc Represents a UserShareRes.
+         * @implements IUserShareRes
+         * @constructor
+         * @param {SystemProto.IUserShareRes=} [properties] Properties to set
+         */
+        function UserShareRes(properties) {
+            if (properties)
+                for (var keys = Object.keys(properties), i = 0; i < keys.length; ++i)
+                    if (properties[keys[i]] != null)
+                        this[keys[i]] = properties[keys[i]];
+        }
+
+        /**
+         * UserShareRes status.
+         * @member {number} status
+         * @memberof SystemProto.UserShareRes
+         * @instance
+         */
+        UserShareRes.prototype.status = 0;
+
+        /**
+         * Creates a new UserShareRes instance using the specified properties.
+         * @function create
+         * @memberof SystemProto.UserShareRes
+         * @static
+         * @param {SystemProto.IUserShareRes=} [properties] Properties to set
+         * @returns {SystemProto.UserShareRes} UserShareRes instance
+         */
+        UserShareRes.create = function create(properties) {
+            return new UserShareRes(properties);
+        };
+
+        /**
+         * Encodes the specified UserShareRes message. Does not implicitly {@link SystemProto.UserShareRes.verify|verify} messages.
+         * @function encode
+         * @memberof SystemProto.UserShareRes
+         * @static
+         * @param {SystemProto.IUserShareRes} message UserShareRes message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserShareRes.encode = function encode(message, writer) {
+            if (!writer)
+                writer = $Writer.create();
+            writer.uint32(/* id 1, wireType 0 =*/8).sint32(message.status);
+            return writer;
+        };
+
+        /**
+         * Encodes the specified UserShareRes message, length delimited. Does not implicitly {@link SystemProto.UserShareRes.verify|verify} messages.
+         * @function encodeDelimited
+         * @memberof SystemProto.UserShareRes
+         * @static
+         * @param {SystemProto.IUserShareRes} message UserShareRes message or plain object to encode
+         * @param {$protobuf.Writer} [writer] Writer to encode to
+         * @returns {$protobuf.Writer} Writer
+         */
+        UserShareRes.encodeDelimited = function encodeDelimited(message, writer) {
+            return this.encode(message, writer).ldelim();
+        };
+
+        /**
+         * Decodes a UserShareRes message from the specified reader or buffer.
+         * @function decode
+         * @memberof SystemProto.UserShareRes
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @param {number} [length] Message length if known beforehand
+         * @returns {SystemProto.UserShareRes} UserShareRes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserShareRes.decode = function decode(reader, length) {
+            if (!(reader instanceof $Reader))
+                reader = $Reader.create(reader);
+            var end = length === undefined ? reader.len : reader.pos + length, message = new $root.SystemProto.UserShareRes();
+            while (reader.pos < end) {
+                var tag = reader.uint32();
+                switch (tag >>> 3) {
+                case 1:
+                    message.status = reader.sint32();
+                    break;
+                default:
+                    reader.skipType(tag & 7);
+                    break;
+                }
+            }
+            if (!message.hasOwnProperty("status"))
+                throw $util.ProtocolError("missing required 'status'", { instance: message });
+            return message;
+        };
+
+        /**
+         * Decodes a UserShareRes message from the specified reader or buffer, length delimited.
+         * @function decodeDelimited
+         * @memberof SystemProto.UserShareRes
+         * @static
+         * @param {$protobuf.Reader|Uint8Array} reader Reader or buffer to decode from
+         * @returns {SystemProto.UserShareRes} UserShareRes
+         * @throws {Error} If the payload is not a reader or valid buffer
+         * @throws {$protobuf.util.ProtocolError} If required fields are missing
+         */
+        UserShareRes.decodeDelimited = function decodeDelimited(reader) {
+            if (!(reader instanceof $Reader))
+                reader = new $Reader(reader);
+            return this.decode(reader, reader.uint32());
+        };
+
+        /**
+         * Verifies a UserShareRes message.
+         * @function verify
+         * @memberof SystemProto.UserShareRes
+         * @static
+         * @param {Object.<string,*>} message Plain object to verify
+         * @returns {string|null} `null` if valid, otherwise the reason why it is not
+         */
+        UserShareRes.verify = function verify(message) {
+            if (typeof message !== "object" || message === null)
+                return "object expected";
+            if (!$util.isInteger(message.status))
+                return "status: integer expected";
+            return null;
+        };
+
+        /**
+         * Creates a UserShareRes message from a plain object. Also converts values to their respective internal types.
+         * @function fromObject
+         * @memberof SystemProto.UserShareRes
+         * @static
+         * @param {Object.<string,*>} object Plain object
+         * @returns {SystemProto.UserShareRes} UserShareRes
+         */
+        UserShareRes.fromObject = function fromObject(object) {
+            if (object instanceof $root.SystemProto.UserShareRes)
+                return object;
+            var message = new $root.SystemProto.UserShareRes();
+            if (object.status != null)
+                message.status = object.status | 0;
+            return message;
+        };
+
+        /**
+         * Creates a plain object from a UserShareRes message. Also converts values to other types if specified.
+         * @function toObject
+         * @memberof SystemProto.UserShareRes
+         * @static
+         * @param {SystemProto.UserShareRes} message UserShareRes
+         * @param {$protobuf.IConversionOptions} [options] Conversion options
+         * @returns {Object.<string,*>} Plain object
+         */
+        UserShareRes.toObject = function toObject(message, options) {
+            if (!options)
+                options = {};
+            var object = {};
+            if (options.defaults)
+                object.status = 0;
+            if (message.status != null && message.hasOwnProperty("status"))
+                object.status = message.status;
+            return object;
+        };
+
+        /**
+         * Converts this UserShareRes to JSON.
+         * @function toJSON
+         * @memberof SystemProto.UserShareRes
+         * @instance
+         * @returns {Object.<string,*>} JSON object
+         */
+        UserShareRes.prototype.toJSON = function toJSON() {
+            return this.constructor.toObject(this, $protobuf.util.toJSONOptions);
+        };
+
+        return UserShareRes;
     })();
 
     return SystemProto;

@@ -9,6 +9,8 @@ enum Cmd {
   eLoginRewardConfigRes       = 2;
   eLoginRewardSignReq         = 3;    //玩家签到
   eLoginRewardSignRes         = 4;
+  eUserShareReq 				      = 5;	  //分享记录
+	eUserShareRes 				      = 6;
 }
 
 message LoginRewardConfigReq {  
@@ -30,3 +32,9 @@ message LoginRewardSignRes {
   optional string rewardconfig = 2; //签到奖励
 }
 
+message UserShareReq {
+}
+
+message UserShareRes {
+	required sint32 status = 1;
+}

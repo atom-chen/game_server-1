@@ -6,6 +6,7 @@ import { Stype, StypeName } from '../protocol/Stype';
 import { Cmd, CmdName } from '../protocol/SystemProto';
 import SystemSend from './SystemSend';
 import LoginRewardInterface from './interface/LoginRewardInterface';
+import ShareInterface from './interface/ShareInterface';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -20,6 +21,7 @@ class SystemModel {
             [CommonProto.eUserLostConnectRes]: this.on_player_lost_connect,
             [Cmd.eLoginRewardConfigReq]: this.on_user_login_reward_config,
             [Cmd.eLoginRewardSignReq]: this.on_user_login_reward_sign,
+            [Cmd.eUserShareReq]: this.on_user_share_req,
         }
     }
 
@@ -58,6 +60,14 @@ class SystemModel {
             return;
         }
         LoginRewardInterface.do_user_login_reward_sign(session, utag, proto_type, raw_cmd);
+    }
+
+    on_user_share_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if(utag == 0){
+            SystemSend.send(session, Cmd.eUserShareRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+            return;
+        }
+        ShareInterface.dn_user_share_req(session, utag, proto_type, raw_cmd);
     }
 }
 
