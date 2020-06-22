@@ -16,7 +16,7 @@ interface CmdHandlerMap {
 }
 
 /**
- * 当前作为客户端，utag是自己的utag 。
+ * 当前作为客户端，utag用来标记哪一位玩家
  * send_game，是当前作为客户端发给game服务。
  */
 

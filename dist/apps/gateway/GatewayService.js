@@ -36,7 +36,6 @@ var GatewayService = /** @class */ (function (_super) {
     }
     //客户端发到网关，网关转发到服务器
     GatewayService.on_recv_client_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        // Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,body:", ProtoManager.decode_cmd(proto_type, raw_cmd));
         var server_session = NetBus_1["default"].get_server_session(stype);
         if (!server_session) {
             return;
@@ -57,7 +56,6 @@ var GatewayService = /** @class */ (function (_super) {
     };
     //服务器发到网关，网关转发到客户端
     GatewayService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        // Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag, " ,body:", ProtoManager.decode_cmd(proto_type, raw_cmd));
         // Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
         var client_session = null;
         if (GatewayFunction_1["default"].is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
@@ -100,6 +98,9 @@ var GatewayService = /** @class */ (function (_super) {
         }
         var server_session = NetBus_1["default"].get_server_session(stype);
         if (!server_session) {
+            return;
+        }
+        if (session.uid == 0) {
             return;
         }
         // 客户端被迫掉线

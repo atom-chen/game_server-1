@@ -2,10 +2,18 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 exports.__esModule = true;
 var ProtoManager_1 = __importDefault(require("./ProtoManager"));
 var Stype_1 = require("../apps/protocol/Stype");
 var Log_1 = __importDefault(require("../utils/Log"));
+var util = __importStar(require("util"));
 var ServiceManager = /** @class */ (function () {
     function ServiceManager() {
     }
@@ -32,11 +40,13 @@ var ServiceManager = /** @class */ (function () {
             Log_1["default"].error("cur as client ServiceManager.service_modules not exist");
             return false;
         }
-        if (stype == null || ctype == null || utag == null || proto_type == null) {
+        if (util.isNullOrUndefined(stype) || util.isNullOrUndefined(ctype) || util.isNullOrUndefined(utag) || util.isNullOrUndefined(proto_type)) {
             Log_1["default"].error("cmd error");
             return false;
         }
-        ServiceManager.service_modules[stype].on_recv_server_player_cmd(session, stype, ctype, utag, proto_type, cmd_buf);
+        if (ServiceManager.service_modules[stype].on_recv_server_player_cmd) {
+            ServiceManager.service_modules[stype].on_recv_server_player_cmd(session, stype, ctype, utag, proto_type, cmd_buf);
+        }
         return true;
     };
     ServiceManager.on_recv_client_cmd = function (session, cmd_buf) {
@@ -59,20 +69,17 @@ var ServiceManager = /** @class */ (function () {
             Log_1["default"].error("cur as server ServiceManager.service_modules not exist");
             return false;
         }
-        if (stype == null || ctype == null || utag == null || proto_type == null) {
+        if (util.isNullOrUndefined(stype) || util.isNullOrUndefined(ctype) || util.isNullOrUndefined(utag) || util.isNullOrUndefined(proto_type)) {
             Log_1["default"].error("cmd error");
             return false;
         }
-        ServiceManager.service_modules[stype].on_recv_client_player_cmd(session, stype, ctype, utag, proto_type, cmd_buf);
-        // Log.info("on_recv_client_cmd>> " , stype, ctype, utag, proto_type)
+        if (ServiceManager.service_modules[stype].on_recv_client_player_cmd) {
+            ServiceManager.service_modules[stype].on_recv_client_player_cmd(session, stype, ctype, utag, proto_type, cmd_buf);
+        }
         return true;
     };
     // 玩家掉线
     ServiceManager.on_client_lost_connect = function (session) {
-        // var uid = session.uid;
-        // if (uid === 0) {
-        //     return;
-        // }
         // 遍历所有的服务模块通知在这个服务上的这个玩家掉线了
         for (var stype in ServiceManager.service_modules) {
             if (ServiceManager.service_modules[stype].on_player_disconnect) {

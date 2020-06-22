@@ -1,7 +1,7 @@
 import ProtoManager from "./ProtoManager";
-import ArrayUtil from '../utils/ArrayUtil';
 import { Stype , StypeName } from '../apps/protocol/Stype';
 import Log from '../utils/Log';
+import * as util from 'util';
 
 class ServiceManager {
     static service_modules:any = {};    
@@ -33,12 +33,13 @@ class ServiceManager {
             return false;
         }
         
-        if (stype == null || ctype == null || utag == null || proto_type == null ) {
+        if (util.isNullOrUndefined(stype) || util.isNullOrUndefined(ctype) || util.isNullOrUndefined(utag) || util.isNullOrUndefined(proto_type)) {
             Log.error("cmd error")
             return false;
         }
-    
-        ServiceManager.service_modules[stype].on_recv_server_player_cmd(session, stype, ctype, utag, proto_type, cmd_buf);
+        if (ServiceManager.service_modules[stype].on_recv_server_player_cmd){
+            ServiceManager.service_modules[stype].on_recv_server_player_cmd(session, stype, ctype, utag, proto_type, cmd_buf);
+        }
         return true;
     }
     
@@ -64,22 +65,19 @@ class ServiceManager {
             return false;
         }
     
-        if (stype == null || ctype == null || utag == null || proto_type == null ) {
+        if (util.isNullOrUndefined(stype) || util.isNullOrUndefined(ctype) || util.isNullOrUndefined(utag) || util.isNullOrUndefined(proto_type)) {
             Log.error("cmd error")
             return false;
         }
-    
-        ServiceManager.service_modules[stype].on_recv_client_player_cmd(session, stype, ctype, utag, proto_type, cmd_buf);
-        // Log.info("on_recv_client_cmd>> " , stype, ctype, utag, proto_type)
+        
+        if (ServiceManager.service_modules[stype].on_recv_client_player_cmd){
+            ServiceManager.service_modules[stype].on_recv_client_player_cmd(session, stype, ctype, utag, proto_type, cmd_buf);
+        }
         return true;
     }
     
     // 玩家掉线
     static on_client_lost_connect(session:any) {
-        // var uid = session.uid;
-        // if (uid === 0) {
-        //     return;
-        // }
         // 遍历所有的服务模块通知在这个服务上的这个玩家掉线了
         for(var stype in ServiceManager.service_modules) {
             if (ServiceManager.service_modules[stype].on_player_disconnect){

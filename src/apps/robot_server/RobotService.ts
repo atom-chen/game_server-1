@@ -18,9 +18,8 @@ class RobotService extends ServiceBase {
         RobotModel.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
     }
 
-    // 收到客户端断开连接;
+    // 收到客户端断开连接
     static on_player_disconnect(session: any, stype: number): void {
-        Log.info("robot on_player_disconnect")
     }
 }
 

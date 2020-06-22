@@ -11,7 +11,7 @@ export default class RobotListConfig {
 
     static READY_DELAY_TIME:number = 1500; //准备延迟时间 毫秒
     static SHOOT_DELAY_TIME:number = 2000; //射击延迟时间
-    static SHOW_EMOJ_TIME:number = 2000;   //射击延迟时间
+    static SHOW_EMOJ_TIME:number = 2000;   //表情发送延迟时间
     static TOTAL_EMOJ_COUNT:number = 35; // 总的表情个数 35个
 }
 

@@ -18,7 +18,6 @@ class GatewayService extends ServiceBase {
 	
 	//客户端发到网关，网关转发到服务器
 	static on_recv_client_player_cmd(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:any){
-		// Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,body:", ProtoManager.decode_cmd(proto_type, raw_cmd));
 		let server_session = NetBus.get_server_session(stype);
 		if (!server_session) {
 			return;
@@ -39,7 +38,6 @@ class GatewayService extends ServiceBase {
 	
 	//服务器发到网关，网关转发到客户端
 	static on_recv_server_player_cmd (session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:any) {
-		// Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag, " ,body:", ProtoManager.decode_cmd(proto_type, raw_cmd));
 		// Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
 		let client_session = null;
 		if (GatewayFunction.is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
@@ -82,12 +80,14 @@ class GatewayService extends ServiceBase {
 		if (stype == Stype.Auth) { // 由Auth服务保存的，那么就由Auth清空
 			GatewayFunction.clear_session_with_uid(session.uid);
 		}
-	
 		let server_session = NetBus.get_server_session(stype);
 		if (!server_session) {
 			return;
 		}
 
+		if(session.uid == 0){
+			return;
+		}
 		// 客户端被迫掉线
 		NetBus.send_cmd(server_session, stype, CommonProto.eUserLostConnectRes, session.uid, ProtoTools.ProtoType.PROTO_JSON)
 	}

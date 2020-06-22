@@ -19,7 +19,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
 var RobotModel_1 = __importDefault(require("./RobotModel"));
-var Log_1 = __importDefault(require("../../utils/Log"));
 var RobotService = /** @class */ (function (_super) {
     __extends(RobotService, _super);
     function RobotService() {
@@ -35,9 +34,8 @@ var RobotService = /** @class */ (function (_super) {
     RobotService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
         RobotModel_1["default"].getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
     };
-    // 收到客户端断开连接;
+    // 收到客户端断开连接
     RobotService.on_player_disconnect = function (session, stype) {
-        Log_1["default"].info("robot on_player_disconnect");
     };
     return RobotService;
 }(ServiceBase_1["default"]));
