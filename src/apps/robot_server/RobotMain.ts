@@ -10,11 +10,14 @@ import { Stype, StypeName } from '../protocol/Stype'
 import RobotService from './RobotService';
 import BornRobot from './interface/RobotInterface';
 import Log from "../../utils/Log";
+import NetClient from '../../netbus/NetClient';
 
 ServiceManager.register_service(Stype.Robot, RobotService);
 
 // cur server as client connect to game_server
-NetBus.connect_tcp_server(Stype.GameHoodle, GameAppConfig.game_server.host, GameAppConfig.game_server.port, false, on_success_callfunc);
+// NetBus.connect_tcp_server(Stype.GameHoodle, GameAppConfig.game_server.host, GameAppConfig.game_server.port, false, on_success_callfunc);
+
+NetClient.connect_tcp_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.tcp_port, false, on_success_callfunc);
 
 function on_success_callfunc() {
 	Log.info("robot server success connect to game_server!!!");

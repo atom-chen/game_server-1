@@ -243,11 +243,11 @@ class Player{
             return;
         }
         
-        if(this.is_robot()){
-            // Log.warn("send to robot!!");
-            NetBus.send_cmd(this._session, Stype.Robot, ctype, this._uid, this._proto_type, body);
-            return;
-        }
+        // if(this.is_robot()){
+        //     // Log.warn("send to robot!!");
+        //     NetBus.send_cmd(this._session, Stype.Robot, ctype, this._uid, this._proto_type, body);
+        //     return;
+        // }
 
         NetBus.send_cmd(this._session, Stype.GameHoodle, ctype, this._uid, this._proto_type, body);
     }

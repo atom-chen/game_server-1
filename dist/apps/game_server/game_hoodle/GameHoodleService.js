@@ -40,7 +40,6 @@ var GameHoodleService = /** @class */ (function (_super) {
     // 收到客户端断开连接(和当前服务直接连接的客户端，当前作为服务端)
     GameHoodleService.on_player_disconnect = function (session, stype) {
         Log_1["default"].info("client lost connect.......... stype:", stype);
-        //当前只有机器人服务，连接到了游戏服 ：清理所有机器人
         var robot_set = RobotManager_1["default"].getInstance().get_robot_player_set();
         for (var key in robot_set) {
             var robot = robot_set[key];

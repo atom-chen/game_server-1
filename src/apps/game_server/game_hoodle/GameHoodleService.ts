@@ -23,7 +23,6 @@ class GameHoodleService extends ServiceBase {
 	// 收到客户端断开连接(和当前服务直接连接的客户端，当前作为服务端)
 	static on_player_disconnect(session: any, stype: number) {
 		Log.info("client lost connect.......... stype:", stype);
-		//当前只有机器人服务，连接到了游戏服 ：清理所有机器人
 		let robot_set = RobotManager.getInstance().get_robot_player_set();
 		for(let key in robot_set){
 			let robot:Player = robot_set[key];

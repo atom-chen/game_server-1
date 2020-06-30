@@ -11,6 +11,7 @@ import { Cmd } from '../protocol/AuthProto';
 import CommonProto from '../protocol/CommonProto';
 import Log from '../../utils/Log';
 import GatewayFunction from './GatewayFunction';
+import * as util from 'util';
 
 class GatewayService extends ServiceBase {
 	service_name: string = "GatewayService"; // 服务名称
@@ -26,10 +27,13 @@ class GatewayService extends ServiceBase {
 		if (GatewayFunction.is_login_req_cmd(stype, ctype)) { //还没登录
 			utag = session.session_key;	
 		}else { //登录过了
-			if(session.uid == 0) {
-				return;
+			if(!util.isNullOrUndefined(utag) && utag > 0){
+			}else{
+				if(session.uid == 0) {
+					return;
+				}
+				utag = session.uid;
 			}
-			utag = session.uid;
 		}
 		ProtoTools.write_utag_inbuf(raw_cmd, utag);
 		NetBus.send_encoded_cmd(server_session,raw_cmd);

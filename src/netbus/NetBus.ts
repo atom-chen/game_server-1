@@ -118,7 +118,7 @@ class NetBus {
         }
         
         session.uid 			= 0; 					// 用户的UID
-        session.last_pkg 		= null; 				// 表示我们存储的上一次没有处理完的TCP包;
+        session.last_pkg 		= null; 				// 表示存储的上一次没有处理完的TCP包;
         session.is_connected 	= true; 				// 是否连接成功
         session.is_websocket 	= is_websocket; 			// 是否websocket
         session.is_encrypt 		= is_encrypt; 			// 是否数据加密

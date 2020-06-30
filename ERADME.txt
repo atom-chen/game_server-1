@@ -8,3 +8,36 @@ node: npm install --save -g @types/node
 本地目录：
 express： npm install @types/express --save
 node:     npm install @types/node --save
+
+///////////////////////////////
+pm2 ：
+启动所有服务：
+pm2 start pm2_start_all.json
+
+查看所有服务列表：
+pm2 list
+pm2 l
+
+启动某一个服务：
+pm2 start app.js
+
+停止：
+pm2 stop app.js
+
+重载：
+pm2 reload app.js
+
+重启：
+pm2 restart app.js
+
+查看100行日志：
+pm2 log --lines 100
+
+启动监视器:
+pm2 monit
+
+启用web查看服务器状态：
+pm2 web 
+
+清理所有日志：
+pm2 flush

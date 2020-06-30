@@ -250,11 +250,11 @@ var Player = /** @class */ (function () {
             Log_1["default"].error("send_cmd error, session is null!!");
             return;
         }
-        if (this.is_robot()) {
-            // Log.warn("send to robot!!");
-            NetBus_1["default"].send_cmd(this._session, Stype_1.Stype.Robot, ctype, this._uid, this._proto_type, body);
-            return;
-        }
+        // if(this.is_robot()){
+        //     // Log.warn("send to robot!!");
+        //     NetBus.send_cmd(this._session, Stype.Robot, ctype, this._uid, this._proto_type, body);
+        //     return;
+        // }
         NetBus_1["default"].send_cmd(this._session, Stype_1.Stype.GameHoodle, ctype, this._uid, this._proto_type, body);
     };
     return Player;

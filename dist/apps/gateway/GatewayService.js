@@ -16,6 +16,13 @@ var __extends = (this && this.__extends) || (function () {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 exports.__esModule = true;
 var NetBus_1 = __importDefault(require("../../netbus/NetBus"));
 var ProtoTools_1 = __importDefault(require("../../netbus/ProtoTools"));
@@ -26,6 +33,7 @@ var Stype_1 = require("../protocol/Stype");
 var AuthProto_1 = require("../protocol/AuthProto");
 var CommonProto_1 = __importDefault(require("../protocol/CommonProto"));
 var GatewayFunction_1 = __importDefault(require("./GatewayFunction"));
+var util = __importStar(require("util"));
 var GatewayService = /** @class */ (function (_super) {
     __extends(GatewayService, _super);
     function GatewayService() {
@@ -45,10 +53,14 @@ var GatewayService = /** @class */ (function (_super) {
             utag = session.session_key;
         }
         else { //登录过了
-            if (session.uid == 0) {
-                return;
+            if (!util.isNullOrUndefined(utag) && utag > 0) {
             }
-            utag = session.uid;
+            else {
+                if (session.uid == 0) {
+                    return;
+                }
+                utag = session.uid;
+            }
         }
         ProtoTools_1["default"].write_utag_inbuf(raw_cmd, utag);
         NetBus_1["default"].send_encoded_cmd(server_session, raw_cmd);

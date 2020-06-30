@@ -65,4 +65,5 @@ let utag = 1921;
 
 let ret = robot_uid_list.indexOf(utag);
 Log.info("hcc>> ret: ", ret);
+
 Log.info("hcc>> ret: ", ret);

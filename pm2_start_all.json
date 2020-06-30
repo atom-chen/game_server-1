@@ -1,0 +1,58 @@
+{
+  "apps": [
+      {
+      "name": "auth_server",
+      "script": "./dist/apps/auth_server/AuthMain.js",
+      "instances": 1,
+      "watch":false,
+      "exec_mode":"fork",
+      },
+      {
+        "name": "system_server",
+        "script": "./dist/apps/system_server/SystemMain.js",
+        "instances": 1,
+        "watch":false,
+        "exec_mode":"fork",
+      },
+      {
+        "name": "robot_server",
+        "script": "./dist/apps/robot_server/RobotMain.js",
+        "instances": 1,
+        "watch":false,
+        "exec_mode":"fork",
+      },
+      {
+        "name": "game_hoodle_server",
+        "script": "./dist/apps/game_server/game_hoodle/GameHoodleMain.js",
+        "instances": 1,
+        "watch":false,
+        "exec_mode":"fork",
+      },
+      {
+        "name": "gateway_server",
+        "script": "./dist/apps/gateway/GatewayMain.js",
+        "instances": 1,
+        "watch":false,
+        "exec_mode":"fork",
+      },
+  ]
+}
+
+/*
+  "apps":[
+    {
+      "name": "sourcepath_Jenvironment",
+      "cwd": "/data/source/sourcepath_Jenvironment/publish/",
+      "script": "/data/source/sourcepath_Jenvironment/publish/service/server.js",
+      "log_date_format": "YYYY-MM-DD HH:mm Z",
+      "error_file": "/data/pm2-log/errlogs/sourcepath_Jenvironment-err.log",
+      "out_file": "/data/pm2-log/outlogs/sourcepath_Jenvironment-out.log",
+      "pid_file": "/data/pm2-log/outlogs/sourcepath_Jenvironment.pid",
+      "instances": 1,
+      "max_restarts": 50,
+      "watch": false,
+      "merge_logs": true,
+      "exec_interpreter": "node",
+      "exec_mode": "fork",
+    }
+ */
