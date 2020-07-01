@@ -14,13 +14,13 @@ var RobotService_1 = __importDefault(require("./RobotService"));
 var RobotInterface_1 = __importDefault(require("./interface/RobotInterface"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
-ServiceManager_1["default"].register_service(Stype_1.Stype.Robot, RobotService_1["default"]);
+ServiceManager_1["default"].register_service(Stype_1.Stype.GameHoodle, RobotService_1["default"]);
 // cur server as client connect to game_server
 // NetBus.connect_tcp_server(Stype.GameHoodle, GameAppConfig.game_server.host, GameAppConfig.game_server.port, false, on_success_callfunc);
 NetClient_1["default"].connect_tcp_server(GameAppConfig_1["default"].gateway_config.host, GameAppConfig_1["default"].gateway_config.tcp_port, false, on_success_callfunc);
-function on_success_callfunc() {
+function on_success_callfunc(server_session) {
     Log_1["default"].info("robot server success connect to game_server!!!");
-    RobotInterface_1["default"].robot_login_logic_server();
+    RobotInterface_1["default"].robot_login_logic_server(server_session);
 }
 /**
  *  robot(as client) ----connect----> game_server

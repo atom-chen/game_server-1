@@ -52,10 +52,11 @@ var GatewayService = /** @class */ (function (_super) {
         if (GatewayFunction_1["default"].is_login_req_cmd(stype, ctype)) { //还没登录
             utag = session.session_key;
         }
-        else { //登录过了
-            if (!util.isNullOrUndefined(utag) && utag > 0) {
+        else {
+            if (!util.isNullOrUndefined(utag) && utag > 0 && session.uid == 0) { //机器人，session.uid == 0 && utag > 0
+                GatewayFunction_1["default"].save_robot_session(session, utag);
             }
-            else {
+            else { //登录过了
                 if (session.uid == 0) {
                     return;
                 }
@@ -67,12 +68,13 @@ var GatewayService = /** @class */ (function (_super) {
         // Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype), ",utag:", utag);
     };
     //服务器发到网关，网关转发到客户端
+    //session,其他服务的session
     GatewayService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
         // Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
         var client_session = null;
         if (GatewayFunction_1["default"].is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
             client_session = NetBus_1["default"].get_client_session(utag);
-            if (!client_session) {
+            if (util.isNullOrUndefined(client_session)) {
                 return;
             }
             var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
@@ -95,8 +97,14 @@ var GatewayService = /** @class */ (function (_super) {
         else { //已经登录,utag == uid
             client_session = GatewayFunction_1["default"].get_session_by_uid(utag);
         }
+        //是机器人，机器人没有登录的，要特殊处理
+        if (util.isNullOrUndefined(client_session)) {
+            var _session = GatewayFunction_1["default"].get_robot_session(utag);
+            if (!util.isNullOrUndefined(_session)) {
+                client_session = _session;
+            }
+        }
         if (client_session) {
-            ProtoTools_1["default"].clear_utag_inbuf(raw_cmd);
             NetBus_1["default"].send_encoded_cmd(client_session, raw_cmd);
             if (ctype == AuthProto_1.Cmd.eLoginOutRes && stype == Stype_1.Stype.Auth) {
                 GatewayFunction_1["default"].clear_session_with_uid(utag);
@@ -109,9 +117,20 @@ var GatewayService = /** @class */ (function (_super) {
             GatewayFunction_1["default"].clear_session_with_uid(session.uid);
         }
         var server_session = NetBus_1["default"].get_server_session(stype);
-        if (!server_session) {
+        if (util.isNullOrUndefined(server_session)) {
             return;
         }
+        //机器人掉线
+        if (GatewayFunction_1["default"].is_robot_session(session)) {
+            var map = GatewayFunction_1["default"].get_robot_session_map();
+            if (!util.isNullOrUndefined(map)) {
+                for (var utag in map) {
+                    NetBus_1["default"].send_cmd(server_session, stype, CommonProto_1["default"].eUserLostConnectRes, Number(utag), ProtoTools_1["default"].ProtoType.PROTO_JSON);
+                }
+                return;
+            }
+        }
+        //普通玩家掉线
         if (session.uid == 0) {
             return;
         }

@@ -8,8 +8,6 @@ let StickPackage = require("stickpackage")
 
 class NetClient {
 
-    static _server_session = null;
-
     static connect_tcp_server(host: string, port: number, is_encrypt: boolean, success_callfunc?: Function) {
         let server_session: any = TcpSocket.connect({
             port: port,
@@ -25,7 +23,7 @@ class NetClient {
                 });
             }
             if (success_callfunc) {
-                success_callfunc();
+                success_callfunc(server_session);
             }
         });
 
@@ -34,7 +32,7 @@ class NetClient {
                 NetClient.on_session_disconnect(server_session);
             }
             NetClient.session_close(server_session);
-            // 重新连接到服务器
+            // 重新连接服务器
             setTimeout(function () {
                 Log.warn("reconnect:", host, port);
                 NetClient.connect_tcp_server(host, port, is_encrypt, success_callfunc);
@@ -61,7 +59,6 @@ class NetClient {
         server_session.is_connected = true;
         server_session.is_encrypt = is_encrypt;
         server_session.msgCenter = new StickPackage.msgCenter({ bigEndian: false }) //粘包处理工具
-        NetClient._server_session = server_session;
     }
 
     static on_recv_cmd_server_return(server_session: any, str_or_buf: any) {
@@ -79,7 +76,6 @@ class NetClient {
     //当前作为客户端，其他服务器断开链接
     static on_session_disconnect(server_session:any) {
         server_session.is_connected = false;
-        NetClient._server_session = null;
     }
 
     // 发送数据包
@@ -89,32 +85,18 @@ class NetClient {
         }
         let encode_cmd = ProtoManager.encode_cmd(stype, ctype, utag, proto_type, body);
         if (encode_cmd) {
-            NetClient.send_encoded_cmd(server_session, encode_cmd)
-        }
-    }
+            if (server_session.is_encrypt) {
+                encode_cmd = ProtoManager.encrypt_cmd(encode_cmd);
+            }
 
-    // 发送未解包的数据包
-    static send_encoded_cmd(server_session: any, encode_cmd: any) {
-        if (!server_session.is_connected) {
-            return;
-        }
-
-        if (server_session.is_encrypt) {
-            encode_cmd = ProtoManager.encrypt_cmd(encode_cmd);
-        }
-
-        if (server_session.msgCenter) {
-            let data = server_session.msgCenter.publish(encode_cmd);
-            if (data) {
-                server_session.write(data);
+            if (server_session.msgCenter) {
+                let data = server_session.msgCenter.publish(encode_cmd);
+                if (data) {
+                    server_session.write(data);
+                }
             }
         }
     }
-
-    static get_server_session() {
-        return NetClient._server_session;
-    }
-
 }
 
 export default NetClient;

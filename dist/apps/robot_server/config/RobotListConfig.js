@@ -24,8 +24,6 @@ exports["default"] = RobotListConfig;
 if (Platform_1["default"].isWin32()) { //测试环境
     RobotListConfig.robot_roomlevel_map = (_b = {},
         _b[1] = [1921, 1922, 1923, 1924],
-        _b[2] = [1925, 1926, 1927],
-        _b[3] = [1928, 1929, 1930],
         _b);
 }
 //# sourceMappingURL=RobotListConfig.js.map

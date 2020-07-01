@@ -60,17 +60,17 @@ class RobotModel {
     // send match to game server
     private on_player_login_logic_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer){
         Log.info("hcc>>on_player_login_logic_res.....,utag: ", utag);
-        RobotSend.send_game(Cmd.eUserGameInfoReq, utag);
-        RobotSend.send_game(Cmd.eRoomListConfigReq, utag);
-        RobotSend.send_game(Cmd.eGetRoomStatusReq,utag);
+        RobotSend.send_game(session, Cmd.eUserGameInfoReq, utag);
+        RobotSend.send_game(session, Cmd.eRoomListConfigReq, utag);
+        RobotSend.send_game(session, Cmd.eGetRoomStatusReq,utag);
     }
 
     private on_player_status_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (res_body && res_body.status == Response.OK){ //at room
-            RobotSend.send_game(Cmd.eBackRoomReq, utag);
+            RobotSend.send_game(session, Cmd.eBackRoomReq, utag);
         }else{ //not at room, free
-            RobotInterface.go_to_match_game(utag);
+            RobotInterface.go_to_match_game(session, utag);
         }
     }
 
@@ -80,7 +80,7 @@ class RobotModel {
         if(res_body && res_body.status == Response.OK){
             if (res_body.matchsuccess){
                 setTimeout(() => {
-                    RobotSend.send_game(Cmd.eUserReadyReq,utag);
+                    RobotSend.send_game(session, Cmd.eUserReadyReq,utag);
                 }, RobotListConfig.READY_DELAY_TIME);
             }
         }
@@ -142,7 +142,7 @@ class RobotModel {
                                 }
                             }
                             setTimeout(() => {
-                                RobotSend.send_game(Cmd.ePlayerShootReq,utag, req_body);
+                                RobotSend.send_game(session, Cmd.ePlayerShootReq,utag, req_body);
                             }, RobotListConfig.SHOOT_DELAY_TIME);
                             break;
                         }
@@ -157,14 +157,14 @@ class RobotModel {
         if (res_body) {
             let isfinal =  res_body.isfinal;
             if (util.isNullOrUndefined(isfinal) || isfinal == false){
-                RobotSend.send_game(Cmd.eUserReadyReq, utag);
+                RobotSend.send_game(session, Cmd.eUserReadyReq, utag);
             }
         }
-        RobotInterface.send_emoj_random_timeout(utag,2);
+        RobotInterface.send_emoj_random_timeout(session, utag, 2);
     }
 
     private on_event_game_total_result_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
-      RobotInterface.go_to_match_game(utag);
+        RobotInterface.go_to_match_game(session, utag);
     }
 
     private on_event_emoj_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
@@ -183,14 +183,14 @@ class RobotModel {
                 Log.info("on_event_ball_pos_res: " , utag);
             }
         }
-        RobotInterface.send_emoj_random_timeout(utag,1);
+        RobotInterface.send_emoj_random_timeout(session, utag, 1);
     }
 
     private on_event_desolve_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (res_body) {
             if(res_body.status == Response.OK){
-                RobotInterface.go_to_match_game(utag);
+                RobotInterface.go_to_match_game(session, utag);
             }
         }
     }
@@ -198,7 +198,7 @@ class RobotModel {
     private on_event_back_room_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (res_body && res_body.status == Response.OK){
-            RobotSend.send_game(Cmd.eCheckLinkGameReq,utag);
+            RobotSend.send_game(session, Cmd.eCheckLinkGameReq,utag);
         }
     }
 }

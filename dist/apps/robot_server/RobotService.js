@@ -31,6 +31,7 @@ var RobotService = /** @class */ (function (_super) {
     RobotService.on_recv_client_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
     };
     //收到连接的服务发过来的数据（当前作为客户端）
+    //session: 所连接的服务的session
     RobotService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
         RobotModel_1["default"].getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
     };

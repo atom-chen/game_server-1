@@ -33,7 +33,7 @@ var NetClient = /** @class */ (function () {
                 });
             }
             if (success_callfunc) {
-                success_callfunc();
+                success_callfunc(server_session);
             }
         });
         server_session.on("close", function () {
@@ -41,7 +41,7 @@ var NetClient = /** @class */ (function () {
                 NetClient.on_session_disconnect(server_session);
             }
             NetClient.session_close(server_session);
-            // 重新连接到服务器
+            // 重新连接服务器
             setTimeout(function () {
                 Log_1["default"].warn("reconnect:", host, port);
                 NetClient.connect_tcp_server(host, port, is_encrypt, success_callfunc);
@@ -64,7 +64,6 @@ var NetClient = /** @class */ (function () {
         server_session.is_connected = true;
         server_session.is_encrypt = is_encrypt;
         server_session.msgCenter = new StickPackage.msgCenter({ bigEndian: false }); //粘包处理工具
-        NetClient._server_session = server_session;
     };
     NetClient.on_recv_cmd_server_return = function (server_session, str_or_buf) {
         if (!ServiceManager_1["default"].on_recv_server_cmd(server_session, str_or_buf)) {
@@ -79,7 +78,6 @@ var NetClient = /** @class */ (function () {
     //当前作为客户端，其他服务器断开链接
     NetClient.on_session_disconnect = function (server_session) {
         server_session.is_connected = false;
-        NetClient._server_session = null;
     };
     // 发送数据包
     NetClient.send_cmd = function (server_session, stype, ctype, utag, proto_type, body) {
@@ -88,28 +86,17 @@ var NetClient = /** @class */ (function () {
         }
         var encode_cmd = ProtoManager_1["default"].encode_cmd(stype, ctype, utag, proto_type, body);
         if (encode_cmd) {
-            NetClient.send_encoded_cmd(server_session, encode_cmd);
-        }
-    };
-    // 发送未解包的数据包
-    NetClient.send_encoded_cmd = function (server_session, encode_cmd) {
-        if (!server_session.is_connected) {
-            return;
-        }
-        if (server_session.is_encrypt) {
-            encode_cmd = ProtoManager_1["default"].encrypt_cmd(encode_cmd);
-        }
-        if (server_session.msgCenter) {
-            var data = server_session.msgCenter.publish(encode_cmd);
-            if (data) {
-                server_session.write(data);
+            if (server_session.is_encrypt) {
+                encode_cmd = ProtoManager_1["default"].encrypt_cmd(encode_cmd);
+            }
+            if (server_session.msgCenter) {
+                var data = server_session.msgCenter.publish(encode_cmd);
+                if (data) {
+                    server_session.write(data);
+                }
             }
         }
     };
-    NetClient.get_server_session = function () {
-        return NetClient._server_session;
-    };
-    NetClient._server_session = null;
     return NetClient;
 }());
 exports["default"] = NetClient;

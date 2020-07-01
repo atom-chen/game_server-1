@@ -20,8 +20,6 @@ exports.__esModule = true;
 var ServiceBase_1 = __importDefault(require("../../../netbus/ServiceBase"));
 var GameHoodleModle_1 = __importDefault(require("./GameHoodleModle"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
-var RobotManager_1 = __importDefault(require("./manager/RobotManager"));
-var GameLinkInterface_1 = __importDefault(require("./interface/GameLinkInterface"));
 var GameHoodleService = /** @class */ (function (_super) {
     __extends(GameHoodleService, _super);
     function GameHoodleService() {
@@ -40,12 +38,6 @@ var GameHoodleService = /** @class */ (function (_super) {
     // 收到客户端断开连接(和当前服务直接连接的客户端，当前作为服务端)
     GameHoodleService.on_player_disconnect = function (session, stype) {
         Log_1["default"].info("client lost connect.......... stype:", stype);
-        var robot_set = RobotManager_1["default"].getInstance().get_robot_player_set();
-        for (var key in robot_set) {
-            var robot = robot_set[key];
-            GameLinkInterface_1["default"].do_player_lost_connect(robot.get_uid());
-            RobotManager_1["default"].getInstance().delete_robot_player(robot.get_uid());
-        }
     };
     return GameHoodleService;
 }(ServiceBase_1["default"]));

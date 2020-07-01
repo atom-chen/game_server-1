@@ -19,6 +19,7 @@ var LOGIN_OR_REGIST_ERS_CMD = [
     AuthProto_1.Cmd.eWeChatSessionLoginRes,
 ];
 var uid_session_map = {}; //保存已经登录过的玩家 uid-> session
+var robot_session_map = {}; //机器人客户端session
 var GatewayFunction = /** @class */ (function () {
     function GatewayFunction() {
     }
@@ -51,6 +52,27 @@ var GatewayFunction = /** @class */ (function () {
             uid_session_map[uid] = null;
             delete uid_session_map[uid];
         }
+    };
+    //保存机器人session
+    GatewayFunction.save_robot_session = function (session, uid) {
+        robot_session_map[uid] = session;
+    };
+    //获取机器人session
+    GatewayFunction.get_robot_session = function (uid) {
+        return robot_session_map[uid];
+    };
+    //是否机器人session
+    GatewayFunction.is_robot_session = function (session) {
+        for (var key in robot_session_map) {
+            if (robot_session_map[key] == session) {
+                return true;
+            }
+        }
+        return false;
+    };
+    //获取机器人session map
+    GatewayFunction.get_robot_session_map = function () {
+        return robot_session_map;
     };
     return GatewayFunction;
 }());

@@ -3,9 +3,6 @@
 import ServiceBase from '../../../netbus/ServiceBase';
 import GameHoodleModle from './GameHoodleModle';
 import Log from '../../../utils/Log';
-import RobotManager from './manager/RobotManager';
-import Player from './cell/Player';
-import GameLinkInterface from './interface/GameLinkInterface';
 
 class GameHoodleService extends ServiceBase {
 	 service_name:string = "GameHoodleService"; // 服务名称
@@ -23,12 +20,6 @@ class GameHoodleService extends ServiceBase {
 	// 收到客户端断开连接(和当前服务直接连接的客户端，当前作为服务端)
 	static on_player_disconnect(session: any, stype: number) {
 		Log.info("client lost connect.......... stype:", stype);
-		let robot_set = RobotManager.getInstance().get_robot_player_set();
-		for(let key in robot_set){
-			let robot:Player = robot_set[key];
-			GameLinkInterface.do_player_lost_connect(robot.get_uid());
-			RobotManager.getInstance().delete_robot_player(robot.get_uid());
-		}
 	}
 }
 

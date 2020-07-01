@@ -12,16 +12,16 @@ import BornRobot from './interface/RobotInterface';
 import Log from "../../utils/Log";
 import NetClient from '../../netbus/NetClient';
 
-ServiceManager.register_service(Stype.Robot, RobotService);
+ServiceManager.register_service(Stype.GameHoodle, RobotService);
 
 // cur server as client connect to game_server
 // NetBus.connect_tcp_server(Stype.GameHoodle, GameAppConfig.game_server.host, GameAppConfig.game_server.port, false, on_success_callfunc);
 
 NetClient.connect_tcp_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.tcp_port, false, on_success_callfunc);
 
-function on_success_callfunc() {
+function on_success_callfunc(server_session:any) {
 	Log.info("robot server success connect to game_server!!!");
-	BornRobot.robot_login_logic_server();
+	BornRobot.robot_login_logic_server(server_session);
 }
 
 /**
