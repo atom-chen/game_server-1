@@ -16,46 +16,36 @@ var RobotListConfig_1 = __importDefault(require("../config/RobotListConfig"));
 var util = __importStar(require("util"));
 var StringUtil_1 = __importDefault(require("../../../utils/StringUtil"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
-var RobotInterface = /** @class */ (function () {
-    function RobotInterface() {
+var RobotGameInterface = /** @class */ (function () {
+    function RobotGameInterface() {
     }
     //登录逻辑服务
-    RobotInterface.robot_login_logic_server = function (server_session) {
-        var robot_roomlevel_map = RobotListConfig_1["default"].robot_roomlevel_map;
-        var body = { isrobot: true };
-        for (var key in robot_roomlevel_map) {
-            var robot_uid_list = robot_roomlevel_map[key];
-            robot_uid_list.forEach(function (uid) {
-                RobotSend_1["default"].send_game(server_session, GameHoodleProto_1.Cmd.eLoginLogicReq, uid, body);
-            });
-        }
+    RobotGameInterface.robot_login_logic_server = function (server_session, utag) {
+        RobotSend_1["default"].send_game(server_session, GameHoodleProto_1.Cmd.eLoginLogicReq, utag, { isrobot: true });
     };
     //去对应等级房间匹配
-    RobotInterface.go_to_match_game = function (server_session, utag) {
-        var robot_roomlevel_map = RobotListConfig_1["default"].robot_roomlevel_map;
-        for (var key in robot_roomlevel_map) {
-            var robot_uid_list = robot_roomlevel_map[key];
-            if (robot_uid_list) {
-                var ret = robot_uid_list.indexOf(utag);
-                if (ret > -1) {
-                    var body = { roomlevel: Number(key) };
-                    RobotSend_1["default"].send_game(server_session, GameHoodleProto_1.Cmd.eUserMatchReq, utag, body);
-                    break;
-                }
+    RobotGameInterface.go_to_match_game = function (server_session, utag) {
+        for (var _utag in RobotListConfig_1["default"].robot_roomlevel_map) {
+            var robot_obj = RobotListConfig_1["default"].robot_roomlevel_map[_utag];
+            var utagtmp = Number(_utag);
+            var room_level = robot_obj.roomlevel;
+            if (utagtmp == utag) {
+                RobotSend_1["default"].send_game(server_session, GameHoodleProto_1.Cmd.eUserMatchReq, utag, { roomlevel: room_level });
+                break;
             }
         }
     };
     //不定时发送表情
-    RobotInterface.send_emoj_random_timeout = function (server_session, utag, time_out) {
+    RobotGameInterface.send_emoj_random_timeout = function (server_session, utag, time_out) {
         if (util.isNullOrUndefined(time_out)) {
             time_out = 0;
         }
         setTimeout(function () {
-            RobotInterface.send_emoj_random(server_session, utag);
+            RobotGameInterface.send_emoj_random(server_session, utag);
         }, time_out);
     };
     //发送随机表情 50%概率发送
-    RobotInterface.send_emoj_random = function (server_session, utag) {
+    RobotGameInterface.send_emoj_random = function (server_session, utag) {
         var random_num = StringUtil_1["default"].random_int(1, 10);
         Log_1["default"].info("is show emoj: ", random_num, random_num <= 5);
         if (random_num <= 5) {
@@ -64,7 +54,7 @@ var RobotInterface = /** @class */ (function () {
             RobotSend_1["default"].send_game(server_session, GameHoodleProto_1.Cmd.eUserEmojReq, utag, body);
         }
     };
-    return RobotInterface;
+    return RobotGameInterface;
 }());
-exports["default"] = RobotInterface;
-//# sourceMappingURL=RobotInterface.js.map
+exports["default"] = RobotGameInterface;
+//# sourceMappingURL=RobotGameInterface.js.map

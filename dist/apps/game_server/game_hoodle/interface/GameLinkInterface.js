@@ -38,6 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 exports.__esModule = true;
 var GameHoodleProto_1 = require("../../../protocol/GameHoodleProto");
 var Log_1 = __importDefault(require("../../../../utils/Log"));
@@ -50,51 +57,66 @@ var GameSendMsg_1 = __importDefault(require("../GameSendMsg"));
 var State_1 = require("../config/State");
 var ProtoManager_1 = __importDefault(require("../../../../netbus/ProtoManager"));
 var RobotManager_1 = __importDefault(require("../manager/RobotManager"));
+var util = __importStar(require("util"));
 var playerMgr = PlayerManager_1["default"].getInstance();
 var roomMgr = RoomManager_1["default"].getInstance();
 var matchMgr = MatchManager_1["default"].getInstance();
 var GameLinkInterface = /** @class */ (function () {
     function GameLinkInterface() {
     }
+    GameLinkInterface._player_lost_connect = function (player) {
+        if (util.isNullOrUndefined(player)) {
+            return;
+        }
+        //设置房间内玩家掉线
+        var room = roomMgr.get_room_by_uid(player.get_uid());
+        if (room) {
+            player.set_offline(true);
+            room.broadcast_in_room(GameHoodleProto_1.Cmd.eUserOfflineRes, { seatid: player.get_seat_id() }, player);
+            GameFunction_1["default"].broadcast_player_info_in_rooom(room, player);
+        }
+        //删掉玩家对象，但是如果在房间里面，玩家引用还会在房间里面，方便下次重连
+        var uname = player.get_unick();
+        var numid = player.get_numberid();
+        var issuccess = playerMgr.delete_player(player.get_uid());
+        if (issuccess) {
+            Log_1["default"].warn(uname + " ,numid:" + numid + " is lostconnect,totalPlyaerCount: " + playerMgr.get_player_count());
+        }
+        //如果在匹配，就从匹配列表中删除
+        var ret = matchMgr.stop_player_match(player.get_uid());
+        if (ret) {
+            Log_1["default"].info(uname, "delete from match");
+        }
+        //如果在匹配房间内游戏还没开始，达到条件房间就解散(在线玩家为0)
+        if (room && room.get_is_match_room()) {
+            if (room.get_game_state() != State_1.GameState.InView) { //游戏已经开始，不能直接解散
+                return;
+            }
+            //游戏还没开始，而且没有在线玩家，房间解散
+            var playerCount = room.get_player_count();
+            var onlinePlayerCount = room.get_online_player_count();
+            Log_1["default"].info("hcc>>do_player_lost_connect: playerCouont: ", playerCount, " ,onlinePlayerCount: ", onlinePlayerCount);
+            if (playerCount == 0 || onlinePlayerCount == 0) {
+                room.kick_all_player();
+                var roomID = room.get_room_id();
+                var ret_1 = roomMgr.delete_room(roomID);
+                Log_1["default"].info("hcc>>do_player_lost_connect>>delete room :", ret_1, " ,roomid: ", roomID);
+            }
+        }
+    };
     //玩家断线
-    GameLinkInterface.do_player_lost_connect = function (utag) {
+    GameLinkInterface.do_player_lost_connect = function (utag, proto_type, raw_cmd) {
+        var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
+        if (body && body.is_robot == true) { //机器人服务掉线，删掉所有机器人
+            var robot_player_set = RobotManager_1["default"].getInstance().get_robot_player_set();
+            for (var key in robot_player_set) {
+                GameLinkInterface._player_lost_connect(robot_player_set[key]);
+            }
+            return;
+        }
         var player = playerMgr.get_player(utag);
         if (player) {
-            //设置房间内玩家掉线
-            var room = roomMgr.get_room_by_uid(utag);
-            if (room) {
-                player.set_offline(true);
-                room.broadcast_in_room(GameHoodleProto_1.Cmd.eUserOfflineRes, { seatid: player.get_seat_id() }, player);
-                GameFunction_1["default"].broadcast_player_info_in_rooom(room, player);
-            }
-            //删掉玩家对象，但是如果在房间里面，玩家引用还会在房间里面，方便下次重连
-            var uname = player.get_unick();
-            var numid = player.get_numberid();
-            var issuccess = playerMgr.delete_player(utag);
-            if (issuccess) {
-                Log_1["default"].warn(uname + " ,numid:" + numid + " is lostconnect,totalPlyaerCount: " + playerMgr.get_player_count());
-            }
-            //如果在匹配，就从匹配列表中删除
-            var ret = matchMgr.stop_player_match(player.get_uid());
-            if (ret) {
-                Log_1["default"].info(uname, "delete from match");
-            }
-            //如果在匹配房间内游戏还没开始，达到条件房间就解散(在线玩家为0)
-            if (room && room.get_is_match_room()) {
-                if (room.get_game_state() != State_1.GameState.InView) { //游戏已经开始，不能直接解散
-                    return;
-                }
-                //游戏还没开始，而且没有在线玩家，房间解散
-                var playerCount = room.get_player_count();
-                var onlinePlayerCount = room.get_online_player_count();
-                Log_1["default"].info("hcc>>do_player_lost_connect: playerCouont: ", playerCount, " ,onlinePlayerCount: ", onlinePlayerCount);
-                if (playerCount == 0 || onlinePlayerCount == 0) {
-                    room.kick_all_player();
-                    var roomID = room.get_room_id();
-                    var ret_1 = roomMgr.delete_room(roomID);
-                    Log_1["default"].info("hcc>>do_player_lost_connect>>delete room :", ret_1, " ,roomid: ", roomID);
-                }
-            }
+            GameLinkInterface._player_lost_connect(player);
         }
     };
     //玩家登录逻辑服务

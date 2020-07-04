@@ -11,19 +11,20 @@ var GameAppConfig_1 = __importDefault(require("../config/GameAppConfig"));
 var ServiceManager_1 = __importDefault(require("../../netbus/ServiceManager"));
 var Stype_1 = require("../protocol/Stype");
 var RobotService_1 = __importDefault(require("./RobotService"));
-var RobotInterface_1 = __importDefault(require("./interface/RobotInterface"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
+var RobotAuthIngerface_1 = __importDefault(require("./interface/RobotAuthIngerface"));
 ServiceManager_1["default"].register_service(Stype_1.Stype.GameHoodle, RobotService_1["default"]);
+ServiceManager_1["default"].register_service(Stype_1.Stype.Auth, RobotService_1["default"]);
 // cur server as client connect to game_server
-// NetBus.connect_tcp_server(Stype.GameHoodle, GameAppConfig.game_server.host, GameAppConfig.game_server.port, false, on_success_callfunc);
 NetClient_1["default"].connect_tcp_server(GameAppConfig_1["default"].gateway_config.host, GameAppConfig_1["default"].gateway_config.tcp_port, false, on_success_callfunc);
+//server_session: gateway的session
 function on_success_callfunc(server_session) {
     Log_1["default"].info("robot server success connect to game_server!!!");
-    RobotInterface_1["default"].robot_login_logic_server(server_session);
+    RobotAuthIngerface_1["default"].robot_login_auth_server(server_session);
 }
 /**
- *  robot(as client) ----connect----> game_server
- *  game_server ----send data-----> robot
+ *  robot(as client) ----> gateway ----> game_server
+ *  game_server ----gateway-----> robot
  */ 
 //# sourceMappingURL=RobotMain.js.map

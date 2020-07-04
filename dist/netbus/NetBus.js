@@ -123,6 +123,7 @@ var NetBus = /** @class */ (function () {
         session.is_connected = true; // 是否连接成功
         session.is_websocket = is_websocket; // 是否websocket
         session.is_encrypt = is_encrypt; // 是否数据加密
+        session.is_robot = false; // 是否机器人
         if (!is_websocket) {
             var option = { bigEndian: false };
             session.msgCenter = new StickPackage.msgCenter(option); //粘包处理工具
@@ -345,6 +346,9 @@ var NetBus = /** @class */ (function () {
             server_connect_list[stype] = null;
             delete server_connect_list[stype];
         }
+    };
+    NetBus.get_global_session_list = function () {
+        return global_session_list;
     };
     return NetBus;
 }());

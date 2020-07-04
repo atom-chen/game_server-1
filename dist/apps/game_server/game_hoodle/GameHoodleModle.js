@@ -83,7 +83,7 @@ var GameHoodleModle = /** @class */ (function () {
         if (!GameCheck_1["default"].check_player(utag)) {
             return;
         }
-        GameLinkInterface_1["default"].do_player_lost_connect(utag);
+        GameLinkInterface_1["default"].do_player_lost_connect(utag, proto_type, raw_cmd);
     };
     //登录逻辑服务
     GameHoodleModle.prototype.on_player_login_logic_server = function (session, utag, proto_type, raw_cmd) {

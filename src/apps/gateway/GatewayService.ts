@@ -25,26 +25,33 @@ class GatewayService extends ServiceBase {
 		}
 		// 打入能够标识client的utag, uid, session.session_key,
 		if (GatewayFunction.is_login_req_cmd(stype, ctype)) { //还没登录
-			utag = session.session_key;	
-		}else {
-			if (!util.isNullOrUndefined(utag) && utag > 0 && session.uid == 0) {//机器人，session.uid == 0 && utag > 0
-				GatewayFunction.save_robot_session(session, utag);
-			} else {//登录过了
-				if(session.uid == 0) {
-					return;
+			if (utag == 0) {//普通玩家，还没登录
+				utag = session.session_key;	
+			} else {//机器人,本来就有utag
+				session.is_robot = true;
+				session.session_key = utag;
+				let session_list = NetBus.get_global_session_list();
+				if(session_list){
+					session_list[utag] = session;
 				}
+			}
+		}else { //登录后
+			if(session.uid == 0) {
+				return;
+			}
+			if(session.is_robot == false){
 				utag = session.uid;
 			}
 		}
 		ProtoTools.write_utag_inbuf(raw_cmd, utag);
 		NetBus.send_encoded_cmd(server_session,raw_cmd);
-		// Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype), ",utag:", utag);
+		Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype), ",utag:", utag);
 	}
 	
 	//服务器发到网关，网关转发到客户端
 	//session,其他服务的session
 	static on_recv_server_player_cmd (session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:any) {
-		// Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
+		Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
 		let client_session = null;
 		if (GatewayFunction.is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
 			client_session = NetBus.get_client_session(utag);
@@ -72,14 +79,6 @@ class GatewayService extends ServiceBase {
 			client_session = GatewayFunction.get_session_by_uid(utag);
 		}
 
-		//是机器人，机器人没有登录的，要特殊处理
-		if(util.isNullOrUndefined(client_session)){
-			let _session = GatewayFunction.get_robot_session(utag);
-			if (!util.isNullOrUndefined(_session)){
-				client_session = _session;
-			}
-		}
-
 		if (client_session){
 			NetBus.send_encoded_cmd(client_session,raw_cmd);
 			if(ctype == Cmd.eLoginOutRes && stype == Stype.Auth){
@@ -99,23 +98,12 @@ class GatewayService extends ServiceBase {
 			return;
 		}
 
-		//机器人掉线
-		if(GatewayFunction.is_robot_session(session)){
-			let map = GatewayFunction.get_robot_session_map();
-			if(!util.isNullOrUndefined(map)){
-				for(let utag in map){
-					NetBus.send_cmd(server_session, stype, CommonProto.eUserLostConnectRes, Number(utag), ProtoTools.ProtoType.PROTO_JSON);
-				}
-				return;
-			}
-		}
-
-		//普通玩家掉线
 		if(session.uid == 0){
 			return;
 		}
-		// 客户端被迫掉线
-		NetBus.send_cmd(server_session, stype, CommonProto.eUserLostConnectRes, session.uid, ProtoTools.ProtoType.PROTO_JSON);
+		//客户端被迫掉线
+		let body = {is_robot : session.is_robot};
+		NetBus.send_cmd(server_session, stype, CommonProto.eUserLostConnectRes, session.uid, ProtoTools.ProtoType.PROTO_JSON, body);
 	}
 }
 

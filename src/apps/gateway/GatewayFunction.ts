@@ -24,7 +24,6 @@ let LOGIN_OR_REGIST_ERS_CMD = [
 ]
 
 let uid_session_map: USMap = {}   //保存已经登录过的玩家 uid-> session
-let robot_session_map:USMap = {}; //机器人客户端session
 
 class GatewayFunction {
 
@@ -62,32 +61,6 @@ class GatewayFunction {
             delete uid_session_map[uid];
         }
     }
-
-    //保存机器人session
-    static save_robot_session(session:any,uid:number){
-        robot_session_map[uid] = session;
-    }
-
-    //获取机器人session
-    static get_robot_session(uid:number){
-        return robot_session_map[uid];
-    }
-
-    //是否机器人session
-    static is_robot_session(session:any){
-        for(let key in robot_session_map){
-            if (robot_session_map[key] == session){
-                return true
-            }
-        }
-        return false;
-    }
-
-    //获取机器人session map
-    static get_robot_session_map(){
-        return robot_session_map;
-    }
-
 }
 
 export default GatewayFunction;

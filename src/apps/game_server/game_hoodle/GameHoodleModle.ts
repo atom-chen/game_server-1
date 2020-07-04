@@ -89,7 +89,7 @@ class GameHoodleModle {
         if(!GameCheck.check_player(utag)){
             return;
         }
-        GameLinkInterface.do_player_lost_connect(utag);
+        GameLinkInterface.do_player_lost_connect(utag, proto_type, raw_cmd);
     }
     //登录逻辑服务
     private on_player_login_logic_server(session:any, utag:number, proto_type:number, raw_cmd:any){

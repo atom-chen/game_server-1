@@ -120,8 +120,9 @@ class NetBus {
         session.uid 			= 0; 					// 用户的UID
         session.last_pkg 		= null; 				// 表示存储的上一次没有处理完的TCP包;
         session.is_connected 	= true; 				// 是否连接成功
-        session.is_websocket 	= is_websocket; 			// 是否websocket
+        session.is_websocket 	= is_websocket; 	    // 是否websocket
         session.is_encrypt 		= is_encrypt; 			// 是否数据加密
+        session.is_robot        = false;                // 是否机器人
 
         if(!is_websocket){
             let option = {bigEndian:false}
@@ -368,6 +369,10 @@ class NetBus {
             server_connect_list[stype] = null;
             delete server_connect_list[stype];
         }
+    }
+
+    static get_global_session_list(){
+        return global_session_list;
     }
 }
 

@@ -5,32 +5,22 @@ import * as util from 'util';
 import StringUtil from '../../../utils/StringUtil';
 import Log from '../../../utils/Log';
 
-class RobotInterface {
+class RobotGameInterface {
 
     //登录逻辑服务
-    static robot_login_logic_server(server_session:any){
-        let robot_roomlevel_map = RobotListConfig.robot_roomlevel_map;
-        let body = { isrobot: true}
-        for(let key in robot_roomlevel_map){
-            let robot_uid_list:Array<number> = robot_roomlevel_map[key];
-            robot_uid_list.forEach(uid =>{
-                RobotSend.send_game(server_session,Cmd.eLoginLogicReq, uid, body);
-            });
-        }
+    static robot_login_logic_server(server_session:any, utag:number){
+        RobotSend.send_game(server_session, Cmd.eLoginLogicReq, utag, { isrobot: true });
     }
 
     //去对应等级房间匹配
     static go_to_match_game(server_session:any, utag:number){
-        let robot_roomlevel_map = RobotListConfig.robot_roomlevel_map;
-        for (let key in robot_roomlevel_map) {
-            let robot_uid_list: Array<number> = robot_roomlevel_map[key];
-            if (robot_uid_list) {
-                let ret = robot_uid_list.indexOf(utag);
-                if (ret > -1) {
-                    let body = { roomlevel: Number(key) }
-                    RobotSend.send_game(server_session, Cmd.eUserMatchReq, utag, body);
-                    break;
-                }
+        for (let _utag in RobotListConfig.robot_roomlevel_map) {
+            let robot_obj = RobotListConfig.robot_roomlevel_map[_utag];
+            let utagtmp = Number(_utag);
+            let room_level = robot_obj.roomlevel;
+            if (utagtmp == utag){
+                RobotSend.send_game(server_session, Cmd.eUserMatchReq, utag, { roomlevel: room_level });
+                break;
             }
         }
     }
@@ -41,7 +31,7 @@ class RobotInterface {
             time_out = 0;
         }
         setTimeout(() => {
-            RobotInterface.send_emoj_random(server_session, utag);
+            RobotGameInterface.send_emoj_random(server_session, utag);
         }, time_out);
     }
 
@@ -57,4 +47,4 @@ class RobotInterface {
     }
 }
 
-export default RobotInterface;
+export default RobotGameInterface;

@@ -2,14 +2,14 @@ import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';
 import Log from '../../utils/Log';
 import { Stype, StypeName } from '../protocol/Stype';
-import { Cmd, CmdName } from '../protocol/RobotProto';
+import { Cmd, CmdName } from '../protocol/GameHoodleProto';
 import RobotSend from './RobotSend';
 import RobotMgr from './manager/RobotMgr';
 import Robot from './cell/Robot';
 import * as util from 'util';
 import { PlayerPower } from '../game_server/game_hoodle/config/State';
 import RobotListConfig from './config/RobotListConfig';
-import RobotInterface from './interface/RobotInterface';
+import RobotGameInterface from './interface/RobotGameInterface';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -20,8 +20,8 @@ interface CmdHandlerMap {
  * send_game，是当前作为客户端发给game服务。
  */
 
-class RobotModel {
-    private static readonly Instance: RobotModel = new RobotModel();
+class RobotGameModel {
+    private static readonly Instance: RobotGameModel = new RobotGameModel();
     _cmd_handler_map: CmdHandlerMap = {};
 
     private constructor() {
@@ -43,11 +43,7 @@ class RobotModel {
     }
 
     public static getInstance() {
-        return RobotModel.Instance;
-    }
-
-    private decode_cmd(proto_type: number, raw_cmd: any) {
-        return ProtoManager.decode_cmd(proto_type, raw_cmd);
+        return RobotGameModel.Instance;
     }
 
     public recv_cmd_msg(session: any, stype: number, ctype: number, utag: number, proto_type: number, raw_cmd: Buffer) {
@@ -70,7 +66,7 @@ class RobotModel {
         if (res_body && res_body.status == Response.OK){ //at room
             RobotSend.send_game(session, Cmd.eBackRoomReq, utag);
         }else{ //not at room, free
-            RobotInterface.go_to_match_game(session, utag);
+            RobotGameInterface.go_to_match_game(session, utag);
         }
     }
 
@@ -160,11 +156,11 @@ class RobotModel {
                 RobotSend.send_game(session, Cmd.eUserReadyReq, utag);
             }
         }
-        RobotInterface.send_emoj_random_timeout(session, utag, 2);
+        RobotGameInterface.send_emoj_random_timeout(session, utag, 2);
     }
 
     private on_event_game_total_result_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
-        RobotInterface.go_to_match_game(session, utag);
+        RobotGameInterface.go_to_match_game(session, utag);
     }
 
     private on_event_emoj_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
@@ -183,14 +179,14 @@ class RobotModel {
                 Log.info("on_event_ball_pos_res: " , utag);
             }
         }
-        RobotInterface.send_emoj_random_timeout(session, utag, 1);
+        RobotGameInterface.send_emoj_random_timeout(session, utag, 1);
     }
 
     private on_event_desolve_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (res_body) {
             if(res_body.status == Response.OK){
-                RobotInterface.go_to_match_game(session, utag);
+                RobotGameInterface.go_to_match_game(session, utag);
             }
         }
     }
@@ -203,4 +199,4 @@ class RobotModel {
     }
 }
 
-export default RobotModel;
+export default RobotGameModel;
