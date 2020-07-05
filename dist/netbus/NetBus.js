@@ -350,6 +350,15 @@ var NetBus = /** @class */ (function () {
     NetBus.get_global_session_list = function () {
         return global_session_list;
     };
+    NetBus.save_global_session = function (session, session_key) {
+        global_session_list[session_key] = session;
+    };
+    NetBus.delete_global_session = function (session_key) {
+        if (global_session_list[session_key]) {
+            global_session_list[session_key] = null;
+            delete global_session_list[session_key];
+        }
+    };
     return NetBus;
 }());
 exports["default"] = NetBus;

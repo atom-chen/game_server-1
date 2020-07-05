@@ -374,6 +374,17 @@ class NetBus {
     static get_global_session_list(){
         return global_session_list;
     }
+
+    static save_global_session(session:any, session_key:number){
+        global_session_list[session_key] = session;
+    }
+
+    static delete_global_session(session_key:any){
+        if (global_session_list[session_key]){
+            global_session_list[session_key] = null;
+            delete global_session_list[session_key];
+        }
+    }
 }
 
 export default NetBus;

@@ -30,10 +30,7 @@ class GatewayService extends ServiceBase {
 			} else {//机器人,本来就有utag
 				session.is_robot = true;
 				session.session_key = utag;
-				let session_list = NetBus.get_global_session_list();
-				if(session_list){
-					session_list[utag] = session;
-				}
+				NetBus.save_global_session(session, session.session_key);
 			}
 		}else { //登录后
 			if(session.uid == 0) {
@@ -104,6 +101,21 @@ class GatewayService extends ServiceBase {
 		//客户端被迫掉线
 		let body = {is_robot : session.is_robot};
 		NetBus.send_cmd(server_session, stype, CommonProto.eUserLostConnectRes, session.uid, ProtoTools.ProtoType.PROTO_JSON, body);
+		//机器人服务掉线，机器人的sessioin全部删除
+		if(session.is_robot){
+			let del_session_key = [];
+			let global_session_list = NetBus.get_global_session_list();
+			for (let session_key in global_session_list){
+				if (global_session_list[session_key].is_robot){
+					del_session_key.push(session_key);
+				}
+			}
+			if(del_session_key.length > 0){
+				del_session_key.forEach(key => {
+					NetBus.delete_global_session(key);
+				})
+			}
+		}
 	}
 }
 

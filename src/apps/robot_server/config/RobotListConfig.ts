@@ -6,7 +6,7 @@ export default class RobotListConfig {
     static SHOW_EMOJ_TIME:number = 2000;   //表情发送延迟时间
     static TOTAL_EMOJ_COUNT:number = 35; // 总的表情个数 35个
 
-    //机器人配置:[房间等级]：机器人uid
+    //机器人配置:[uid]：{机器人key, 房间等级}
     static robot_roomlevel_map: any = {
         [1911]: { guestkey: "TnhSy7aP7TkK7MN2rppYTs2aKM6jicF7", roomlevel: 1 },
         [1912]: { guestkey: "nM5irPKdfYX6dJP8RPJKR5G6f7ZGx2pe", roomlevel: 1 },

@@ -25,5 +25,5 @@ function on_success_callfunc(server_session:any) {
 
 /**
  *  robot(as client) ----> gateway ----> game_server
- *  game_server ----gateway-----> robot
+ *  game_server ----> gateway -----> robot
  */

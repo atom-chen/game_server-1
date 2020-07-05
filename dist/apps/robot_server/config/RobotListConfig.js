@@ -12,7 +12,7 @@ var RobotListConfig = /** @class */ (function () {
     RobotListConfig.SHOOT_DELAY_TIME = 2000; //射击延迟时间
     RobotListConfig.SHOW_EMOJ_TIME = 2000; //表情发送延迟时间
     RobotListConfig.TOTAL_EMOJ_COUNT = 35; // 总的表情个数 35个
-    //机器人配置:[房间等级]：机器人uid
+    //机器人配置:[uid]：{机器人key, 房间等级}
     RobotListConfig.robot_roomlevel_map = (_a = {},
         _a[1911] = { guestkey: "TnhSy7aP7TkK7MN2rppYTs2aKM6jicF7", roomlevel: 1 },
         _a[1912] = { guestkey: "nM5irPKdfYX6dJP8RPJKR5G6f7ZGx2pe", roomlevel: 1 },
