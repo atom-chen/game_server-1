@@ -88,13 +88,21 @@ class GameAppConfig {
 		stype: Stype.GameHoodle,
 	}
 	
-	//游戏服务2
-	static robot_server: any = {
+	//用户中心服务
+	static auth_server:any =  {
 		host: LOCAL_HOST,
-		port: 6090,
-		stype: Stype.Robot,
+		port: 6086,
+		stype: Stype.Auth,
 	}
 
+	//数据库服务
+	static data_server: any = {
+		host: LOCAL_HOST,
+		port: 6090,
+		stype: Stype.DataBase,
+	}
+	
+	////////////////////
 	//游戏数据库服务
 	static game_database:any =  {
 		host: LOCAL_HOST,
@@ -102,13 +110,6 @@ class GameAppConfig {
 		db_name: "moba_game",
 		uname: "root",
 		upwd: "123456",
-	}
-
-	//用户中心服务
-	static auth_server:any =  {
-		host: LOCAL_HOST,
-		port: 6086,
-		stype: Stype.Auth,
 	}
 
 	//用户中心数据库
@@ -120,19 +121,7 @@ class GameAppConfig {
 		upwd: "123456",
 	}
 
-	//用户中心redis
-	static auth_redis:any =  {
-		host: LOCAL_HOST,
-		port: 6379,
-		db_index: 0,
-	}
-
-	//游戏服务redis
-	static game_redis:any =  {
-		host: LOCAL_HOST,
-		port: 6379,
-		db_index: 1,
-	}
+	////////////////////
 
 	//网关连接其他服务
 	static gw_connect_servers:any =  {
@@ -153,12 +142,6 @@ class GameAppConfig {
 			host: LOCAL_HOST,
 			port: 6087,
 		},
-
-		// [4]: {
-		// 	stype: Stype.Robot,
-		// 	host: LOCAL_HOST,
-		// 	port: 6090,
-		// },
 	}
 }
 

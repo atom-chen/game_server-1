@@ -19,6 +19,7 @@ var LOGIN_OR_REGIST_ERS_CMD = [
     AuthProto_1.Cmd.eWeChatSessionLoginRes,
 ];
 var uid_session_map = {}; //保存已经登录过的玩家 uid-> session
+var server_session_map = {}; //当前连接的服务器session
 var GatewayFunction = /** @class */ (function () {
     function GatewayFunction() {
     }
@@ -51,6 +52,14 @@ var GatewayFunction = /** @class */ (function () {
             uid_session_map[uid] = null;
             delete uid_session_map[uid];
         }
+    };
+    //保存当前所连接的服务session
+    GatewayFunction.save_server_session = function (server_session, stype) {
+        server_session_map[stype] = server_session;
+    };
+    //获取服务session
+    GatewayFunction.get_server_session = function (stype) {
+        return server_session_map[stype];
     };
     return GatewayFunction;
 }());

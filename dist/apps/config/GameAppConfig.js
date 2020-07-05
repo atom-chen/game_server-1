@@ -84,12 +84,19 @@ var GameAppConfig = /** @class */ (function () {
         port: 6089,
         stype: Stype_1.Stype.GameHoodle
     };
-    //游戏服务2
-    GameAppConfig.robot_server = {
+    //用户中心服务
+    GameAppConfig.auth_server = {
+        host: LOCAL_HOST,
+        port: 6086,
+        stype: Stype_1.Stype.Auth
+    };
+    //数据库服务
+    GameAppConfig.data_server = {
         host: LOCAL_HOST,
         port: 6090,
-        stype: Stype_1.Stype.Robot
+        stype: Stype_1.Stype.DataBase
     };
+    ////////////////////
     //游戏数据库服务
     GameAppConfig.game_database = {
         host: LOCAL_HOST,
@@ -97,12 +104,6 @@ var GameAppConfig = /** @class */ (function () {
         db_name: "moba_game",
         uname: "root",
         upwd: "123456"
-    };
-    //用户中心服务
-    GameAppConfig.auth_server = {
-        host: LOCAL_HOST,
-        port: 6086,
-        stype: Stype_1.Stype.Auth
     };
     //用户中心数据库
     GameAppConfig.auth_database = {
@@ -112,18 +113,7 @@ var GameAppConfig = /** @class */ (function () {
         uname: "root",
         upwd: "123456"
     };
-    //用户中心redis
-    GameAppConfig.auth_redis = {
-        host: LOCAL_HOST,
-        port: 6379,
-        db_index: 0
-    };
-    //游戏服务redis
-    GameAppConfig.game_redis = {
-        host: LOCAL_HOST,
-        port: 6379,
-        db_index: 1
-    };
+    ////////////////////
     //网关连接其他服务
     GameAppConfig.gw_connect_servers = (_a = {},
         _a[1] = {

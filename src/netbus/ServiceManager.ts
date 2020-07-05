@@ -12,7 +12,6 @@ class ServiceManager {
         }
     
         ServiceManager.service_modules[stype] = service;
-        Log.info(StypeName[stype] , " service registed success !!!!");
     }
     
     static on_recv_server_cmd(session:any, cmd_buf:Buffer) {

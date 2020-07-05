@@ -19,12 +19,13 @@ var StickPackage = require("stickpackage");
 var NetClient = /** @class */ (function () {
     function NetClient() {
     }
-    NetClient.connect_tcp_server = function (host, port, is_encrypt, success_callfunc) {
+    NetClient.connect_tcp_server = function (host, port, is_encrypt, stype, success_callfunc) {
         var server_session = TcpSocket.connect({
             port: port,
             host: host
         });
         server_session.is_connected = false;
+        server_session.stype = stype;
         server_session.on("connect", function () {
             NetClient.on_session_connected(server_session, is_encrypt);
             if (server_session.msgCenter) {
@@ -44,7 +45,7 @@ var NetClient = /** @class */ (function () {
             // 重新连接服务器
             setTimeout(function () {
                 Log_1["default"].warn("reconnect:", host, port);
-                NetClient.connect_tcp_server(host, port, is_encrypt, success_callfunc);
+                NetClient.connect_tcp_server(host, port, is_encrypt, stype, success_callfunc);
             }, 1000);
         });
         server_session.on("error", function (err) {
@@ -86,9 +87,21 @@ var NetClient = /** @class */ (function () {
         }
         var encode_cmd = ProtoManager_1["default"].encode_cmd(stype, ctype, utag, proto_type, body);
         if (encode_cmd) {
-            if (server_session.is_encrypt) {
-                encode_cmd = ProtoManager_1["default"].encrypt_cmd(encode_cmd);
-            }
+            NetClient.send_encoded_cmd(server_session, encode_cmd);
+        }
+    };
+    // 发送未解包的数据包
+    NetClient.send_encoded_cmd = function (server_session, encode_cmd) {
+        if (!server_session.is_connected) {
+            return;
+        }
+        if (server_session.is_encrypt) {
+            encode_cmd = ProtoManager_1["default"].encrypt_cmd(encode_cmd);
+        }
+        if (server_session.is_websocket) { //websocket
+            server_session.send(encode_cmd);
+        }
+        else { //tcp
             if (server_session.msgCenter) {
                 var data = server_session.msgCenter.publish(encode_cmd);
                 if (data) {

@@ -22,7 +22,6 @@ var ServiceManager = /** @class */ (function () {
             Log_1["default"].warn(Stype_1.StypeName[stype], " service is registed !!!!");
         }
         ServiceManager.service_modules[stype] = service;
-        Log_1["default"].info(Stype_1.StypeName[stype], " service registed success !!!!");
     };
     ServiceManager.on_recv_server_cmd = function (session, cmd_buf) {
         if (session.is_encrypt) {

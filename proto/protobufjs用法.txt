@@ -1,4 +1,4 @@
-1.pbjs 安装： npm install protobufjs
+﻿1.pbjs 安装： npm install protobufjs
 2.进入 protobufjs -> node_module/.bin/
 3.主要使用pbjs.com 将proto文件转成js , json文件供项目使用
 4.转换命令： 将gameprotocol.proto 转成gameprotocol.js

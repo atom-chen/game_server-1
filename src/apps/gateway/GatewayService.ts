@@ -12,15 +12,17 @@ import CommonProto from '../protocol/CommonProto';
 import Log from '../../utils/Log';
 import GatewayFunction from './GatewayFunction';
 import * as util from 'util';
+import NetClient from '../../netbus/NetClient';
 
 class GatewayService extends ServiceBase {
 	service_name: string = "GatewayService"; // 服务名称
 	is_transfer: boolean = true; 			// 是否为转发模块,
 	
 	//客户端发到网关，网关转发到服务器
+	//session 客户端session
 	static on_recv_client_player_cmd(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:any){
-		let server_session = NetBus.get_server_session(stype);
-		if (!server_session) {
+		let server_session = GatewayFunction.get_server_session(stype);
+		if (util.isNullOrUndefined(server_session)) {
 			return;
 		}
 		// 打入能够标识client的utag, uid, session.session_key,
@@ -41,7 +43,7 @@ class GatewayService extends ServiceBase {
 			}
 		}
 		ProtoTools.write_utag_inbuf(raw_cmd, utag);
-		NetBus.send_encoded_cmd(server_session,raw_cmd);
+		NetClient.send_encoded_cmd(server_session,raw_cmd);
 		Log.info("recv_client>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype), ",utag:", utag);
 	}
 	
@@ -85,12 +87,13 @@ class GatewayService extends ServiceBase {
 	}
 
 	//玩家掉线,网关发消息给其他服务，其他服务接收eUserLostConnectRes协议进行处理就好了
+	//session: 客户端session
 	static on_player_disconnect(session:any, stype:number) {
 		if (stype == Stype.Auth) { // 由Auth服务保存的，那么就由Auth清空
 			GatewayFunction.clear_session_with_uid(session.uid);
 		}
 
-		let server_session = NetBus.get_server_session(stype);
+		let server_session = GatewayFunction.get_server_session(stype);
 		if (util.isNullOrUndefined(server_session)) {
 			return;
 		}

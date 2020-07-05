@@ -36,6 +36,7 @@ var CommonProto_1 = __importDefault(require("../protocol/CommonProto"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var GatewayFunction_1 = __importDefault(require("./GatewayFunction"));
 var util = __importStar(require("util"));
+var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
 var GatewayService = /** @class */ (function (_super) {
     __extends(GatewayService, _super);
     function GatewayService() {
@@ -45,9 +46,10 @@ var GatewayService = /** @class */ (function (_super) {
         return _this;
     }
     //客户端发到网关，网关转发到服务器
+    //session 客户端session
     GatewayService.on_recv_client_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        var server_session = NetBus_1["default"].get_server_session(stype);
-        if (!server_session) {
+        var server_session = GatewayFunction_1["default"].get_server_session(stype);
+        if (util.isNullOrUndefined(server_session)) {
             return;
         }
         // 打入能够标识client的utag, uid, session.session_key,
@@ -70,7 +72,7 @@ var GatewayService = /** @class */ (function (_super) {
             }
         }
         ProtoTools_1["default"].write_utag_inbuf(raw_cmd, utag);
-        NetBus_1["default"].send_encoded_cmd(server_session, raw_cmd);
+        NetClient_1["default"].send_encoded_cmd(server_session, raw_cmd);
         Log_1["default"].info("recv_client>>> ", ProtoCmd_1["default"].getProtoName(stype) + ",", ProtoCmd_1["default"].getCmdName(stype, ctype), ",utag:", utag);
     };
     //服务器发到网关，网关转发到客户端
@@ -111,11 +113,12 @@ var GatewayService = /** @class */ (function (_super) {
         }
     };
     //玩家掉线,网关发消息给其他服务，其他服务接收eUserLostConnectRes协议进行处理就好了
+    //session: 客户端session
     GatewayService.on_player_disconnect = function (session, stype) {
         if (stype == Stype_1.Stype.Auth) { // 由Auth服务保存的，那么就由Auth清空
             GatewayFunction_1["default"].clear_session_with_uid(session.uid);
         }
-        var server_session = NetBus_1["default"].get_server_session(stype);
+        var server_session = GatewayFunction_1["default"].get_server_session(stype);
         if (util.isNullOrUndefined(server_session)) {
             return;
         }

@@ -15,13 +15,11 @@ var ProtoManager_1 = __importDefault(require("./ProtoManager"));
 var ServiceManager_1 = __importDefault(require("./ServiceManager"));
 var WebSocket = __importStar(require("ws"));
 var TcpSocket = __importStar(require("net"));
-var Stype_1 = require("../apps/protocol/Stype");
 var ArrayUtil_1 = __importDefault(require("../utils/ArrayUtil"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var StickPackage = require("stickpackage");
 var global_session_list = {}; //客户端session
 var global_seesion_key = 1; //客户端session key
-var server_connect_list = {}; //当前作为客户端，连接到的其他服务器的session
 var IS_USE_STICKPACKAGE = true; //是否使用stickpackage处理粘包
 var NetBus = /** @class */ (function () {
     function NetBus() {
@@ -58,56 +56,6 @@ var NetBus = /** @class */ (function () {
             host: ip,
             port: port,
             exclusive: true
-        });
-    };
-    //连接到其他服务器
-    NetBus.connect_tcp_server = function (stype, host, port, is_encrypt, success_callfunc) {
-        var session = TcpSocket.connect({
-            port: port,
-            host: host
-        });
-        session.is_connected = false;
-        session.on("connect", function () {
-            NetBus.on_session_connected(stype, session, false, is_encrypt);
-            if (session.msgCenter) {
-                session.msgCenter.onMsgRecv(function (cmd_buf) {
-                    NetBus.on_recv_cmd_server_return(session, cmd_buf);
-                });
-            }
-            if (success_callfunc) {
-                success_callfunc();
-            }
-        });
-        session.on("close", function () {
-            if (session.is_connected === true) {
-                NetBus.on_session_disconnect(session);
-            }
-            NetBus.session_close(session);
-            // 重新连接到服务器
-            setTimeout(function () {
-                Log_1["default"].warn("reconnect:", Stype_1.StypeName[stype], host, port);
-                NetBus.connect_tcp_server(stype, host, port, is_encrypt, success_callfunc);
-            }, 1000);
-        });
-        session.on("error", function (err) {
-        });
-        session.on("data", function (data) {
-            if (!Buffer.isBuffer(data)) {
-                NetBus.session_close(session);
-                return;
-            }
-            if (IS_USE_STICKPACKAGE == true) {
-                if (session.msgCenter) { //使用工具处理粘包
-                    session.msgCenter.putData(data);
-                }
-            }
-            else {
-                //TODO 数据包不对，会一直堆积
-                var last_pkg = NetBus.handle_package_data(session.last_pkg, data, function (cmd_buf) {
-                    NetBus.on_recv_cmd_server_return(session, cmd_buf);
-                });
-                session.last_pkg = last_pkg;
-            }
         });
     };
     // 有客户端的session接入进来
@@ -242,7 +190,6 @@ var NetBus = /** @class */ (function () {
             else {
                 data = TcpPkg_1["default"].package_data(encode_cmd);
             }
-            // Log.info("data: " , data)
             if (data) {
                 session.write(data);
             }
@@ -302,50 +249,9 @@ var NetBus = /** @class */ (function () {
         // Log.info("handle_package_data555")
         return last_pkg;
     };
-    //////////////////////////////////
-    //当前作为客户端，接收到其他服务器消息
-    NetBus.on_recv_cmd_server_return = function (session, str_or_buf) {
-        if (!ServiceManager_1["default"].on_recv_server_cmd(session, str_or_buf)) {
-            NetBus.session_close(session);
-        }
-    };
-    //当前作为客户端，成功连接到其他服务器
-    NetBus.on_session_connected = function (stype, session, is_websocket, is_encrypt) {
-        if (is_websocket) {
-            Log_1["default"].info("connect to " + Stype_1.StypeName[stype], " server success!  ", session._socket.remoteAddress, session._socket.remotePort);
-        }
-        else {
-            Log_1["default"].info("connect to " + Stype_1.StypeName[stype] + " server success! ", session.remoteAddress, session.remotePort);
-        }
-        session.last_pkg = null; // 表示我们存储的上一次没有处理完的TCP包;
-        session.is_websocket = is_websocket;
-        session.is_connected = true;
-        session.is_encrypt = is_encrypt;
-        if (!is_websocket) {
-            var option = { bigEndian: false };
-            session.msgCenter = new StickPackage.msgCenter(option); //粘包处理工具
-        }
-        server_connect_list[stype] = session;
-        session.session_key = stype;
-    };
-    //当前作为客户端，获取其他服务器session
-    NetBus.get_server_session = function (stype) {
-        return server_connect_list[stype];
-    };
     //获取客户端Session
     NetBus.get_client_session = function (session_key) {
         return global_session_list[session_key];
-    };
-    //当前作为客户端，其他服务器断开链接
-    NetBus.on_session_disconnect = function (session) {
-        session.is_connected = false;
-        var stype = session.session_key;
-        session.last_pkg = null;
-        session.session_key = null;
-        if (server_connect_list[stype]) {
-            server_connect_list[stype] = null;
-            delete server_connect_list[stype];
-        }
     };
     NetBus.get_global_session_list = function () {
         return global_session_list;

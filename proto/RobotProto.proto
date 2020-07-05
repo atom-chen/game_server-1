@@ -1,8 +1,0 @@
-//RobotProto.proro
-
-syntax = "proto3";
-package RobotProto;
-
-enum Cmd {
-	INVALED 					= 0;
-}

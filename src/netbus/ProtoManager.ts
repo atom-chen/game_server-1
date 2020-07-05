@@ -1,5 +1,4 @@
 import ProtoTools from "./ProtoTools"
-import CryptoUtil from '../utils/CryptoUtil';
 
 class ProtoManager {
     //解头: stype, ctype, utag, proto_type, body

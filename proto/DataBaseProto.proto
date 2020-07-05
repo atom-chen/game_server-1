@@ -1,0 +1,20 @@
+//DataBaseProto.proro
+
+syntax = "proto3";
+package DataBaseProto;
+
+enum Cmd {
+	INVALED 					= 0;
+	eAuthUinfoReq 				= 1;
+	eAuthUinfoRes 				= 2;
+}
+
+message AuthUinfoReq {
+	string uname = 1;
+	string upwd = 2;
+}
+
+message AuthUinfoRes {
+	sint32 status = 1;
+	optional string result = 2;
+}

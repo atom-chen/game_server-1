@@ -11,7 +11,6 @@ let StickPackage    = require("stickpackage")
 
 let global_session_list:any         = {}; 	//客户端session
 let global_seesion_key:number 	    = 1; 	//客户端session key
-let server_connect_list:any         = {}; 	//当前作为客户端，连接到的其他服务器的session
 let IS_USE_STICKPACKAGE:boolean     = true; //是否使用stickpackage处理粘包
 
 class NetBus {
@@ -53,61 +52,6 @@ class NetBus {
             exclusive: true,
         });
     }
-    //连接到其他服务器
-    static connect_tcp_server(stype:number, host:string, port:number, is_encrypt:boolean, success_callfunc?:Function) {
-        let session:any = TcpSocket.connect({
-            port: port,
-            host: host,
-        });
-
-        session.is_connected = false;
-        session.on("connect",function() {
-            NetBus.on_session_connected(stype, session, false, is_encrypt);
-            if (session.msgCenter){
-                session.msgCenter.onMsgRecv(function(cmd_buf:Buffer){
-                    NetBus.on_recv_cmd_server_return(session,cmd_buf)
-                });
-            }
-            if(success_callfunc){
-                success_callfunc();
-            }
-        });
-
-        session.on("close", function() {
-            if (session.is_connected === true) {
-                NetBus.on_session_disconnect(session);	
-            }
-            NetBus.session_close(session);
-            // 重新连接到服务器
-            setTimeout(function() {
-                Log.warn("reconnect:", StypeName[stype], host, port);
-                NetBus.connect_tcp_server(stype, host, port, is_encrypt, success_callfunc);
-            }, 1000);
-        });
-
-        session.on("error", function(err:Error) {
-        });
-
-        session.on("data", function(data:Buffer) {
-            if (!Buffer.isBuffer(data)) {
-                NetBus.session_close(session);
-                return;
-            }
-
-            if(IS_USE_STICKPACKAGE == true){
-                if(session.msgCenter){//使用工具处理粘包
-                    session.msgCenter.putData(data)
-                }
-            }else{
-                //TODO 数据包不对，会一直堆积
-                let last_pkg = NetBus.handle_package_data(session.last_pkg, data,function(cmd_buf:Buffer){
-                    NetBus.on_recv_cmd_server_return(session, cmd_buf)
-                })
-                session.last_pkg = last_pkg;
-            }
-        });
-    }
-
     // 有客户端的session接入进来
     static on_session_enter(session:any, is_websocket:boolean, is_encrypt:boolean) {
         if (is_websocket) {
@@ -253,7 +197,6 @@ class NetBus {
             }else{
                 data = TcpPkg.package_data(encode_cmd);
             }
-            // Log.info("data: " , data)
             if (data){
                 session.write(data);
             }
@@ -318,57 +261,9 @@ class NetBus {
         return last_pkg
     }
 
-    //////////////////////////////////
-    //当前作为客户端，接收到其他服务器消息
-    static on_recv_cmd_server_return(session:any, str_or_buf:any) {
-        if(!ServiceManager.on_recv_server_cmd(session, str_or_buf)) {
-            NetBus.session_close(session);
-        }
-    }
-
-    //当前作为客户端，成功连接到其他服务器
-    static on_session_connected(stype:number, session:any, is_websocket:boolean, is_encrypt:boolean) {
-        if (is_websocket) {
-            Log.info("connect to " + StypeName[stype] , " server success!  ", session._socket.remoteAddress, session._socket.remotePort);
-        }
-        else {
-            Log.info("connect to " + StypeName[stype] + " server success! ", session.remoteAddress, session.remotePort);	
-        }
-        
-        session.last_pkg 		= null; // 表示我们存储的上一次没有处理完的TCP包;
-        session.is_websocket 	= is_websocket;
-        session.is_connected 	= true;
-        session.is_encrypt 		= is_encrypt;
-        if(!is_websocket){
-            let option = {bigEndian:false}
-            session.msgCenter = new StickPackage.msgCenter(option) //粘包处理工具
-        }
-
-        server_connect_list[stype] 	= session;
-        session.session_key 		= stype;
-    }
-
-    //当前作为客户端，获取其他服务器session
-    static get_server_session(stype:number) {
-        return server_connect_list[stype];
-    }
-
     //获取客户端Session
     static get_client_session(session_key:number) {
         return global_session_list[session_key];
-    }
-
-    //当前作为客户端，其他服务器断开链接
-    static on_session_disconnect(session:any) {
-        session.is_connected = false;
-        let stype = session.session_key;
-        session.last_pkg = null; 
-        session.session_key = null;
-
-        if (server_connect_list[stype]) {
-            server_connect_list[stype] = null;
-            delete server_connect_list[stype];
-        }
     }
 
     static get_global_session_list(){

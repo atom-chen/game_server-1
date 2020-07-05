@@ -24,6 +24,7 @@ let LOGIN_OR_REGIST_ERS_CMD = [
 ]
 
 let uid_session_map: USMap = {}   //保存已经登录过的玩家 uid-> session
+let server_session_map: USMap = {} //当前连接的服务器session
 
 class GatewayFunction {
 
@@ -60,6 +61,16 @@ class GatewayFunction {
             uid_session_map[uid] = null;
             delete uid_session_map[uid];
         }
+    }
+
+    //保存当前所连接的服务session
+    static save_server_session(server_session:any, stype:number){
+        server_session_map[stype] = server_session;
+    }
+
+    //获取服务session
+    static get_server_session(stype:number){
+        return server_session_map[stype];
     }
 }
 

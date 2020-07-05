@@ -1,8 +1,7 @@
 import ProtoCmd from "../apps/protocol/ProtoCmd"
 import StringUtil from "../utils/StringUtil"
 import Log from '../utils/Log';
-
-var protobufMsg = require("../apps/protocol/protobufMsg")
+import * as util from 'util';
 
 class ProtoTools  {
     static  HEADER_SIZE: number    = 10;   // header size
@@ -127,36 +126,20 @@ class ProtoTools  {
   
     //编码 protobuf命令
     static encode_protobuf_cmd(stype:number, ctype:number, utag:number, proto_type:number, body?:any){
-        let stypeName = ProtoCmd.getProtoName(stype)
-        let cmdName   = ProtoCmd.getCmdName(stype,ctype)
-        // Log.info("encode_protobuf_cmd: ", stypeName , cmdName ,stype ,ctype)
-        if (!stypeName || !cmdName){
-            Log.error("encode stypeName or cmdName not exist")
-            return;
-        }
-
-        if (!protobufMsg[stypeName]) {
-            Log.error("encode stypeName" , stypeName , " not exist")
-            return;
-        }
-    
-        let msgType = protobufMsg[stypeName][cmdName]
+        let msgType = ProtoCmd.getProtoMsg(stype, ctype);
         if (!msgType) {
-            Log.error("encode cmdName" , cmdName, "not exist")
             return;
         }
 
-        if(!body){
-            body = {}
-        }
+        if(!body){body = {};}
 
-        let error = msgType.verify(body)
+        let error = msgType.verify(body);
         if(error){
             Log.error(error)
             return;
         }
 
-        let message = msgType.create(body)
+        let message = msgType.create(body);
         if(message){
             try {
                 let emcode_msg 	= msgType.encode(message).finish()
@@ -177,33 +160,14 @@ class ProtoTools  {
         let ctype = ProtoTools.read_int16(cmd_buf, 2);
         let bodyBuf = ProtoTools.read_protobuf_inbuf(cmd_buf,ProtoTools.HEADER_SIZE)
         if(bodyBuf){
-            let stypeName = ProtoCmd.getProtoName(stype)
-            let cmdName   = ProtoCmd.getCmdName(stype,ctype)
-            // Log.info("decode_protobuf_cmd: ", stypeName , cmdName ,stype ,ctype)
-            if (!stypeName || !cmdName){
-                Log.error("decode stypeName or cmdName not exist")
-                return;
-            }
-    
-            if (!protobufMsg[stypeName]) {
-                Log.error("decode stypeName" , stypeName , " not exist")
-                return;
-            }
-    
-            let msgType = protobufMsg[stypeName][cmdName]
-            if (!msgType) {
-                Log.error("decode cmdName" , cmdName , " not exist")
-                return;
-            }
-            let decodeMsg = null;
+            let msgType = ProtoCmd.getProtoMsg(stype, ctype);
+            if (util.isNullOrUndefined(msgType)) { return;}
             try {
-                 decodeMsg = msgType.decode(bodyBuf)
-            }
-            catch(e) {
+                 return msgType.decode(bodyBuf)
+            }catch(e) {
                 Log.error(e)
                 return ;
             }
-            return decodeMsg;
         }
     }
 }

@@ -17,7 +17,7 @@ var RobotAuthIngerface_1 = __importDefault(require("./interface/RobotAuthIngerfa
 ServiceManager_1["default"].register_service(Stype_1.Stype.GameHoodle, RobotService_1["default"]);
 ServiceManager_1["default"].register_service(Stype_1.Stype.Auth, RobotService_1["default"]);
 // cur server as client connect to game_server
-NetClient_1["default"].connect_tcp_server(GameAppConfig_1["default"].gateway_config.host, GameAppConfig_1["default"].gateway_config.tcp_port, false, on_success_callfunc);
+NetClient_1["default"].connect_tcp_server(GameAppConfig_1["default"].gateway_config.host, GameAppConfig_1["default"].gateway_config.tcp_port, false, undefined, on_success_callfunc);
 //server_session: gateway的session
 function on_success_callfunc(server_session) {
     Log_1["default"].info("robot server success connect to game_server!!!");

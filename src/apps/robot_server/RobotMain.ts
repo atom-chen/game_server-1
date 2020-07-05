@@ -15,7 +15,7 @@ ServiceManager.register_service(Stype.GameHoodle, RobotService);
 ServiceManager.register_service(Stype.Auth, RobotService);
 
 // cur server as client connect to game_server
-NetClient.connect_tcp_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.tcp_port, false, on_success_callfunc);
+NetClient.connect_tcp_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.tcp_port, false, undefined, on_success_callfunc);
 
 //server_session: gateway的session
 function on_success_callfunc(server_session:any) {

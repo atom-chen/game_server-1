@@ -2,11 +2,18 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
 exports.__esModule = true;
 var ProtoCmd_1 = __importDefault(require("../apps/protocol/ProtoCmd"));
 var StringUtil_1 = __importDefault(require("../utils/StringUtil"));
 var Log_1 = __importDefault(require("../utils/Log"));
-var protobufMsg = require("../apps/protocol/protobufMsg");
+var util = __importStar(require("util"));
 var ProtoTools = /** @class */ (function () {
     function ProtoTools() {
     }
@@ -107,20 +114,8 @@ var ProtoTools = /** @class */ (function () {
     };
     //编码 protobuf命令
     ProtoTools.encode_protobuf_cmd = function (stype, ctype, utag, proto_type, body) {
-        var stypeName = ProtoCmd_1["default"].getProtoName(stype);
-        var cmdName = ProtoCmd_1["default"].getCmdName(stype, ctype);
-        // Log.info("encode_protobuf_cmd: ", stypeName , cmdName ,stype ,ctype)
-        if (!stypeName || !cmdName) {
-            Log_1["default"].error("encode stypeName or cmdName not exist");
-            return;
-        }
-        if (!protobufMsg[stypeName]) {
-            Log_1["default"].error("encode stypeName", stypeName, " not exist");
-            return;
-        }
-        var msgType = protobufMsg[stypeName][cmdName];
+        var msgType = ProtoCmd_1["default"].getProtoMsg(stype, ctype);
         if (!msgType) {
-            Log_1["default"].error("encode cmdName", cmdName, "not exist");
             return;
         }
         if (!body) {
@@ -152,31 +147,17 @@ var ProtoTools = /** @class */ (function () {
         var ctype = ProtoTools.read_int16(cmd_buf, 2);
         var bodyBuf = ProtoTools.read_protobuf_inbuf(cmd_buf, ProtoTools.HEADER_SIZE);
         if (bodyBuf) {
-            var stypeName = ProtoCmd_1["default"].getProtoName(stype);
-            var cmdName = ProtoCmd_1["default"].getCmdName(stype, ctype);
-            // Log.info("decode_protobuf_cmd: ", stypeName , cmdName ,stype ,ctype)
-            if (!stypeName || !cmdName) {
-                Log_1["default"].error("decode stypeName or cmdName not exist");
+            var msgType = ProtoCmd_1["default"].getProtoMsg(stype, ctype);
+            if (util.isNullOrUndefined(msgType)) {
                 return;
             }
-            if (!protobufMsg[stypeName]) {
-                Log_1["default"].error("decode stypeName", stypeName, " not exist");
-                return;
-            }
-            var msgType = protobufMsg[stypeName][cmdName];
-            if (!msgType) {
-                Log_1["default"].error("decode cmdName", cmdName, " not exist");
-                return;
-            }
-            var decodeMsg = null;
             try {
-                decodeMsg = msgType.decode(bodyBuf);
+                return msgType.decode(bodyBuf);
             }
             catch (e) {
                 Log_1["default"].error(e);
                 return;
             }
-            return decodeMsg;
         }
     };
     ProtoTools.HEADER_SIZE = 10; // header size
