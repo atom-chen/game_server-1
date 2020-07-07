@@ -24,7 +24,7 @@ class NetClient {
                 });
             }
             if (success_callfunc) {
-                success_callfunc(server_session);
+                success_callfunc(server_session);//这里将所连接的服务的session返回，各个进程自己维护服务session
             }
         });
 

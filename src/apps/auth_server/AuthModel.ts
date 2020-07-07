@@ -1,3 +1,4 @@
+//接收客户端协议模块
 import {Cmd,CmdName} from "../protocol/AuthProto"
 import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';

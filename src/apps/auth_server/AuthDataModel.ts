@@ -1,3 +1,5 @@
+//数据模块，通过协议去数据库拿数据
+
 import ProtoManager from '../../netbus/ProtoManager';
 import CommonProto from '../protocol/CommonProto';
 import Log from '../../utils/Log';

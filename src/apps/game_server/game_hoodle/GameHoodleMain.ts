@@ -15,7 +15,6 @@ import Log from '../../../utils/Log';
 
 let game_server = GameAppConfig.game_server;
 NetBus.start_tcp_server(game_server.host, game_server.port, false);
-
 ServiceManager.register_service(Stype.GameHoodle, GameHoodleService);
 
 //游戏服务

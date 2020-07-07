@@ -27,13 +27,8 @@ var DataService = /** @class */ (function (_super) {
         return _this;
     }
     // 收到客户端，或者其他服务发来的数据
+    //暂时还不能区分，哪个服务发过来的消息 TODO
     DataService.on_recv_client_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        // if(stype == Stype.Auth){
-        // } else if (stype == Stype.GameHoodle){
-        //     DataModelGame.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
-        // } else if (stype == Stype.GameSystem){
-        //     DataModelSystem.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
-        // }
         DataModelAuth_1["default"].getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
     };
     // 收到连接的其他服务发过来的消息，这里不做处理

@@ -4,6 +4,7 @@ import Log from '../../utils/Log';
 import { Stype, StypeName } from '../protocol/Stype';
 import RobotGameInterface from './interface/RobotGameInterface';
 import { Cmd, CmdName } from '../protocol/AuthProto';
+import RobotSend from './RobotSend';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;

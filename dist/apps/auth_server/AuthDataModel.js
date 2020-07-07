@@ -1,4 +1,5 @@
 "use strict";
+//数据模块，通过协议去数据库拿数据
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };

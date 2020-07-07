@@ -95,7 +95,7 @@ class GameAppConfig {
 		stype: Stype.Auth,
 	}
 
-	//数据库服务
+	//数据服务
 	static data_server: any = {
 		host: LOCAL_HOST,
 		port: 6090,
@@ -125,23 +125,9 @@ class GameAppConfig {
 
 	//网关连接其他服务
 	static gw_connect_servers:any =  {
-		[1]: {
-			stype: Stype.Auth,
-			host: LOCAL_HOST,
-			port: 6086,
-		},
-
-		[2]: {
-			stype: Stype.GameHoodle,
-			host: LOCAL_HOST,
-			port: 6088,
-		},
-
-		[3]: {
-			stype: Stype.GameSystem,
-			host: LOCAL_HOST,
-			port: 6087,
-		},
+		[1]: GameAppConfig.auth_server,
+		[2]: GameAppConfig.game_server,
+		[3]: GameAppConfig.game_system_server,
 	}
 }
 

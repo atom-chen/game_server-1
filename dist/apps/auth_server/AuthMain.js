@@ -11,28 +11,27 @@ var GameAppConfig_1 = __importDefault(require("../config/GameAppConfig"));
 var NetBus_1 = __importDefault(require("../../netbus/NetBus"));
 var AuthService_1 = __importDefault(require("./AuthService"));
 var ServiceManager_1 = __importDefault(require("../../netbus/ServiceManager"));
+var MySqlAuth_1 = __importDefault(require("../../database/MySqlAuth"));
 var Stype_1 = require("../protocol/Stype");
-var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
-var Log_1 = __importDefault(require("../../utils/Log"));
-var DataBaseProto_1 = require("../protocol/DataBaseProto");
-var ProtoTools_1 = __importDefault(require("../../netbus/ProtoTools"));
-var AuthSendMsg_1 = __importDefault(require("./AuthSendMsg"));
 var auth_server = GameAppConfig_1["default"].auth_server;
 NetBus_1["default"].start_tcp_server(auth_server.host, auth_server.port, false);
 ServiceManager_1["default"].register_service(Stype_1.Stype.Auth, AuthService_1["default"]);
-ServiceManager_1["default"].register_service(Stype_1.Stype.DataBase, AuthService_1["default"]); //便于DataBase服务转发数据给当前服务
-NetClient_1["default"].connect_tcp_server(GameAppConfig_1["default"].data_server.host, GameAppConfig_1["default"].data_server.port, false, Stype_1.Stype.DataBase, on_success_callfunc);
-function on_success_callfunc(server_session) {
-    AuthSendMsg_1["default"].save_server_session(server_session, server_session.stype);
-    Log_1["default"].info("auth server success connect to data_server!!!");
-    var body = {
-        uname: "hcc",
-        upwd: "hccpwd"
-    };
-    //stype.database 表示当前发给database服务的
-    // NetClient.send_cmd(server_session, Stype.DataBase, Cmd.eAuthUinfoReq, 0, ProtoTools.ProtoType.PROTO_BUF, body);
-    AuthSendMsg_1["default"].send_data_server(DataBaseProto_1.Cmd.eAuthUinfoReq, 0, ProtoTools_1["default"].ProtoType.PROTO_BUF, body);
+// ServiceManager.register_service(Stype.DataBase, AuthService); //便于DataBase服务转发数据给当前服务
+var db_auth = GameAppConfig_1["default"].auth_database;
+MySqlAuth_1["default"].connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db_auth.upwd);
+//连接数据服务
+/*
+NetClient.connect_tcp_server(GameAppConfig.data_server.host, GameAppConfig.data_server.port, false, Stype.DataBase ,on_success_callfunc);
+function on_success_callfunc(server_session: any) {
+    AuthSendMsg.save_server_session(server_session, server_session.stype);
+    Log.info("auth server success connect to data_server!!!");
+    
+    //test
+    // let body = {
+    // 	uname : "hcc",
+    // 	upwd : "hccpwd",
+    // }
+    // AuthSendMsg.send_data_server(Cmd.eAuthUinfoReq, 0, ProtoTools.ProtoType.PROTO_BUF, body);
 }
-// let db_auth = GameAppConfig.auth_database;
-// MySqlAuth.connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db_auth.upwd)
+*/
 //# sourceMappingURL=AuthMain.js.map

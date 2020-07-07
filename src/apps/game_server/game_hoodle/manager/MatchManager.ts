@@ -39,8 +39,8 @@ class MatchManager {
         for(let key in RoomListConfig){
             let conf = RoomListConfig[key];
             this._zoom_list[conf.roomlevel] = {};
-            this._zoom_list[conf.roomlevel]["match_list"] = {}
-            this._zoom_list[conf.roomlevel]["in_match_list"] = {}
+            this._zoom_list[conf.roomlevel]["match_list"] = {};
+            this._zoom_list[conf.roomlevel]["in_match_list"] = {};
         }
     }
 

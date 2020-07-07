@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
+//接收客户端协议模块
 var AuthProto_1 = require("../protocol/AuthProto");
 var Response_1 = __importDefault(require("../protocol/Response"));
 var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));

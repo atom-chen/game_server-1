@@ -1,3 +1,5 @@
+//协议发送
+
 import NetBus from "../../netbus/NetBus";
 import { Stype } from '../protocol/Stype';
 import NetClient from '../../netbus/NetClient';

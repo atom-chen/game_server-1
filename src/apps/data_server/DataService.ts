@@ -1,8 +1,6 @@
 import ServiceBase from '../../netbus/ServiceBase';
 import DataModelAuth from './DataModelAuth';
 import { Stype } from '../protocol/Stype';
-import DataModelGame from './DataModelGame';
-import DataModelSystem from './DataModelSystem';
 
 class DataService extends ServiceBase {
     service_name: string = "DataService"; // 服务名称
@@ -11,12 +9,6 @@ class DataService extends ServiceBase {
     // 收到客户端，或者其他服务发来的数据
     //暂时还不能区分，哪个服务发过来的消息 TODO
     static on_recv_client_player_cmd(session: any, stype: number, ctype: number, utag: number, proto_type: number, raw_cmd: any) {
-        // if(stype == Stype.Auth){
-        // } else if (stype == Stype.GameHoodle){
-        //     DataModelGame.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
-        // } else if (stype == Stype.GameSystem){
-        //     DataModelSystem.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
-        // }
         DataModelAuth.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
     }
 

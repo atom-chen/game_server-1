@@ -90,7 +90,7 @@ var GameAppConfig = /** @class */ (function () {
         port: 6086,
         stype: Stype_1.Stype.Auth
     };
-    //数据库服务
+    //数据服务
     GameAppConfig.data_server = {
         host: LOCAL_HOST,
         port: 6090,
@@ -116,21 +116,9 @@ var GameAppConfig = /** @class */ (function () {
     ////////////////////
     //网关连接其他服务
     GameAppConfig.gw_connect_servers = (_a = {},
-        _a[1] = {
-            stype: Stype_1.Stype.Auth,
-            host: LOCAL_HOST,
-            port: 6086
-        },
-        _a[2] = {
-            stype: Stype_1.Stype.GameHoodle,
-            host: LOCAL_HOST,
-            port: 6088
-        },
-        _a[3] = {
-            stype: Stype_1.Stype.GameSystem,
-            host: LOCAL_HOST,
-            port: 6087
-        },
+        _a[1] = GameAppConfig.auth_server,
+        _a[2] = GameAppConfig.game_server,
+        _a[3] = GameAppConfig.game_system_server,
         _a);
     return GameAppConfig;
 }());
