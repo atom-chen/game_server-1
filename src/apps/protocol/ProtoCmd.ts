@@ -1,4 +1,3 @@
-import * as DataBaseProto from "./DataBaseProto"
 import * as AuthProto from "./AuthProto"
 import * as SystemProto from "./SystemProto"
 import * as GameHoodleProto from "./GameHoodleProto"
@@ -15,7 +14,6 @@ class ProtoCmd {
 		  [Stype.Auth]: AuthProto,
 		  [Stype.GameSystem]: SystemProto,
 		  [Stype.GameHoodle] : GameHoodleProto,
-		  [Stype.DataBase]: DataBaseProto,
 	}
 	
 	//命名空间

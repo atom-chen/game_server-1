@@ -22,12 +22,6 @@ class AuthSendMsg {
     public static send(session:any, ctype:number, utag:number, proto_type:number, body:any){
         NetBus.send_cmd(session, Stype.Auth, ctype, utag, proto_type, body)
     }
-
-    //当前作为客户端，发给data_server, server_session已经保存
-    public static send_data_server(ctype:number, utag:number, proto_type:number, body:any){
-        let server_session = AuthSendMsg.get_server_session(Stype.DataBase);
-        NetClient.send_cmd(server_session, Stype.DataBase, ctype, utag, proto_type, body);
-    }
 }
 
 export default AuthSendMsg;

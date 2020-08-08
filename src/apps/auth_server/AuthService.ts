@@ -2,7 +2,6 @@
 
 import ServiceBase from "../../netbus/ServiceBase"
 import AuthModel from './AuthModel'
-import AuthDataModel from './AuthDataModel';
 
 class AuthService extends ServiceBase {
 	 service_name:string = "AuthService"; // 服务名称
@@ -14,7 +13,6 @@ class AuthService extends ServiceBase {
 	
 	// 收到连接的其他服务发过来的消息
 	static on_recv_server_player_cmd(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:any) {
-		AuthDataModel.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
 	} 
 	
 	// 收到客户端断开连接，网关已经发了断开协议（eUserLostConnectRes）过来，这里不用做处理

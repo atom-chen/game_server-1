@@ -156,7 +156,7 @@ class RobotGameModel {
                 RobotSend.send_game(session, Cmd.eUserReadyReq, utag);
             }
         }
-        RobotGameInterface.send_emoj_random_timeout(session, utag, 2);
+        RobotGameInterface.send_emoj_random_timeout(session, utag, 1000);
     }
 
     private on_event_game_total_result_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
@@ -179,7 +179,7 @@ class RobotGameModel {
                 Log.info("on_event_ball_pos_res: " , utag);
             }
         }
-        RobotGameInterface.send_emoj_random_timeout(session, utag, 1);
+        RobotGameInterface.send_emoj_random_timeout(session, utag, 1000);
     }
 
     private on_event_desolve_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
