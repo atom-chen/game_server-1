@@ -8,7 +8,7 @@ var ArrayUtil_1 = __importDefault(require("../../../../utils/ArrayUtil"));
 var StringUtil_1 = __importDefault(require("../../../../utils/StringUtil"));
 var Log_1 = __importDefault(require("../../../../utils/Log"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
-var GameHoodleProto_1 = require("../../../protocol/GameHoodleProto");
+var GameHoodleProto_1 = require("../../../protocol/protofile/GameHoodleProto");
 var Response_1 = __importDefault(require("../../../protocol/Response"));
 var RoomManager = /** @class */ (function () {
     function RoomManager() {

@@ -1,9 +1,9 @@
 //接收客户端协议模块
-import {Cmd,CmdName} from "../protocol/AuthProto"
+import {Cmd,CmdName} from "../protocol/protofile/AuthProto"
 import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';
 import AuthSendMsg from './AuthSendMsg';
-import CommonProto from '../protocol/CommonProto';
+import CommonProto from '../protocol/protofile/CommonProto';
 import Log from '../../utils/Log';
 import AuthInfoInterface from './interface/AuthInfoInterface';
 import AuthLoginInterface from './interface/AuthLoginInterface';

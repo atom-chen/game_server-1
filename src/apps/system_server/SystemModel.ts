@@ -1,6 +1,6 @@
 import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';
-import CommonProto from '../protocol/CommonProto';
+import CommonProto from '../protocol/protofile/CommonProto';
 import Log from '../../utils/Log';
 import { Stype, StypeName } from '../protocol/Stype';
 import { Cmd, CmdName } from '../protocol/SystemProto';

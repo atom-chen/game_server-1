@@ -1,6 +1,6 @@
 //玩家使用表情
 import Player from '../cell/Player';
-import { Cmd } from "../../../protocol/GameHoodleProto";
+import { Cmd } from "../../../protocol/protofile/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import Response from '../../../protocol/Response';
 import PlayerManager from '../manager/PlayerManager';

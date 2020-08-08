@@ -42,7 +42,7 @@ exports.__esModule = true;
 var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
-var AuthProto_1 = require("../../protocol/AuthProto");
+var AuthProto_1 = require("../../protocol/protofile/AuthProto");
 var AuthInfoInterface = /** @class */ (function () {
     function AuthInfoInterface() {
     }

@@ -46,7 +46,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 exports.__esModule = true;
-var GameHoodleProto_1 = require("../../../protocol/GameHoodleProto");
+var GameHoodleProto_1 = require("../../../protocol/protofile/GameHoodleProto");
 var Log_1 = __importDefault(require("../../../../utils/Log"));
 var Response_1 = __importDefault(require("../../../protocol/Response"));
 var PlayerManager_1 = __importDefault(require("../manager/PlayerManager"));

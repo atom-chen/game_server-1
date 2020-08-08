@@ -11,7 +11,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 exports.__esModule = true;
 var RobotSend_1 = __importDefault(require("../RobotSend"));
-var GameHoodleProto_1 = require("../../protocol/GameHoodleProto");
+var GameHoodleProto_1 = require("../../protocol/protofile/GameHoodleProto");
 var RobotListConfig_1 = __importDefault(require("../config/RobotListConfig"));
 var util = __importStar(require("util"));
 var StringUtil_1 = __importDefault(require("../../../utils/StringUtil"));

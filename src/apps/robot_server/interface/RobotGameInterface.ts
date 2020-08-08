@@ -1,5 +1,5 @@
 import RobotSend from '../RobotSend';
-import { Cmd } from '../../protocol/GameHoodleProto';
+import { Cmd } from '../../protocol/protofile/GameHoodleProto';
 import RobotListConfig from '../config/RobotListConfig';
 import * as util from 'util';
 import StringUtil from '../../../utils/StringUtil';

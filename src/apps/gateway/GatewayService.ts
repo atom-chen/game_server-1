@@ -7,8 +7,8 @@ import ProtoManager from "../../netbus/ProtoManager"
 import Respones from "../protocol/Response"
 import ServiceBase from "../../netbus/ServiceBase"
 import { Stype, StypeName } from '../protocol/Stype';
-import { Cmd } from '../protocol/AuthProto';
-import CommonProto from '../protocol/CommonProto';
+import { Cmd } from '../protocol/protofile/AuthProto';
+import CommonProto from '../protocol/protofile/CommonProto';
 import Log from '../../utils/Log';
 import GatewayFunction from './GatewayFunction';
 import * as util from 'util';

@@ -4,7 +4,7 @@ import Player from '../cell/Player';
 import Log from '../../../../utils/Log';
 import { UserState, PlayerPower, GameState } from '../config/State';
 import RoomManager from './RoomManager';
-import { Cmd } from '../../../protocol/GameHoodleProto';
+import { Cmd } from '../../../protocol/protofile/GameHoodleProto';
 import GameHoodleConfig from '../config/GameHoodleConfig';
 import Response from '../../../protocol/Response';
 import GameFunction from '../interface/GameFunction';

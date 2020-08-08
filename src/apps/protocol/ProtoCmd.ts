@@ -1,11 +1,9 @@
-import * as AuthProto from "./AuthProto"
+import * as AuthProto from "./protofile/AuthProto"
 import * as SystemProto from "./SystemProto"
-import * as GameHoodleProto from "./GameHoodleProto"
+import * as GameHoodleProto from "./protofile/GameHoodleProto"
 import { Stype, StypeName } from './Stype';
-import * as util from 'util';
-import Log from '../../utils/Log';
 
-let protofilePath = "./protofile/%sMsg.js"
+let protoFilePath = "./protofileMsg/"
 
 class ProtoCmd {
 	
@@ -33,10 +31,12 @@ class ProtoCmd {
 	//获取xxxproto.js文件对象
 	static getProtoFileObj(stype:number){
 		if (ProtoCmd.StypeProtos[stype]) {
-			let protoName = ProtoCmd.StypeProtos[stype].protoName;
-			if (protoName){
-				let pname = util.format(protofilePath,protoName);
-				let proto_js_file = require(pname);
+			let protoNameMsg = ProtoCmd.StypeProtos[stype].protoNameMsg;
+			if (protoNameMsg){
+				let proto_js_file = require(protoFilePath + protoNameMsg);
+				if (!proto_js_file) {
+					proto_js_file = require(protoNameMsg)
+				}
 				return proto_js_file;
 			}
 		}
@@ -45,27 +45,27 @@ class ProtoCmd {
 	//获取protobuf字段
 	static getProtoMsg(stype:number, ctype:number){
 		let proto_file_obj = ProtoCmd.getProtoFileObj(stype);
-		if (util.isNullOrUndefined(proto_file_obj)){
-			Log.warn("getProtoMsg proto_file_obj is null");
+		if (!proto_file_obj){
+			console.warn("getProtoMsg proto_file_obj is null");
 			return;
 		}
 
 		let proto_name = ProtoCmd.getProtoName(stype);
 		let cmd_name = ProtoCmd.getCmdName(stype, ctype);
 
-		if (util.isNullOrUndefined(proto_name) || util.isNullOrUndefined(cmd_name)){
-			Log.warn("getProtoMsg stype:", stype , " or ctype:" , ctype , " is null");
+		if (!proto_name || !cmd_name){
+			console.warn("getProtoMsg stype:", stype , " or ctype:" , ctype , " is null");
 			return;
 		}
 
 		let proto_namespace = proto_file_obj[proto_name];
-		if(util.isNullOrUndefined(proto_namespace)){
-			Log.warn("getProtoMsg stype:", proto_name , "is null");
+		if (!proto_namespace){
+			console.warn("getProtoMsg stype:", proto_name , "is null");
 			return;
 		}
 		let proto_msg = proto_namespace[cmd_name];
-		if(util.isNullOrUndefined(proto_msg)){
-			Log.warn("getProtoMsg cmd:", cmd_name, "is null");
+		if (!proto_msg){
+			console.warn("getProtoMsg cmd:", cmd_name, "is null");
 			return;
 		}
 		return proto_msg;

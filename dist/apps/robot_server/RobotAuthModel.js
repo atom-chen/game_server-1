@@ -8,7 +8,7 @@ var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var Stype_1 = require("../protocol/Stype");
 var RobotGameInterface_1 = __importDefault(require("./interface/RobotGameInterface"));
-var AuthProto_1 = require("../protocol/AuthProto");
+var AuthProto_1 = require("../protocol/protofile/AuthProto");
 var RobotAuthModel = /** @class */ (function () {
     function RobotAuthModel() {
         var _a;

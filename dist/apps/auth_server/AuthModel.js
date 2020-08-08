@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 //接收客户端协议模块
-var AuthProto_1 = require("../protocol/AuthProto");
+var AuthProto_1 = require("../protocol/protofile/AuthProto");
 var Response_1 = __importDefault(require("../protocol/Response"));
 var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
 var AuthSendMsg_1 = __importDefault(require("./AuthSendMsg"));
-var CommonProto_1 = __importDefault(require("../protocol/CommonProto"));
+var CommonProto_1 = __importDefault(require("../protocol/protofile/CommonProto"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var AuthInfoInterface_1 = __importDefault(require("./interface/AuthInfoInterface"));
 var AuthLoginInterface_1 = __importDefault(require("./interface/AuthLoginInterface"));

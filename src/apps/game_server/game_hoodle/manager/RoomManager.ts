@@ -3,7 +3,7 @@ import ArrayUtil from '../../../../utils/ArrayUtil';
 import StringUtil from '../../../../utils/StringUtil';
 import Log from '../../../../utils/Log';
 import GameHoodleConfig from '../config/GameHoodleConfig';
-import { Cmd } from '../../../protocol/GameHoodleProto';
+import { Cmd } from '../../../protocol/protofile/GameHoodleProto';
 import Response from '../../../protocol/Response';
 
 class RoomManager {

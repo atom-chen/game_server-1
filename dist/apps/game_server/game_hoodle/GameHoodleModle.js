@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
-var GameHoodleProto_1 = require("../../protocol/GameHoodleProto");
+var GameHoodleProto_1 = require("../../protocol/protofile/GameHoodleProto");
 var GameSendMsg_1 = __importDefault(require("./GameSendMsg"));
-var CommonProto_1 = __importDefault(require("../../protocol/CommonProto"));
+var CommonProto_1 = __importDefault(require("../../protocol/protofile/CommonProto"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var GameInfoInterface_1 = __importDefault(require("./interface/GameInfoInterface"));

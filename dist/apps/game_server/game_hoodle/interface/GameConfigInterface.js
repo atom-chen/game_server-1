@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var GameHoodleProto_1 = require("../../../protocol/GameHoodleProto");
+var GameHoodleProto_1 = require("../../../protocol/protofile/GameHoodleProto");
 var Response_1 = __importDefault(require("../../../protocol/Response"));
 var PlayerManager_1 = __importDefault(require("../manager/PlayerManager"));
 var RoomListConfig_1 = require("../config/RoomListConfig");

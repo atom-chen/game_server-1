@@ -2,7 +2,7 @@ import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';
 import Log from '../../utils/Log';
 import { Stype, StypeName } from '../protocol/Stype';
-import { Cmd, CmdName } from '../protocol/GameHoodleProto';
+import { Cmd, CmdName } from '../protocol/protofile/GameHoodleProto';
 import RobotSend from './RobotSend';
 import RobotMgr from './manager/RobotMgr';
 import Robot from './cell/Robot';

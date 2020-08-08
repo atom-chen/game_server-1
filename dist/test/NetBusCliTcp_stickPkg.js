@@ -11,7 +11,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var net = require("net");
-var AuthProto = __importStar(require("../apps/protocol/AuthProto"));
+var AuthProto = __importStar(require("../apps/protocol/protofile/AuthProto"));
 var StickPackage = require("stickpackage");
 var ProtoManager_1 = __importDefault(require("../netbus/ProtoManager"));
 var Platform_1 = __importDefault(require("../utils/Platform"));

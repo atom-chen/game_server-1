@@ -1,4 +1,4 @@
-import { Cmd } from '../protocol/AuthProto';
+import { Cmd } from '../protocol/protofile/AuthProto';
 import { Stype } from '../protocol/Stype';
 
 interface USMap {

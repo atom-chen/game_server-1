@@ -2,6 +2,7 @@
 var _a;
 exports.__esModule = true;
 exports.protoName = "SystemProto";
+exports.protoNameMsg = "SystemProtoMsg";
 var Cmd;
 (function (Cmd) {
     Cmd[Cmd["INVALED"] = 0] = "INVALED";

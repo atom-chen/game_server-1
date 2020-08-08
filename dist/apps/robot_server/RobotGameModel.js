@@ -14,7 +14,7 @@ var Response_1 = __importDefault(require("../protocol/Response"));
 var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var Stype_1 = require("../protocol/Stype");
-var GameHoodleProto_1 = require("../protocol/GameHoodleProto");
+var GameHoodleProto_1 = require("../protocol/protofile/GameHoodleProto");
 var RobotSend_1 = __importDefault(require("./RobotSend"));
 var RobotMgr_1 = __importDefault(require("./manager/RobotMgr"));
 var util = __importStar(require("util"));
@@ -156,7 +156,7 @@ var RobotGameModel = /** @class */ (function () {
                 RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.eUserReadyReq, utag);
             }
         }
-        RobotGameInterface_1["default"].send_emoj_random_timeout(session, utag, 2);
+        RobotGameInterface_1["default"].send_emoj_random_timeout(session, utag, 1000);
     };
     RobotGameModel.prototype.on_event_game_total_result_res = function (session, utag, proto_type, raw_cmd) {
         RobotGameInterface_1["default"].go_to_match_game(session, utag);
@@ -174,7 +174,7 @@ var RobotGameModel = /** @class */ (function () {
                 Log_1["default"].info("on_event_ball_pos_res: ", utag);
             }
         }
-        RobotGameInterface_1["default"].send_emoj_random_timeout(session, utag, 1);
+        RobotGameInterface_1["default"].send_emoj_random_timeout(session, utag, 1000);
     };
     RobotGameModel.prototype.on_event_desolve_res = function (session, utag, proto_type, raw_cmd) {
         var res_body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);

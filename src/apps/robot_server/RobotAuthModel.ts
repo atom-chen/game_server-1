@@ -3,7 +3,7 @@ import ProtoManager from '../../netbus/ProtoManager';
 import Log from '../../utils/Log';
 import { Stype, StypeName } from '../protocol/Stype';
 import RobotGameInterface from './interface/RobotGameInterface';
-import { Cmd, CmdName } from '../protocol/AuthProto';
+import { Cmd, CmdName } from '../protocol/protofile/AuthProto';
 import RobotSend from './RobotSend';
 
 interface CmdHandlerMap {

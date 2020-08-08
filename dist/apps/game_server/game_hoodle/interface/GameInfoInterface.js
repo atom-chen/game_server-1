@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var GameHoodleProto_1 = require("../../../protocol/GameHoodleProto");
+var GameHoodleProto_1 = require("../../../protocol/protofile/GameHoodleProto");
 var Log_1 = __importDefault(require("../../../../utils/Log"));
 var MySqlGame_1 = __importDefault(require("../../../../database/MySqlGame"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));

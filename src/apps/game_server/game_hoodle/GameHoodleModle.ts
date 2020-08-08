@@ -1,7 +1,7 @@
 import ProtoManager from '../../../netbus/ProtoManager';
-import { Cmd ,CmdName} from '../../protocol/GameHoodleProto';
+import { Cmd ,CmdName} from '../../protocol/protofile/GameHoodleProto';
 import GameSendMsg from './GameSendMsg';
-import CommonProto from '../../protocol/CommonProto';
+import CommonProto from '../../protocol/protofile/CommonProto';
 import Response from '../../protocol/Response';
 import Log from '../../../utils/Log';
 import GameInfoInterface from './interface/GameInfoInterface';

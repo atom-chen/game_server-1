@@ -1,6 +1,6 @@
 //登录，断线协议处理
 import Player from '../cell/Player';
-import { Cmd } from "../../../protocol/GameHoodleProto";
+import { Cmd } from "../../../protocol/protofile/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import Response from '../../../protocol/Response';
 import PlayerManager from '../manager/PlayerManager';

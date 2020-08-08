@@ -2,6 +2,7 @@
 var _a;
 exports.__esModule = true;
 exports.protoName = "GameHoodleProto";
+exports.protoNameMsg = "GameHoodleProtoMsg";
 var Cmd;
 (function (Cmd) {
     ///////////////////////////////////

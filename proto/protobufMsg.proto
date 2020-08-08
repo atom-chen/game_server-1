@@ -1,8 +1,0 @@
-//ProtobufMsg.proto
-
-syntax = "proto3";
-
-import "AuthProto.proto";
-import "GameHoodleProto.proto";
-import "SystemProto.proto";
-import "RobotProto.proto";

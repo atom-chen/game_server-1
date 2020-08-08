@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var AuthProto_1 = require("../../protocol/AuthProto");
+var AuthProto_1 = require("../../protocol/protofile/AuthProto");
 var RobotListConfig_1 = __importDefault(require("../config/RobotListConfig"));
 var RobotSend_1 = __importDefault(require("../RobotSend"));
 var RobotAuthIngerface = /** @class */ (function () {

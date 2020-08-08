@@ -1,5 +1,5 @@
 var net = require("net");
-import * as AuthProto from "../apps/protocol/AuthProto"
+import * as AuthProto from "../apps/protocol/protofile/AuthProto"
 var StickPackage 	 = require("stickpackage")
 
 import ProtoManager from "../netbus/ProtoManager"

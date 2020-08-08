@@ -1,1 +1,0 @@
-pbts -o ./protobufMsg.d.ts ./protobufMsg.js

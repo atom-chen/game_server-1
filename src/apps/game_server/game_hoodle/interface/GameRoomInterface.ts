@@ -1,6 +1,6 @@
 //房间相关处理逻辑，登录，创建，返回房间相关协议处理
 import Player from '../cell/Player';
-import { Cmd } from "../../../protocol/GameHoodleProto";
+import { Cmd } from "../../../protocol/protofile/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import GameHoodleConfig from "../config/GameHoodleConfig";
 import Response from '../../../protocol/Response';

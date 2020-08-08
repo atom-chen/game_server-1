@@ -1,6 +1,6 @@
 //游戏服务信息,商城,兑换,相关协议处理
 import Player from '../cell/Player';
-import { Cmd } from "../../../protocol/GameHoodleProto";
+import { Cmd } from "../../../protocol/protofile/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import MySqlGame from '../../../../database/MySqlGame';
 import GameHoodleConfig from "../config/GameHoodleConfig";

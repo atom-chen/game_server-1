@@ -6,19 +6,13 @@ var __importStar = (this && this.__importStar) || function (mod) {
     result["default"] = mod;
     return result;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _a;
 exports.__esModule = true;
-var DataBaseProto = __importStar(require("./DataBaseProto"));
-var AuthProto = __importStar(require("./AuthProto"));
+var AuthProto = __importStar(require("./protofile/AuthProto"));
 var SystemProto = __importStar(require("./SystemProto"));
-var GameHoodleProto = __importStar(require("./GameHoodleProto"));
+var GameHoodleProto = __importStar(require("./protofile/GameHoodleProto"));
 var Stype_1 = require("./Stype");
-var util = __importStar(require("util"));
-var Log_1 = __importDefault(require("../../utils/Log"));
-var protofilePath = "./protofile/%sMsg.js";
+var protoFilePath = "./protofileMsg/";
 var ProtoCmd = /** @class */ (function () {
     function ProtoCmd() {
     }
@@ -37,10 +31,12 @@ var ProtoCmd = /** @class */ (function () {
     //获取xxxproto.js文件对象
     ProtoCmd.getProtoFileObj = function (stype) {
         if (ProtoCmd.StypeProtos[stype]) {
-            var protoName = ProtoCmd.StypeProtos[stype].protoName;
-            if (protoName) {
-                var pname = util.format(protofilePath, protoName);
-                var proto_js_file = require(pname);
+            var protoNameMsg = ProtoCmd.StypeProtos[stype].protoNameMsg;
+            if (protoNameMsg) {
+                var proto_js_file = require(protoFilePath + protoNameMsg);
+                if (!proto_js_file) {
+                    proto_js_file = require(protoNameMsg);
+                }
                 return proto_js_file;
             }
         }
@@ -48,24 +44,24 @@ var ProtoCmd = /** @class */ (function () {
     //获取protobuf字段
     ProtoCmd.getProtoMsg = function (stype, ctype) {
         var proto_file_obj = ProtoCmd.getProtoFileObj(stype);
-        if (util.isNullOrUndefined(proto_file_obj)) {
-            Log_1["default"].warn("getProtoMsg proto_file_obj is null");
+        if (!proto_file_obj) {
+            console.warn("getProtoMsg proto_file_obj is null");
             return;
         }
         var proto_name = ProtoCmd.getProtoName(stype);
         var cmd_name = ProtoCmd.getCmdName(stype, ctype);
-        if (util.isNullOrUndefined(proto_name) || util.isNullOrUndefined(cmd_name)) {
-            Log_1["default"].warn("getProtoMsg stype:", stype, " or ctype:", ctype, " is null");
+        if (!proto_name || !cmd_name) {
+            console.warn("getProtoMsg stype:", stype, " or ctype:", ctype, " is null");
             return;
         }
         var proto_namespace = proto_file_obj[proto_name];
-        if (util.isNullOrUndefined(proto_namespace)) {
-            Log_1["default"].warn("getProtoMsg stype:", proto_name, "is null");
+        if (!proto_namespace) {
+            console.warn("getProtoMsg stype:", proto_name, "is null");
             return;
         }
         var proto_msg = proto_namespace[cmd_name];
-        if (util.isNullOrUndefined(proto_msg)) {
-            Log_1["default"].warn("getProtoMsg cmd:", cmd_name, "is null");
+        if (!proto_msg) {
+            console.warn("getProtoMsg cmd:", cmd_name, "is null");
             return;
         }
         return proto_msg;
@@ -75,7 +71,6 @@ var ProtoCmd = /** @class */ (function () {
         _a[Stype_1.Stype.Auth] = AuthProto,
         _a[Stype_1.Stype.GameSystem] = SystemProto,
         _a[Stype_1.Stype.GameHoodle] = GameHoodleProto,
-        _a[Stype_1.Stype.DataBase] = DataBaseProto,
         _a);
     return ProtoCmd;
 }());

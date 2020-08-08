@@ -1,7 +1,7 @@
 //游戏相关辅助函数
 import Room from "../cell/Room";
 import Player from "../cell/Player";
-import { Cmd } from "../../../protocol/GameHoodleProto";
+import { Cmd } from "../../../protocol/protofile/GameHoodleProto";
 import Log from '../../../../utils/Log';
 import {PlayerPower} from '../config/State';
 import StringUtil from '../../../../utils/StringUtil';

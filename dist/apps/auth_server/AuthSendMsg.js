@@ -6,7 +6,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var NetBus_1 = __importDefault(require("../../netbus/NetBus"));
 var Stype_1 = require("../protocol/Stype");
-var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
 var server_session_map = {}; //当前连接的服务器session
 var AuthSendMsg = /** @class */ (function () {
     function AuthSendMsg() {
@@ -22,11 +21,6 @@ var AuthSendMsg = /** @class */ (function () {
     //当前作为服务端，发给客户端,session 为客户端session
     AuthSendMsg.send = function (session, ctype, utag, proto_type, body) {
         NetBus_1["default"].send_cmd(session, Stype_1.Stype.Auth, ctype, utag, proto_type, body);
-    };
-    //当前作为客户端，发给data_server, server_session已经保存
-    AuthSendMsg.send_data_server = function (ctype, utag, proto_type, body) {
-        var server_session = AuthSendMsg.get_server_session(Stype_1.Stype.DataBase);
-        NetClient_1["default"].send_cmd(server_session, Stype_1.Stype.DataBase, ctype, utag, proto_type, body);
     };
     return AuthSendMsg;
 }());

@@ -1,6 +1,6 @@
 "use strict";
 exports.__esModule = true;
-var AuthProto_1 = require("../protocol/AuthProto");
+var AuthProto_1 = require("../protocol/protofile/AuthProto");
 var Stype_1 = require("../protocol/Stype");
 var LOGIN_OR_REGIST_ERQ_CMD = [
     AuthProto_1.Cmd.eUnameLoginReq,

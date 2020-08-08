@@ -2,7 +2,7 @@ import MySqlAuth from "../../../database/MySqlAuth"
 import Response from '../../protocol/Response';
 import Log from "../../../utils/Log";
 import AuthSendMsg from "../AuthSendMsg";
-import { Cmd } from "../../protocol/AuthProto";
+import { Cmd } from "../../protocol/protofile/AuthProto";
 
 class AuthInfoInterface {
 
