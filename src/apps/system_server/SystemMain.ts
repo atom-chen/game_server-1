@@ -4,7 +4,7 @@
 */
 
 import GameAppConfig from "../config/GameAppConfig"
-import NetBus from "../../netbus/NetBus"
+import NetServer from "../../netbus/NetServer"
 import ServiceManager from "../../netbus/ServiceManager"
 import { Stype, StypeName } from '../protocol/Stype'
 import SystemService from './SystemService';
@@ -12,7 +12,7 @@ import MySqlSystem from "../../database/MysqlSystem"
 import MySqlGame from '../../database/MySqlGame';
 
 var system_server = GameAppConfig.game_system_server;
-NetBus.start_tcp_server(system_server.host, system_server.port, false);
+NetServer.start_tcp_server(system_server.host, system_server.port, false);
 ServiceManager.register_service(Stype.GameSystem, SystemService);
 
 var game_database = GameAppConfig.game_database;

@@ -6,6 +6,9 @@ import Log from "../utils/Log";
 import ProtoManager from "./ProtoManager";
 let StickPackage = require("stickpackage")
 
+let server_session_map:any = {}
+let max_server_load_count:number = 1000; // 一个room服务最大人数
+
 class NetClient {
 
     static connect_tcp_server(host: string, port: number, is_encrypt: boolean, stype?:number, success_callfunc?: Function) {
@@ -16,6 +19,7 @@ class NetClient {
 
         server_session.is_connected = false;
         server_session.stype = stype;
+        server_session.load_count = 0; //当前连接的服务的人数，有人连接就自增
         server_session.on("connect", function () {
             NetClient.on_session_connected(server_session, is_encrypt);
             if (server_session.msgCenter) {
@@ -26,6 +30,7 @@ class NetClient {
             if (success_callfunc) {
                 success_callfunc(server_session);//这里将所连接的服务的session返回，各个进程自己维护服务session
             }
+            NetClient.save_server_session(server_session, host, String(port));
         });
 
         server_session.on("close", function () {
@@ -63,14 +68,17 @@ class NetClient {
     }
 
     static on_recv_cmd_server_return(server_session: any, str_or_buf: any) {
-        if (!ServiceManager.on_recv_server_cmd(server_session, str_or_buf)) {
-            NetClient.session_close(server_session);
+        let ret = ServiceManager.on_recv_server_cmd(server_session, str_or_buf);
+        if (!ret) {
+            // NetClient.session_close(server_session);
         }
     }
 
     static session_close(server_session: any) {
         if (server_session.end){
             server_session.end();
+            server_session.is_connected = false;
+            NetClient.clear_server_session(server_session.server_ip_port_key)
         }
     }
 
@@ -81,7 +89,7 @@ class NetClient {
 
     // 发送数据包
     static send_cmd(server_session: any, stype: number, ctype: number, utag: number, proto_type: number, body?: any) {
-        if (!server_session.is_connected) {
+        if (!server_session || !server_session.is_connected) {
             return
         }
         let encode_cmd = ProtoManager.encode_cmd(stype, ctype, utag, proto_type, body);
@@ -92,7 +100,7 @@ class NetClient {
 
     // 发送未解包的数据包
     static send_encoded_cmd(server_session: any, encode_cmd: any) {
-        if (!server_session.is_connected) {
+        if (!server_session || !server_session.is_connected) {
             return;
         }
 
@@ -110,6 +118,39 @@ class NetClient {
               }
             }
         }
+    }
+
+    static save_server_session(server_session:any, ip:string, port:string){
+        let server_session_key = ip + ":" + port;
+        server_session_map[server_session_key] = server_session;
+        server_session.server_ip_port_key = server_session_key;
+    }
+
+    static get_server_session(ip_port_key: string) {
+        return server_session_map[ip_port_key];
+    }
+
+    static clear_server_session(ip_port_key: string){
+        if (server_session_map[ip_port_key]){
+            delete server_session_map[ip_port_key];
+        }
+    }
+
+    //没超负载的服务,且用户多的服务
+    //超负载就换下一个
+    static choose_server(){
+        let server_session = null;
+        for(let k in server_session_map){
+            let session = server_session_map[k];
+            if(server_session == null){
+                server_session = session;
+            }else{
+                if (server_session.load_count > session.load_count && server_session.load_count < max_server_load_count ){
+                    server_session = session;
+                }
+            }
+        }
+        return server_session;
     }
 }
 

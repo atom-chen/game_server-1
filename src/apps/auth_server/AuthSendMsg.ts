@@ -1,6 +1,6 @@
 //协议发送
 
-import NetBus from "../../netbus/NetBus";
+import NetServer from "../../netbus/NetServer";
 import { Stype } from '../protocol/Stype';
 import NetClient from '../../netbus/NetClient';
 
@@ -20,7 +20,7 @@ class AuthSendMsg {
 
     //当前作为服务端，发给客户端,session 为客户端session
     public static send(session:any, ctype:number, utag:number, proto_type:number, body:any){
-        NetBus.send_cmd(session, Stype.Auth, ctype, utag, proto_type, body)
+        NetServer.send_cmd(session, Stype.Auth, ctype, utag, proto_type, body)
     }
 }
 

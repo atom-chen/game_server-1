@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 exports.__esModule = true;
-var NetBus_1 = __importDefault(require("../../netbus/NetBus"));
+var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
 var ProtoTools_1 = __importDefault(require("../../netbus/ProtoTools"));
 var ProtoCmd_1 = __importDefault(require("../protocol/ProtoCmd"));
 var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
@@ -60,7 +60,7 @@ var GatewayService = /** @class */ (function (_super) {
             else { //机器人,本来就有utag
                 session.is_robot = true;
                 session.session_key = utag;
-                NetBus_1["default"].save_global_session(session, session.session_key);
+                NetServer_1["default"].save_global_session(session, session.session_key);
             }
         }
         else { //登录后
@@ -81,7 +81,7 @@ var GatewayService = /** @class */ (function (_super) {
         Log_1["default"].info("recv_server>>> ", ProtoCmd_1["default"].getProtoName(stype) + ",", ProtoCmd_1["default"].getCmdName(stype, ctype) + " ,utag:", utag);
         var client_session = null;
         if (GatewayFunction_1["default"].is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
-            client_session = NetBus_1["default"].get_client_session(utag);
+            client_session = NetServer_1["default"].get_client_session(utag);
             if (util.isNullOrUndefined(client_session)) {
                 return;
             }
@@ -90,9 +90,9 @@ var GatewayService = /** @class */ (function (_super) {
                 // 以前你登陆过,发送一个命令给这个客户端，告诉它说以前有人登陆
                 var prev_session = GatewayFunction_1["default"].get_session_by_uid(body.uid);
                 if (prev_session) {
-                    NetBus_1["default"].send_cmd(prev_session, stype, AuthProto_1.Cmd.eReloginRes, utag, proto_type);
+                    NetServer_1["default"].send_cmd(prev_session, stype, AuthProto_1.Cmd.eReloginRes, utag, proto_type);
                     prev_session.uid = 0;
-                    NetBus_1["default"].session_close(prev_session);
+                    NetServer_1["default"].session_close(prev_session);
                 }
                 if (body.uid) {
                     client_session.uid = body.uid;
@@ -106,7 +106,7 @@ var GatewayService = /** @class */ (function (_super) {
             client_session = GatewayFunction_1["default"].get_session_by_uid(utag);
         }
         if (client_session) {
-            NetBus_1["default"].send_encoded_cmd(client_session, raw_cmd);
+            NetServer_1["default"].send_encoded_cmd(client_session, raw_cmd);
             if (ctype == AuthProto_1.Cmd.eLoginOutRes && stype == Stype_1.Stype.Auth) {
                 GatewayFunction_1["default"].clear_session_with_uid(utag);
             }
@@ -127,11 +127,11 @@ var GatewayService = /** @class */ (function (_super) {
         }
         //客户端被迫掉线
         var body = { is_robot: session.is_robot };
-        NetBus_1["default"].send_cmd(server_session, stype, CommonProto_1["default"].eUserLostConnectRes, session.uid, ProtoTools_1["default"].ProtoType.PROTO_JSON, body);
+        NetServer_1["default"].send_cmd(server_session, stype, CommonProto_1["default"].eUserLostConnectRes, session.uid, ProtoTools_1["default"].ProtoType.PROTO_JSON, body);
         //机器人服务掉线，机器人的sessioin全部删除
         if (session.is_robot) {
             var del_session_key = [];
-            var global_session_list = NetBus_1["default"].get_global_session_list();
+            var global_session_list = NetServer_1["default"].get_global_session_list();
             for (var session_key in global_session_list) {
                 if (global_session_list[session_key].is_robot) {
                     del_session_key.push(session_key);
@@ -139,7 +139,7 @@ var GatewayService = /** @class */ (function (_super) {
             }
             if (del_session_key.length > 0) {
                 del_session_key.forEach(function (key) {
-                    NetBus_1["default"].delete_global_session(key);
+                    NetServer_1["default"].delete_global_session(key);
                 });
             }
         }

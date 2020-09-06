@@ -1,5 +1,5 @@
 import ProtoManager from "../../../netbus/ProtoManager";
-import GameHoodleConfig from "../../game_server/game_hoodle/config/GameHoodleConfig";
+import GameHoodleConfig from "../../game_server/hall_server/config/GameHoodleConfig";
 import MySqlGame from "../../../database/MySqlGame";
 import SystemSend from '../SystemSend';
 import { Cmd } from "../../protocol/SystemProto";

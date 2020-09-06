@@ -1,6 +1,6 @@
 //网关服务
 
-import NetBus from '../../netbus/NetBus';
+import NetServer from '../../netbus/NetServer';
 import ProtoTools from "../../netbus/ProtoTools"
 import ProtoCmd from "../protocol/ProtoCmd"
 import ProtoManager from "../../netbus/ProtoManager"
@@ -32,7 +32,7 @@ class GatewayService extends ServiceBase {
 			} else {//机器人,本来就有utag
 				session.is_robot = true;
 				session.session_key = utag;
-				NetBus.save_global_session(session, session.session_key);
+				NetServer.save_global_session(session, session.session_key);
 			}
 		}else { //登录后
 			if(session.uid == 0) {
@@ -53,7 +53,7 @@ class GatewayService extends ServiceBase {
 		Log.info("recv_server>>> ", ProtoCmd.getProtoName(stype) + ",", ProtoCmd.getCmdName(stype, ctype) + " ,utag:", utag);
 		let client_session = null;
 		if (GatewayFunction.is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
-			client_session = NetBus.get_client_session(utag);
+			client_session = NetServer.get_client_session(utag);
 			if (util.isNullOrUndefined(client_session)) {
 				return;
 			}
@@ -62,9 +62,9 @@ class GatewayService extends ServiceBase {
 				// 以前你登陆过,发送一个命令给这个客户端，告诉它说以前有人登陆
 				let prev_session = GatewayFunction.get_session_by_uid(body.uid);
 				if (prev_session) {
-					NetBus.send_cmd(prev_session, stype, Cmd.eReloginRes, utag, proto_type);
+					NetServer.send_cmd(prev_session, stype, Cmd.eReloginRes, utag, proto_type);
 					prev_session.uid = 0;
-					NetBus.session_close(prev_session);
+					NetServer.session_close(prev_session);
 				}
 
 				if(body.uid){
@@ -79,7 +79,7 @@ class GatewayService extends ServiceBase {
 		}
 
 		if (client_session){
-			NetBus.send_encoded_cmd(client_session,raw_cmd);
+			NetServer.send_encoded_cmd(client_session,raw_cmd);
 			if(ctype == Cmd.eLoginOutRes && stype == Stype.Auth){
 				GatewayFunction.clear_session_with_uid(utag);
 			}
@@ -103,11 +103,11 @@ class GatewayService extends ServiceBase {
 		}
 		//客户端被迫掉线
 		let body = {is_robot : session.is_robot};
-		NetBus.send_cmd(server_session, stype, CommonProto.eUserLostConnectRes, session.uid, ProtoTools.ProtoType.PROTO_JSON, body);
+		NetServer.send_cmd(server_session, stype, CommonProto.eUserLostConnectRes, session.uid, ProtoTools.ProtoType.PROTO_JSON, body);
 		//机器人服务掉线，机器人的sessioin全部删除
 		if(session.is_robot){
 			let del_session_key = [];
-			let global_session_list = NetBus.get_global_session_list();
+			let global_session_list = NetServer.get_global_session_list();
 			for (let session_key in global_session_list){
 				if (global_session_list[session_key].is_robot){
 					del_session_key.push(session_key);
@@ -115,7 +115,7 @@ class GatewayService extends ServiceBase {
 			}
 			if(del_session_key.length > 0){
 				del_session_key.forEach(key => {
-					NetBus.delete_global_session(key);
+					NetServer.delete_global_session(key);
 				})
 			}
 		}

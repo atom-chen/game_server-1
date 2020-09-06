@@ -49,7 +49,6 @@ var GatewayFunction = /** @class */ (function () {
     //清理session
     GatewayFunction.clear_session_with_uid = function (uid) {
         if (uid_session_map[uid]) {
-            uid_session_map[uid] = null;
             delete uid_session_map[uid];
         }
     };
@@ -60,6 +59,12 @@ var GatewayFunction = /** @class */ (function () {
     //获取服务session
     GatewayFunction.get_server_session = function (stype) {
         return server_session_map[stype];
+    };
+    //删除服务session
+    GatewayFunction.clear_server_session = function (stype) {
+        if (server_session_map[stype]) {
+            delete server_session_map[stype];
+        }
     };
     return GatewayFunction;
 }());

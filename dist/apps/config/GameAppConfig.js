@@ -3,7 +3,7 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a;
+var _a, _b;
 exports.__esModule = true;
 /**
  * async await 使用陷阱：
@@ -90,12 +90,6 @@ var GameAppConfig = /** @class */ (function () {
         port: 6086,
         stype: Stype_1.Stype.Auth
     };
-    //数据服务
-    GameAppConfig.data_server = {
-        host: LOCAL_HOST,
-        port: 6090,
-        stype: Stype_1.Stype.DataBase
-    };
     ////////////////////
     //游戏数据库服务
     GameAppConfig.game_database = {
@@ -114,12 +108,34 @@ var GameAppConfig = /** @class */ (function () {
         upwd: "123456"
     };
     ////////////////////
+    //游戏房间服务，可拓展多个
+    GameAppConfig.game_room_server_1 = {
+        host: LOCAL_HOST,
+        port: 6090,
+        stype: Stype_1.Stype.GameHoodle
+    };
+    GameAppConfig.game_room_server_2 = {
+        host: LOCAL_HOST,
+        port: 6091,
+        stype: Stype_1.Stype.GameHoodle
+    };
+    GameAppConfig.game_room_server_3 = {
+        host: LOCAL_HOST,
+        port: 6092,
+        stype: Stype_1.Stype.GameHoodle
+    };
+    ////////////////////
     //网关连接其他服务
     GameAppConfig.gw_connect_servers = (_a = {},
         _a[1] = GameAppConfig.auth_server,
         _a[2] = GameAppConfig.game_server,
         _a[3] = GameAppConfig.game_system_server,
+        _a[4] = GameAppConfig.game_server_2,
         _a);
+    //大厅服务连接到其他房间服务
+    GameAppConfig.hall_connect_servers = (_b = {},
+        _b[1] = GameAppConfig.game_room_server_1,
+        _b);
     return GameAppConfig;
 }());
 exports["default"] = GameAppConfig;

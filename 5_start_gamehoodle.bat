@@ -1,2 +1,2 @@
-ts-node src/apps/game_server/game_hoodle/GameHoodleMain.ts
+ts-node src/apps/game_server/hall_server/GameHoodleMain.ts
 pause;

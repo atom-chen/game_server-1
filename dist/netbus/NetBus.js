@@ -117,10 +117,8 @@ var NetBus = /** @class */ (function () {
                 }
             }
             else {
-                // Log.info("data recv: " , data)
                 //TODO 数据包不对，会一直堆积
                 var last_pkg = NetBus.handle_package_data(session.last_pkg, data, function (cmd_buf) {
-                    // Log.info("handle_package_data888: " ,cmd_buf)
                     NetBus.on_session_recv_cmd(session, cmd_buf);
                 });
                 session.last_pkg = last_pkg;
@@ -134,8 +132,9 @@ var NetBus = /** @class */ (function () {
     };
     //接收客户端数据
     NetBus.on_session_recv_cmd = function (session, str_or_buf) {
-        if (!ServiceManager_1["default"].on_recv_client_cmd(session, str_or_buf)) {
-            NetBus.session_close(session);
+        var ret = ServiceManager_1["default"].on_recv_client_cmd(session, str_or_buf);
+        if (!ret) {
+            // NetBus.session_close(session);
         }
     };
     // 有客户端session退出

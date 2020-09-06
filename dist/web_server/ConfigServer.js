@@ -28,34 +28,30 @@ app_express.all('*', function (req, res, next) {
     res.header("Content-Type", "application/json;charset=utf-8");
     next();
 });
-function start_config_web_server() {
-    try {
-        var cwdPath = path.join(__dirname, KW_WWW_ROOT_PATH);
-        if (fs.existsSync(cwdPath)) {
-            app_express.use(express_1["default"].static(cwdPath));
-        }
-        else {
-            Log_1["default"].error("path: ", cwdPath, " is not exists, start config server failed!");
-            return;
-        }
+try {
+    var cwdPath = path.join(__dirname, KW_WWW_ROOT_PATH);
+    if (fs.existsSync(cwdPath)) {
+        app_express.use(express_1["default"].static(cwdPath));
     }
-    catch (error) {
-        Log_1["default"].error("start_config_server error: ", error);
+    else {
+        Log_1["default"].error("path: ", cwdPath, " is not exists, start config server failed!");
     }
-    // 获取客户端连接的服务器信息, 
-    // http://www.hccfun.com:6091/server_info
-    app_express.get("/server_info", function (request, respones) {
-        Log_1["default"].info("hcc>>get: ", request.url);
-        var body = {
-            host: GameAppConfig_1["default"].gateway_config.host,
-            tcp_port: GameAppConfig_1["default"].gateway_config.tcp_port,
-            ws_port: GameAppConfig_1["default"].gateway_config.wbsocket_port
-        };
-        var str_data = JSON.stringify(body);
-        respones.send(str_data);
-    });
-    app_express.listen(GameAppConfig_1["default"].config_webserver.port);
-    Log_1["default"].info("start config server success, address: ", GameAppConfig_1["default"].config_webserver.host + ":" + GameAppConfig_1["default"].config_webserver.port);
 }
-start_config_web_server();
+catch (error) {
+    Log_1["default"].error("start_config_server error: ", error);
+}
+// 获取客户端连接的服务器信息, 
+// http://www.hccfun.com:6091/server_info
+app_express.get("/server_info", function (request, respones) {
+    Log_1["default"].info("hcc>>get: ", request.url);
+    var body = {
+        host: GameAppConfig_1["default"].gateway_config.host,
+        tcp_port: GameAppConfig_1["default"].gateway_config.tcp_port,
+        ws_port: GameAppConfig_1["default"].gateway_config.wbsocket_port
+    };
+    var str_data = JSON.stringify(body);
+    respones.send(str_data);
+});
+app_express.listen(GameAppConfig_1["default"].config_webserver.port);
+Log_1["default"].info("start config server success, address: ", GameAppConfig_1["default"].config_webserver.host + ":" + GameAppConfig_1["default"].config_webserver.port);
 //# sourceMappingURL=ConfigServer.js.map

@@ -1,0 +1,59 @@
+{
+    "gateway_config": {
+        "host": "172.16.166.106",
+        "tcp_port": 6080,
+        "wbsocket_port": 6061
+    },
+    "hotupdate_webserver": {
+        "host": "172.16.166.106",
+        "port": 7000
+    },
+    "config_webserver": {
+        "host": "172.16.166.106",
+        "port": 6091
+    },
+    "game_database": {
+        "host": "172.16.166.106",
+        "port": 3306,
+        "db_name": "moba_game",
+        "uname": "root",
+        "upwd": "123456"
+    },
+    "auth_database": {
+        "host": "172.16.166.106",
+        "port": 3306,
+        "db_name": "auth_center",
+        "uname": "root",
+        "upwd": "123456"
+    },
+    "gw_connect_servers" : [
+        {
+            "name": "auth_server",
+            "host": "172.16.166.106",
+            "port": 6086,
+            "stype": 1,
+            "isOpen":true
+        },
+        {
+            "name": "game_system_server",
+            "host": "172.16.166.106",
+            "port": 6087,
+            "stype": 2,
+            "isOpen": true
+        },
+        {
+            "name": "game_server",
+            "host": "172.16.166.106",
+            "port": 6088,
+            "stype": 3,
+            "isOpen": true
+        },
+        {
+            "name": "game_server2",
+            "host": "172.16.166.106",
+            "port": 6089,
+            "stype": 4,
+            "isOpen": false
+        }
+    ]
+}

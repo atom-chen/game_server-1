@@ -1,6 +1,6 @@
 //登录奖励配置
 
-import GameHoodleConfig from "../../game_server/game_hoodle/config/GameHoodleConfig";
+import GameHoodleConfig from "../../game_server/hall_server/config/GameHoodleConfig";
 
 export let LoginRewardConfig:any = {
     [1]:{

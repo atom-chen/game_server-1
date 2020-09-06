@@ -47,7 +47,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 exports.__esModule = true;
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
-var GameHoodleConfig_1 = __importDefault(require("../../game_server/game_hoodle/config/GameHoodleConfig"));
+var GameHoodleConfig_1 = __importDefault(require("../../game_server/hall_server/config/GameHoodleConfig"));
 var MySqlGame_1 = __importDefault(require("../../../database/MySqlGame"));
 var SystemSend_1 = __importDefault(require("../SystemSend"));
 var SystemProto_1 = require("../../protocol/SystemProto");

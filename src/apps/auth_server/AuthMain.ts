@@ -4,14 +4,14 @@
 */
 
 import GameAppConfig from "../config/GameAppConfig"
-import NetBus from "../../netbus/NetBus"
+import NetServer from "../../netbus/NetServer"
 import AuthService from "./AuthService"
 import ServiceManager from "../../netbus/ServiceManager"
 import MySqlAuth from "../../database/MySqlAuth"
 import {Stype,StypeName} from '../protocol/Stype'
 
 let auth_server = GameAppConfig.auth_server;
-NetBus.start_tcp_server(auth_server.host, auth_server.port, false);
+NetServer.start_tcp_server(auth_server.host, auth_server.port, false);
 ServiceManager.register_service(Stype.Auth, AuthService);
 
 let db_auth = GameAppConfig.auth_database;

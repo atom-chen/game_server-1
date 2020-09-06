@@ -8,10 +8,20 @@ class ServiceManager {
 
     static register_service(stype:number, service:any) {
         if (ServiceManager.service_modules[stype]) {
-            Log.warn(StypeName[stype] , " service is registed !!!!");
+            Log.warn('【' + StypeName[stype] + '】' , "registed failed, service is registed !!!!");
         }
-    
         ServiceManager.service_modules[stype] = service;
+        Log.warn('【' + StypeName[stype] + '】', "registed success !!!!");
+    }
+
+    static unregister_service(stype:number){
+        if (ServiceManager.service_modules[stype]) {
+            delete ServiceManager.service_modules[stype];
+        }
+    }
+
+    static get_service(stype:number){
+        return this.service_modules[stype];
     }
     
     static on_recv_server_cmd(session:any, cmd_buf:Buffer) {
@@ -28,7 +38,7 @@ class ServiceManager {
         var proto_type 	= cmd[3];
     
         if (!ServiceManager.service_modules[stype]) {
-            Log.error("cur as client ServiceManager.service_modules not exist")
+            Log.error("cur as client ServiceManager.service_modules not exist>> service: ", StypeName[stype])
             return false;
         }
         
@@ -60,7 +70,7 @@ class ServiceManager {
         var proto_type 	= cmd[3];
     
         if (!ServiceManager.service_modules[stype]) {
-            Log.error("cur as server ServiceManager.service_modules not exist")
+            Log.error("cur as server ServiceManager.service_modules not exist>>service: ", StypeName[stype])
             return false;
         }
     

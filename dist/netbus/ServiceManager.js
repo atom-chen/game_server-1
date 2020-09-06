@@ -19,9 +19,18 @@ var ServiceManager = /** @class */ (function () {
     }
     ServiceManager.register_service = function (stype, service) {
         if (ServiceManager.service_modules[stype]) {
-            Log_1["default"].warn(Stype_1.StypeName[stype], " service is registed !!!!");
+            Log_1["default"].warn('【' + Stype_1.StypeName[stype] + '】', "registed failed, service is registed !!!!");
         }
         ServiceManager.service_modules[stype] = service;
+        Log_1["default"].warn('【' + Stype_1.StypeName[stype] + '】', "registed success !!!!");
+    };
+    ServiceManager.unregister_service = function (stype) {
+        if (ServiceManager.service_modules[stype]) {
+            delete ServiceManager.service_modules[stype];
+        }
+    };
+    ServiceManager.get_service = function (stype) {
+        return this.service_modules[stype];
     };
     ServiceManager.on_recv_server_cmd = function (session, cmd_buf) {
         if (session.is_encrypt) {
@@ -36,7 +45,7 @@ var ServiceManager = /** @class */ (function () {
         var utag = cmd[2];
         var proto_type = cmd[3];
         if (!ServiceManager.service_modules[stype]) {
-            Log_1["default"].error("cur as client ServiceManager.service_modules not exist");
+            Log_1["default"].error("cur as client ServiceManager.service_modules not exist>> service: ", Stype_1.StypeName[stype]);
             return false;
         }
         if (util.isNullOrUndefined(stype) || util.isNullOrUndefined(ctype) || util.isNullOrUndefined(utag) || util.isNullOrUndefined(proto_type)) {
@@ -65,7 +74,7 @@ var ServiceManager = /** @class */ (function () {
         var utag = cmd[2];
         var proto_type = cmd[3];
         if (!ServiceManager.service_modules[stype]) {
-            Log_1["default"].error("cur as server ServiceManager.service_modules not exist");
+            Log_1["default"].error("cur as server ServiceManager.service_modules not exist>>service: ", Stype_1.StypeName[stype]);
             return false;
         }
         if (util.isNullOrUndefined(stype) || util.isNullOrUndefined(ctype) || util.isNullOrUndefined(utag) || util.isNullOrUndefined(proto_type)) {

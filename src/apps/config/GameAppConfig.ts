@@ -94,14 +94,6 @@ class GameAppConfig {
 		port: 6086,
 		stype: Stype.Auth,
 	}
-
-	//数据服务
-	static data_server: any = {
-		host: LOCAL_HOST,
-		port: 6090,
-		stype: Stype.DataBase,
-	}
-	
 	////////////////////
 	//游戏数据库服务
 	static game_database:any =  {
@@ -122,12 +114,39 @@ class GameAppConfig {
 	}
 
 	////////////////////
+	//游戏房间服务，可拓展多个
+	static game_room_server_1:any = {
+		host: LOCAL_HOST,
+		port: 6090,
+		stype: Stype.GameHoodle,
+	}
+	static game_room_server_2: any = {
+		host: LOCAL_HOST,
+		port: 6091,
+		stype: Stype.GameHoodle,
+	}
+
+	static game_room_server_3: any = {
+		host: LOCAL_HOST,
+		port: 6092,
+		stype: Stype.GameHoodle,
+	}
+
+	////////////////////
 
 	//网关连接其他服务
 	static gw_connect_servers:any =  {
 		[1]: GameAppConfig.auth_server,
 		[2]: GameAppConfig.game_server,
 		[3]: GameAppConfig.game_system_server,
+		[4]: GameAppConfig.game_server_2,
+	}
+
+	//大厅服务连接到其他房间服务
+	static hall_connect_servers:any = {
+		[1]: GameAppConfig.game_room_server_1,
+		// [2]: GameAppConfig.game_room_server_2,
+		// [3]: GameAppConfig.game_room_server_3,
 	}
 }
 

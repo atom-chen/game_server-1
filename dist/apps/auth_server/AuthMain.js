@@ -8,13 +8,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var GameAppConfig_1 = __importDefault(require("../config/GameAppConfig"));
-var NetBus_1 = __importDefault(require("../../netbus/NetBus"));
+var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
 var AuthService_1 = __importDefault(require("./AuthService"));
 var ServiceManager_1 = __importDefault(require("../../netbus/ServiceManager"));
 var MySqlAuth_1 = __importDefault(require("../../database/MySqlAuth"));
 var Stype_1 = require("../protocol/Stype");
 var auth_server = GameAppConfig_1["default"].auth_server;
-NetBus_1["default"].start_tcp_server(auth_server.host, auth_server.port, false);
+NetServer_1["default"].start_tcp_server(auth_server.host, auth_server.port, false);
 ServiceManager_1["default"].register_service(Stype_1.Stype.Auth, AuthService_1["default"]);
 var db_auth = GameAppConfig_1["default"].auth_database;
 MySqlAuth_1["default"].connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db_auth.upwd);

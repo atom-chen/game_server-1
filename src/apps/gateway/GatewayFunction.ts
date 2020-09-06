@@ -58,7 +58,6 @@ class GatewayFunction {
     //清理session
     static clear_session_with_uid(uid: number) {
         if (uid_session_map[uid]) {
-            uid_session_map[uid] = null;
             delete uid_session_map[uid];
         }
     }
@@ -71,6 +70,13 @@ class GatewayFunction {
     //获取服务session
     static get_server_session(stype:number){
         return server_session_map[stype];
+    }
+    
+    //删除服务session
+    static clear_server_session(stype: number){
+        if (server_session_map[stype]) {
+            delete server_session_map[stype];
+        }
     }
 }
 
