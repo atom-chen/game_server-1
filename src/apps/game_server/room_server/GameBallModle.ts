@@ -1,11 +1,11 @@
 import { Cmd, CmdName } from '../../protocol/protofile/GameHoodleProto';
-import PlayerManager from '../hall_server/manager/PlayerManager';
-import Player from '../hall_server/cell/Player';
+import PlayerManager from '../lobby_server/manager/PlayerManager';
+import Player from '../lobby_server/cell/Player';
 import ProtoManager from '../../../netbus/ProtoManager';
 import { StypeName } from '../../protocol/Stype';
 import Log from '../../../utils/Log';
 import NetServer from '../../../netbus/NetServer';
-import GameCheck from '../hall_server/interface/GameCheck';
+import GameCheck from '../lobby_server/interface/GameCheck';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -41,7 +41,7 @@ class GameBallModle {
     public recv_cmd_msg(session: any, stype: number, ctype: number, utag: number, proto_type: number, raw_cmd: Buffer) {
         let body = this.decode_cmd(proto_type, raw_cmd);
         Log.info("hcc>>recv_cmd_msg: " , stype, ctype, utag, proto_type, body);
-        NetServer.send_encoded_cmd(session,raw_cmd);
+        //NetServer.send_encoded_cmd(session,raw_cmd);
         // let player: Player = PlayerManager.getInstance().get_player(utag);
         // let unick = "none";
         // if (player) {

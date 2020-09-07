@@ -18,7 +18,7 @@ var TcpSocket = __importStar(require("net"));
 var ArrayUtil_1 = __importDefault(require("../utils/ArrayUtil"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var StickPackage = require("stickpackage");
-var global_session_list = {}; //客户端session
+var client_session_list = {}; //客户端session
 var global_seesion_key = 1; //客户端session key
 var IS_USE_STICKPACKAGE = true; //是否使用stickpackage处理粘包
 var NetServer = /** @class */ (function () {
@@ -77,10 +77,10 @@ var NetServer = /** @class */ (function () {
             session.msgCenter = new StickPackage.msgCenter(option); //粘包处理工具
         }
         //加入到serssion 列表
-        global_session_list[global_seesion_key] = session;
+        client_session_list[global_seesion_key] = session;
         session.session_key = global_seesion_key;
-        Log_1["default"].warn("client session enter, client count: ", ArrayUtil_1["default"].GetArrayLen(global_session_list));
         global_seesion_key++;
+        Log_1["default"].warn("client session enter, client count: ", ArrayUtil_1["default"].GetArrayLen(client_session_list));
     };
     //websocket 客户端session事件
     NetServer.ws_add_client_session_event = function (session) {
@@ -142,25 +142,28 @@ var NetServer = /** @class */ (function () {
         session.is_connected = false;
         ServiceManager_1["default"].on_client_lost_connect(session);
         session.last_pkg = null;
-        if (global_session_list[session.session_key]) {
-            global_session_list[session.session_key] = null;
-            delete global_session_list[session.session_key];
+        if (client_session_list[session.session_key]) {
+            delete client_session_list[session.session_key];
             session.session_key = null;
         }
-        Log_1["default"].warn("client session exit, client count: ", ArrayUtil_1["default"].GetArrayLen(global_session_list));
+        Log_1["default"].warn("client session exit, client count: ", ArrayUtil_1["default"].GetArrayLen(client_session_list));
     };
     // 关闭session
     NetServer.session_close = function (session) {
         if (!session.is_websocket) {
-            session.end();
+            if (session.end) {
+                session.end();
+            }
         }
         else {
-            session.close();
+            if (session.close) {
+                session.close();
+            }
         }
     };
     // 发送数据包
     NetServer.send_cmd = function (session, stype, ctype, utag, proto_type, body) {
-        if (!session.is_connected) {
+        if (!session || !session.is_connected) {
             return;
         }
         var encode_cmd = ProtoManager_1["default"].encode_cmd(stype, ctype, utag, proto_type, body);
@@ -170,7 +173,7 @@ var NetServer = /** @class */ (function () {
     };
     // 发送未解包的数据包
     NetServer.send_encoded_cmd = function (session, encode_cmd) {
-        if (!session.is_connected) {
+        if (!session || !session.is_connected) {
             return;
         }
         if (session.is_encrypt) {
@@ -250,18 +253,18 @@ var NetServer = /** @class */ (function () {
     };
     //获取客户端Session
     NetServer.get_client_session = function (session_key) {
-        return global_session_list[session_key];
+        return client_session_list[session_key];
     };
-    NetServer.get_global_session_list = function () {
-        return global_session_list;
+    NetServer.get_client_session_list = function () {
+        return client_session_list;
     };
-    NetServer.save_global_session = function (session, session_key) {
-        global_session_list[session_key] = session;
+    NetServer.save_client_session = function (session, session_key) {
+        client_session_list[session_key] = session;
     };
-    NetServer.delete_global_session = function (session_key) {
-        if (global_session_list[session_key]) {
-            global_session_list[session_key] = null;
-            delete global_session_list[session_key];
+    NetServer.delete_client_session = function (session_key) {
+        if (client_session_list[session_key]) {
+            client_session_list[session_key] = null;
+            delete client_session_list[session_key];
         }
     };
     return NetServer;

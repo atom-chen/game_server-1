@@ -7,7 +7,6 @@ import NetServer from '../../../netbus/NetServer';
 import ServiceManager from '../../../netbus/ServiceManager';
 import { Stype } from '../../protocol/Stype';
 import GameAppConfig from '../../config/GameAppConfig';
-import Log from '../../../utils/Log';
 import GameBallService from './GameBallService';
 
 let game_room_server = GameAppConfig.game_room_server_1

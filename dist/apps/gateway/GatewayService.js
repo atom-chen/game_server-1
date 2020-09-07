@@ -60,7 +60,7 @@ var GatewayService = /** @class */ (function (_super) {
             else { //机器人,本来就有utag
                 session.is_robot = true;
                 session.session_key = utag;
-                NetServer_1["default"].save_global_session(session, session.session_key);
+                NetServer_1["default"].save_client_session(session, session.session_key);
             }
         }
         else { //登录后
@@ -131,7 +131,7 @@ var GatewayService = /** @class */ (function (_super) {
         //机器人服务掉线，机器人的sessioin全部删除
         if (session.is_robot) {
             var del_session_key = [];
-            var global_session_list = NetServer_1["default"].get_global_session_list();
+            var global_session_list = NetServer_1["default"].get_client_session_list();
             for (var session_key in global_session_list) {
                 if (global_session_list[session_key].is_robot) {
                     del_session_key.push(session_key);
@@ -139,7 +139,7 @@ var GatewayService = /** @class */ (function (_super) {
             }
             if (del_session_key.length > 0) {
                 del_session_key.forEach(function (key) {
-                    NetServer_1["default"].delete_global_session(key);
+                    NetServer_1["default"].delete_client_session(key);
                 });
             }
         }

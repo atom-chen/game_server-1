@@ -130,7 +130,6 @@ var GameAppConfig = /** @class */ (function () {
         _a[1] = GameAppConfig.auth_server,
         _a[2] = GameAppConfig.game_server,
         _a[3] = GameAppConfig.game_system_server,
-        _a[4] = GameAppConfig.game_server_2,
         _a);
     //大厅服务连接到其他房间服务
     GameAppConfig.hall_connect_servers = (_b = {},

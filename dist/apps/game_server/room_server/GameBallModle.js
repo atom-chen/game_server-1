@@ -6,7 +6,6 @@ exports.__esModule = true;
 var GameHoodleProto_1 = require("../../protocol/protofile/GameHoodleProto");
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
-var NetServer_1 = __importDefault(require("../../../netbus/NetServer"));
 var GameBallModle = /** @class */ (function () {
     function GameBallModle() {
         var _a;
@@ -24,7 +23,7 @@ var GameBallModle = /** @class */ (function () {
     GameBallModle.prototype.recv_cmd_msg = function (session, stype, ctype, utag, proto_type, raw_cmd) {
         var body = this.decode_cmd(proto_type, raw_cmd);
         Log_1["default"].info("hcc>>recv_cmd_msg: ", stype, ctype, utag, proto_type, body);
-        NetServer_1["default"].send_encoded_cmd(session, raw_cmd);
+        //NetServer.send_encoded_cmd(session,raw_cmd);
         // let player: Player = PlayerManager.getInstance().get_player(utag);
         // let unick = "none";
         // if (player) {

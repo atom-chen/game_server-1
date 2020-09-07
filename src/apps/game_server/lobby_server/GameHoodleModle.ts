@@ -82,34 +82,36 @@ class GameHoodleModle {
         Log.info("recv_cmd_msg: ", StypeName[stype], cmdname, utag, unick);
         if (this._cmd_handler_map[ctype]){
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
-        }else{
-            //client_server_ip_port_map  保存客户端ip_port 和服务端ip_port的映射，使得下次发消息会发送到该服务端
-            // client_server_ip_port_map = {client_ip_port_key: server_ip_port_key}
-            let client_ip = session.remoteAddress || "";
-            let client_port = session.remotePort || "";
-            let client_key = client_ip + ":" + client_port;
-            let client_server_ip_port_map: any = session.client_server_ip_port_map; //map: client_ip_port_key: server_ip_port__key
-            if (client_server_ip_port_map) {
-                let server_key = client_server_ip_port_map[client_key];
-                let server_session = NetClient.get_server_session(server_key);
-                if (server_session){
-                    NetClient.send_encoded_cmd(server_session, raw_cmd);
-                }else{
-                    server_session = NetClient.choose_server();
-                    if (server_session) {
-                        NetClient.send_encoded_cmd(server_session, raw_cmd);
-                        client_server_ip_port_map[client_key] = server_session.server_ip_port_key;
-                        session.client_server_ip_port_map = client_server_ip_port_map;
-                    }                    
-                }
-            } else {
-                let server_session = NetClient.choose_server();
+        }
+        
+        //同时发一遍给room 服务
+        //选择一个没有超负载的服务进行发送消息，并进行标记，下次发消息也发给当前标记服务
+        //client_server_ip_port_map  保存客户端ip_port 和服务端ip_port的映射，使得下次发消息会发送到该服务端
+        // client_server_ip_port_map = {client_ip_port_key: server_ip_port_key}
+        let client_ip = session.remoteAddress || "";
+        let client_port = session.remotePort || "";
+        let client_key = client_ip + ":" + client_port;
+        let client_server_ip_port_map: any = session.client_server_ip_port_map; //map: client_ip_port_key: server_ip_port__key
+        if (client_server_ip_port_map) {
+            let server_key = client_server_ip_port_map[client_key];
+            let server_session = NetClient.get_server_session(server_key);
+            if (server_session){
+                NetClient.send_encoded_cmd(server_session, raw_cmd);
+            }else{
+                server_session = NetClient.choose_server();
                 if (server_session) {
                     NetClient.send_encoded_cmd(server_session, raw_cmd);
-                    client_server_ip_port_map = {};
                     client_server_ip_port_map[client_key] = server_session.server_ip_port_key;
                     session.client_server_ip_port_map = client_server_ip_port_map;
-                }
+                }                    
+            }
+        } else {
+            let server_session = NetClient.choose_server();
+            if (server_session) {
+                NetClient.send_encoded_cmd(server_session, raw_cmd);
+                client_server_ip_port_map = {};
+                client_server_ip_port_map[client_key] = server_session.server_ip_port_key;
+                session.client_server_ip_port_map = client_server_ip_port_map;
             }
         }
     }

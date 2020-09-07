@@ -139,7 +139,6 @@ class GameAppConfig {
 		[1]: GameAppConfig.auth_server,
 		[2]: GameAppConfig.game_server,
 		[3]: GameAppConfig.game_system_server,
-		[4]: GameAppConfig.game_server_2,
 	}
 
 	//大厅服务连接到其他房间服务

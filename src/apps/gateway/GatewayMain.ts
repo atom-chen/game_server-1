@@ -20,7 +20,7 @@ NetServer.start_tcp_server(GameAppConfig.gateway_config.host, GameAppConfig.gate
 NetServer.start_ws_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.wbsocket_port, false)
 
 // 连接其他服务器
-/*
+
 var game_server = GameAppConfig.gw_connect_servers;
 for(var key in game_server) {
 	NetClient.connect_tcp_server(game_server[key].host, game_server[key].port, false, game_server[key].stype, function(server_session:any) {
@@ -28,8 +28,8 @@ for(var key in game_server) {
 	});
 	ServiceManager.register_service(game_server[key].stype, GatewayService);
 }
-*/
 
+/*
 let connect_server_callBack = function(status:boolean, data:any) {
 	if(status == true){
 		let gw_connect_servers = data.gw_connect_servers;
@@ -102,3 +102,4 @@ setInterval(function () {
 		}
 	});
 }, 1000);
+*/

@@ -50,7 +50,7 @@ var MySqlEngine_1 = __importDefault(require("./MySqlEngine"));
 var util = __importStar(require("util"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var querystring_1 = __importDefault(require("querystring"));
-var GameHoodleConfig_1 = __importDefault(require("../apps/game_server/hall_server/config/GameHoodleConfig"));
+var GameHoodleConfig_1 = __importDefault(require("../apps/game_server/lobby_server/config/GameHoodleConfig"));
 var table_name = "ugame";
 var MySqlGame = /** @class */ (function () {
     function MySqlGame() {

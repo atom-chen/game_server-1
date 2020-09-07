@@ -3,13 +3,12 @@ import ProtoManager from "./ProtoManager"
 import ServiceManager from "./ServiceManager"
 import * as WebSocket from "ws"
 import * as TcpSocket from "net"
-import { Stype, StypeName} from '../apps/protocol/Stype';
 import ArrayUtil from '../utils/ArrayUtil';
 import Log from '../utils/Log';
 
 let StickPackage    = require("stickpackage")
 
-let global_session_list:any         = {}; 	//客户端session
+let client_session_list:any         = {}; 	//客户端session
 let global_seesion_key:number 	    = 1; 	//客户端session key
 let IS_USE_STICKPACKAGE:boolean     = true; //是否使用stickpackage处理粘包
 
@@ -73,10 +72,10 @@ class NetServer {
             session.msgCenter = new StickPackage.msgCenter(option) //粘包处理工具
         }
         //加入到serssion 列表
-        global_session_list[global_seesion_key] = session;
+        client_session_list[global_seesion_key] = session;
         session.session_key = global_seesion_key;
-        Log.warn("client session enter, client count: " , ArrayUtil.GetArrayLen(global_session_list))
         global_seesion_key ++;
+        Log.warn("client session enter, client count: ", ArrayUtil.GetArrayLen(client_session_list))
     }
 
     //websocket 客户端session事件
@@ -146,27 +145,30 @@ class NetServer {
         session.is_connected = false;
         ServiceManager.on_client_lost_connect(session);
         session.last_pkg = null; 
-        if (global_session_list[session.session_key]) {
-            global_session_list[session.session_key] = null;
-            delete global_session_list[session.session_key];
+        if (client_session_list[session.session_key]) {
+            delete client_session_list[session.session_key];
             session.session_key = null;
         }
-        Log.warn("client session exit, client count: " , ArrayUtil.GetArrayLen(global_session_list))
+        Log.warn("client session exit, client count: " , ArrayUtil.GetArrayLen(client_session_list))
     }
 
     // 关闭session
     static session_close(session:any) {
         if (!session.is_websocket) {
-            session.end();
+            if (session.end){
+                session.end();
+            }
         }
         else {
-            session.close();
+            if (session.close){
+                session.close();
+            }
         }
     }
 
     // 发送数据包
     static send_cmd(session:any, stype:number, ctype:number, utag:number, proto_type:number, body?:any){
-        if (!session.is_connected){
+        if (!session || !session.is_connected){
             return
         }
         let encode_cmd = ProtoManager.encode_cmd(stype, ctype, utag, proto_type, body);
@@ -177,7 +179,7 @@ class NetServer {
 
     // 发送未解包的数据包
     static send_encoded_cmd(session:any, encode_cmd:any){
-        if (!session.is_connected) {
+        if (!session || !session.is_connected) {
             return;
         }
 
@@ -262,21 +264,21 @@ class NetServer {
 
     //获取客户端Session
     static get_client_session(session_key:number) {
-        return global_session_list[session_key];
+        return client_session_list[session_key];
     }
 
-    static get_global_session_list(){
-        return global_session_list;
+    static get_client_session_list(){
+        return client_session_list;
     }
 
-    static save_global_session(session:any, session_key:number){
-        global_session_list[session_key] = session;
+    static save_client_session(session:any, session_key:number){
+        client_session_list[session_key] = session;
     }
 
-    static delete_global_session(session_key:any){
-        if (global_session_list[session_key]){
-            global_session_list[session_key] = null;
-            delete global_session_list[session_key];
+    static delete_client_session(session_key:any){
+        if (client_session_list[session_key]){
+            client_session_list[session_key] = null;
+            delete client_session_list[session_key];
         }
     }
 }
