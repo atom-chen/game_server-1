@@ -21,7 +21,7 @@ var ServiceBase_1 = __importDefault(require("../../../netbus/ServiceBase"));
 var GameHoodleModle_1 = __importDefault(require("./GameHoodleModle"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var NetServer_1 = __importDefault(require("../../../netbus/NetServer"));
-var gateway_session = null;
+var GameSessionMgr_1 = __importDefault(require("./GameSessionMgr"));
 var GameHoodleService = /** @class */ (function (_super) {
     __extends(GameHoodleService, _super);
     function GameHoodleService() {
@@ -32,12 +32,12 @@ var GameHoodleService = /** @class */ (function (_super) {
     }
     // 收到客户端，或者其他服务发来的数据
     GameHoodleService.on_recv_client_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        gateway_session = session; //保存一下网关session
         GameHoodleModle_1["default"].getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
     };
     // 收到连接的其他服务发过来的消息
     GameHoodleService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
         Log_1["default"].info("hcc>>on_recv_server_player_cmd: ", stype, ctype, utag, proto_type);
+        var gateway_session = GameSessionMgr_1["default"].get_gateway_session();
         if (gateway_session) {
             NetServer_1["default"].send_encoded_cmd(gateway_session, raw_cmd); //发给网关
         }

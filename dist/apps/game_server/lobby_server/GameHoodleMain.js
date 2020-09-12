@@ -15,11 +15,12 @@ var GameHoodleService_1 = __importDefault(require("./GameHoodleService"));
 var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var MatchManager_1 = __importDefault(require("./manager/MatchManager"));
 var GameAppConfig_1 = __importDefault(require("../../config/GameAppConfig"));
-var Log_1 = __importDefault(require("../../../utils/Log"));
-var NetClient_1 = __importDefault(require("../../../netbus/NetClient"));
+var GameSessionMgr_1 = __importDefault(require("./GameSessionMgr"));
 //作为服务端，开启tcp服务
 var game_server = GameAppConfig_1["default"].game_server;
-NetServer_1["default"].start_tcp_server(game_server.host, game_server.port, false);
+NetServer_1["default"].start_tcp_server(game_server.host, game_server.port, false, function (client_session) {
+    GameSessionMgr_1["default"].set_gateway_session(client_session);
+});
 ServiceManager_1["default"].register_service(Stype_1.Stype.GameHoodle, GameHoodleService_1["default"]);
 //游戏服务
 var db_game = GameAppConfig_1["default"].game_database;
@@ -32,12 +33,14 @@ MatchManager_1["default"].getInstance().start_match();
 ////////////////////////////////
 ////////////////////////////////
 //作为客户端，连接到其他服务器
-var room_server = GameAppConfig_1["default"].hall_connect_servers;
+/*
+let room_server = GameAppConfig.hall_connect_servers;
 for (var key in room_server) {
-    NetClient_1["default"].connect_tcp_server(room_server[key].host, room_server[key].port, false, room_server[key].stype, function (server_session) {
-        Log_1["default"].info("hcc>>connect to room server success !!", server_session.server_ip_port_key);
+    NetClient.connect_tcp_server(room_server[key].host, room_server[key].port, false, room_server[key].stype, function (server_session: any) {
+        Log.info("hcc>>connect to room server success !!", server_session.server_ip_port_key);
     });
 }
+*/
 ////////////////////////////////
 ////////////////////////////////
 //内存使用情况打印

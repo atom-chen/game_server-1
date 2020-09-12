@@ -11,12 +11,13 @@ import GameHoodleService from './GameHoodleService';
 import MySqlAuth from '../../../database/MySqlAuth';
 import MatchManager from './manager/MatchManager';
 import GameAppConfig from '../../config/GameAppConfig';
-import Log from '../../../utils/Log';
-import NetClient from '../../../netbus/NetClient';
+import GameSessionMgr from './GameSessionMgr';
 
 //作为服务端，开启tcp服务
 let game_server = GameAppConfig.game_server;
-NetServer.start_tcp_server(game_server.host, game_server.port, false);
+NetServer.start_tcp_server(game_server.host, game_server.port, false, function(client_session:any) {
+	GameSessionMgr.set_gateway_session(client_session);
+});
 ServiceManager.register_service(Stype.GameHoodle, GameHoodleService);
 
 //游戏服务
@@ -34,12 +35,14 @@ MatchManager.getInstance().start_match();
 ////////////////////////////////
 
 //作为客户端，连接到其他服务器
+/*
 let room_server = GameAppConfig.hall_connect_servers;
 for (var key in room_server) {
 	NetClient.connect_tcp_server(room_server[key].host, room_server[key].port, false, room_server[key].stype, function (server_session: any) {
 		Log.info("hcc>>connect to room server success !!", server_session.server_ip_port_key);
 	});
 }
+*/
 
 ////////////////////////////////
 ////////////////////////////////

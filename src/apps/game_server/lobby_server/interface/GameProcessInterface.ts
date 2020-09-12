@@ -39,7 +39,7 @@ class GameProcessInterface {
                 GameFunction.send_player_score(room, undefined, player);
             }
 
-            //如果有机器人，要发权限给机器人,防止机器人射击之后，别的玩家退出，再进来，卡主了
+            //如果有机器人，要发权限给机器人,防止机器人射击之后，别的玩家退出，再进来，卡了
             if (room.get_game_state() == GameState.Gameing) {
                 let player_set = room.get_all_player();
                 for(let idx in player_set){

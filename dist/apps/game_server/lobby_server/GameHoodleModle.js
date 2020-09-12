@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
 var GameHoodleProto_1 = require("../../protocol/protofile/GameHoodleProto");
 var GameSendMsg_1 = __importDefault(require("./GameSendMsg"));
 var CommonProto_1 = __importDefault(require("../../protocol/protofile/CommonProto"));
@@ -21,7 +20,6 @@ var GamePlayAgainInterface_1 = __importDefault(require("./interface/GamePlayAgai
 var GameConfigInterface_1 = __importDefault(require("./interface/GameConfigInterface"));
 var PlayerManager_1 = __importDefault(require("./manager/PlayerManager"));
 var Stype_1 = require("../../protocol/Stype");
-var NetClient_1 = __importDefault(require("../../../netbus/NetClient"));
 var GameHoodleModle = /** @class */ (function () {
     function GameHoodleModle() {
         var _a;
@@ -58,9 +56,6 @@ var GameHoodleModle = /** @class */ (function () {
     GameHoodleModle.getInstance = function () {
         return GameHoodleModle.Instance;
     };
-    GameHoodleModle.prototype.decode_cmd = function (proto_type, raw_cmd) {
-        return ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
-    };
     GameHoodleModle.prototype.recv_cmd_msg = function (session, stype, ctype, utag, proto_type, raw_cmd) {
         var player = PlayerManager_1["default"].getInstance().get_player(utag);
         var unick = "none";
@@ -82,34 +77,34 @@ var GameHoodleModle = /** @class */ (function () {
         //选择一个没有超负载的服务进行发送消息，并进行标记，下次发消息也发给当前标记服务
         //client_server_ip_port_map  保存客户端ip_port 和服务端ip_port的映射，使得下次发消息会发送到该服务端
         // client_server_ip_port_map = {client_ip_port_key: server_ip_port_key}
-        var client_ip = session.remoteAddress || "";
-        var client_port = session.remotePort || "";
-        var client_key = client_ip + ":" + client_port;
-        var client_server_ip_port_map = session.client_server_ip_port_map; //map: client_ip_port_key: server_ip_port__key
+        /*
+        let client_ip = session.remoteAddress || "";
+        let client_port = session.remotePort || "";
+        let client_key = client_ip + ":" + client_port;
+        let client_server_ip_port_map: any = session.client_server_ip_port_map; //map: client_ip_port_key: server_ip_port__key
         if (client_server_ip_port_map) {
-            var server_key = client_server_ip_port_map[client_key];
-            var server_session = NetClient_1["default"].get_server_session(server_key);
-            if (server_session) {
-                NetClient_1["default"].send_encoded_cmd(server_session, raw_cmd);
-            }
-            else {
-                server_session = NetClient_1["default"].choose_server();
+            let server_key = client_server_ip_port_map[client_key];
+            let server_session = NetClient.get_server_session(server_key);
+            if (server_session){
+                NetClient.send_encoded_cmd(server_session, raw_cmd);
+            }else{
+                server_session = NetClient.choose_server();
                 if (server_session) {
-                    NetClient_1["default"].send_encoded_cmd(server_session, raw_cmd);
+                    NetClient.send_encoded_cmd(server_session, raw_cmd);
                     client_server_ip_port_map[client_key] = server_session.server_ip_port_key;
                     session.client_server_ip_port_map = client_server_ip_port_map;
                 }
             }
-        }
-        else {
-            var server_session = NetClient_1["default"].choose_server();
+        } else {
+            let server_session = NetClient.choose_server();
             if (server_session) {
-                NetClient_1["default"].send_encoded_cmd(server_session, raw_cmd);
+                NetClient.send_encoded_cmd(server_session, raw_cmd);
                 client_server_ip_port_map = {};
                 client_server_ip_port_map[client_key] = server_session.server_ip_port_key;
                 session.client_server_ip_port_map = client_server_ip_port_map;
             }
         }
+        */
     };
     //玩家离开逻辑服务
     GameHoodleModle.prototype.on_player_lost_connect = function (session, utag, proto_type, raw_cmd) {

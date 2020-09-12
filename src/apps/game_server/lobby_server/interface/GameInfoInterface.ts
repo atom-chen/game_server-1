@@ -170,7 +170,7 @@ class GameInfoInterface {
                     player.set_uball_info(tmp_ball_json);
                     return;
                 }
-            } 
+            }
             player.send_cmd(Cmd.eUpdateUserBallRes, { status: Response.INVALIDI_OPT });
         }
     }

@@ -34,7 +34,7 @@ var Stype_1 = require("../protocol/Stype");
 var AuthProto_1 = require("../protocol/protofile/AuthProto");
 var CommonProto_1 = __importDefault(require("../protocol/protofile/CommonProto"));
 var Log_1 = __importDefault(require("../../utils/Log"));
-var GatewayFunction_1 = __importDefault(require("./GatewayFunction"));
+var GatewayHandle_1 = __importDefault(require("./GatewayHandle"));
 var util = __importStar(require("util"));
 var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
 var GatewayService = /** @class */ (function (_super) {
@@ -48,19 +48,19 @@ var GatewayService = /** @class */ (function (_super) {
     //客户端发到网关，网关转发到服务器
     //session 客户端session
     GatewayService.on_recv_client_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        var server_session = GatewayFunction_1["default"].get_server_session(stype);
+        var server_session = GatewayHandle_1["default"].get_server_session(stype);
         if (util.isNullOrUndefined(server_session)) {
             return;
         }
         // 打入能够标识client的utag, uid, session.session_key,
-        if (GatewayFunction_1["default"].is_login_req_cmd(stype, ctype)) { //还没登录
+        if (GatewayHandle_1["default"].is_login_req_cmd(stype, ctype)) { //还没登录
             if (utag == 0) { //普通玩家，还没登录
                 utag = session.session_key;
             }
             else { //机器人,本来就有utag
                 session.is_robot = true;
                 session.session_key = utag;
-                NetServer_1["default"].save_client_session(session, session.session_key);
+                NetServer_1["default"].set_client_session(session, session.session_key);
             }
         }
         else { //登录后
@@ -80,7 +80,7 @@ var GatewayService = /** @class */ (function (_super) {
     GatewayService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
         Log_1["default"].info("recv_server>>> ", ProtoCmd_1["default"].getProtoName(stype) + ",", ProtoCmd_1["default"].getCmdName(stype, ctype) + " ,utag:", utag);
         var client_session = null;
-        if (GatewayFunction_1["default"].is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
+        if (GatewayHandle_1["default"].is_login_res_cmd(stype, ctype)) { // 还没登录,utag == session.session_key
             client_session = NetServer_1["default"].get_client_session(utag);
             if (util.isNullOrUndefined(client_session)) {
                 return;
@@ -88,27 +88,26 @@ var GatewayService = /** @class */ (function (_super) {
             var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
             if (body.status == Response_1["default"].OK) {
                 // 以前你登陆过,发送一个命令给这个客户端，告诉它说以前有人登陆
-                var prev_session = GatewayFunction_1["default"].get_session_by_uid(body.uid);
+                var prev_session = GatewayHandle_1["default"].get_session_by_uid(body.uid);
                 if (prev_session) {
                     NetServer_1["default"].send_cmd(prev_session, stype, AuthProto_1.Cmd.eReloginRes, utag, proto_type);
                     prev_session.uid = 0;
-                    NetServer_1["default"].session_close(prev_session);
                 }
                 if (body.uid) {
                     client_session.uid = body.uid;
-                    GatewayFunction_1["default"].save_session_with_uid(body.uid, client_session, proto_type);
+                    GatewayHandle_1["default"].save_session_with_uid(body.uid, client_session, proto_type);
                     body.uid = 0;
                     raw_cmd = ProtoManager_1["default"].encode_cmd(stype, ctype, utag, proto_type, body);
                 }
             }
         }
         else { //已经登录,utag == uid
-            client_session = GatewayFunction_1["default"].get_session_by_uid(utag);
+            client_session = GatewayHandle_1["default"].get_session_by_uid(utag);
         }
         if (client_session) {
             NetServer_1["default"].send_encoded_cmd(client_session, raw_cmd);
             if (ctype == AuthProto_1.Cmd.eLoginOutRes && stype == Stype_1.Stype.Auth) {
-                GatewayFunction_1["default"].clear_session_with_uid(utag);
+                GatewayHandle_1["default"].clear_session_with_uid(utag);
             }
         }
     };
@@ -116,9 +115,9 @@ var GatewayService = /** @class */ (function (_super) {
     //session: 客户端session
     GatewayService.on_player_disconnect = function (session, stype) {
         if (stype == Stype_1.Stype.Auth) { // 由Auth服务保存的，那么就由Auth清空
-            GatewayFunction_1["default"].clear_session_with_uid(session.uid);
+            GatewayHandle_1["default"].clear_session_with_uid(session.uid);
         }
-        var server_session = GatewayFunction_1["default"].get_server_session(stype);
+        var server_session = GatewayHandle_1["default"].get_server_session(stype);
         if (util.isNullOrUndefined(server_session)) {
             return;
         }

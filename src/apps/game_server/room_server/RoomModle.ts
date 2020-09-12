@@ -1,18 +1,13 @@
 import { Cmd, CmdName } from '../../protocol/protofile/GameHoodleProto';
-import PlayerManager from '../lobby_server/manager/PlayerManager';
-import Player from '../lobby_server/cell/Player';
 import ProtoManager from '../../../netbus/ProtoManager';
-import { StypeName } from '../../protocol/Stype';
 import Log from '../../../utils/Log';
-import NetServer from '../../../netbus/NetServer';
-import GameCheck from '../lobby_server/interface/GameCheck';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
 }
 
-class GameBallModle {
-    private static readonly Instance: GameBallModle = new GameBallModle();
+class RoomModle {
+    private static readonly Instance: RoomModle = new RoomModle();
     _cmd_handler_map: CmdHandlerMap = {};
 
     private constructor() {
@@ -31,7 +26,7 @@ class GameBallModle {
     }
 
     public static getInstance() {
-        return GameBallModle.Instance;
+        return RoomModle.Instance;
     }
 
     private decode_cmd(proto_type: number, raw_cmd: any) {
@@ -76,4 +71,4 @@ class GameBallModle {
 
 }
 
-export default GameBallModle;
+export default RoomModle;

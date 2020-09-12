@@ -1,4 +1,3 @@
-import ProtoManager from '../../../netbus/ProtoManager';
 import { Cmd ,CmdName} from '../../protocol/protofile/GameHoodleProto';
 import GameSendMsg from './GameSendMsg';
 import CommonProto from '../../protocol/protofile/CommonProto';
@@ -61,10 +60,6 @@ class GameHoodleModle {
     public static getInstance(){
         return GameHoodleModle.Instance;
     }
-    
-    private decode_cmd(proto_type:number,raw_cmd:any){
-        return ProtoManager.decode_cmd(proto_type,raw_cmd);
-    }
 
     public recv_cmd_msg(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:Buffer){
         let player:Player = PlayerManager.getInstance().get_player(utag);
@@ -88,6 +83,7 @@ class GameHoodleModle {
         //选择一个没有超负载的服务进行发送消息，并进行标记，下次发消息也发给当前标记服务
         //client_server_ip_port_map  保存客户端ip_port 和服务端ip_port的映射，使得下次发消息会发送到该服务端
         // client_server_ip_port_map = {client_ip_port_key: server_ip_port_key}
+        /*
         let client_ip = session.remoteAddress || "";
         let client_port = session.remotePort || "";
         let client_key = client_ip + ":" + client_port;
@@ -114,6 +110,7 @@ class GameHoodleModle {
                 session.client_server_ip_port_map = client_server_ip_port_map;
             }
         }
+        */
     }
 
     //玩家离开逻辑服务

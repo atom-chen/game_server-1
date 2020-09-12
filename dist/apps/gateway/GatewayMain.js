@@ -12,14 +12,14 @@ var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
 var GatewayService_1 = __importDefault(require("./GatewayService"));
 var ServiceManager_1 = __importDefault(require("../../netbus/ServiceManager"));
 var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
-var GatewayFunction_1 = __importDefault(require("./GatewayFunction"));
+var GatewayHandle_1 = __importDefault(require("./GatewayHandle"));
 NetServer_1["default"].start_tcp_server(GameAppConfig_1["default"].gateway_config.host, GameAppConfig_1["default"].gateway_config.tcp_port, false);
 NetServer_1["default"].start_ws_server(GameAppConfig_1["default"].gateway_config.host, GameAppConfig_1["default"].gateway_config.wbsocket_port, false);
 // 连接其他服务器
 var game_server = GameAppConfig_1["default"].gw_connect_servers;
 for (var key in game_server) {
     NetClient_1["default"].connect_tcp_server(game_server[key].host, game_server[key].port, false, game_server[key].stype, function (server_session) {
-        GatewayFunction_1["default"].save_server_session(server_session, server_session.stype);
+        GatewayHandle_1["default"].save_server_session(server_session, server_session.stype);
     });
     ServiceManager_1["default"].register_service(game_server[key].stype, GatewayService_1["default"]);
 }

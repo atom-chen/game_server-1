@@ -8,7 +8,7 @@ import NetServer from "../../netbus/NetServer"
 import GatewayService from "./GatewayService"
 import ServiceManager from '../../netbus/ServiceManager';
 import NetClient from '../../netbus/NetClient';
-import GatewayFunction from './GatewayFunction';
+import GatewayFunction from './GatewayHandle';
 import Log from '../../utils/Log';
 import * as util from 'util';
 import Platform from '../../utils/Platform';

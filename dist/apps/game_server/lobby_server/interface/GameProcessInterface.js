@@ -38,7 +38,7 @@ var GameProcessInterface = /** @class */ (function () {
                 GameFunction_1["default"].send_player_power(room, undefined, player);
                 GameFunction_1["default"].send_player_score(room, undefined, player);
             }
-            //如果有机器人，要发权限给机器人,防止机器人射击之后，别的玩家退出，再进来，卡主了
+            //如果有机器人，要发权限给机器人,防止机器人射击之后，别的玩家退出，再进来，卡了
             if (room.get_game_state() == State_1.GameState.Gameing) {
                 var player_set = room.get_all_player();
                 for (var idx in player_set) {
