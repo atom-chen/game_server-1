@@ -46,7 +46,7 @@ var Log_1 = __importDefault(require("../../../utils/Log"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var TimeUtil_1 = __importDefault(require("../../../utils/TimeUtil"));
 var SystemSend_1 = __importDefault(require("../SystemSend"));
-var SystemProto_1 = require("../../protocol/SystemProto");
+var SystemProto_1 = require("../../protocol/protofile/SystemProto");
 var SystemConfig_1 = __importDefault(require("../config/SystemConfig"));
 var ShareInterface = /** @class */ (function () {
     function ShareInterface() {

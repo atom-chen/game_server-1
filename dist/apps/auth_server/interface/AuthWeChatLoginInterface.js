@@ -51,12 +51,12 @@ var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
-var AuthProto_1 = require("../../protocol/protofile/AuthProto");
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
 var util = __importStar(require("util"));
 var https = __importStar(require("https"));
 var iconv = __importStar(require("iconv-lite"));
 var WXBizDataCrypt_1 = __importDefault(require("../../../utils/WXBizDataCrypt"));
+var AuthProto_1 = __importDefault(require("../../protocol/protofile/AuthProto"));
 var WECHAT_APPID = "wxb03d15124f396116";
 var WECHAT_APPSECRET = "6b0b8e0066b7e0e9b841a6b9e05b6941";
 var HTTPS_WECHAT_LOGIN = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
@@ -188,7 +188,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                             userlogininfo: JSON.stringify(sql_info)
                         };
                         // Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
-                        AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, resbody);
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATLOGIN, utag, proto_type, resbody);
                         login_uid = sql_info.uid;
                         if (!login_uid) return [3 /*break*/, 5];
                         return [4 /*yield*/, MySqlAuth_1["default"].update_wechat_user_info(login_uid, nickName, gender, address, unionId, avatarUrl)];
@@ -200,7 +200,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                         _a.label = 5;
                     case 5: return [2 /*return*/];
                     case 6:
-                        AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                         return [2 /*return*/];
                 }
             });
@@ -228,12 +228,12 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                                 userlogininfo: JSON.stringify(sql_info)
                             };
                             Log_1["default"].info("hcc>>do_wechat_session_login_req: ", resbody);
-                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatSessionLoginRes, utag, proto_type, resbody);
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, resbody);
                             return [2 /*return*/];
                         }
                         _a.label = 2;
                     case 2:
-                        AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                         _a.label = 3;
                     case 3: return [2 /*return*/];
                 }

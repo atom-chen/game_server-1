@@ -15,6 +15,8 @@ var TcpSocket = __importStar(require("net"));
 var ServiceManager_1 = __importDefault(require("./ServiceManager"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var ProtoManager_1 = __importDefault(require("./ProtoManager"));
+var util = __importStar(require("util"));
+var Stype_1 = __importDefault(require("../apps/protocol/Stype"));
 var StickPackage = require("stickpackage");
 var server_session_map = {};
 var max_server_load_count = 1000; // 一个room服务最大人数
@@ -22,9 +24,10 @@ var NetClient = /** @class */ (function () {
     function NetClient() {
     }
     NetClient.connect_tcp_server = function (host, port, is_encrypt, stype, success_callfunc) {
-        var server_session = TcpSocket.connect({
-            port: port,
-            host: host
+        var options = { port: port, host: host };
+        var server_session = TcpSocket.createConnection(options, function () {
+            var stypeName = util.isNullOrUndefined(stype) ? "" : Stype_1["default"].S_NAME[stype];
+            Log_1["default"].info("hcc>>已经连接到tcp服务器：", stypeName, host, port);
         });
         server_session.is_connected = false;
         server_session.stype = stype;
@@ -39,7 +42,8 @@ var NetClient = /** @class */ (function () {
             if (success_callfunc) {
                 success_callfunc(server_session); //这里将所连接的服务的session返回，各个进程自己维护服务session
             }
-            NetClient.save_server_session(server_session, host, String(port));
+            var server_session_key = host + ":" + String(port);
+            NetClient.save_server_session(server_session, server_session_key);
         });
         server_session.on("close", function () {
             if (server_session.is_connected == true) {
@@ -71,10 +75,7 @@ var NetClient = /** @class */ (function () {
         server_session.msgCenter = new StickPackage.msgCenter({ bigEndian: false }); //粘包处理工具
     };
     NetClient.on_recv_cmd_server_return = function (server_session, str_or_buf) {
-        var ret = ServiceManager_1["default"].on_recv_server_cmd(server_session, str_or_buf);
-        if (!ret) {
-            // NetClient.session_close(server_session);
-        }
+        ServiceManager_1["default"].on_recv_server_cmd(server_session, str_or_buf);
     };
     NetClient.session_close = function (server_session) {
         if (server_session.end) {
@@ -117,17 +118,16 @@ var NetClient = /** @class */ (function () {
             }
         }
     };
-    NetClient.save_server_session = function (server_session, ip, port) {
-        var server_session_key = ip + ":" + port;
-        server_session_map[server_session_key] = server_session;
-        server_session.server_ip_port_key = server_session_key;
+    NetClient.save_server_session = function (server_session, session_key) {
+        server_session_map[session_key] = server_session;
+        server_session.session_key = session_key;
     };
-    NetClient.get_server_session = function (ip_port_key) {
-        return server_session_map[ip_port_key];
+    NetClient.get_server_session = function (session_key) {
+        return server_session_map[session_key];
     };
-    NetClient.clear_server_session = function (ip_port_key) {
-        if (server_session_map[ip_port_key]) {
-            delete server_session_map[ip_port_key];
+    NetClient.clear_server_session = function (session_key) {
+        if (server_session_map[session_key]) {
+            delete server_session_map[session_key];
         }
     };
     //没超负载的服务,且用户多的服务

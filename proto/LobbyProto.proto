@@ -1,0 +1,46 @@
+//LobbyProto.proto
+
+/*
+写协议规则：
+1.先定义枚举，再定义协议内容, 
+1.协议名字（类型）用驼峰命名
+2.协议字段统一小写（因为protobufjs 大小写不区分），不用下划线
+4.枚举要大写加下划线, 枚举不可重名，否则会出现问题
+
+命名规则：
+REQ_XX:  客户端请求
+RES_XX:  服务端根据客户端请求推送，一一对应
+PULL_XX: 客户端拉取，服务可能推送多条消息
+PUSH_XX: 服务主动推送
+*/
+
+/*
+基本类型： 
+常用： bool, int32(负数效率低下), sint32(负数速度更快)，int64(负数效率低下), sint64(负数速度更快), string, bytes, enum, message（message内部可以嵌套）
+uint32, uint64,
+不常用： double, float, fixed32(四个字节，如果>2^28比uint32效率更高), fixed64(八个字节，如果>2^56比uint64效率更高),
+数组类型：repeated
+可选类型：optional
+必须类型: required,如果不写的话就是optional类型
+*/
+syntax = "proto3";
+package lobby.client.proto;
+
+enum XY_ID {
+	INVALED = 0;
+	
+	REQ_LOGINLOBBY = 20001;
+	RES_LOBINLOBBY = 20002;
+}
+
+message reqLoginLobby {
+	bool isrobot = 1;
+}
+
+message resLoginLobby {
+	enum LOGIN_LOBBY_STATUS {
+		E_LOGIN_LOBBY_SUCCESS = 0;
+		E_LOGIN_LOBBY_FAILED = 1;
+	}
+	LOGIN_LOBBY_STATUS status = 1;
+}

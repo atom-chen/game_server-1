@@ -1,7 +1,7 @@
 import SystemSend from '../SystemSend';
 import MySqlSystem from '../../../database/MysqlSystem';
 import Response from '../../protocol/Response';
-import { Cmd } from '../../protocol/SystemProto';
+import { Cmd } from '../../protocol/protofile/SystemProto';
 import Log from '../../../utils/Log';
 import { LoginRewardConfig } from '../config/LoginRewardConfig';
 import ArrayUtil from '../../../utils/ArrayUtil';

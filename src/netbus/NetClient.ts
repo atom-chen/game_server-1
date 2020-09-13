@@ -4,6 +4,8 @@ import * as TcpSocket from "net"
 import ServiceManager from "./ServiceManager";
 import Log from "../utils/Log";
 import ProtoManager from "./ProtoManager";
+import * as util from 'util';
+import Stype from '../apps/protocol/Stype';
 let StickPackage = require("stickpackage")
 
 let server_session_map:any = {}
@@ -12,9 +14,10 @@ let max_server_load_count:number = 1000; // 一个room服务最大人数
 class NetClient {
 
     static connect_tcp_server(host: string, port: number, is_encrypt: boolean, stype?:number, success_callfunc?: Function) {
-        let server_session: any = TcpSocket.connect({
-            port: port,
-            host: host,
+        let options: TcpSocket.NetConnectOpts = {port: port, host: host,};
+        let server_session: any = TcpSocket.createConnection(options, function() {
+            let stypeName = util.isNullOrUndefined(stype) ? "" : Stype.S_NAME[stype];
+            Log.info("hcc>>已经连接到tcp服务器：", stypeName , host, port );
         });
 
         server_session.is_connected = false;
@@ -30,7 +33,8 @@ class NetClient {
             if (success_callfunc) {
                 success_callfunc(server_session);//这里将所连接的服务的session返回，各个进程自己维护服务session
             }
-            NetClient.save_server_session(server_session, host, String(port));
+            let server_session_key = host + ":" + String(port);
+            NetClient.save_server_session(server_session, server_session_key);
         });
 
         server_session.on("close", function () {
@@ -68,10 +72,7 @@ class NetClient {
     }
 
     static on_recv_cmd_server_return(server_session: any, str_or_buf: any) {
-        let ret = ServiceManager.on_recv_server_cmd(server_session, str_or_buf);
-        if (!ret) {
-            // NetClient.session_close(server_session);
-        }
+        ServiceManager.on_recv_server_cmd(server_session, str_or_buf);
     }
 
     static session_close(server_session: any) {
@@ -120,19 +121,18 @@ class NetClient {
         }
     }
 
-    static save_server_session(server_session:any, ip:string, port:string){
-        let server_session_key = ip + ":" + port;
-        server_session_map[server_session_key] = server_session;
-        server_session.server_ip_port_key = server_session_key;
+    static save_server_session(server_session:any, session_key:string){
+        server_session_map[session_key] = server_session;
+        server_session.session_key = session_key;
     }
 
-    static get_server_session(ip_port_key: string) {
-        return server_session_map[ip_port_key];
+    static get_server_session(session_key: string) {
+        return server_session_map[session_key];
     }
 
-    static clear_server_session(ip_port_key: string){
-        if (server_session_map[ip_port_key]){
-            delete server_session_map[ip_port_key];
+    static clear_server_session(session_key: string){
+        if (server_session_map[session_key]){
+            delete server_session_map[session_key];
         }
     }
 

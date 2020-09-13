@@ -4,13 +4,13 @@ import MySqlAuth from "../../../database/MySqlAuth"
 import Response from '../../protocol/Response';
 import Log from "../../../utils/Log";
 import AuthSendMsg from "../AuthSendMsg";
-import { Cmd } from "../../protocol/protofile/AuthProto";
 import ProtoManager from "../../../netbus/ProtoManager";
 import * as util from 'util';
 import * as https from 'https';
 import * as http from "http";
 import * as iconv from "iconv-lite";
 import WXBizDataCrypt from '../../../utils/WXBizDataCrypt';
+import AuthProto from '../../protocol/protofile/AuthProto';
 
 let WECHAT_APPID        = "wxb03d15124f396116";
 let WECHAT_APPSECRET    = "6b0b8e0066b7e0e9b841a6b9e05b6941";
@@ -121,7 +121,7 @@ class AuthWeChatLoginInterface {
                     userlogininfo: JSON.stringify(sql_info)
                 }
                 // Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
-                AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, resbody)
+                AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATLOGIN, utag, proto_type, resbody)
                 //登录成功后，立即更新玩家微信数据，可能会耗费IO，但是为了同步微信信息没办法
                 let login_uid = sql_info.uid;
                 if(login_uid){
@@ -133,7 +133,7 @@ class AuthWeChatLoginInterface {
                 return;
             }
         }
-        AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
+        AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
     }
 
     //微信session登录(其实就是unionid登录)
@@ -152,11 +152,11 @@ class AuthWeChatLoginInterface {
                         userlogininfo: JSON.stringify(sql_info)
                     }
                     Log.info("hcc>>do_wechat_session_login_req: ", resbody)
-                    AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, resbody)
+                    AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, resbody)
                     return;
                 }
             }
-            AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
         }
     }
 }

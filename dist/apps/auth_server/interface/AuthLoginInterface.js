@@ -42,9 +42,9 @@ exports.__esModule = true;
 var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
-var AuthProto_1 = require("../../protocol/protofile/AuthProto");
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
 var StringUtil_1 = __importDefault(require("../../../utils/StringUtil"));
+var AuthProto_1 = __importDefault(require("../../protocol/protofile/AuthProto"));
 var AuthLoginInterface = /** @class */ (function () {
     function AuthLoginInterface() {
     }
@@ -56,15 +56,15 @@ var AuthLoginInterface = /** @class */ (function () {
                     case 0:
                         body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
                         if (!body) {
-                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eUnameLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                             return [2 /*return*/];
                         }
                         if (!body.uname || !body.upwd) {
-                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eUnameLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                             return [2 /*return*/];
                         }
                         if (body.uname.length < 6 || body.upwd.length < 6) {
-                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eUnameLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                             return [2 /*return*/];
                         }
                         return [4 /*yield*/, MySqlAuth_1["default"].login_by_uname_upwd(body.uname, body.upwd)];
@@ -76,13 +76,13 @@ var AuthLoginInterface = /** @class */ (function () {
                                 resbody = {
                                     status: 1,
                                     uid: sql_info.uid,
-                                    userlogininfo: JSON.stringify(sql_info)
+                                    logininfo: JSON.stringify(sql_info)
                                 };
-                                AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eUnameLoginRes, utag, proto_type, resbody);
+                                AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMELOGIN, utag, proto_type, resbody);
                                 return [2 /*return*/];
                             }
                         }
-                        AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eUnameLoginRes, utag, proto_type, { status: Response_1["default"].UNAME_OR_UPWD_ERR });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response_1["default"].UNAME_OR_UPWD_ERR });
                         return [2 /*return*/];
                 }
             });
@@ -96,15 +96,15 @@ var AuthLoginInterface = /** @class */ (function () {
                     case 0:
                         body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
                         if (!body) {
-                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGuestLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                             return [2 /*return*/];
                         }
                         if (!body.guestkey) {
-                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGuestLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                             return [2 /*return*/];
                         }
                         if (body.guestkey.length < 32) {
-                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGuestLoginRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                             return [2 /*return*/];
                         }
                         return [4 /*yield*/, MySqlAuth_1["default"].login_by_guestkey(body.guestkey)];
@@ -127,13 +127,13 @@ var AuthLoginInterface = /** @class */ (function () {
                         resbody = {
                             status: 1,
                             uid: sql_info.uid,
-                            userlogininfo: JSON.stringify(sql_info)
+                            logininfo: JSON.stringify(sql_info)
                         };
                         // Log.info("hcc>>login_by_guestkey: ", resbody)
-                        AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGuestLoginRes, utag, proto_type, resbody);
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_GUESTLOGIN, utag, proto_type, resbody);
                         return [2 /*return*/];
                     case 4:
-                        AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGuestLoginRes, utag, proto_type, { status: Response_1["default"].UNAME_OR_UPWD_ERR });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response_1["default"].UNAME_OR_UPWD_ERR });
                         return [2 /*return*/];
                 }
             });
@@ -141,7 +141,7 @@ var AuthLoginInterface = /** @class */ (function () {
     };
     AuthLoginInterface.do_login_out_req = function (session, utag, proto_type, raw_cmd) {
         if (utag != 0) {
-            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eLoginOutRes, utag, proto_type, { status: 1 });
+            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_LOGINOUT, utag, proto_type, { status: 1 });
         }
     };
     return AuthLoginInterface;

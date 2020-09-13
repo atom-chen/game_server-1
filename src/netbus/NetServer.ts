@@ -1,4 +1,5 @@
-import TcpPkg from "./TcpPkg"
+//当前作为服务端，监听其他服务器来连接
+
 import ProtoManager from "./ProtoManager"
 import * as WebSocket from "ws"
 import * as TcpSocket from "net"
@@ -6,10 +7,12 @@ import Log from '../utils/Log';
 import NetServerHandle from './NetServerHandle';
 
 class NetServer {
+
     //开启webserver
     static start_ws_server(ip: string, port: number, is_encrypt: boolean, success_callfunc?: Function) {
-        Log.info("start ws server:", ip, port);
-        let server:WebSocket.Server = new WebSocket.Server({ host: ip, port: port,});
+        let options: WebSocket.ServerOptions = { host: ip, port: port, };
+        const server:WebSocket.Server = new WebSocket.Server(options);
+        
         server.on("connection", function(client_session:WebSocket){
             NetServerHandle.on_session_enter(client_session, true, is_encrypt);
             NetServerHandle.ws_add_client_session_event(client_session);
@@ -17,38 +20,46 @@ class NetServer {
                 success_callfunc(client_session);
             }
         });
+        
+        server.on("listening", function () {
+            Log.info("WebSocket server start listen",",ip:" , ip , " ,port:" , port);
+        });
 
         server.on("error", function(err:Error){
+            Log.error("WebSocket server listen error");
         });
 
         server.on("close", function(err:Error){
             Log.error("WebSocket server listen close!!");
         });
+
     }
 
     //开启tcpserver
     static start_tcp_server(ip: string, port: number, is_encrypt: boolean, success_callfunc?: Function) {
-        Log.info("start tcp server:", ip, port);
-        let server = TcpSocket.createServer(function(client_session:TcpSocket.Socket) { 
+        let options: TcpSocket.ListenOptions = { port: port, host: ip, exclusive: true, }
+        const server = TcpSocket.createServer();
+        server.listen(options);
+        
+        server.on("connection", function (client_session: TcpSocket.Socket) {
+            Log.info("tcp client connection:", client_session.address());
             NetServerHandle.on_session_enter(client_session, false, is_encrypt);
             NetServerHandle.tcp_add_client_session_event(client_session);
             if (success_callfunc) {
                 success_callfunc(client_session);
             }
         });
-        // 监听发生错误的时候调用
+
+        server.on("listening", function() {
+            Log.info("tcp server start listen", ",ip:", ip, " ,port:", port);
+        });
+
         server.on("error", function() {
             Log.error("tcp server listen error");
         });
 
         server.on("close", function() {
             Log.error("tcp server listen close");
-        });
-
-        server.listen({
-            host: ip,
-            port: port,
-            exclusive: true,
         });
     }
 
@@ -96,17 +107,21 @@ class NetServer {
         return NetServerHandle.get_client_session(session_key);
     }
 
+    //获取客户端Session列表
     static get_client_session_list(){
         return NetServerHandle.get_client_session_list();
     }
 
+    //保存客户端session
     static set_client_session(session:any, session_key:number){
         NetServerHandle.set_client_session(session, session_key);
     }
 
+    //删除客户端session
     static delete_client_session(session_key:any){
         NetServerHandle.delete_client_session(session_key);
     }
+    
 }
 
 export default NetServer;

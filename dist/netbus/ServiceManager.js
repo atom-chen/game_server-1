@@ -11,18 +11,18 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 exports.__esModule = true;
 var ProtoManager_1 = __importDefault(require("./ProtoManager"));
-var Stype_1 = require("../apps/protocol/Stype");
 var Log_1 = __importDefault(require("../utils/Log"));
 var util = __importStar(require("util"));
+var Stype_1 = __importDefault(require("../apps/protocol/Stype"));
 var ServiceManager = /** @class */ (function () {
     function ServiceManager() {
     }
     ServiceManager.register_service = function (stype, service) {
         if (ServiceManager.service_modules[stype]) {
-            Log_1["default"].warn('【' + Stype_1.StypeName[stype] + '】', "registed failed, service is registed !!!!");
+            Log_1["default"].warn('【' + Stype_1["default"].S_NAME[stype] + '】', "registed failed, service is registed !!!!");
         }
         ServiceManager.service_modules[stype] = service;
-        Log_1["default"].warn('【' + Stype_1.StypeName[stype] + '】', "registed success !!!!");
+        Log_1["default"].warn('【' + Stype_1["default"].S_NAME[stype] + '】', "registed success !!!!");
     };
     ServiceManager.unregister_service = function (stype) {
         if (ServiceManager.service_modules[stype]) {
@@ -45,7 +45,7 @@ var ServiceManager = /** @class */ (function () {
         var utag = cmd[2];
         var proto_type = cmd[3];
         if (!ServiceManager.service_modules[stype]) {
-            Log_1["default"].error("cur as client ServiceManager.service_modules not exist>> service: ", Stype_1.StypeName[stype]);
+            Log_1["default"].error("cur as client ServiceManager.service_modules not exist>> service: ", Stype_1["default"].S_NAME[stype]);
             return false;
         }
         if (util.isNullOrUndefined(stype) || util.isNullOrUndefined(ctype) || util.isNullOrUndefined(utag) || util.isNullOrUndefined(proto_type)) {
@@ -74,7 +74,7 @@ var ServiceManager = /** @class */ (function () {
         var utag = cmd[2];
         var proto_type = cmd[3];
         if (!ServiceManager.service_modules[stype]) {
-            Log_1["default"].error("cur as server ServiceManager.service_modules not exist>>service: ", Stype_1.StypeName[stype]);
+            Log_1["default"].error("cur as server ServiceManager.service_modules not exist>>service: ", Stype_1["default"].S_NAME[stype]);
             return false;
         }
         if (util.isNullOrUndefined(stype) || util.isNullOrUndefined(ctype) || util.isNullOrUndefined(utag) || util.isNullOrUndefined(proto_type)) {

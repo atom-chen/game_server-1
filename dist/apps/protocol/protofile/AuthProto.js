@@ -1,67 +1,47 @@
 "use strict";
 var _a;
 exports.__esModule = true;
-exports.protoName = "AuthProto";
-exports.protoNameMsg = "AuthProtoMsg";
-var Cmd;
-(function (Cmd) {
-    Cmd[Cmd["INVALED"] = 0] = "INVALED";
-    Cmd[Cmd["eUnameLoginReq"] = 1] = "eUnameLoginReq";
-    Cmd[Cmd["eUnameLoginRes"] = 2] = "eUnameLoginRes";
-    Cmd[Cmd["eGuestLoginReq"] = 3] = "eGuestLoginReq";
-    Cmd[Cmd["eGuestLoginRes"] = 4] = "eGuestLoginRes";
-    Cmd[Cmd["eUnameRegistReq"] = 5] = "eUnameRegistReq";
-    Cmd[Cmd["eUnameRegistRes"] = 6] = "eUnameRegistRes";
-    Cmd[Cmd["ePhoneRegistReq"] = 7] = "ePhoneRegistReq";
-    Cmd[Cmd["ePhoneRegistRes"] = 8] = "ePhoneRegistRes";
-    Cmd[Cmd["eGetPhoneRegVerNumReq"] = 9] = "eGetPhoneRegVerNumReq";
-    Cmd[Cmd["eGetPhoneRegVerNumRes"] = 10] = "eGetPhoneRegVerNumRes";
-    Cmd[Cmd["eBindPhoneNumberReq"] = 11] = "eBindPhoneNumberReq";
-    Cmd[Cmd["eBindPhoneNumberRes"] = 12] = "eBindPhoneNumberRes";
-    Cmd[Cmd["eResetUserPwdReq"] = 13] = "eResetUserPwdReq";
-    Cmd[Cmd["eResetUserPwdRes"] = 14] = "eResetUserPwdRes";
-    Cmd[Cmd["eLoginOutReq"] = 15] = "eLoginOutReq";
-    Cmd[Cmd["eLoginOutRes"] = 16] = "eLoginOutRes";
-    Cmd[Cmd["eEditProfileReq"] = 17] = "eEditProfileReq";
-    Cmd[Cmd["eEditProfileRes"] = 18] = "eEditProfileRes";
-    Cmd[Cmd["eAccountUpgradeReq"] = 19] = "eAccountUpgradeReq";
-    Cmd[Cmd["eAccountUpgradeRes"] = 20] = "eAccountUpgradeRes";
-    Cmd[Cmd["eGetUserCenterInfoReq"] = 21] = "eGetUserCenterInfoReq";
-    Cmd[Cmd["eGetUserCenterInfoRes"] = 22] = "eGetUserCenterInfoRes";
-    Cmd[Cmd["eReloginRes"] = 23] = "eReloginRes";
-    Cmd[Cmd["eWeChatLoginReq"] = 24] = "eWeChatLoginReq";
-    Cmd[Cmd["eWeChatLoginRes"] = 25] = "eWeChatLoginRes";
-    Cmd[Cmd["eWeChatSessionLoginReq"] = 26] = "eWeChatSessionLoginReq";
-    Cmd[Cmd["eWeChatSessionLoginRes"] = 27] = "eWeChatSessionLoginRes";
-})(Cmd = exports.Cmd || (exports.Cmd = {}));
-exports.CmdName = (_a = {},
-    _a[0] = "INVALED",
-    _a[1] = "UnameLoginReq",
-    _a[2] = "UnameLoginRes",
-    _a[3] = "GuestLoginReq",
-    _a[4] = "GuestLoginRes",
-    _a[5] = "UnameRegistReq",
-    _a[6] = "UnameRegistRes",
-    _a[7] = "PhoneRegistReq",
-    _a[8] = "PhoneRegistRes",
-    _a[9] = "GetPhoneRegVerNumReq",
-    _a[10] = "GetPhoneRegVerNumRes",
-    _a[11] = "BindPhoneNumberReq",
-    _a[12] = "BindPhoneNumberRes",
-    _a[13] = "ResetUserPwdReq",
-    _a[14] = "ResetUserPwdRes",
-    _a[15] = "LoginOutReq",
-    _a[16] = "LoginOutRes",
-    _a[17] = "EditProfileReq",
-    _a[18] = "EditProfileRes",
-    _a[19] = "AccountUpgradeReq",
-    _a[20] = "AccountUpgradeRes",
-    _a[21] = "GetUserCenterInfoReq",
-    _a[22] = "GetUserCenterInfoRes",
-    _a[23] = "ReloginRes",
-    _a[24] = "WeChatLoginReq",
-    _a[25] = "WeChatLoginRes",
-    _a[26] = "WeChatSessionLoginReq",
-    _a[27] = "WeChatSessionLoginRes",
-    _a);
+var AuthProto = /** @class */ (function () {
+    function AuthProto() {
+    }
+    AuthProto.protoNameSpace = "auth.client.proto"; //proto命名空间
+    AuthProto.protoFileName = "AuthProtoMsg"; //编译出来后xxxProtoMsg.js的文件名，不用加.js
+    AuthProto.XY_ID = {
+        INVALED: 0,
+        REQ_UNAMEREGIST: 10001,
+        RES_UNAMEREGIST: 10002,
+        REQ_UNAMELOGIN: 10003,
+        RES_UNAMELOGIN: 10004,
+        REQ_GUESTLOGIN: 10005,
+        RES_GUESTLOGIN: 10006,
+        REQ_WECHATLOGIN: 10007,
+        RES_WECHATLOGIN: 10008,
+        REQ_WECHATSESSIONLOGIN: 10009,
+        RES_WECHATSESSIONLOGIN: 10010,
+        REQ_LOGINOUT: 10011,
+        RES_LOGINOUT: 10012,
+        PUSH_RELOGIN: 10013,
+        REQ_USERCENTERINFO: 10014,
+        RES_USERCENTERINFO: 10015
+    };
+    AuthProto.XY_NAME = (_a = {},
+        _a[AuthProto.XY_ID.REQ_UNAMEREGIST] = "ReqUnameRegist",
+        _a[AuthProto.XY_ID.RES_UNAMEREGIST] = "ResUnameRegist",
+        _a[AuthProto.XY_ID.REQ_UNAMELOGIN] = "ReqUnameLogin",
+        _a[AuthProto.XY_ID.RES_UNAMELOGIN] = "ResUnameLogin",
+        _a[AuthProto.XY_ID.REQ_GUESTLOGIN] = "ReqGuestLogin",
+        _a[AuthProto.XY_ID.RES_GUESTLOGIN] = "ResGuestLogin",
+        _a[AuthProto.XY_ID.REQ_WECHATLOGIN] = "ReqWeChatLogin",
+        _a[AuthProto.XY_ID.RES_WECHATLOGIN] = "ResWeChatLogin",
+        _a[AuthProto.XY_ID.REQ_WECHATSESSIONLOGIN] = "ReqWeChatSessionLogin",
+        _a[AuthProto.XY_ID.RES_WECHATSESSIONLOGIN] = "ResWeChatSessionLogin",
+        _a[AuthProto.XY_ID.REQ_LOGINOUT] = "ReqLoginOut",
+        _a[AuthProto.XY_ID.RES_LOGINOUT] = "ResLoginOut",
+        _a[AuthProto.XY_ID.PUSH_RELOGIN] = "PushRelogin",
+        _a[AuthProto.XY_ID.REQ_USERCENTERINFO] = "ReqUserCenterInfo",
+        _a[AuthProto.XY_ID.RES_USERCENTERINFO] = "ResUserCenterInfo",
+        _a);
+    return AuthProto;
+}());
+exports["default"] = AuthProto;
 //# sourceMappingURL=AuthProto.js.map

@@ -2,9 +2,9 @@ import MySqlAuth from "../../../database/MySqlAuth"
 import Response from '../../protocol/Response';
 import Log from "../../../utils/Log";
 import AuthSendMsg from "../AuthSendMsg";
-import { Cmd } from "../../protocol/protofile/AuthProto";
 import ProtoManager from '../../../netbus/ProtoManager';
 import StringUtil from "../../../utils/StringUtil";
+import AuthProto from '../../protocol/protofile/AuthProto';
 
 class AuthRegistInterface {
 
@@ -14,19 +14,19 @@ class AuthRegistInterface {
 
         if (!body) {
             Log.warn("uname_regist error, regist body is null")
-            AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response.INVALID_PARAMS })
             return;
         }
 
         if (!body.uname || !body.upwdmd5) {
             Log.warn("uname_regist error, regist uname or upwdmd5 is null")
-            AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response.INVALID_PARAMS })
             return;
         }
 
         if (body.uname.length < 6 || body.upwdmd5.length < 6) {
             Log.warn("uname_regist error, regist uname or upwdmd5 length is < 6")
-            AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response.INVALID_PARAMS })
             return;
         }
 
@@ -37,11 +37,11 @@ class AuthRegistInterface {
         if(ret == false){
             let insert_ret = await MySqlAuth.insert_uname_upwd_user(body.uname, body.upwdmd5, unick, uface, usex);
             if (insert_ret){
-                AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: 1 })
+                AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: 1 })
                 return;
             }
         }
-        AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT });
+        AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT });
     }
 
 }

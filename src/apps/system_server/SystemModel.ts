@@ -3,7 +3,7 @@ import ProtoManager from '../../netbus/ProtoManager';
 import CommonProto from '../protocol/protofile/CommonProto';
 import Log from '../../utils/Log';
 import { Stype, StypeName } from '../protocol/Stype';
-import { Cmd, CmdName } from '../protocol/SystemProto';
+import { Cmd, CmdName } from '../protocol/protofile/SystemProto';
 import SystemSend from './SystemSend';
 import LoginRewardInterface from './interface/LoginRewardInterface';
 import ShareInterface from './interface/ShareInterface';

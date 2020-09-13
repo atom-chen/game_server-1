@@ -12,26 +12,29 @@ class NetServerHandle {
     
     //有客户端session连接
     public static on_session_enter(session: any, is_websocket: boolean, is_encrypt: boolean) {
+        let tmp_session_key = "";
         if (is_websocket) {
-            Log.info("websocket client session enter", session._socket.remoteAddress, session._socket.remotePort);
+            tmp_session_key = session._socket.remoteAddress + ":" + session._socket.remotePort;
+            Log.info("websocket client session enter", tmp_session_key);
         }
         else {
-            Log.info("tcpsocket client session enter", session.remoteAddress, session.remotePort);
+            tmp_session_key = session.remoteAddress + ":" +  session.remotePort
+            Log.info("tcpsocket client session enter", tmp_session_key);
         }
 
         session.uid = 0; 					        // 用户的UID
         session.is_connected = true; 				// 是否连接成功
+        session.is_robot = false;                   // 是否机器人
         session.is_websocket = is_websocket; 	    // 是否websocket
         session.is_encrypt = is_encrypt; 			// 是否数据加密
-        session.is_robot = false;                   // 是否机器人
+        session.session_key = global_seesion_key;   // 临时session_key
 
         if (!is_websocket) {
-            let option = { bigEndian: false }
+            let option = { bigEndian: false } //小端
             session.msgCenter = new StickPackage.msgCenter(option) //粘包处理工具
         }
-        //加入到serssion 列表
+        //加入到session 列表
         client_session_list[global_seesion_key] = session;
-        session.session_key = global_seesion_key;
         global_seesion_key++;
         Log.warn("client session enter, client count: ", ArrayUtil.GetArrayLen(client_session_list))
     }
@@ -91,12 +94,13 @@ class NetServerHandle {
     static on_session_exit(session: any) {
         session.is_connected = false;
         ServiceManager.on_client_lost_connect(session);
-        session.last_pkg = null;
+        
         if (client_session_list[session.session_key]) {
             delete client_session_list[session.session_key];
             session.session_key = null;
         }
-        Log.warn("client session exit, client count: ", ArrayUtil.GetArrayLen(client_session_list))
+        Log.warn("client session exit, client count: ", ArrayUtil.GetArrayLen(client_session_list));
+        
     }
 
     // 关闭session
@@ -135,6 +139,7 @@ class NetServerHandle {
             delete client_session_list[session_key];
         }
     }
+    
 }
 
 export default NetServerHandle;

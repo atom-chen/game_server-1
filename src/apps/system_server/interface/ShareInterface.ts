@@ -5,7 +5,7 @@ import Log from "../../../utils/Log";
 import Response from '../../protocol/Response';
 import TimeUtil from '../../../utils/TimeUtil';
 import SystemSend from '../SystemSend';
-import { Cmd } from '../../protocol/SystemProto';
+import { Cmd } from '../../protocol/protofile/SystemProto';
 import SystemConfig from '../config/SystemConfig';
 
 class ShareInterface {

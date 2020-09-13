@@ -2,7 +2,7 @@ import ProtoManager from "../../../netbus/ProtoManager";
 import GameHoodleConfig from "../../game_server/lobby_server/config/GameHoodleConfig";
 import MySqlGame from "../../../database/MySqlGame";
 import SystemSend from '../SystemSend';
-import { Cmd } from "../../protocol/SystemProto";
+import { Cmd } from "../../protocol/protofile/SystemProto";
 import Response from '../../protocol/Response';
 import ArrayUtil from "../../../utils/ArrayUtil";
 import querystring from 'querystring';

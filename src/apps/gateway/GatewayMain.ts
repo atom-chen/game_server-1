@@ -14,15 +14,13 @@ import * as util from 'util';
 import Platform from '../../utils/Platform';
 import * as fs from 'fs';
 import * as path from "path";
-import { StypeName } from '../protocol/Stype';
 
 NetServer.start_tcp_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.tcp_port, false)
 NetServer.start_ws_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.wbsocket_port, false)
 
 // 连接其他服务器
-
-var game_server = GameAppConfig.gw_connect_servers;
-for(var key in game_server) {
+let game_server = GameAppConfig.gw_connect_servers;
+for(let key in game_server) {
 	NetClient.connect_tcp_server(game_server[key].host, game_server[key].port, false, game_server[key].stype, function(server_session:any) {
 		GatewayFunction.save_server_session(server_session,server_session.stype);
 	});

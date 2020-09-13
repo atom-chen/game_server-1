@@ -1,5 +1,4 @@
 //接收客户端协议模块
-import {Cmd,CmdName} from "../protocol/protofile/AuthProto"
 import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';
 import AuthSendMsg from './AuthSendMsg';
@@ -8,8 +7,9 @@ import Log from '../../utils/Log';
 import AuthInfoInterface from './interface/AuthInfoInterface';
 import AuthLoginInterface from './interface/AuthLoginInterface';
 import AuthRegistInterface from './interface/AuthRegistInterface';
-import { Stype, StypeName } from '../protocol/Stype';
 import AuthWeChatLoginInterface from './interface/AuthWeChatLoginInterface';
+import Stype from '../protocol/Stype';
+import AuthProto from '../protocol/protofile/AuthProto';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -21,21 +21,14 @@ class AuthModel {
 
     private constructor(){
         this._cmd_handler_map = {
-            [CommonProto.eUserLostConnectRes]:      this.on_player_lost_connect,
-            [Cmd.eUnameLoginReq]:                   this.on_uname_login_req,
-            [Cmd.eGuestLoginReq]:                   this.on_guest_login_req,
-            [Cmd.eUnameRegistReq]:                  this.on_uname_regist_req,
-            [Cmd.eLoginOutReq]:                     this.on_login_out_req,
-            [Cmd.eGetUserCenterInfoReq]:            this.on_get_user_center_info_req,
-            [Cmd.eWeChatLoginReq]:                  this.on_wechat_login_req,
-            [Cmd.eWeChatSessionLoginReq]:           this.on_wechat_session_login_req,
-            [Cmd.ePhoneRegistReq]:                  () => {},
-            [Cmd.eGetPhoneRegVerNumReq]:            () => {},
-            [Cmd.eBindPhoneNumberReq]:              () => {},
-            [Cmd.eResetUserPwdReq]:                 () => {},
-            [Cmd.eEditProfileReq]:                  () => {},
-            [Cmd.eAccountUpgradeReq]:               () => {},
-            [Cmd.eReloginRes]:                      () => {},
+            [CommonProto.eUserLostConnectRes]:                  this.on_player_lost_connect,
+            [AuthProto.XY_ID.REQ_UNAMELOGIN]:                   this.on_uname_login_req,
+            [AuthProto.XY_ID.REQ_GUESTLOGIN]:                   this.on_guest_login_req,
+            [AuthProto.XY_ID.REQ_UNAMEREGIST]:                  this.on_uname_regist_req,
+            [AuthProto.XY_ID.REQ_LOGINOUT]:                     this.on_login_out_req,
+            [AuthProto.XY_ID.REQ_USERCENTERINFO]:               this.on_get_user_center_info_req,
+            [AuthProto.XY_ID.REQ_WECHATLOGIN]:                  this.on_wechat_login_req,
+            [AuthProto.XY_ID.REQ_WECHATSESSIONLOGIN]:           this.on_wechat_session_login_req,
         }
     }
 
@@ -48,9 +41,8 @@ class AuthModel {
     }
 
     public recv_cmd_msg(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:Buffer){
-        // Log.info("recv_cmd_msg: ", stype, ctype, utag, proto_type, ProtoManager.decode_cmd(proto_type, raw_cmd))
-        let ctypeName = ctype == CommonProto.eUserLostConnectRes ? "UserLostConnectRes" : CmdName[ctype];
-        Log.info("recv_cmd_msg: stype:", StypeName[stype], " ,cmdName: ", ctypeName, " ,utag: ",utag)
+        let ctypeName = ctype == CommonProto.eUserLostConnectRes ? "UserLostConnectRes" : AuthProto.XY_NAME[ctype];
+        Log.info("recv_cmd_msg: stype:", Stype.S_NAME[stype], " ,cmdName: ", ctypeName, " ,utag: ",utag)
         if (this._cmd_handler_map[ctype]) {
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }
@@ -63,7 +55,7 @@ class AuthModel {
 
     on_uname_login_req(session:any, utag:number, proto_type:number, raw_cmd:any){
         if (utag == 0) {
-            AuthSendMsg.send(session, Cmd.eUnameLoginRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
             return;
         }
         AuthLoginInterface.do_uname_login_req(session, utag, proto_type, raw_cmd);
@@ -71,7 +63,7 @@ class AuthModel {
     
     on_guest_login_req(session:any, utag:number, proto_type:number, raw_cmd:any){
         if (utag == 0) {
-            AuthSendMsg.send(session, Cmd.eGuestLoginRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
             return;
         }
         AuthLoginInterface.do_guest_login_req(session, utag, proto_type, raw_cmd);
@@ -79,7 +71,7 @@ class AuthModel {
 
     on_uname_regist_req(session:any, utag:number, proto_type:number, raw_cmd:any){
         if (utag == 0) {
-            AuthSendMsg.send(session, Cmd.eUnameRegistRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
             return;
         }
         AuthRegistInterface.do_uname_regist_req(session, utag, proto_type, raw_cmd);
@@ -87,7 +79,7 @@ class AuthModel {
 
     on_get_user_center_info_req(session:any, utag:number, proto_type:number, raw_cmd:any){
         if (utag == 0) {
-            AuthSendMsg.send(session, Cmd.eGetUserCenterInfoRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
             return;
         }
         AuthInfoInterface.do_get_user_center_info_req(session, utag, proto_type, raw_cmd);
@@ -95,7 +87,7 @@ class AuthModel {
 
     on_login_out_req(session:any, utag:number, proto_type:number,raw_cmd:any){
         if (utag == 0) {
-            AuthSendMsg.send(session, Cmd.eLoginOutRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_LOGINOUT, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
             return;
         }
         AuthLoginInterface.do_login_out_req(session, utag, proto_type, raw_cmd);
@@ -103,7 +95,7 @@ class AuthModel {
 
     on_wechat_login_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (utag == 0) {
-            AuthSendMsg.send(session, Cmd.eWeChatLoginRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT})
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT})
             return;
         }
         AuthWeChatLoginInterface.do_wechat_login_req(session, utag, proto_type, raw_cmd);
@@ -111,7 +103,7 @@ class AuthModel {
 
     on_wechat_session_login_req(session: any, utag: number, proto_type: number, raw_cmd: any){
         if (utag == 0) {
-            AuthSendMsg.send(session, Cmd.eWeChatSessionLoginRes, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
             return;
         }
         AuthWeChatLoginInterface.do_wechat_session_login_req(session, utag, proto_type, raw_cmd);

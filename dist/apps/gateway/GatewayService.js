@@ -30,13 +30,17 @@ var ProtoCmd_1 = __importDefault(require("../protocol/ProtoCmd"));
 var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
 var Response_1 = __importDefault(require("../protocol/Response"));
 var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
-var Stype_1 = require("../protocol/Stype");
-var AuthProto_1 = require("../protocol/protofile/AuthProto");
 var CommonProto_1 = __importDefault(require("../protocol/protofile/CommonProto"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var GatewayHandle_1 = __importDefault(require("./GatewayHandle"));
 var util = __importStar(require("util"));
 var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
+var Stype_1 = __importDefault(require("../protocol/Stype"));
+var AuthProto_1 = __importDefault(require("../protocol/protofile/AuthProto"));
+/**
+ * 未登陆：uid == 0, utag = session.session_key
+ * 登陆过后：uid == utag
+ */
 var GatewayService = /** @class */ (function (_super) {
     __extends(GatewayService, _super);
     function GatewayService() {
@@ -55,7 +59,7 @@ var GatewayService = /** @class */ (function (_super) {
         // 打入能够标识client的utag, uid, session.session_key,
         if (GatewayHandle_1["default"].is_login_req_cmd(stype, ctype)) { //还没登录
             if (utag == 0) { //普通玩家，还没登录
-                utag = session.session_key;
+                utag = session.session_key; //方便服务返回的时候，用session_key找到session: NetServer.get_client_session(utag);
             }
             else { //机器人,本来就有utag
                 session.is_robot = true;
@@ -64,14 +68,14 @@ var GatewayService = /** @class */ (function (_super) {
             }
         }
         else { //登录后
-            if (session.uid == 0) {
+            if (session.uid == 0) { //登陆后，uid肯定是>0
                 return;
             }
             if (session.is_robot == false) {
                 utag = session.uid;
             }
         }
-        ProtoTools_1["default"].write_utag_inbuf(raw_cmd, utag);
+        ProtoTools_1["default"].write_utag_inbuf(raw_cmd, utag); //打入utag, 方便返回的时候找到客户端session
         NetClient_1["default"].send_encoded_cmd(server_session, raw_cmd);
         Log_1["default"].info("recv_client>>> ", ProtoCmd_1["default"].getProtoName(stype) + ",", ProtoCmd_1["default"].getCmdName(stype, ctype), ",utag:", utag);
     };
@@ -88,34 +92,33 @@ var GatewayService = /** @class */ (function (_super) {
             var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
             if (body.status == Response_1["default"].OK) {
                 // 以前你登陆过,发送一个命令给这个客户端，告诉它说以前有人登陆
-                var prev_session = GatewayHandle_1["default"].get_session_by_uid(body.uid);
+                var prev_session = GatewayHandle_1["default"].get_client_session_by_uid(body.uid);
                 if (prev_session) {
-                    NetServer_1["default"].send_cmd(prev_session, stype, AuthProto_1.Cmd.eReloginRes, utag, proto_type);
+                    NetServer_1["default"].send_cmd(prev_session, stype, AuthProto_1["default"].XY_ID.PUSH_RELOGIN, utag, proto_type);
                     prev_session.uid = 0;
+                    NetServer_1["default"].session_close(prev_session);
                 }
                 if (body.uid) {
                     client_session.uid = body.uid;
-                    GatewayHandle_1["default"].save_session_with_uid(body.uid, client_session, proto_type);
-                    body.uid = 0;
-                    raw_cmd = ProtoManager_1["default"].encode_cmd(stype, ctype, utag, proto_type, body);
+                    GatewayHandle_1["default"].save_client_session_with_uid(body.uid, client_session, proto_type); //gateway保存登陆过后的客户端session
                 }
             }
         }
-        else { //已经登录,utag == uid
-            client_session = GatewayHandle_1["default"].get_session_by_uid(utag);
+        else { //已经登录,utag == uid,在gateway找已经登陆过的client_session
+            client_session = GatewayHandle_1["default"].get_client_session_by_uid(utag);
         }
         if (client_session) {
             NetServer_1["default"].send_encoded_cmd(client_session, raw_cmd);
-            if (ctype == AuthProto_1.Cmd.eLoginOutRes && stype == Stype_1.Stype.Auth) {
-                GatewayHandle_1["default"].clear_session_with_uid(utag);
+            if (ctype == AuthProto_1["default"].XY_ID.RES_LOGINOUT && stype == Stype_1["default"].S_TYPE.Auth) {
+                GatewayHandle_1["default"].clear_client_session_with_uid(utag);
             }
         }
     };
     //玩家掉线,网关发消息给其他服务，其他服务接收eUserLostConnectRes协议进行处理就好了
     //session: 客户端session
     GatewayService.on_player_disconnect = function (session, stype) {
-        if (stype == Stype_1.Stype.Auth) { // 由Auth服务保存的，那么就由Auth清空
-            GatewayHandle_1["default"].clear_session_with_uid(session.uid);
+        if (stype == Stype_1["default"].S_TYPE.Auth) { // 由Auth服务保存的，那么就由Auth清空
+            GatewayHandle_1["default"].clear_client_session_with_uid(session.uid);
         }
         var server_session = GatewayHandle_1["default"].get_server_session(stype);
         if (util.isNullOrUndefined(server_session)) {

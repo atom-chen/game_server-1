@@ -25,7 +25,7 @@ await会等待await 执行完成后再执行下面(await必须等待一个Promis
 
 import Platform from "../../utils/Platform"
 import Log from '../../utils/Log';
-import { Stype } from '../protocol/Stype';
+import Stype from '../protocol/Stype';
 
 let LOCAL_HOST:string = "127.0.0.1"
 let WSS_WEBSOCKET_PORT:number = 6081;
@@ -67,32 +67,39 @@ class GameAppConfig {
 		port: 6091,
 	}
 
+	//大厅服务
+	static lobby_server:any = {
+		host: LOCAL_HOST,
+		port: 6085,
+		stype: Stype.S_TYPE.Lobby,
+	}
+
 	//系统服务
 	static game_system_server:any =  {
 		host: LOCAL_HOST,
 		port: 6087,
-		stype: Stype.GameSystem,
+		stype: Stype.S_TYPE.GameSystem,
 	}
 
 	//游戏服务1
 	static game_server:any =  {
 		host: LOCAL_HOST,
 		port: 6088,
-		stype: Stype.GameHoodle,
+		stype: Stype.S_TYPE.GameHoodle,
 	}
 
 	//游戏服务2
 	static game_server_2: any = {
 		host: LOCAL_HOST,
 		port: 6089,
-		stype: Stype.GameHoodle,
+		stype: Stype.S_TYPE.GameHoodle,
 	}
 	
 	//用户中心服务
 	static auth_server:any =  {
 		host: LOCAL_HOST,
 		port: 6086,
-		stype: Stype.Auth,
+		stype: Stype.S_TYPE.Auth,
 	}
 	////////////////////
 	//游戏数据库服务
@@ -118,18 +125,18 @@ class GameAppConfig {
 	static game_room_server_1:any = {
 		host: LOCAL_HOST,
 		port: 6090,
-		stype: Stype.GameHoodle,
+		stype: Stype.S_TYPE.GameHoodle,
 	}
 	static game_room_server_2: any = {
 		host: LOCAL_HOST,
 		port: 6091,
-		stype: Stype.GameHoodle,
+		stype: Stype.S_TYPE.GameHoodle,
 	}
 
 	static game_room_server_3: any = {
 		host: LOCAL_HOST,
 		port: 6092,
-		stype: Stype.GameHoodle,
+		stype: Stype.S_TYPE.GameHoodle,
 	}
 
 	////////////////////

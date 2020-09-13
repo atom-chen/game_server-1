@@ -1,17 +1,17 @@
 import ProtoManager from "./ProtoManager";
-import { Stype , StypeName } from '../apps/protocol/Stype';
 import Log from '../utils/Log';
 import * as util from 'util';
+import Stype from '../apps/protocol/Stype';
 
 class ServiceManager {
     static service_modules:any = {};    
 
     static register_service(stype:number, service:any) {
         if (ServiceManager.service_modules[stype]) {
-            Log.warn('【' + StypeName[stype] + '】' , "registed failed, service is registed !!!!");
+            Log.warn('【' + Stype.S_NAME[stype] + '】' , "registed failed, service is registed !!!!");
         }
         ServiceManager.service_modules[stype] = service;
-        Log.warn('【' + StypeName[stype] + '】', "registed success !!!!");
+        Log.warn('【' + Stype.S_NAME[stype] + '】', "registed success !!!!");
     }
 
     static unregister_service(stype:number){
@@ -38,7 +38,7 @@ class ServiceManager {
         var proto_type 	= cmd[3];
     
         if (!ServiceManager.service_modules[stype]) {
-            Log.error("cur as client ServiceManager.service_modules not exist>> service: ", StypeName[stype])
+            Log.error("cur as client ServiceManager.service_modules not exist>> service: ", Stype.S_NAME[stype])
             return false;
         }
         
@@ -70,7 +70,7 @@ class ServiceManager {
         var proto_type 	= cmd[3];
     
         if (!ServiceManager.service_modules[stype]) {
-            Log.error("cur as server ServiceManager.service_modules not exist>>service: ", StypeName[stype])
+            Log.error("cur as server ServiceManager.service_modules not exist>>service: ", Stype.S_NAME[stype])
             return false;
         }
     

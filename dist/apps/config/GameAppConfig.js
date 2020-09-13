@@ -29,7 +29,7 @@ await会等待await 执行完成后再执行下面(await必须等待一个Promis
  */
 var Platform_1 = __importDefault(require("../../utils/Platform"));
 var Log_1 = __importDefault(require("../../utils/Log"));
-var Stype_1 = require("../protocol/Stype");
+var Stype_1 = __importDefault(require("../protocol/Stype"));
 var LOCAL_HOST = "127.0.0.1";
 var WSS_WEBSOCKET_PORT = 6081;
 var IS_LOCAL_DEBUG = true; //是否启用本地ip来测试，启用后只能用当前电脑ip调试服务端程序
@@ -66,29 +66,35 @@ var GameAppConfig = /** @class */ (function () {
         host: LOCAL_HOST,
         port: 6091
     };
+    //大厅服务
+    GameAppConfig.lobby_server = {
+        host: LOCAL_HOST,
+        port: 6085,
+        stype: Stype_1["default"].S_TYPE.Lobby
+    };
     //系统服务
     GameAppConfig.game_system_server = {
         host: LOCAL_HOST,
         port: 6087,
-        stype: Stype_1.Stype.GameSystem
+        stype: Stype_1["default"].S_TYPE.GameSystem
     };
     //游戏服务1
     GameAppConfig.game_server = {
         host: LOCAL_HOST,
         port: 6088,
-        stype: Stype_1.Stype.GameHoodle
+        stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     //游戏服务2
     GameAppConfig.game_server_2 = {
         host: LOCAL_HOST,
         port: 6089,
-        stype: Stype_1.Stype.GameHoodle
+        stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     //用户中心服务
     GameAppConfig.auth_server = {
         host: LOCAL_HOST,
         port: 6086,
-        stype: Stype_1.Stype.Auth
+        stype: Stype_1["default"].S_TYPE.Auth
     };
     ////////////////////
     //游戏数据库服务
@@ -112,17 +118,17 @@ var GameAppConfig = /** @class */ (function () {
     GameAppConfig.game_room_server_1 = {
         host: LOCAL_HOST,
         port: 6090,
-        stype: Stype_1.Stype.GameHoodle
+        stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     GameAppConfig.game_room_server_2 = {
         host: LOCAL_HOST,
         port: 6091,
-        stype: Stype_1.Stype.GameHoodle
+        stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     GameAppConfig.game_room_server_3 = {
         host: LOCAL_HOST,
         port: 6092,
-        stype: Stype_1.Stype.GameHoodle
+        stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     ////////////////////
     //网关连接其他服务

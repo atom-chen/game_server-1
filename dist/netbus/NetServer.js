@@ -1,4 +1,5 @@
 "use strict";
+//当前作为服务端，监听其他服务器来连接
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -20,8 +21,8 @@ var NetServer = /** @class */ (function () {
     }
     //开启webserver
     NetServer.start_ws_server = function (ip, port, is_encrypt, success_callfunc) {
-        Log_1["default"].info("start ws server:", ip, port);
-        var server = new WebSocket.Server({ host: ip, port: port });
+        var options = { host: ip, port: port };
+        var server = new WebSocket.Server(options);
         server.on("connection", function (client_session) {
             NetServerHandle_1["default"].on_session_enter(client_session, true, is_encrypt);
             NetServerHandle_1["default"].ws_add_client_session_event(client_session);
@@ -29,7 +30,11 @@ var NetServer = /** @class */ (function () {
                 success_callfunc(client_session);
             }
         });
+        server.on("listening", function () {
+            Log_1["default"].info("WebSocket server start listen", ",ip:", ip, " ,port:", port);
+        });
         server.on("error", function (err) {
+            Log_1["default"].error("WebSocket server listen error");
         });
         server.on("close", function (err) {
             Log_1["default"].error("WebSocket server listen close!!");
@@ -37,25 +42,25 @@ var NetServer = /** @class */ (function () {
     };
     //开启tcpserver
     NetServer.start_tcp_server = function (ip, port, is_encrypt, success_callfunc) {
-        Log_1["default"].info("start tcp server:", ip, port);
-        var server = TcpSocket.createServer(function (client_session) {
+        var options = { port: port, host: ip, exclusive: true };
+        var server = TcpSocket.createServer();
+        server.listen(options);
+        server.on("connection", function (client_session) {
+            Log_1["default"].info("tcp client connection:", client_session.address());
             NetServerHandle_1["default"].on_session_enter(client_session, false, is_encrypt);
             NetServerHandle_1["default"].tcp_add_client_session_event(client_session);
             if (success_callfunc) {
                 success_callfunc(client_session);
             }
         });
-        // 监听发生错误的时候调用
+        server.on("listening", function () {
+            Log_1["default"].info("tcp server start listen", ",ip:", ip, " ,port:", port);
+        });
         server.on("error", function () {
             Log_1["default"].error("tcp server listen error");
         });
         server.on("close", function () {
             Log_1["default"].error("tcp server listen close");
-        });
-        server.listen({
-            host: ip,
-            port: port,
-            exclusive: true
         });
     };
     //关闭session连接
@@ -97,12 +102,15 @@ var NetServer = /** @class */ (function () {
     NetServer.get_client_session = function (session_key) {
         return NetServerHandle_1["default"].get_client_session(session_key);
     };
+    //获取客户端Session列表
     NetServer.get_client_session_list = function () {
         return NetServerHandle_1["default"].get_client_session_list();
     };
+    //保存客户端session
     NetServer.set_client_session = function (session, session_key) {
         NetServerHandle_1["default"].set_client_session(session, session_key);
     };
+    //删除客户端session
     NetServer.delete_client_session = function (session_key) {
         NetServerHandle_1["default"].delete_client_session(session_key);
     };

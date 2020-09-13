@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
-var Stype_1 = require("../protocol/Stype");
+var Stype_1 = __importDefault(require("../protocol/Stype"));
 var server_session_map = {}; //当前连接的服务器session
 var AuthSendMsg = /** @class */ (function () {
     function AuthSendMsg() {
@@ -20,7 +20,7 @@ var AuthSendMsg = /** @class */ (function () {
     };
     //当前作为服务端，发给客户端,session 为客户端session
     AuthSendMsg.send = function (session, ctype, utag, proto_type, body) {
-        NetServer_1["default"].send_cmd(session, Stype_1.Stype.Auth, ctype, utag, proto_type, body);
+        NetServer_1["default"].send_cmd(session, Stype_1["default"].S_TYPE.Auth, ctype, utag, proto_type, body);
     };
     return AuthSendMsg;
 }());

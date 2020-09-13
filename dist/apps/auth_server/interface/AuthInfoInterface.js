@@ -42,7 +42,7 @@ exports.__esModule = true;
 var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
-var AuthProto_1 = require("../../protocol/protofile/AuthProto");
+var AuthProto_1 = __importDefault(require("../../protocol/protofile/AuthProto"));
 var AuthInfoInterface = /** @class */ (function () {
     function AuthInfoInterface() {
     }
@@ -58,13 +58,12 @@ var AuthInfoInterface = /** @class */ (function () {
                             sql_info = data[0];
                             resbody = {
                                 status: 1,
-                                usercenterinfostring: JSON.stringify(sql_info)
+                                usercenterinfo: JSON.stringify(sql_info)
                             };
-                            // Log.info("get_user_center_info:", resbody)
-                            AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGetUserCenterInfoRes, utag, proto_type, resbody);
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, resbody);
                             return [2 /*return*/];
                         }
-                        AuthSendMsg_1["default"].send(session, AuthProto_1.Cmd.eGetUserCenterInfoRes, utag, proto_type, { status: Response_1["default"].ILLEGAL_ACCOUNT });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response_1["default"].ILLEGAL_ACCOUNT });
                         return [2 /*return*/];
                 }
             });
