@@ -4,7 +4,7 @@ import ServiceBase from "../../netbus/ServiceBase";
 import LobbyModle from './LobbyModle';
 
 class RoomService extends ServiceBase {
-    service_name: string = "RoomService"; // 服务名称
+    service_name: string = "LobbyService"; // 服务名称
     is_transfer: boolean = false; // 是否为转发模块,
 
     // 收到客户端，或者其他服务发来的数据 on_recv_client_player_cmd

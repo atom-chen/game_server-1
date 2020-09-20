@@ -106,7 +106,7 @@ class GatewayService extends ServiceBase {
 		}
 		//客户端被迫掉线
 		let body = {is_robot : session.is_robot};
-		NetServer.send_cmd(server_session, stype, CommonProto.eUserLostConnectRes, session.uid, ProtoTools.ProtoType.PROTO_JSON, body);
+		NetServer.send_cmd(server_session, stype, CommonProto.XY_ID.PUSH_USERLOSTCONNECTION, session.uid, ProtoTools.ProtoType.PROTO_JSON, body);
 		//机器人服务掉线，机器人的sessioin全部删除
 		if(session.is_robot){
 			let del_session_key = [];

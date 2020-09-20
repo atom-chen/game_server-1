@@ -1,8 +1,8 @@
-import MySqlEngine from "./MySqlEngine"
+import MySqlEngine from "../utils/MySqlEngine"
 import * as util from "util"
 import Log from '../utils/Log';
 import querystring from "querystring"
-import GameHoodleConfig from '../apps/game_server/lobby_server/config/GameHoodleConfig';
+import GameHoodleConfig from '../apps/game_server/config/GameHoodleConfig';
 
 let table_name = "ugame";
 

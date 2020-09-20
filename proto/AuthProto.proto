@@ -2,6 +2,7 @@
 
 /*
 写协议规则：
+0.协议ID两个字节，最大65536，不要超过不然会有问题
 1.先定义枚举，再定义协议内容, 枚举一定要从0开始
 1.协议名字（类型）用驼峰命名
 2.协议字段统一小写（因为protobufjs 大小写不区分），不用下划线
@@ -61,10 +62,10 @@ message ReqUnameRegist {
 }
 
 message ResUnameRegist {
-  enum UNAME_REGIST_STATUS {
-    UNAME_REGIST_SUCCESS = 0;
-    UNAME_REGIST_ALREADY_EXIST = 1;
-    UNAME_REGIST_UNAME_PWD_INVALID = 2;
+  enum STATUS {
+    SUCCESS = 0;
+    FAILED_ALREADY_EXIST = 1;
+    FAILED_UNAME_PWD_INVALID = 2;
   }
   required sint32 status = 1;
 }
@@ -75,9 +76,9 @@ message ReqUnameLogin {
 }
 
 message ResUnameLogin {
-  enum UNAME_LOGIN_STATUS {
-    UNAME_LOGIN_SUCCESS = 0;
-    UNAME_LOGIN_UNAME_PWD_INVALID = 1;
+  enum STATUS {
+    SUCCESS = 0;
+    FAILED_UNAME_PWD_INVALID = 1;
   }
   required sint32 status = 1;
   required sint32 uid = 2;
@@ -89,9 +90,9 @@ message ReqGuestLogin {
 }
 
 message ResGuestLogin {
-  enum GUEST_LOGIN_STATUS {
-    GUEST_LOGIN_SUCCESS = 0;
-    GUEST_LOGIN_PWD_INVALID = 1;
+  enum STATUS {
+    SUCCESS = 0;
+    FAILED_PWD_INVALID = 1;
   }
   required sint32 status = 1;
   required sint32 uid = 2;
@@ -104,9 +105,9 @@ message ReqWeChatLogin {
 }
 
 message ResWeChatLogin {
-  enum WECHAT_LOGIN_STATUS {
-    WECHAT_LOGIN_SUCCESS = 0;
-    WECHAT_LOGIN_FAILED = 1;
+  enum STATUS {
+    SUCCESS = 0;
+    FAILED = 1;
   }
   required sint32 status = 1;
   sint32 uid = 2;
@@ -118,9 +119,9 @@ message ReqWeChatSessionLogin {
 }
 
 message ResWeChatSessionLogin {
-  enum WECHAT_S_LOGIN_STATUS {
-    WECHAT_LOGIN_SUCCESS = 0;
-    WECHAT_LOGIN_FAILED = 1;
+  enum STATUS {
+    SUCCESS = 0;
+    FAILED = 1;
   }
   required sint32 status = 1;
   sint32 uid = 2;
@@ -131,9 +132,9 @@ message ReqLoginOut {
 }
 
 message ResLoginOut {
-  enum LOGIN_OUT_STATUS {
-    LOGIN_OUT_SUCCESS = 0;
-    LOGIN_OUT_FAILED = 1;
+  enum STATUS {
+    SUCCESS = 0;
+    FAILED = 1;
   }
   required sint32 status = 1;
 }
@@ -145,9 +146,9 @@ message ReqUserCenterInfo {
 }
 
 message ResUserCenterInfo {
-  enum USER_INFO_STATUS {
-    USER_INFO_SUCCESS = 0;
-    USER_INFO_FAILED = 1;
+  enum STATUS {
+    SUCCESS = 0;
+    FAILED = 1;
   }
   required sint32 status = 1;
 	optional string usercenterinfo = 2;

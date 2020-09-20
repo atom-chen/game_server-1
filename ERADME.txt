@@ -9,6 +9,16 @@ node: npm install --save -g @types/node
 express： npm install @types/express --save
 node:     npm install @types/node --save
 
+安装redis:
+本地目录安装： npm install redis
+全局安装： npm install redis -g
+安装ts提示库：npm install @types/redis --save
+
+安装rabbitMQ:
+本地安装：npm install amqplib
+安装ts提示库： npm install @types/amqplib --save
+
+
 ///////////////////////////////
 pm2 ：
 启动所有服务：

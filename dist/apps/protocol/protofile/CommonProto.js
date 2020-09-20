@@ -4,7 +4,9 @@ var CommonProto = /** @class */ (function () {
     function CommonProto() {
     }
     //PROTO_JSON
-    CommonProto.eUserLostConnectRes = 10000; //用户断开,网关服务发给其他服
+    CommonProto.XY_ID = {
+        PUSH_USERLOSTCONNECTION: 10000
+    };
     return CommonProto;
 }());
 exports["default"] = CommonProto;

@@ -9,7 +9,9 @@ var json_obj = { propid: 111 };
 // let json_str: string = "{propid=1111}";
 // let json_str: string = "hhhhh:111"
 // let res= JSON.stringify(json_obj);
-var resObj = JSON.parse("protid:111");
+// let resObj = JSON.parse("protid:111");
 // Log.info(typeof(res) , res)
-Log_1["default"].info(typeof (resObj), resObj);
+// Log.info(typeof(resObj) , resObj);
+Log_1["default"].info("hcc>>this: ", this);
+Log_1["default"].info("hcc>>this:222 ");
 //# sourceMappingURL=jsontest.js.map

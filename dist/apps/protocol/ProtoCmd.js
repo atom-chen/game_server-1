@@ -6,8 +6,9 @@ var _a;
 exports.__esModule = true;
 var LobbyProto_1 = __importDefault(require("./protofile/LobbyProto"));
 var AuthProto_1 = __importDefault(require("./protofile/AuthProto"));
-var Log_1 = __importDefault(require("../../utils/Log"));
 var Stype_1 = __importDefault(require("./Stype"));
+var SystemProto_1 = __importDefault(require("./protofile/SystemProto"));
+var GameHoodleProto_1 = __importDefault(require("./protofile/GameHoodleProto"));
 var protoFilePath = "./protofileMsg/";
 var ProtoCmd = /** @class */ (function () {
     function ProtoCmd() {
@@ -34,7 +35,7 @@ var ProtoCmd = /** @class */ (function () {
                     return proto_js_file;
                 }
                 catch (error) {
-                    Log_1["default"].error("error");
+                    console.error(error);
                 }
             }
         }
@@ -58,7 +59,7 @@ var ProtoCmd = /** @class */ (function () {
             splitStr.forEach(function (value) {
                 result_obj = result_obj[value];
                 if (!result_obj) {
-                    Log_1["default"].warn("getProtoMsg: ", value, "is null,333");
+                    console.warn("getProtoMsg: ", value, "is null,333");
                     return;
                 }
             });
@@ -80,8 +81,8 @@ var ProtoCmd = /** @class */ (function () {
     //服务器下标->协议脚本
     ProtoCmd.StypeProtos = (_a = {},
         _a[Stype_1["default"].S_TYPE.Auth] = AuthProto_1["default"],
-        //   [Stype.GameSystem]: SystemProto,
-        //   [Stype.GameHoodle] : GameHoodleProto,
+        _a[Stype_1["default"].S_TYPE.System] = SystemProto_1["default"],
+        _a[Stype_1["default"].S_TYPE.GameHoodle] = GameHoodleProto_1["default"],
         _a[Stype_1["default"].S_TYPE.Lobby] = LobbyProto_1["default"],
         _a);
     return ProtoCmd;

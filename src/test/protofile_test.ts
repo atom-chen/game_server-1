@@ -1,11 +1,11 @@
-import { Stype } from '../apps/protocol/Stype';
 import ProtoCmd from '../apps/protocol/ProtoCmd';
 import Log from '../utils/Log';
 import LobbyProto from '../apps/protocol/protofile/LobbyProto';
 import * as util from 'util';
 import AuthProto from '../apps/protocol/protofile/AuthProto';
+import Stype from '../apps/protocol/Stype';
 
-let stype = Stype.Auth;
+let stype = Stype.S_TYPE.Auth;
 let ctype = AuthProto.XY_ID.RES_UNAMEREGIST; //eUnameLoginReq
 
 let msgType = ProtoCmd.getProtoMsg(stype,ctype)

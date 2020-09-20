@@ -1,4 +1,4 @@
-import MySqlEngine from "./MySqlEngine"
+import MySqlEngine from "../utils/MySqlEngine"
 import * as util from "util"
 import Response from '../apps/protocol/Response';
 import Log from '../utils/Log';

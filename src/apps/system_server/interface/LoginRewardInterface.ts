@@ -1,13 +1,13 @@
 import SystemSend from '../SystemSend';
 import MySqlSystem from '../../../database/MysqlSystem';
 import Response from '../../protocol/Response';
-import { Cmd } from '../../protocol/protofile/SystemProto';
 import Log from '../../../utils/Log';
 import { LoginRewardConfig } from '../config/LoginRewardConfig';
 import ArrayUtil from '../../../utils/ArrayUtil';
 import ProtoManager from '../../../netbus/ProtoManager';
 import TimeUtil from '../../../utils/TimeUtil';
 import MySqlGame from '../../../database/MySqlGame';
+import SystemProto from '../../protocol/protofile/SystemProto';
 
 let bonues_max_days = 7;//连续签到最大天数
 
@@ -49,10 +49,10 @@ class LoginRewardInterface {
                     config: JSON.stringify(config),
                 }
                 Log.info("hcc>>do_user_login_reward_config: ", resbody);
-                SystemSend.send(session, Cmd.eLoginRewardConfigRes, utag, proto_type, resbody);
+                SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, resbody);
             }
         }else{
-            SystemSend.send(session, Cmd.eLoginRewardConfigRes, utag, proto_type, { status: Response.INVALID_PARAMS });
+            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response.INVALID_PARAMS });
         }
     }
 
@@ -86,7 +86,7 @@ class LoginRewardInterface {
                                         status: Response.OK,
                                         rewardconfig: JSON.stringify(rewardObj),
                                     }
-                                    SystemSend.send(session, Cmd.eLoginRewardSignRes, utag, proto_type, resbody);
+                                    SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, resbody);
                                     Log.info("hcc>>do_user_login_reward_sign success ", resbody);
                                     return;
                                 }
@@ -96,7 +96,7 @@ class LoginRewardInterface {
                 }
             }
         }
-        SystemSend.send(session, Cmd.eLoginRewardSignRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+        SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response.INVALIDI_OPT });
     }
 
     //test use async await

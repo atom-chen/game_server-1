@@ -1,13 +1,13 @@
 import ProtoManager from "../../../netbus/ProtoManager";
-import GameHoodleConfig from "../../game_server/lobby_server/config/GameHoodleConfig";
+import GameHoodleConfig from "../../game_server/config/GameHoodleConfig";
 import MySqlGame from "../../../database/MySqlGame";
 import SystemSend from '../SystemSend';
-import { Cmd } from "../../protocol/protofile/SystemProto";
 import Response from '../../protocol/Response';
 import ArrayUtil from "../../../utils/ArrayUtil";
 import querystring from 'querystring';
 import Log from "../../../utils/Log";
 import * as util from 'util';
+import SystemProto from '../../protocol/protofile/SystemProto';
 
 class AddUchipInterface {
 
@@ -18,7 +18,7 @@ class AddUchipInterface {
             let propid = body.propid;
             let propcount = body.propcount;
             if (propcount <= 0){
-                SystemSend.send(session, Cmd.eUserAddChipRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.INVALIDI_OPT });
                 return;
             }
             let config = body.config;
@@ -31,10 +31,10 @@ class AddUchipInterface {
                         propcount: propcount,
                         config: config,
                     }
-                    SystemSend.send(session,Cmd.eUserAddChipRes,utag,proto_type,res_body);
+                    SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag,proto_type,res_body);
                     return;
                 }
-                SystemSend.send(session, Cmd.eUserAddChipRes, utag, proto_type, {status:Response.INVALIDI_OPT});
+                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, {status:Response.INVALIDI_OPT});
             }else if(propid == GameHoodleConfig.KW_PROP_ID_BALL){
                 if(util.isNullOrUndefined(config)){
                     return;
@@ -67,7 +67,7 @@ class AddUchipInterface {
                                         propcount: propcount,
                                         config: config,
                                     }
-                                    SystemSend.send(session, Cmd.eUserAddChipRes, utag, proto_type, res_body);
+                                    SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, res_body);
                                     return;
                                 }
                             }
@@ -76,7 +76,7 @@ class AddUchipInterface {
                         }
                     }
                 }
-                SystemSend.send(session, Cmd.eUserAddChipRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.INVALIDI_OPT });
             }
         }
     }

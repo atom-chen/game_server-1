@@ -1,7 +1,8 @@
 import LobbyProto from './protofile/LobbyProto';
 import AuthProto from './protofile/AuthProto';
-import Log from "../../utils/Log";
 import Stype from './Stype';
+import SystemProto from './protofile/SystemProto';
+import GameHoodleProto from './protofile/GameHoodleProto';
 
 let protoFilePath = "./protofileMsg/"
 
@@ -10,8 +11,8 @@ class ProtoCmd {
 	//服务器下标->协议脚本
 	  static StypeProtos = {
 		  [Stype.S_TYPE.Auth]: AuthProto,
-		//   [Stype.GameSystem]: SystemProto,
-		//   [Stype.GameHoodle] : GameHoodleProto,
+		  [Stype.S_TYPE.System]: SystemProto,
+		  [Stype.S_TYPE.GameHoodle] : GameHoodleProto,
 		  [Stype.S_TYPE.Lobby]: LobbyProto,
 	}
 	
@@ -38,7 +39,7 @@ class ProtoCmd {
 					let proto_js_file = require(protoFilePath + protoFileName); //creator 客户端不用带路径，node.js需要带路径
 					return proto_js_file;
 				} catch (error) {
-					Log.error("error")					
+					console.error(error);				
 				}
 			}
 		}
@@ -66,7 +67,7 @@ class ProtoCmd {
 			splitStr.forEach(value => {
 				result_obj = result_obj[value];
 				if (!result_obj){
-					Log.warn("getProtoMsg: " , value , "is null,333")
+					console.warn("getProtoMsg: " , value , "is null,333")
 					return;
 				}
 			});

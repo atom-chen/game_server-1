@@ -9,10 +9,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
 var ServiceManager_1 = __importDefault(require("../../netbus/ServiceManager"));
-var Stype_1 = require("../protocol/Stype");
 var GameAppConfig_1 = __importDefault(require("../config/GameAppConfig"));
 var LobbyService_1 = __importDefault(require("./LobbyService"));
+var Stype_1 = __importDefault(require("../protocol/Stype"));
 var server = GameAppConfig_1["default"].lobby_server;
 NetServer_1["default"].start_tcp_server(server.host, server.port, false);
-ServiceManager_1["default"].register_service(Stype_1.Stype.Lobby, LobbyService_1["default"]);
+ServiceManager_1["default"].register_service(Stype_1["default"].S_TYPE.Lobby, LobbyService_1["default"]);
 //# sourceMappingURL=LobbyMain.js.map

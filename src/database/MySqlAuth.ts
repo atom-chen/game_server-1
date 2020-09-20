@@ -1,4 +1,4 @@
-import MySqlEngine from "./MySqlEngine"
+import MySqlEngine from "../utils/MySqlEngine"
 import TimeUtil from '../utils/TimeUtil';
 import * as util from "util"
 import Log from '../utils/Log';

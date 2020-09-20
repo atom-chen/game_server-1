@@ -91,14 +91,14 @@ class ProtoTools  {
     }
     // 返回 str, offset
     static read_str_inbuf(cmd_buf:Buffer, offset:number) {
-        var byte_len = ProtoTools.read_int16(cmd_buf, offset);
-        var str = ProtoTools.read_str(cmd_buf, offset, byte_len);
+        let byte_len = ProtoTools.read_int16(cmd_buf, offset);
+        let str = ProtoTools.read_str(cmd_buf, offset, byte_len);
         offset += byte_len;
         return str;
     }
     
     static write_protobuf_inbuf(cmd_buf:Buffer,offset:number,proto_buf:Uint8Array){
-        var buf = Buffer.from(proto_buf)
+        let buf = Buffer.from(proto_buf)
         buf.copy(cmd_buf,offset)
     }
     
@@ -109,11 +109,11 @@ class ProtoTools  {
     //编码str命令
     static encode_str_cmd(stype:number, ctype:number, utag:number, proto_type:number, str?:string) {
         if(!str){str = ""}
-        var byte_len 	= StringUtil.utf8_byte_len(str);
+        let byte_len 	= StringUtil.utf8_byte_len(str);
         // Log.info("hcc>>encode_str_cmd: len: " , byte_len)
-        var total_len 	= ProtoTools.HEADER_SIZE + byte_len;
-        var cmd_buf 	= ProtoTools.alloc_buffer(total_len);
-        var offset 		= ProtoTools.write_cmd_header_inbuf(cmd_buf, stype, ctype, utag, proto_type);
+        let total_len 	= ProtoTools.HEADER_SIZE + byte_len;
+        let cmd_buf 	= ProtoTools.alloc_buffer(total_len);
+        let offset 		= ProtoTools.write_cmd_header_inbuf(cmd_buf, stype, ctype, utag, proto_type);
         if(str != ""){
             ProtoTools.write_str_inbuf(cmd_buf, offset, str, byte_len);
         }

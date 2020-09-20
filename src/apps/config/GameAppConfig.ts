@@ -27,7 +27,8 @@ import Platform from "../../utils/Platform"
 import Log from '../../utils/Log';
 import Stype from '../protocol/Stype';
 
-let LOCAL_HOST:string = "127.0.0.1"
+let LOCAL_HOST:string = "127.0.0.1";
+let ALY_CLOUD_HOST: string = "172.16.166.106";
 let WSS_WEBSOCKET_PORT:number = 6081;
 let IS_LOCAL_DEBUG:boolean = true; //是否启用本地ip来测试，启用后只能用当前电脑ip调试服务端程序
 
@@ -37,7 +38,7 @@ if(Platform.isWin32()){
 	}
 	WSS_WEBSOCKET_PORT = 6081;
 }else if(Platform.isLinux()){
-	LOCAL_HOST = "172.16.166.106";//阿里云外网ip
+	LOCAL_HOST = ALY_CLOUD_HOST;//阿里云外网ip
 	WSS_WEBSOCKET_PORT = 6061;
 }
 
@@ -48,62 +49,60 @@ Log.info("hcc>>localIP: " , LOCAL_HOST);
 // 6081 服务端wss外网端口(nginx.conf外网配置)
 
 class GameAppConfig {
+	static getRealLocalIP(){
+		return Platform.isWin32() ? Platform.getLocalIP() : ALY_CLOUD_HOST;
+	}
+
 	//网关服
-	static gateway_config:any  ={
+	static gateway_config  ={
 		host: LOCAL_HOST,
 		tcp_port: 6080,
 		wbsocket_port: WSS_WEBSOCKET_PORT, 
 	}
 
 	//web热更新服务
-	static hotupdate_webserver:any = {
+	static hotupdate_webserver = {
 		host: LOCAL_HOST,
 		port: 7000,
 	}
 
 	//web配置服务
-	static config_webserver: any = {
+	static config_webserver = {
 		host: LOCAL_HOST,
 		port: 6091,
 	}
 
+	//用户中心服务
+	static auth_server = {
+		host: LOCAL_HOST,
+		port: 6001,
+		stype: Stype.S_TYPE.Auth,
+	}
+
 	//大厅服务
-	static lobby_server:any = {
+	static lobby_server = {
 		host: LOCAL_HOST,
 		port: 6085,
 		stype: Stype.S_TYPE.Lobby,
 	}
 
 	//系统服务
-	static game_system_server:any =  {
+	static system_server =  {
 		host: LOCAL_HOST,
 		port: 6087,
-		stype: Stype.S_TYPE.GameSystem,
+		stype: Stype.S_TYPE.System,
 	}
 
 	//游戏服务1
-	static game_server:any =  {
+	static game_server =  {
 		host: LOCAL_HOST,
 		port: 6088,
 		stype: Stype.S_TYPE.GameHoodle,
 	}
 
-	//游戏服务2
-	static game_server_2: any = {
-		host: LOCAL_HOST,
-		port: 6089,
-		stype: Stype.S_TYPE.GameHoodle,
-	}
-	
-	//用户中心服务
-	static auth_server:any =  {
-		host: LOCAL_HOST,
-		port: 6086,
-		stype: Stype.S_TYPE.Auth,
-	}
 	////////////////////
 	//游戏数据库服务
-	static game_database:any =  {
+	static game_database =  {
 		host: LOCAL_HOST,
 		port: 3306,
 		db_name: "moba_game",
@@ -112,7 +111,7 @@ class GameAppConfig {
 	}
 
 	//用户中心数据库
-	static auth_database:any =  {
+	static auth_database =  {
 		host: LOCAL_HOST,
 		port: 3306,
 		db_name: "auth_center",
@@ -120,20 +119,29 @@ class GameAppConfig {
 		upwd: "123456",
 	}
 
+	//MQ中间件服务
+	static rabbit_mq_option = {
+		hostname: Platform.isWin32() ? "localhost" : LOCAL_HOST,
+		port: 5672,
+		username:"guest",
+		password:"guest",
+		protocol:"amqp",
+	}
+
 	////////////////////
-	//游戏房间服务，可拓展多个
-	static game_room_server_1:any = {
+	//游戏逻辑服务，可拓展多个
+	static game_logic_server_1 = {
 		host: LOCAL_HOST,
 		port: 6090,
 		stype: Stype.S_TYPE.GameHoodle,
 	}
-	static game_room_server_2: any = {
+	static game_logic_server_2 = {
 		host: LOCAL_HOST,
 		port: 6091,
 		stype: Stype.S_TYPE.GameHoodle,
 	}
 
-	static game_room_server_3: any = {
+	static game_logic_server_3 = {
 		host: LOCAL_HOST,
 		port: 6092,
 		stype: Stype.S_TYPE.GameHoodle,
@@ -142,18 +150,17 @@ class GameAppConfig {
 	////////////////////
 
 	//网关连接其他服务
-	static gw_connect_servers:any =  {
-		[1]: GameAppConfig.auth_server,
-		[2]: GameAppConfig.game_server,
-		[3]: GameAppConfig.game_system_server,
-	}
+	static gw_connect_servers =  [
+		GameAppConfig.auth_server,
+		GameAppConfig.game_server,
+		GameAppConfig.system_server,
 
-	//大厅服务连接到其他房间服务
-	static hall_connect_servers:any = {
-		[1]: GameAppConfig.game_room_server_1,
-		// [2]: GameAppConfig.game_room_server_2,
-		// [3]: GameAppConfig.game_room_server_3,
-	}
+	]
+	
+	//逻辑路由服务连接到其他逻辑服务
+	static logic_connect_servers = [
+		GameAppConfig.game_logic_server_1,
+	]
 }
 
 export default GameAppConfig;

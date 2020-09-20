@@ -47,15 +47,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 exports.__esModule = true;
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
-var GameHoodleConfig_1 = __importDefault(require("../../game_server/lobby_server/config/GameHoodleConfig"));
+var GameHoodleConfig_1 = __importDefault(require("../../game_server/config/GameHoodleConfig"));
 var MySqlGame_1 = __importDefault(require("../../../database/MySqlGame"));
 var SystemSend_1 = __importDefault(require("../SystemSend"));
-var SystemProto_1 = require("../../protocol/protofile/SystemProto");
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
 var querystring_1 = __importDefault(require("querystring"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var util = __importStar(require("util"));
+var SystemProto_1 = __importDefault(require("../../protocol/protofile/SystemProto"));
 var AddUchipInterface = /** @class */ (function () {
     function AddUchipInterface() {
     }
@@ -71,7 +71,7 @@ var AddUchipInterface = /** @class */ (function () {
                         propid = body.propid;
                         propcount = body.propcount;
                         if (propcount <= 0) {
-                            SystemSend_1["default"].send(session, SystemProto_1.Cmd.eUserAddChipRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
                             return [2 /*return*/];
                         }
                         config = body.config;
@@ -86,10 +86,10 @@ var AddUchipInterface = /** @class */ (function () {
                                 propcount: propcount,
                                 config: config
                             };
-                            SystemSend_1["default"].send(session, SystemProto_1.Cmd.eUserAddChipRes, utag, proto_type, res_body);
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, res_body);
                             return [2 /*return*/];
                         }
-                        SystemSend_1["default"].send(session, SystemProto_1.Cmd.eUserAddChipRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
                         return [3 /*break*/, 9];
                     case 2:
                         if (!(propid == GameHoodleConfig_1["default"].KW_PROP_ID_BALL)) return [3 /*break*/, 9];
@@ -129,7 +129,7 @@ var AddUchipInterface = /** @class */ (function () {
                                 propcount: propcount,
                                 config: config
                             };
-                            SystemSend_1["default"].send(session, SystemProto_1.Cmd.eUserAddChipRes, utag, proto_type, res_body);
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, res_body);
                             return [2 /*return*/];
                         }
                         _a.label = 6;
@@ -139,7 +139,7 @@ var AddUchipInterface = /** @class */ (function () {
                         Log_1["default"].error(error_1);
                         return [3 /*break*/, 8];
                     case 8:
-                        SystemSend_1["default"].send(session, SystemProto_1.Cmd.eUserAddChipRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
                         _a.label = 9;
                     case 9: return [2 /*return*/];
                 }

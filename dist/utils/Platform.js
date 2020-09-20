@@ -14,17 +14,22 @@ var Platform = /** @class */ (function () {
         return os_1["default"].platform() == "linux";
     };
     Platform.getLocalIP = function () {
-        var interfaces = os_1["default"].networkInterfaces();
-        for (var devName in interfaces) {
-            var iface = interfaces[devName];
-            for (var i = 0; i < iface.length; i++) {
-                var alias = iface[i];
-                if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
-                    return alias.address;
+        if (Platform.isWin32()) {
+            var interfaces = os_1["default"].networkInterfaces();
+            for (var devName in interfaces) {
+                var iface = interfaces[devName];
+                for (var i = 0; i < iface.length; i++) {
+                    var alias = iface[i];
+                    if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+                        return alias.address;
+                    }
                 }
             }
+            return "";
         }
-        return "";
+        else {
+            return "172.16.166.106"; //阿里云外网ip
+        }
     };
     return Platform;
 }());

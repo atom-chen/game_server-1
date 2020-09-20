@@ -5,7 +5,7 @@ interface USMap {
     [uid: number]: any;
 }
 
-let LOGIN_OR_REGIST_ERQ_CMD:any = {
+let LOGIN_OR_REGIST_ERQ_CMD = {
     [AuthProto.XY_ID.REQ_UNAMELOGIN] : true,
     [AuthProto.XY_ID.REQ_GUESTLOGIN] : true,
     [AuthProto.XY_ID.REQ_UNAMEREGIST] : true,
@@ -13,7 +13,7 @@ let LOGIN_OR_REGIST_ERQ_CMD:any = {
     [AuthProto.XY_ID.REQ_WECHATSESSIONLOGIN] : true,
 }
 
-let LOGIN_OR_REGIST_ERS_CMD:any = {
+let LOGIN_OR_REGIST_ERS_CMD = {
     [AuthProto.XY_ID.RES_UNAMELOGIN]: true,
     [AuthProto.XY_ID.RES_GUESTLOGIN]: true,
     [AuthProto.XY_ID.RES_UNAMEREGIST]: true,

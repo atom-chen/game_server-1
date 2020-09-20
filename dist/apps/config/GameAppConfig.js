@@ -3,7 +3,6 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _a, _b;
 exports.__esModule = true;
 /**
  * async await 使用陷阱：
@@ -31,6 +30,7 @@ var Platform_1 = __importDefault(require("../../utils/Platform"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var Stype_1 = __importDefault(require("../protocol/Stype"));
 var LOCAL_HOST = "127.0.0.1";
+var ALY_CLOUD_HOST = "172.16.166.106";
 var WSS_WEBSOCKET_PORT = 6081;
 var IS_LOCAL_DEBUG = true; //是否启用本地ip来测试，启用后只能用当前电脑ip调试服务端程序
 if (Platform_1["default"].isWin32()) {
@@ -40,7 +40,7 @@ if (Platform_1["default"].isWin32()) {
     WSS_WEBSOCKET_PORT = 6081;
 }
 else if (Platform_1["default"].isLinux()) {
-    LOCAL_HOST = "172.16.166.106"; //阿里云外网ip
+    LOCAL_HOST = ALY_CLOUD_HOST; //阿里云外网ip
     WSS_WEBSOCKET_PORT = 6061;
 }
 Log_1["default"].info("hcc>>localIP: ", LOCAL_HOST);
@@ -50,6 +50,9 @@ Log_1["default"].info("hcc>>localIP: ", LOCAL_HOST);
 var GameAppConfig = /** @class */ (function () {
     function GameAppConfig() {
     }
+    GameAppConfig.getRealLocalIP = function () {
+        return Platform_1["default"].isWin32() ? Platform_1["default"].getLocalIP() : ALY_CLOUD_HOST;
+    };
     //网关服
     GameAppConfig.gateway_config = {
         host: LOCAL_HOST,
@@ -66,6 +69,12 @@ var GameAppConfig = /** @class */ (function () {
         host: LOCAL_HOST,
         port: 6091
     };
+    //用户中心服务
+    GameAppConfig.auth_server = {
+        host: LOCAL_HOST,
+        port: 6001,
+        stype: Stype_1["default"].S_TYPE.Auth
+    };
     //大厅服务
     GameAppConfig.lobby_server = {
         host: LOCAL_HOST,
@@ -73,28 +82,16 @@ var GameAppConfig = /** @class */ (function () {
         stype: Stype_1["default"].S_TYPE.Lobby
     };
     //系统服务
-    GameAppConfig.game_system_server = {
+    GameAppConfig.system_server = {
         host: LOCAL_HOST,
         port: 6087,
-        stype: Stype_1["default"].S_TYPE.GameSystem
+        stype: Stype_1["default"].S_TYPE.System
     };
     //游戏服务1
     GameAppConfig.game_server = {
         host: LOCAL_HOST,
         port: 6088,
         stype: Stype_1["default"].S_TYPE.GameHoodle
-    };
-    //游戏服务2
-    GameAppConfig.game_server_2 = {
-        host: LOCAL_HOST,
-        port: 6089,
-        stype: Stype_1["default"].S_TYPE.GameHoodle
-    };
-    //用户中心服务
-    GameAppConfig.auth_server = {
-        host: LOCAL_HOST,
-        port: 6086,
-        stype: Stype_1["default"].S_TYPE.Auth
     };
     ////////////////////
     //游戏数据库服务
@@ -113,34 +110,42 @@ var GameAppConfig = /** @class */ (function () {
         uname: "root",
         upwd: "123456"
     };
+    //MQ中间件服务
+    GameAppConfig.rabbit_mq_option = {
+        hostname: Platform_1["default"].isWin32() ? "localhost" : LOCAL_HOST,
+        port: 5672,
+        username: "guest",
+        password: "guest",
+        protocol: "amqp"
+    };
     ////////////////////
-    //游戏房间服务，可拓展多个
-    GameAppConfig.game_room_server_1 = {
+    //游戏逻辑服务，可拓展多个
+    GameAppConfig.game_logic_server_1 = {
         host: LOCAL_HOST,
         port: 6090,
         stype: Stype_1["default"].S_TYPE.GameHoodle
     };
-    GameAppConfig.game_room_server_2 = {
+    GameAppConfig.game_logic_server_2 = {
         host: LOCAL_HOST,
         port: 6091,
         stype: Stype_1["default"].S_TYPE.GameHoodle
     };
-    GameAppConfig.game_room_server_3 = {
+    GameAppConfig.game_logic_server_3 = {
         host: LOCAL_HOST,
         port: 6092,
         stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     ////////////////////
     //网关连接其他服务
-    GameAppConfig.gw_connect_servers = (_a = {},
-        _a[1] = GameAppConfig.auth_server,
-        _a[2] = GameAppConfig.game_server,
-        _a[3] = GameAppConfig.game_system_server,
-        _a);
-    //大厅服务连接到其他房间服务
-    GameAppConfig.hall_connect_servers = (_b = {},
-        _b[1] = GameAppConfig.game_room_server_1,
-        _b);
+    GameAppConfig.gw_connect_servers = [
+        GameAppConfig.auth_server,
+        GameAppConfig.game_server,
+        GameAppConfig.system_server,
+    ];
+    //逻辑路由服务连接到其他逻辑服务
+    GameAppConfig.logic_connect_servers = [
+        GameAppConfig.game_logic_server_1,
+    ];
     return GameAppConfig;
 }());
 exports["default"] = GameAppConfig;

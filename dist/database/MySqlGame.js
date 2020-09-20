@@ -46,11 +46,11 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 exports.__esModule = true;
-var MySqlEngine_1 = __importDefault(require("./MySqlEngine"));
+var MySqlEngine_1 = __importDefault(require("../utils/MySqlEngine"));
 var util = __importStar(require("util"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var querystring_1 = __importDefault(require("querystring"));
-var GameHoodleConfig_1 = __importDefault(require("../apps/game_server/lobby_server/config/GameHoodleConfig"));
+var GameHoodleConfig_1 = __importDefault(require("../apps/game_server/config/GameHoodleConfig"));
 var table_name = "ugame";
 var MySqlGame = /** @class */ (function () {
     function MySqlGame() {

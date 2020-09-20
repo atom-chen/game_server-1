@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a;
 exports.__esModule = true;
-var GameHoodleConfig_1 = __importDefault(require("../../game_server/lobby_server/config/GameHoodleConfig"));
+var GameHoodleConfig_1 = __importDefault(require("../../game_server/config/GameHoodleConfig"));
 exports.LoginRewardConfig = (_a = {},
     _a[1] = {
         propid: GameHoodleConfig_1["default"].KW_PROP_ID_COIN,

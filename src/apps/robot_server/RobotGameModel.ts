@@ -7,7 +7,7 @@ import RobotSend from './RobotSend';
 import RobotMgr from './manager/RobotMgr';
 import Robot from './cell/Robot';
 import * as util from 'util';
-import { PlayerPower } from '../game_server/lobby_server/config/State';
+import { PlayerPower } from '../game_server/config/State';
 import RobotListConfig from './config/RobotListConfig';
 import RobotGameInterface from './interface/RobotGameInterface';
 

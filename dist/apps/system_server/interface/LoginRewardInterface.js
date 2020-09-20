@@ -42,13 +42,13 @@ exports.__esModule = true;
 var SystemSend_1 = __importDefault(require("../SystemSend"));
 var MysqlSystem_1 = __importDefault(require("../../../database/MysqlSystem"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
-var SystemProto_1 = require("../../protocol/protofile/SystemProto");
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var LoginRewardConfig_1 = require("../config/LoginRewardConfig");
 var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
 var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
 var TimeUtil_1 = __importDefault(require("../../../utils/TimeUtil"));
 var MySqlGame_1 = __importDefault(require("../../../database/MySqlGame"));
+var SystemProto_1 = __importDefault(require("../../protocol/protofile/SystemProto"));
 var bonues_max_days = 7; //连续签到最大天数
 var LoginRewardInterface = /** @class */ (function () {
     function LoginRewardInterface() {
@@ -98,11 +98,11 @@ var LoginRewardInterface = /** @class */ (function () {
                             config: JSON.stringify(config)
                         };
                         Log_1["default"].info("hcc>>do_user_login_reward_config: ", resbody);
-                        SystemSend_1["default"].send(session, SystemProto_1.Cmd.eLoginRewardConfigRes, utag, proto_type, resbody);
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, resbody);
                         _a.label = 4;
                     case 4: return [3 /*break*/, 6];
                     case 5:
-                        SystemSend_1["default"].send(session, SystemProto_1.Cmd.eLoginRewardConfigRes, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
                         _a.label = 6;
                     case 6: return [2 /*return*/];
                 }
@@ -149,13 +149,13 @@ var LoginRewardInterface = /** @class */ (function () {
                                 status: Response_1["default"].OK,
                                 rewardconfig: JSON.stringify(rewardObj)
                             };
-                            SystemSend_1["default"].send(session, SystemProto_1.Cmd.eLoginRewardSignRes, utag, proto_type, resbody);
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, resbody);
                             Log_1["default"].info("hcc>>do_user_login_reward_sign success ", resbody);
                             return [2 /*return*/];
                         }
                         _a.label = 4;
                     case 4:
-                        SystemSend_1["default"].send(session, SystemProto_1.Cmd.eLoginRewardSignRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
                         return [2 /*return*/];
                 }
             });

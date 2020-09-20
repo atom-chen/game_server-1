@@ -28,14 +28,14 @@ class ServiceManager {
         if (session.is_encrypt) {
             cmd_buf = ProtoManager.decrypt_cmd(cmd_buf);	
         }
-        var cmd = ProtoManager.decode_cmd_header(cmd_buf);
+        let cmd = ProtoManager.decode_cmd_header(cmd_buf);
         if (!cmd) {
             return false;
         }
-        var stype 		= cmd[0]; 
-        var ctype 		= cmd[1];
-        var utag 		= cmd[2];
-        var proto_type 	= cmd[3];
+        let stype 		= cmd[0]; 
+        let ctype 		= cmd[1];
+        let utag 		= cmd[2];
+        let proto_type 	= cmd[3];
     
         if (!ServiceManager.service_modules[stype]) {
             Log.error("cur as client ServiceManager.service_modules not exist>> service: ", Stype.S_NAME[stype])
@@ -60,14 +60,14 @@ class ServiceManager {
         if (session.is_encrypt) {
             cmd_buf = ProtoManager.decrypt_cmd(cmd_buf);	
         }
-        var cmd = ProtoManager.decode_cmd_header(cmd_buf);
+        let cmd = ProtoManager.decode_cmd_header(cmd_buf);
         if (!cmd) {
             return false;
         }
-        var stype 		= cmd[0];
-        var ctype 		= cmd[1];
-        var utag 		= cmd[2];
-        var proto_type 	= cmd[3];
+        let stype 		= cmd[0];
+        let ctype 		= cmd[1];
+        let utag 		= cmd[2];
+        let proto_type 	= cmd[3];
     
         if (!ServiceManager.service_modules[stype]) {
             Log.error("cur as server ServiceManager.service_modules not exist>>service: ", Stype.S_NAME[stype])
@@ -88,7 +88,7 @@ class ServiceManager {
     // 玩家掉线
     static on_client_lost_connect(session:any) {
         // 遍历所有的服务模块通知在这个服务上的这个玩家掉线了
-        for(var stype in ServiceManager.service_modules) {
+        for(let stype in ServiceManager.service_modules) {
             if (ServiceManager.service_modules[stype].on_player_disconnect){
                 ServiceManager.service_modules[stype].on_player_disconnect(session,stype);
             }

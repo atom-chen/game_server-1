@@ -1,1 +1,1 @@
-{"version":3,"file":"CommonProto.js","sourceRoot":"","sources":["../../../../src/apps/protocol/protofile/CommonProto.ts"],"names":[],"mappings":";;AAAA;IAAA;IAGA,CAAC;IAFG,YAAY;IACL,+BAAmB,GAAW,KAAK,CAAC,CAAC,gBAAgB;IAChE,kBAAC;CAAA,AAHD,IAGC;AAED,qBAAe,WAAW,CAAC"}
+{"version":3,"file":"CommonProto.js","sourceRoot":"","sources":["../../../../src/apps/protocol/protofile/CommonProto.ts"],"names":[],"mappings":";;AAAA;IAAA;IAKA,CAAC;IAJG,YAAY;IACL,iBAAK,GAAG;QACX,uBAAuB,EAAG,KAAK;KAClC,CAAA;IACL,kBAAC;CAAA,AALD,IAKC;qBALoB,WAAW"}

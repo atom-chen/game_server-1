@@ -1,5 +1,5 @@
-import RoomManager from '../apps/game_server/lobby_server/manager/RoomManager';
-import Room from '../apps/game_server/lobby_server/cell/Room';
+import RoomManager from '../apps/game_server/manager/RoomManager';
+import Room from '../apps/game_server/cell/Room';
 import StringUtil from '../utils/StringUtil';
 
 let room_set:any = {

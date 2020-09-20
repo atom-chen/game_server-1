@@ -3,7 +3,7 @@ import ProtoTools from "./ProtoTools"
 class ProtoManager {
     //解头: stype, ctype, utag, proto_type, body
     static decode_cmd_header(cmd_buf:Buffer) {
-        var cmd = [];
+        let cmd = [];
 
         if (cmd_buf.length < ProtoTools.HEADER_SIZE) {
             return null;

@@ -5,10 +5,10 @@
 
 import NetServer from '../../netbus/NetServer';
 import ServiceManager from '../../netbus/ServiceManager';
-import { Stype } from '../protocol/Stype';
 import GameAppConfig from '../config/GameAppConfig';
 import LobbyService from './LobbyService';
+import Stype from '../protocol/Stype';
 
 let server = GameAppConfig.lobby_server
 NetServer.start_tcp_server(server.host, server.port, false);
-ServiceManager.register_service(Stype.Lobby, LobbyService);
+ServiceManager.register_service(Stype.S_TYPE.Lobby, LobbyService);

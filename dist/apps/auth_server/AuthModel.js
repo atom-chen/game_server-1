@@ -20,7 +20,7 @@ var AuthModel = /** @class */ (function () {
         var _a;
         this._cmd_handler_map = {};
         this._cmd_handler_map = (_a = {},
-            _a[CommonProto_1["default"].eUserLostConnectRes] = this.on_player_lost_connect,
+            _a[CommonProto_1["default"].XY_ID.PUSH_USERLOSTCONNECTION] = this.on_player_lost_connect,
             _a[AuthProto_1["default"].XY_ID.REQ_UNAMELOGIN] = this.on_uname_login_req,
             _a[AuthProto_1["default"].XY_ID.REQ_GUESTLOGIN] = this.on_guest_login_req,
             _a[AuthProto_1["default"].XY_ID.REQ_UNAMEREGIST] = this.on_uname_regist_req,
@@ -33,18 +33,15 @@ var AuthModel = /** @class */ (function () {
     AuthModel.getInstance = function () {
         return AuthModel.Instance;
     };
-    AuthModel.prototype.decode_cmd = function (proto_type, raw_cmd) {
-        return ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
-    };
     AuthModel.prototype.recv_cmd_msg = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        var ctypeName = ctype == CommonProto_1["default"].eUserLostConnectRes ? "UserLostConnectRes" : AuthProto_1["default"].XY_NAME[ctype];
+        var ctypeName = ctype == CommonProto_1["default"].XY_ID.PUSH_USERLOSTCONNECTION ? "UserLostConnectRes" : AuthProto_1["default"].XY_NAME[ctype];
         Log_1["default"].info("recv_cmd_msg: stype:", Stype_1["default"].S_NAME[stype], " ,cmdName: ", ctypeName, " ,utag: ", utag);
         if (this._cmd_handler_map[ctype]) {
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }
     };
     AuthModel.prototype.on_player_lost_connect = function (session, utag, proto_type, raw_cmd) {
-        var body = this.decode_cmd(proto_type, raw_cmd);
+        var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
         Log_1["default"].info("on_player_lost_connect utag:", utag, body);
     };
     AuthModel.prototype.on_uname_login_req = function (session, utag, proto_type, raw_cmd) {

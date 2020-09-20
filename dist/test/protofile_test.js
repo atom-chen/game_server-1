@@ -3,11 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var Stype_1 = require("../apps/protocol/Stype");
 var ProtoCmd_1 = __importDefault(require("../apps/protocol/ProtoCmd"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var AuthProto_1 = __importDefault(require("../apps/protocol/protofile/AuthProto"));
-var stype = Stype_1.Stype.Auth;
+var Stype_1 = __importDefault(require("../apps/protocol/Stype"));
+var stype = Stype_1["default"].S_TYPE.Auth;
 var ctype = AuthProto_1["default"].XY_ID.RES_UNAMEREGIST; //eUnameLoginReq
 var msgType = ProtoCmd_1["default"].getProtoMsg(stype, ctype);
 var body = {

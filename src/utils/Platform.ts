@@ -10,17 +10,21 @@ class Platform{
 	}
 
 	static getLocalIP():string{
-		let interfaces:any = os.networkInterfaces();
-		for (let devName in interfaces) {
-			let iface = interfaces[devName];
-			for (let i = 0; i < iface.length; i++) {
-				var alias = iface[i];
-				if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
-					return alias.address;
+		if (Platform.isWin32()){
+			let interfaces:any = os.networkInterfaces();
+			for (let devName in interfaces) {
+				let iface = interfaces[devName];
+				for (let i = 0; i < iface.length; i++) {
+					var alias = iface[i];
+					if (alias.family === 'IPv4' && alias.address !== '127.0.0.1' && !alias.internal) {
+						return alias.address;
+					}
 				}
 			}
+			return "";
+		}else{
+			return "172.16.166.106";//阿里云外网ip
 		}
-		return "";
 	}
 }
 

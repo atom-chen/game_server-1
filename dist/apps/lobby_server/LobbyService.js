@@ -23,7 +23,7 @@ var RoomService = /** @class */ (function (_super) {
     __extends(RoomService, _super);
     function RoomService() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.service_name = "RoomService"; // 服务名称
+        _this.service_name = "LobbyService"; // 服务名称
         _this.is_transfer = false; // 是否为转发模块,
         return _this;
     }

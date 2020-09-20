@@ -129,7 +129,7 @@ var GatewayService = /** @class */ (function (_super) {
         }
         //客户端被迫掉线
         var body = { is_robot: session.is_robot };
-        NetServer_1["default"].send_cmd(server_session, stype, CommonProto_1["default"].eUserLostConnectRes, session.uid, ProtoTools_1["default"].ProtoType.PROTO_JSON, body);
+        NetServer_1["default"].send_cmd(server_session, stype, CommonProto_1["default"].XY_ID.PUSH_USERLOSTCONNECTION, session.uid, ProtoTools_1["default"].ProtoType.PROTO_JSON, body);
         //机器人服务掉线，机器人的sessioin全部删除
         if (session.is_robot) {
             var del_session_key = [];

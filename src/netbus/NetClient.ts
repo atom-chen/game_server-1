@@ -9,7 +9,7 @@ import Stype from '../apps/protocol/Stype';
 let StickPackage = require("stickpackage")
 
 let server_session_map:any = {}
-let max_server_load_count:number = 1000; // 一个room服务最大人数
+let max_server_load_count:number = 1000; // 一个logic服务最大人数
 
 class NetClient {
 
@@ -23,6 +23,7 @@ class NetClient {
         server_session.is_connected = false;
         server_session.stype = stype;
         server_session.load_count = 0; //当前连接的服务的人数，有人连接就自增
+
         server_session.on("connect", function () {
             NetClient.on_session_connected(server_session, is_encrypt);
             if (server_session.msgCenter) {
@@ -30,11 +31,13 @@ class NetClient {
                     NetClient.on_recv_cmd_server_return(server_session, cmd_buf)
                 });
             }
+            
+            let server_session_key = host + ":" + String(port);
+            NetClient.save_server_session(server_session, server_session_key);
+
             if (success_callfunc) {
                 success_callfunc(server_session);//这里将所连接的服务的session返回，各个进程自己维护服务session
             }
-            let server_session_key = host + ":" + String(port);
-            NetClient.save_server_session(server_session, server_session_key);
         });
 
         server_session.on("close", function () {
@@ -145,8 +148,10 @@ class NetClient {
             if(server_session == null){
                 server_session = session;
             }else{
-                if (server_session.load_count > session.load_count && server_session.load_count < max_server_load_count ){
-                    server_session = session;
+                if (server_session.load_count){
+                    if (server_session.load_count > session.load_count && server_session.load_count < max_server_load_count ){
+                        server_session = session;
+                    }
                 }
             }
         }

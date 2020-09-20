@@ -473,18 +473,18 @@ $root.auth = (function() {
                 };
 
                 /**
-                 * UNAME_REGIST_STATUS enum.
-                 * @name auth.client.proto.ResUnameRegist.UNAME_REGIST_STATUS
+                 * STATUS enum.
+                 * @name auth.client.proto.ResUnameRegist.STATUS
                  * @enum {string}
-                 * @property {number} UNAME_REGIST_SUCCESS=0 UNAME_REGIST_SUCCESS value
-                 * @property {number} UNAME_REGIST_ALREADY_EXIST=1 UNAME_REGIST_ALREADY_EXIST value
-                 * @property {number} UNAME_REGIST_UNAME_PWD_INVALID=2 UNAME_REGIST_UNAME_PWD_INVALID value
+                 * @property {number} SUCCESS=0 SUCCESS value
+                 * @property {number} FAILED_ALREADY_EXIST=1 FAILED_ALREADY_EXIST value
+                 * @property {number} FAILED_UNAME_PWD_INVALID=2 FAILED_UNAME_PWD_INVALID value
                  */
-                ResUnameRegist.UNAME_REGIST_STATUS = (function() {
+                ResUnameRegist.STATUS = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
-                    values[valuesById[0] = "UNAME_REGIST_SUCCESS"] = 0;
-                    values[valuesById[1] = "UNAME_REGIST_ALREADY_EXIST"] = 1;
-                    values[valuesById[2] = "UNAME_REGIST_UNAME_PWD_INVALID"] = 2;
+                    values[valuesById[0] = "SUCCESS"] = 0;
+                    values[valuesById[1] = "FAILED_ALREADY_EXIST"] = 1;
+                    values[valuesById[2] = "FAILED_UNAME_PWD_INVALID"] = 2;
                     return values;
                 })();
 
@@ -931,16 +931,16 @@ $root.auth = (function() {
                 };
 
                 /**
-                 * UNAME_LOGIN_STATUS enum.
-                 * @name auth.client.proto.ResUnameLogin.UNAME_LOGIN_STATUS
+                 * STATUS enum.
+                 * @name auth.client.proto.ResUnameLogin.STATUS
                  * @enum {string}
-                 * @property {number} UNAME_LOGIN_SUCCESS=0 UNAME_LOGIN_SUCCESS value
-                 * @property {number} UNAME_LOGIN_UNAME_PWD_INVALID=1 UNAME_LOGIN_UNAME_PWD_INVALID value
+                 * @property {number} SUCCESS=0 SUCCESS value
+                 * @property {number} FAILED_UNAME_PWD_INVALID=1 FAILED_UNAME_PWD_INVALID value
                  */
-                ResUnameLogin.UNAME_LOGIN_STATUS = (function() {
+                ResUnameLogin.STATUS = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
-                    values[valuesById[0] = "UNAME_LOGIN_SUCCESS"] = 0;
-                    values[valuesById[1] = "UNAME_LOGIN_UNAME_PWD_INVALID"] = 1;
+                    values[valuesById[0] = "SUCCESS"] = 0;
+                    values[valuesById[1] = "FAILED_UNAME_PWD_INVALID"] = 1;
                     return values;
                 })();
 
@@ -1364,16 +1364,16 @@ $root.auth = (function() {
                 };
 
                 /**
-                 * GUEST_LOGIN_STATUS enum.
-                 * @name auth.client.proto.ResGuestLogin.GUEST_LOGIN_STATUS
+                 * STATUS enum.
+                 * @name auth.client.proto.ResGuestLogin.STATUS
                  * @enum {string}
-                 * @property {number} GUEST_LOGIN_SUCCESS=0 GUEST_LOGIN_SUCCESS value
-                 * @property {number} GUEST_LOGIN_PWD_INVALID=1 GUEST_LOGIN_PWD_INVALID value
+                 * @property {number} SUCCESS=0 SUCCESS value
+                 * @property {number} FAILED_PWD_INVALID=1 FAILED_PWD_INVALID value
                  */
-                ResGuestLogin.GUEST_LOGIN_STATUS = (function() {
+                ResGuestLogin.STATUS = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
-                    values[valuesById[0] = "GUEST_LOGIN_SUCCESS"] = 0;
-                    values[valuesById[1] = "GUEST_LOGIN_PWD_INVALID"] = 1;
+                    values[valuesById[0] = "SUCCESS"] = 0;
+                    values[valuesById[1] = "FAILED_PWD_INVALID"] = 1;
                     return values;
                 })();
 
@@ -1820,16 +1820,16 @@ $root.auth = (function() {
                 };
 
                 /**
-                 * WECHAT_LOGIN_STATUS enum.
-                 * @name auth.client.proto.ResWeChatLogin.WECHAT_LOGIN_STATUS
+                 * STATUS enum.
+                 * @name auth.client.proto.ResWeChatLogin.STATUS
                  * @enum {string}
-                 * @property {number} WECHAT_LOGIN_SUCCESS=0 WECHAT_LOGIN_SUCCESS value
-                 * @property {number} WECHAT_LOGIN_FAILED=1 WECHAT_LOGIN_FAILED value
+                 * @property {number} SUCCESS=0 SUCCESS value
+                 * @property {number} FAILED=1 FAILED value
                  */
-                ResWeChatLogin.WECHAT_LOGIN_STATUS = (function() {
+                ResWeChatLogin.STATUS = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
-                    values[valuesById[0] = "WECHAT_LOGIN_SUCCESS"] = 0;
-                    values[valuesById[1] = "WECHAT_LOGIN_FAILED"] = 1;
+                    values[valuesById[0] = "SUCCESS"] = 0;
+                    values[valuesById[1] = "FAILED"] = 1;
                     return values;
                 })();
 
@@ -2253,16 +2253,16 @@ $root.auth = (function() {
                 };
 
                 /**
-                 * WECHAT_S_LOGIN_STATUS enum.
-                 * @name auth.client.proto.ResWeChatSessionLogin.WECHAT_S_LOGIN_STATUS
+                 * STATUS enum.
+                 * @name auth.client.proto.ResWeChatSessionLogin.STATUS
                  * @enum {string}
-                 * @property {number} WECHAT_LOGIN_SUCCESS=0 WECHAT_LOGIN_SUCCESS value
-                 * @property {number} WECHAT_LOGIN_FAILED=1 WECHAT_LOGIN_FAILED value
+                 * @property {number} SUCCESS=0 SUCCESS value
+                 * @property {number} FAILED=1 FAILED value
                  */
-                ResWeChatSessionLogin.WECHAT_S_LOGIN_STATUS = (function() {
+                ResWeChatSessionLogin.STATUS = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
-                    values[valuesById[0] = "WECHAT_LOGIN_SUCCESS"] = 0;
-                    values[valuesById[1] = "WECHAT_LOGIN_FAILED"] = 1;
+                    values[valuesById[0] = "SUCCESS"] = 0;
+                    values[valuesById[1] = "FAILED"] = 1;
                     return values;
                 })();
 
@@ -2614,16 +2614,16 @@ $root.auth = (function() {
                 };
 
                 /**
-                 * LOGIN_OUT_STATUS enum.
-                 * @name auth.client.proto.ResLoginOut.LOGIN_OUT_STATUS
+                 * STATUS enum.
+                 * @name auth.client.proto.ResLoginOut.STATUS
                  * @enum {string}
-                 * @property {number} LOGIN_OUT_SUCCESS=0 LOGIN_OUT_SUCCESS value
-                 * @property {number} LOGIN_OUT_FAILED=1 LOGIN_OUT_FAILED value
+                 * @property {number} SUCCESS=0 SUCCESS value
+                 * @property {number} FAILED=1 FAILED value
                  */
-                ResLoginOut.LOGIN_OUT_STATUS = (function() {
+                ResLoginOut.STATUS = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
-                    values[valuesById[0] = "LOGIN_OUT_SUCCESS"] = 0;
-                    values[valuesById[1] = "LOGIN_OUT_FAILED"] = 1;
+                    values[valuesById[0] = "SUCCESS"] = 0;
+                    values[valuesById[1] = "FAILED"] = 1;
                     return values;
                 })();
 
@@ -3158,16 +3158,16 @@ $root.auth = (function() {
                 };
 
                 /**
-                 * USER_INFO_STATUS enum.
-                 * @name auth.client.proto.ResUserCenterInfo.USER_INFO_STATUS
+                 * STATUS enum.
+                 * @name auth.client.proto.ResUserCenterInfo.STATUS
                  * @enum {string}
-                 * @property {number} USER_INFO_SUCCESS=0 USER_INFO_SUCCESS value
-                 * @property {number} USER_INFO_FAILED=1 USER_INFO_FAILED value
+                 * @property {number} SUCCESS=0 SUCCESS value
+                 * @property {number} FAILED=1 FAILED value
                  */
-                ResUserCenterInfo.USER_INFO_STATUS = (function() {
+                ResUserCenterInfo.STATUS = (function() {
                     var valuesById = {}, values = Object.create(valuesById);
-                    values[valuesById[0] = "USER_INFO_SUCCESS"] = 0;
-                    values[valuesById[1] = "USER_INFO_FAILED"] = 1;
+                    values[valuesById[0] = "SUCCESS"] = 0;
+                    values[valuesById[1] = "FAILED"] = 1;
                     return values;
                 })();
 

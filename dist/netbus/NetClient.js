@@ -19,7 +19,7 @@ var util = __importStar(require("util"));
 var Stype_1 = __importDefault(require("../apps/protocol/Stype"));
 var StickPackage = require("stickpackage");
 var server_session_map = {};
-var max_server_load_count = 1000; // 一个room服务最大人数
+var max_server_load_count = 1000; // 一个logic服务最大人数
 var NetClient = /** @class */ (function () {
     function NetClient() {
     }
@@ -39,11 +39,11 @@ var NetClient = /** @class */ (function () {
                     NetClient.on_recv_cmd_server_return(server_session, cmd_buf);
                 });
             }
+            var server_session_key = host + ":" + String(port);
+            NetClient.save_server_session(server_session, server_session_key);
             if (success_callfunc) {
                 success_callfunc(server_session); //这里将所连接的服务的session返回，各个进程自己维护服务session
             }
-            var server_session_key = host + ":" + String(port);
-            NetClient.save_server_session(server_session, server_session_key);
         });
         server_session.on("close", function () {
             if (server_session.is_connected == true) {
@@ -140,8 +140,10 @@ var NetClient = /** @class */ (function () {
                 server_session = session;
             }
             else {
-                if (server_session.load_count > session.load_count && server_session.load_count < max_server_load_count) {
-                    server_session = session;
+                if (server_session.load_count) {
+                    if (server_session.load_count > session.load_count && server_session.load_count < max_server_load_count) {
+                        server_session = session;
+                    }
                 }
             }
         }

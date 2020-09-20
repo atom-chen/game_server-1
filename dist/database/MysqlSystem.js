@@ -46,7 +46,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 exports.__esModule = true;
-var MySqlEngine_1 = __importDefault(require("./MySqlEngine"));
+var MySqlEngine_1 = __importDefault(require("../utils/MySqlEngine"));
 var util = __importStar(require("util"));
 var table_name = "login_bonues";
 var MySqlSystem = /** @class */ (function () {

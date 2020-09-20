@@ -5,8 +5,8 @@ import Log from "../../../utils/Log";
 import Response from '../../protocol/Response';
 import TimeUtil from '../../../utils/TimeUtil';
 import SystemSend from '../SystemSend';
-import { Cmd } from '../../protocol/protofile/SystemProto';
 import SystemConfig from '../config/SystemConfig';
+import SystemProto from '../../protocol/protofile/SystemProto';
 
 class ShareInterface {
     static async dn_user_share_req(session: any, utag:number, proto_type:number, raw_cmd:Buffer){
@@ -25,7 +25,7 @@ class ShareInterface {
                         if (ret_config){
                             let ret = await MySqlGame.add_ugame_uchip(utag, SystemConfig.SHARE_REWARD_COUNT);
                             if (ret) {
-                                SystemSend.send(session, Cmd.eUserShareRes, utag, proto_type, {status:Response.OK});
+                                SystemSend.send(session, SystemProto.XY_ID.RES_USERSHARE, utag, proto_type, {status:Response.OK});
                                 Log.info("hcc>>dn_user_share_req>> not share, share success!", utag);
                             }
                             return;
@@ -39,7 +39,7 @@ class ShareInterface {
             }
         }
         //已经签到或者签到失败
-        SystemSend.send(session, Cmd.eUserShareRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+        SystemSend.send(session, SystemProto.XY_ID.RES_USERSHARE, utag, proto_type, { status: Response.INVALIDI_OPT });
     }
 }
 

@@ -2,12 +2,12 @@ import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';
 import CommonProto from '../protocol/protofile/CommonProto';
 import Log from '../../utils/Log';
-import { Stype, StypeName } from '../protocol/Stype';
-import { Cmd, CmdName } from '../protocol/protofile/SystemProto';
 import SystemSend from './SystemSend';
 import LoginRewardInterface from './interface/LoginRewardInterface';
 import ShareInterface from './interface/ShareInterface';
 import AddUchipInterface from './interface/AddUchipInterface';
+import Stype from '../protocol/Stype';
+import SystemProto from '../protocol/protofile/SystemProto';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -19,11 +19,11 @@ class SystemModel {
 
     private constructor() {
         this._cmd_handler_map = {
-            [CommonProto.eUserLostConnectRes]: this.on_player_lost_connect,
-            [Cmd.eLoginRewardConfigReq]: this.on_user_login_reward_config,
-            [Cmd.eLoginRewardSignReq]: this.on_user_login_reward_sign,
-            [Cmd.eUserShareReq]: this.on_user_share_req,
-            [Cmd.eUserAddChipReq]: this.on_user_add_chip_req,
+            [CommonProto.XY_ID.PUSH_USERLOSTCONNECTION]: this.on_player_lost_connect,
+            [SystemProto.XY_ID.REQ_LOGINREWARDCONFIG]: this.on_user_login_reward_config,
+            [SystemProto.XY_ID.REQ_LOGINREWARDSIGN]: this.on_user_login_reward_sign,
+            [SystemProto.XY_ID.REQ_USERSHARE]: this.on_user_share_req,
+            [SystemProto.XY_ID.REQ_USERADDCHIP]: this.on_user_add_chip_req,
         }
     }
 
@@ -36,8 +36,8 @@ class SystemModel {
     }
 
     public recv_cmd_msg(session: any, stype: number, ctype: number, utag: number, proto_type: number, raw_cmd: Buffer) {
-        let ctypeName = ctype == CommonProto.eUserLostConnectRes ? "UserLostConnectRes" : CmdName[ctype];
-        Log.info("recv_cmd_msg: stype:", StypeName[stype], " ,cmdName: ", ctypeName, " ,utag: ", utag)
+        let ctypeName = ctype == CommonProto.XY_ID.PUSH_USERLOSTCONNECTION ? "UserLostConnectRes" : SystemProto.XY_NAME[ctype];
+        Log.info("recv_cmd_msg: stype:", Stype.S_NAME[stype], " ,cmdName: ", ctypeName, " ,utag: ", utag)
         if (this._cmd_handler_map[ctype]) {
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }
@@ -50,7 +50,7 @@ class SystemModel {
 
     on_user_login_reward_config(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (utag == 0) {
-            SystemSend.send(session, Cmd.eLoginRewardConfigRes, utag, proto_type,{status: Response.INVALIDI_OPT});
+            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type,{status: Response.INVALIDI_OPT});
             return;
         }
         LoginRewardInterface.do_user_login_reward_config(session, utag, proto_type, raw_cmd);
@@ -58,7 +58,7 @@ class SystemModel {
 
     on_user_login_reward_sign(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (utag == 0) {
-            SystemSend.send(session, Cmd.eLoginRewardSignRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response.INVALIDI_OPT });
             return;
         }
         LoginRewardInterface.do_user_login_reward_sign(session, utag, proto_type, raw_cmd);
@@ -66,7 +66,7 @@ class SystemModel {
 
     on_user_share_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if(utag == 0){
-            SystemSend.send(session, Cmd.eUserShareRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+            SystemSend.send(session, SystemProto.XY_ID.RES_USERSHARE, utag, proto_type, { status: Response.INVALIDI_OPT });
             return;
         }
         ShareInterface.dn_user_share_req(session, utag, proto_type, raw_cmd);
@@ -74,7 +74,7 @@ class SystemModel {
 
     on_user_add_chip_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (utag == 0) {
-            SystemSend.send(session, Cmd.eUserAddChipRes, utag, proto_type, { status: Response.INVALIDI_OPT });
+            SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.INVALIDI_OPT });
             return;
         }
 

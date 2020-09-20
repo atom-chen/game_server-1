@@ -1,11 +1,11 @@
 var net = require("net");
-import * as AuthProto from "../apps/protocol/protofile/AuthProto"
 var StickPackage 	 = require("stickpackage")
 
 import ProtoManager from "../netbus/ProtoManager"
 import Platform from "../utils/Platform"
-import {Stype,StypeName}  from '../apps/protocol/Stype';
 import Log from '../utils/Log';
+import Stype from '../apps/protocol/Stype';
+import AuthProto from '../apps/protocol/protofile/AuthProto';
 
 var recvMsgCenter = new StickPackage.msgCenter({bigEndian:false})
 
@@ -26,8 +26,8 @@ var sock = net.connect({
 sock.on("connect",function() {
 	var msgCenter = new StickPackage.msgCenter({bigEndian:false})
 	console.log("tcp connect success");
-	var stype = Stype.Auth;
-	var ctype = AuthProto.Cmd.eUnameLoginReq
+	var stype = Stype.S_TYPE.Auth;
+	var ctype = AuthProto.XY_ID.REQ_UNAMELOGIN
 	var utag = 0;
 	var body = {
 		uname: "test1111",

@@ -2,9 +2,9 @@ var ws = require("ws");
 
 import ProtoManager from "../netbus/ProtoManager"
 import Platform from "../utils/Platform"
-import {Stype,StypeName}  from '../apps/protocol/Stype';
-import * as AuthProto from "../apps/protocol/protofile/AuthProto"
 import Log from '../utils/Log';
+import Stype from '../apps/protocol/Stype';
+import AuthProto from '../apps/protocol/protofile/AuthProto';
 
 var local = "ws://127.0.0.1:6081"
 var remote = "ws://www.hccfun.com:6081"
@@ -16,8 +16,8 @@ var sock = new ws(local);
 var proto_type = 2;
 sock.on("open", function () {
 	Log.info("connect success !!!!");
-	var stype = Stype.Auth;
-	var ctype = AuthProto.Cmd.eUnameLoginReq;
+	var stype = Stype.S_TYPE.Auth;
+	var ctype = AuthProto.XY_ID.REQ_UNAMELOGIN
 	var utag = 0;
 	var body = {
 		uname: "test2222",

@@ -2,6 +2,7 @@ import * as WebSocket from "ws"
 import Log from "../utils/Log";
 import ArrayUtil from "../utils/ArrayUtil";
 import ServiceManager from "./ServiceManager";
+import StringUtil from '../utils/StringUtil';
 
 let StickPackage = require("stickpackage")
 
@@ -20,6 +21,7 @@ class NetServerHandle {
         else {
             tmp_session_key = session.remoteAddress + ":" +  session.remotePort
             Log.info("tcpsocket client session enter", tmp_session_key);
+            
         }
 
         session.uid = 0; 					        // 用户的UID

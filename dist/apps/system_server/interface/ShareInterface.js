@@ -46,8 +46,8 @@ var Log_1 = __importDefault(require("../../../utils/Log"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var TimeUtil_1 = __importDefault(require("../../../utils/TimeUtil"));
 var SystemSend_1 = __importDefault(require("../SystemSend"));
-var SystemProto_1 = require("../../protocol/protofile/SystemProto");
 var SystemConfig_1 = __importDefault(require("../config/SystemConfig"));
+var SystemProto_1 = __importDefault(require("../../protocol/protofile/SystemProto"));
 var ShareInterface = /** @class */ (function () {
     function ShareInterface() {
     }
@@ -78,7 +78,7 @@ var ShareInterface = /** @class */ (function () {
                     case 4:
                         ret = _a.sent();
                         if (ret) {
-                            SystemSend_1["default"].send(session, SystemProto_1.Cmd.eUserShareRes, utag, proto_type, { status: Response_1["default"].OK });
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERSHARE, utag, proto_type, { status: Response_1["default"].OK });
                             Log_1["default"].info("hcc>>dn_user_share_req>> not share, share success!", utag);
                         }
                         return [2 /*return*/];
@@ -93,7 +93,7 @@ var ShareInterface = /** @class */ (function () {
                         return [3 /*break*/, 9];
                     case 9:
                         //已经签到或者签到失败
-                        SystemSend_1["default"].send(session, SystemProto_1.Cmd.eUserShareRes, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERSHARE, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
                         return [2 /*return*/];
                 }
             });

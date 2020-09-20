@@ -21,7 +21,7 @@ class AuthModel {
 
     private constructor(){
         this._cmd_handler_map = {
-            [CommonProto.eUserLostConnectRes]:                  this.on_player_lost_connect,
+            [CommonProto.XY_ID.PUSH_USERLOSTCONNECTION]:        this.on_player_lost_connect,
             [AuthProto.XY_ID.REQ_UNAMELOGIN]:                   this.on_uname_login_req,
             [AuthProto.XY_ID.REQ_GUESTLOGIN]:                   this.on_guest_login_req,
             [AuthProto.XY_ID.REQ_UNAMEREGIST]:                  this.on_uname_regist_req,
@@ -36,12 +36,8 @@ class AuthModel {
         return AuthModel.Instance;
     }
 
-    private decode_cmd(proto_type:number,raw_cmd:any){
-        return ProtoManager.decode_cmd(proto_type,raw_cmd);
-    }
-
     public recv_cmd_msg(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:Buffer){
-        let ctypeName = ctype == CommonProto.eUserLostConnectRes ? "UserLostConnectRes" : AuthProto.XY_NAME[ctype];
+        let ctypeName = ctype == CommonProto.XY_ID.PUSH_USERLOSTCONNECTION ? "UserLostConnectRes" : AuthProto.XY_NAME[ctype];
         Log.info("recv_cmd_msg: stype:", Stype.S_NAME[stype], " ,cmdName: ", ctypeName, " ,utag: ",utag)
         if (this._cmd_handler_map[ctype]) {
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
@@ -49,7 +45,7 @@ class AuthModel {
     }
     
     on_player_lost_connect(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        let body = this.decode_cmd(proto_type, raw_cmd);
+        let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         Log.info("on_player_lost_connect utag:", utag, body)
     }
 

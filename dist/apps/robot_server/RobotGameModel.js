@@ -18,7 +18,7 @@ var GameHoodleProto_1 = require("../protocol/protofile/GameHoodleProto");
 var RobotSend_1 = __importDefault(require("./RobotSend"));
 var RobotMgr_1 = __importDefault(require("./manager/RobotMgr"));
 var util = __importStar(require("util"));
-var State_1 = require("../game_server/lobby_server/config/State");
+var State_1 = require("../game_server/config/State");
 var RobotListConfig_1 = __importDefault(require("./config/RobotListConfig"));
 var RobotGameInterface_1 = __importDefault(require("./interface/RobotGameInterface"));
 /**
