@@ -1,15 +1,15 @@
 import RobotSend from '../RobotSend';
-import { Cmd } from '../../protocol/protofile/GameHoodleProto';
 import RobotListConfig from '../config/RobotListConfig';
 import * as util from 'util';
 import StringUtil from '../../../utils/StringUtil';
 import Log from '../../../utils/Log';
+import GameHoodleProto from '../../protocol/protofile/GameHoodleProto';
 
 class RobotGameInterface {
 
     //登录逻辑服务
     static robot_login_logic_server(server_session:any, utag:number){
-        RobotSend.send_game(server_session, Cmd.eLoginLogicReq, utag, { isrobot: true });
+        RobotSend.send_game(server_session, GameHoodleProto.XY_ID.eLoginLogicReq, utag, { isrobot: true });
     }
 
     //去对应等级房间匹配
@@ -19,7 +19,7 @@ class RobotGameInterface {
             let utagtmp = Number(_utag);
             let room_level = robot_obj.roomlevel;
             if (utagtmp == utag){
-                RobotSend.send_game(server_session, Cmd.eUserMatchReq, utag, { roomlevel: room_level });
+                RobotSend.send_game(server_session, GameHoodleProto.XY_ID.eUserMatchReq, utag, { roomlevel: room_level });
                 break;
             }
         }
@@ -42,7 +42,7 @@ class RobotGameInterface {
         if (random_num <= 5) {
             let emojIndex = StringUtil.random_int(1, RobotListConfig.TOTAL_EMOJ_COUNT);
             let body = { emojconfig: String(emojIndex) }
-            RobotSend.send_game(server_session, Cmd.eUserEmojReq, utag, body);
+            RobotSend.send_game(server_session, GameHoodleProto.XY_ID.eUserEmojReq, utag, body);
         }
     }
 }

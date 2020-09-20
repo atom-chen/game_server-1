@@ -2,8 +2,8 @@
 
 import ServiceBase from "../../netbus/ServiceBase"
 import RobotGameModel from "./RobotGameModel";
-import { Stype } from '../protocol/Stype';
 import RobotAuthModel from './RobotAuthModel';
+import Stype from '../protocol/Stype';
 
 class RobotService extends ServiceBase {
     service_name: string = "RobotService";
@@ -17,9 +17,9 @@ class RobotService extends ServiceBase {
     //收到连接的服务发过来的数据（当前作为客户端）
     //session: 所连接的服务的session
     static on_recv_server_player_cmd(session: any, stype: number, ctype: number, utag: number, proto_type: number, raw_cmd: any) {
-        if(stype == Stype.Auth){
+        if(stype == Stype.S_TYPE.Auth){
             RobotAuthModel.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
-        }else if(stype == Stype.GameHoodle){
+        }else if(stype == Stype.S_TYPE.GameHoodle){
             RobotGameModel.getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
         }
     }

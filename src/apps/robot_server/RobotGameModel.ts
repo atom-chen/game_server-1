@@ -1,8 +1,6 @@
 import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';
 import Log from '../../utils/Log';
-import { Stype, StypeName } from '../protocol/Stype';
-import { Cmd, CmdName } from '../protocol/protofile/GameHoodleProto';
 import RobotSend from './RobotSend';
 import RobotMgr from './manager/RobotMgr';
 import Robot from './cell/Robot';
@@ -10,6 +8,8 @@ import * as util from 'util';
 import { PlayerPower } from '../game_server/config/State';
 import RobotListConfig from './config/RobotListConfig';
 import RobotGameInterface from './interface/RobotGameInterface';
+import Stype from '../protocol/Stype';
+import GameHoodleProto from '../protocol/protofile/GameHoodleProto';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -26,19 +26,19 @@ class RobotGameModel {
 
     private constructor() {
         this._cmd_handler_map = {
-            [Cmd.eLoginLogicRes]: this.on_player_login_logic_res,
-            [Cmd.eGetRoomStatusRes]: this.on_player_status_res,
-            [Cmd.eUserMatchRes]: this.on_event_match_res,
-            [Cmd.eUserInfoRes]: this.on_event_user_info_res,
-            [Cmd.eGameStartRes]: this.on_event_game_start_res,
-            [Cmd.ePlayerPowerRes]: this.on_event_power_res,
-            [Cmd.eGameResultRes]: this.on_event_game_result_res,
-            [Cmd.eTotalGameResultRes]: this.on_event_game_total_result_res,
-            [Cmd.eUserEmojRes]: this.on_event_emoj_res,
-            [Cmd.ePlayerShootRes]: this.on_event_player_shoot_res,
-            [Cmd.ePlayerBallPosRes]: this.on_event_ball_pos_res,
-            [Cmd.eDessolveRes]: this.on_event_desolve_res,
-            [Cmd.eBackRoomRes]: this.on_event_back_room_res,
+            [GameHoodleProto.XY_ID.eLoginLogicRes]: this.on_player_login_logic_res,
+            [GameHoodleProto.XY_ID.eGetRoomStatusRes]: this.on_player_status_res,
+            [GameHoodleProto.XY_ID.eUserMatchRes]: this.on_event_match_res,
+            [GameHoodleProto.XY_ID.eUserInfoRes]: this.on_event_user_info_res,
+            [GameHoodleProto.XY_ID.eGameStartRes]: this.on_event_game_start_res,
+            [GameHoodleProto.XY_ID.ePlayerPowerRes]: this.on_event_power_res,
+            [GameHoodleProto.XY_ID.eGameResultRes]: this.on_event_game_result_res,
+            [GameHoodleProto.XY_ID.eTotalGameResultRes]: this.on_event_game_total_result_res,
+            [GameHoodleProto.XY_ID.eUserEmojRes]: this.on_event_emoj_res,
+            [GameHoodleProto.XY_ID.ePlayerShootRes]: this.on_event_player_shoot_res,
+            [GameHoodleProto.XY_ID.ePlayerBallPosRes]: this.on_event_ball_pos_res,
+            [GameHoodleProto.XY_ID.eDessolveRes]: this.on_event_desolve_res,
+            [GameHoodleProto.XY_ID.eBackRoomRes]: this.on_event_back_room_res,
         }
     }
 
@@ -47,7 +47,7 @@ class RobotGameModel {
     }
 
     public recv_cmd_msg(session: any, stype: number, ctype: number, utag: number, proto_type: number, raw_cmd: Buffer) {
-        Log.info("recv_cmd_msg: stype:", StypeName[stype], " ,cmdName: ", CmdName[ctype], " ,utag: ", utag);
+        Log.info("recv_cmd_msg: stype:", Stype.S_NAME[stype], " ,cmdName: ", GameHoodleProto.XY_NAME[ctype], " ,utag: ", utag);
         if (this._cmd_handler_map[ctype]) {
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }
@@ -56,15 +56,15 @@ class RobotGameModel {
     // send match to game server
     private on_player_login_logic_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer){
         Log.info("hcc>>on_player_login_logic_res.....,utag: ", utag);
-        RobotSend.send_game(session, Cmd.eUserGameInfoReq, utag);
-        RobotSend.send_game(session, Cmd.eRoomListConfigReq, utag);
-        RobotSend.send_game(session, Cmd.eGetRoomStatusReq,utag);
+        RobotSend.send_game(session, GameHoodleProto.XY_ID.eUserGameInfoReq, utag);
+        RobotSend.send_game(session, GameHoodleProto.XY_ID.eRoomListConfigReq, utag);
+        RobotSend.send_game(session, GameHoodleProto.XY_ID.eGetRoomStatusReq,utag);
     }
 
     private on_player_status_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (res_body && res_body.status == Response.OK){ //at room
-            RobotSend.send_game(session, Cmd.eBackRoomReq, utag);
+            RobotSend.send_game(session, GameHoodleProto.XY_ID.eBackRoomReq, utag);
         }else{ //not at room, free
             RobotGameInterface.go_to_match_game(session, utag);
         }
@@ -76,7 +76,7 @@ class RobotGameModel {
         if(res_body && res_body.status == Response.OK){
             if (res_body.matchsuccess){
                 setTimeout(() => {
-                    RobotSend.send_game(session, Cmd.eUserReadyReq,utag);
+                    RobotSend.send_game(session, GameHoodleProto.XY_ID.eUserReadyReq,utag);
                 }, RobotListConfig.READY_DELAY_TIME);
             }
         }
@@ -138,7 +138,7 @@ class RobotGameModel {
                                 }
                             }
                             setTimeout(() => {
-                                RobotSend.send_game(session, Cmd.ePlayerShootReq,utag, req_body);
+                                RobotSend.send_game(session, GameHoodleProto.XY_ID.ePlayerShootReq,utag, req_body);
                             }, RobotListConfig.SHOOT_DELAY_TIME);
                             break;
                         }
@@ -153,7 +153,7 @@ class RobotGameModel {
         if (res_body) {
             let isfinal =  res_body.isfinal;
             if (util.isNullOrUndefined(isfinal) || isfinal == false){
-                RobotSend.send_game(session, Cmd.eUserReadyReq, utag);
+                RobotSend.send_game(session, GameHoodleProto.XY_ID.eUserReadyReq, utag);
             }
         }
         RobotGameInterface.send_emoj_random_timeout(session, utag, 1000);
@@ -194,7 +194,7 @@ class RobotGameModel {
     private on_event_back_room_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (res_body && res_body.status == Response.OK){
-            RobotSend.send_game(session, Cmd.eCheckLinkGameReq,utag);
+            RobotSend.send_game(session, GameHoodleProto.XY_ID.eCheckLinkGameReq,utag);
         }
     }
 }

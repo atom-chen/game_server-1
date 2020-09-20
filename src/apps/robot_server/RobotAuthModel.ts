@@ -1,10 +1,10 @@
 import Response from '../protocol/Response';
 import ProtoManager from '../../netbus/ProtoManager';
 import Log from '../../utils/Log';
-import { Stype, StypeName } from '../protocol/Stype';
 import RobotGameInterface from './interface/RobotGameInterface';
-import { Cmd, CmdName } from '../protocol/protofile/AuthProto';
 import RobotSend from './RobotSend';
+import Stype from '../protocol/Stype';
+import AuthProto from '../protocol/protofile/AuthProto';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -16,7 +16,7 @@ class RobotAuthModel {
 
     private constructor() {
         this._cmd_handler_map = {
-            [Cmd.eGuestLoginRes]: this.on_guest_login_auth_res,
+            [AuthProto.XY_ID.REQ_GUESTLOGIN]: this.on_guest_login_auth_res,
         }
     }
 
@@ -25,7 +25,7 @@ class RobotAuthModel {
     }
 
     public recv_cmd_msg(session: any, stype: number, ctype: number, utag: number, proto_type: number, raw_cmd: Buffer) {
-        Log.info("recv_cmd_msg: stype:", StypeName[stype], " ,cmdName: ", CmdName[ctype], " ,utag: ", utag);
+        Log.info("recv_cmd_msg: stype:", Stype.S_NAME[stype], " ,cmdName: ", AuthProto.XY_NAME[ctype], " ,utag: ", utag);
         if (this._cmd_handler_map[ctype]) {
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }

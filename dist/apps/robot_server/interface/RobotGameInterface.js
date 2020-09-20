@@ -11,17 +11,17 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 exports.__esModule = true;
 var RobotSend_1 = __importDefault(require("../RobotSend"));
-var GameHoodleProto_1 = require("../../protocol/protofile/GameHoodleProto");
 var RobotListConfig_1 = __importDefault(require("../config/RobotListConfig"));
 var util = __importStar(require("util"));
 var StringUtil_1 = __importDefault(require("../../../utils/StringUtil"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
+var GameHoodleProto_1 = __importDefault(require("../../protocol/protofile/GameHoodleProto"));
 var RobotGameInterface = /** @class */ (function () {
     function RobotGameInterface() {
     }
     //登录逻辑服务
     RobotGameInterface.robot_login_logic_server = function (server_session, utag) {
-        RobotSend_1["default"].send_game(server_session, GameHoodleProto_1.Cmd.eLoginLogicReq, utag, { isrobot: true });
+        RobotSend_1["default"].send_game(server_session, GameHoodleProto_1["default"].XY_ID.eLoginLogicReq, utag, { isrobot: true });
     };
     //去对应等级房间匹配
     RobotGameInterface.go_to_match_game = function (server_session, utag) {
@@ -30,7 +30,7 @@ var RobotGameInterface = /** @class */ (function () {
             var utagtmp = Number(_utag);
             var room_level = robot_obj.roomlevel;
             if (utagtmp == utag) {
-                RobotSend_1["default"].send_game(server_session, GameHoodleProto_1.Cmd.eUserMatchReq, utag, { roomlevel: room_level });
+                RobotSend_1["default"].send_game(server_session, GameHoodleProto_1["default"].XY_ID.eUserMatchReq, utag, { roomlevel: room_level });
                 break;
             }
         }
@@ -51,7 +51,7 @@ var RobotGameInterface = /** @class */ (function () {
         if (random_num <= 5) {
             var emojIndex = StringUtil_1["default"].random_int(1, RobotListConfig_1["default"].TOTAL_EMOJ_COUNT);
             var body = { emojconfig: String(emojIndex) };
-            RobotSend_1["default"].send_game(server_session, GameHoodleProto_1.Cmd.eUserEmojReq, utag, body);
+            RobotSend_1["default"].send_game(server_session, GameHoodleProto_1["default"].XY_ID.eUserEmojReq, utag, body);
         }
     };
     return RobotGameInterface;

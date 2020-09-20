@@ -1,6 +1,6 @@
-import { Cmd } from "../../protocol/protofile/AuthProto";
 import RobotListConfig from "../config/RobotListConfig";
 import RobotSend from "../RobotSend";
+import AuthProto from '../../protocol/protofile/AuthProto';
 
 class RobotAuthIngerface {
     //登录auth服务
@@ -9,7 +9,7 @@ class RobotAuthIngerface {
             let robot_obj = RobotListConfig.robot_roomlevel_map[_utag];
             let utag = Number(_utag);
             let guest_key = robot_obj.guestkey;
-            RobotSend.send_auth(server_session, Cmd.eGuestLoginReq, utag, { guestkey : guest_key});
+            RobotSend.send_auth(server_session, AuthProto.XY_ID.REQ_GUESTLOGIN, utag, { guestkey : guest_key});
         }
     }
 }

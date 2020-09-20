@@ -9,13 +9,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var GameAppConfig_1 = __importDefault(require("../config/GameAppConfig"));
 var ServiceManager_1 = __importDefault(require("../../netbus/ServiceManager"));
-var Stype_1 = require("../protocol/Stype");
 var RobotService_1 = __importDefault(require("./RobotService"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
 var RobotAuthIngerface_1 = __importDefault(require("./interface/RobotAuthIngerface"));
-ServiceManager_1["default"].register_service(Stype_1.Stype.GameHoodle, RobotService_1["default"]);
-ServiceManager_1["default"].register_service(Stype_1.Stype.Auth, RobotService_1["default"]);
+var Stype_1 = __importDefault(require("../protocol/Stype"));
+ServiceManager_1["default"].register_service(Stype_1["default"].S_TYPE.GameHoodle, RobotService_1["default"]);
+ServiceManager_1["default"].register_service(Stype_1["default"].S_TYPE.Auth, RobotService_1["default"]);
 // cur server as client connect to game_server
 NetClient_1["default"].connect_tcp_server(GameAppConfig_1["default"].gateway_config.host, GameAppConfig_1["default"].gateway_config.tcp_port, false, undefined, on_success_callfunc);
 //server_session: gateway的session

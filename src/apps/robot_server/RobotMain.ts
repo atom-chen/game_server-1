@@ -5,14 +5,14 @@
 
 import GameAppConfig from "../config/GameAppConfig"
 import ServiceManager from "../../netbus/ServiceManager"
-import { Stype, StypeName } from '../protocol/Stype'
 import RobotService from './RobotService';
 import Log from "../../utils/Log";
 import NetClient from '../../netbus/NetClient';
 import RobotAuthIngerface from './interface/RobotAuthIngerface';
+import Stype from '../protocol/Stype';
 
-ServiceManager.register_service(Stype.GameHoodle, RobotService);
-ServiceManager.register_service(Stype.Auth, RobotService);
+ServiceManager.register_service(Stype.S_TYPE.GameHoodle, RobotService);
+ServiceManager.register_service(Stype.S_TYPE.Auth, RobotService);
 
 // cur server as client connect to game_server
 NetClient.connect_tcp_server(GameAppConfig.gateway_config.host, GameAppConfig.gateway_config.tcp_port, false, undefined, on_success_callfunc);

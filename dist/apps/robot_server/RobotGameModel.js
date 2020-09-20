@@ -13,14 +13,14 @@ exports.__esModule = true;
 var Response_1 = __importDefault(require("../protocol/Response"));
 var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
 var Log_1 = __importDefault(require("../../utils/Log"));
-var Stype_1 = require("../protocol/Stype");
-var GameHoodleProto_1 = require("../protocol/protofile/GameHoodleProto");
 var RobotSend_1 = __importDefault(require("./RobotSend"));
 var RobotMgr_1 = __importDefault(require("./manager/RobotMgr"));
 var util = __importStar(require("util"));
 var State_1 = require("../game_server/config/State");
 var RobotListConfig_1 = __importDefault(require("./config/RobotListConfig"));
 var RobotGameInterface_1 = __importDefault(require("./interface/RobotGameInterface"));
+var Stype_1 = __importDefault(require("../protocol/Stype"));
+var GameHoodleProto_1 = __importDefault(require("../protocol/protofile/GameHoodleProto"));
 /**
  * 当前作为客户端，utag用来标记哪一位玩家
  * send_game，是当前作为客户端发给game服务。
@@ -30,26 +30,26 @@ var RobotGameModel = /** @class */ (function () {
         var _a;
         this._cmd_handler_map = {};
         this._cmd_handler_map = (_a = {},
-            _a[GameHoodleProto_1.Cmd.eLoginLogicRes] = this.on_player_login_logic_res,
-            _a[GameHoodleProto_1.Cmd.eGetRoomStatusRes] = this.on_player_status_res,
-            _a[GameHoodleProto_1.Cmd.eUserMatchRes] = this.on_event_match_res,
-            _a[GameHoodleProto_1.Cmd.eUserInfoRes] = this.on_event_user_info_res,
-            _a[GameHoodleProto_1.Cmd.eGameStartRes] = this.on_event_game_start_res,
-            _a[GameHoodleProto_1.Cmd.ePlayerPowerRes] = this.on_event_power_res,
-            _a[GameHoodleProto_1.Cmd.eGameResultRes] = this.on_event_game_result_res,
-            _a[GameHoodleProto_1.Cmd.eTotalGameResultRes] = this.on_event_game_total_result_res,
-            _a[GameHoodleProto_1.Cmd.eUserEmojRes] = this.on_event_emoj_res,
-            _a[GameHoodleProto_1.Cmd.ePlayerShootRes] = this.on_event_player_shoot_res,
-            _a[GameHoodleProto_1.Cmd.ePlayerBallPosRes] = this.on_event_ball_pos_res,
-            _a[GameHoodleProto_1.Cmd.eDessolveRes] = this.on_event_desolve_res,
-            _a[GameHoodleProto_1.Cmd.eBackRoomRes] = this.on_event_back_room_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eLoginLogicRes] = this.on_player_login_logic_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eGetRoomStatusRes] = this.on_player_status_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eUserMatchRes] = this.on_event_match_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eUserInfoRes] = this.on_event_user_info_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eGameStartRes] = this.on_event_game_start_res,
+            _a[GameHoodleProto_1["default"].XY_ID.ePlayerPowerRes] = this.on_event_power_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eGameResultRes] = this.on_event_game_result_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eTotalGameResultRes] = this.on_event_game_total_result_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eUserEmojRes] = this.on_event_emoj_res,
+            _a[GameHoodleProto_1["default"].XY_ID.ePlayerShootRes] = this.on_event_player_shoot_res,
+            _a[GameHoodleProto_1["default"].XY_ID.ePlayerBallPosRes] = this.on_event_ball_pos_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eDessolveRes] = this.on_event_desolve_res,
+            _a[GameHoodleProto_1["default"].XY_ID.eBackRoomRes] = this.on_event_back_room_res,
             _a);
     }
     RobotGameModel.getInstance = function () {
         return RobotGameModel.Instance;
     };
     RobotGameModel.prototype.recv_cmd_msg = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        Log_1["default"].info("recv_cmd_msg: stype:", Stype_1.StypeName[stype], " ,cmdName: ", GameHoodleProto_1.CmdName[ctype], " ,utag: ", utag);
+        Log_1["default"].info("recv_cmd_msg: stype:", Stype_1["default"].S_NAME[stype], " ,cmdName: ", GameHoodleProto_1["default"].XY_NAME[ctype], " ,utag: ", utag);
         if (this._cmd_handler_map[ctype]) {
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }
@@ -57,14 +57,14 @@ var RobotGameModel = /** @class */ (function () {
     // send match to game server
     RobotGameModel.prototype.on_player_login_logic_res = function (session, utag, proto_type, raw_cmd) {
         Log_1["default"].info("hcc>>on_player_login_logic_res.....,utag: ", utag);
-        RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.eUserGameInfoReq, utag);
-        RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.eRoomListConfigReq, utag);
-        RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.eGetRoomStatusReq, utag);
+        RobotSend_1["default"].send_game(session, GameHoodleProto_1["default"].XY_ID.eUserGameInfoReq, utag);
+        RobotSend_1["default"].send_game(session, GameHoodleProto_1["default"].XY_ID.eRoomListConfigReq, utag);
+        RobotSend_1["default"].send_game(session, GameHoodleProto_1["default"].XY_ID.eGetRoomStatusReq, utag);
     };
     RobotGameModel.prototype.on_player_status_res = function (session, utag, proto_type, raw_cmd) {
         var res_body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
         if (res_body && res_body.status == Response_1["default"].OK) { //at room
-            RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.eBackRoomReq, utag);
+            RobotSend_1["default"].send_game(session, GameHoodleProto_1["default"].XY_ID.eBackRoomReq, utag);
         }
         else { //not at room, free
             RobotGameInterface_1["default"].go_to_match_game(session, utag);
@@ -76,7 +76,7 @@ var RobotGameModel = /** @class */ (function () {
         if (res_body && res_body.status == Response_1["default"].OK) {
             if (res_body.matchsuccess) {
                 setTimeout(function () {
-                    RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.eUserReadyReq, utag);
+                    RobotSend_1["default"].send_game(session, GameHoodleProto_1["default"].XY_ID.eUserReadyReq, utag);
                 }, RobotListConfig_1["default"].READY_DELAY_TIME);
             }
         }
@@ -134,7 +134,7 @@ var RobotGameModel = /** @class */ (function () {
                                 };
                             }
                             setTimeout(function () {
-                                RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.ePlayerShootReq, utag, req_body_1);
+                                RobotSend_1["default"].send_game(session, GameHoodleProto_1["default"].XY_ID.ePlayerShootReq, utag, req_body_1);
                             }, RobotListConfig_1["default"].SHOOT_DELAY_TIME);
                             return "break";
                         }
@@ -153,7 +153,7 @@ var RobotGameModel = /** @class */ (function () {
         if (res_body) {
             var isfinal = res_body.isfinal;
             if (util.isNullOrUndefined(isfinal) || isfinal == false) {
-                RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.eUserReadyReq, utag);
+                RobotSend_1["default"].send_game(session, GameHoodleProto_1["default"].XY_ID.eUserReadyReq, utag);
             }
         }
         RobotGameInterface_1["default"].send_emoj_random_timeout(session, utag, 1000);
@@ -187,7 +187,7 @@ var RobotGameModel = /** @class */ (function () {
     RobotGameModel.prototype.on_event_back_room_res = function (session, utag, proto_type, raw_cmd) {
         var res_body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
         if (res_body && res_body.status == Response_1["default"].OK) {
-            RobotSend_1["default"].send_game(session, GameHoodleProto_1.Cmd.eCheckLinkGameReq, utag);
+            RobotSend_1["default"].send_game(session, GameHoodleProto_1["default"].XY_ID.eCheckLinkGameReq, utag);
         }
     };
     RobotGameModel.Instance = new RobotGameModel();

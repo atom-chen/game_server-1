@@ -19,8 +19,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
 var RobotGameModel_1 = __importDefault(require("./RobotGameModel"));
-var Stype_1 = require("../protocol/Stype");
 var RobotAuthModel_1 = __importDefault(require("./RobotAuthModel"));
+var Stype_1 = __importDefault(require("../protocol/Stype"));
 var RobotService = /** @class */ (function (_super) {
     __extends(RobotService, _super);
     function RobotService() {
@@ -35,10 +35,10 @@ var RobotService = /** @class */ (function (_super) {
     //收到连接的服务发过来的数据（当前作为客户端）
     //session: 所连接的服务的session
     RobotService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        if (stype == Stype_1.Stype.Auth) {
+        if (stype == Stype_1["default"].S_TYPE.Auth) {
             RobotAuthModel_1["default"].getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
         }
-        else if (stype == Stype_1.Stype.GameHoodle) {
+        else if (stype == Stype_1["default"].S_TYPE.GameHoodle) {
             RobotGameModel_1["default"].getInstance().recv_cmd_msg(session, stype, ctype, utag, proto_type, raw_cmd);
         }
     };
