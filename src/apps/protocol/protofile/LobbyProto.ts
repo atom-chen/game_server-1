@@ -13,4 +13,5 @@ export default class LobbyProto {
         [LobbyProto.XY_ID.REQ_LOGINLOBBY]: "reqLoginLobby",
         [LobbyProto.XY_ID.RESP_LOBINLOBBY]: "resLoginLobby",
     }
+
 }

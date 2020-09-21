@@ -29,8 +29,8 @@ class AuthLoginInterface {
                 let sql_info = data[0]
                 let resbody = {
                     status: 1,
-                    uid: sql_info.uid,
-                    logininfo: JSON.stringify(sql_info)
+                    uid: Number(sql_info.uid),
+                    logininfo: JSON.stringify(sql_info),
                 }
                 AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, resbody)
                 return;
@@ -69,8 +69,8 @@ class AuthLoginInterface {
              let sql_info = data[0]
                 let resbody = {
                     status: 1,
-                    uid: sql_info.uid,
-                    logininfo: JSON.stringify(sql_info)
+                    uid: Number(sql_info.uid),
+                    logininfo: JSON.stringify(sql_info),
                 }
                 // Log.info("hcc>>login_by_guestkey: ", resbody)
                 AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, resbody)

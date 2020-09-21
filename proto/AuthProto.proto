@@ -81,7 +81,7 @@ message ResUnameLogin {
     FAILED_UNAME_PWD_INVALID = 1;
   }
   required sint32 status = 1;
-  required sint32 uid = 2;
+  optional sint32 uid = 2;
   optional string logininfo = 3; //登录信息，以便客户端保存
 }
 
@@ -95,7 +95,7 @@ message ResGuestLogin {
     FAILED_PWD_INVALID = 1;
   }
   required sint32 status = 1;
-  required sint32 uid = 2;
+  optional sint32 uid = 2;
   optional string logininfo = 3;
 }
 
@@ -110,7 +110,7 @@ message ResWeChatLogin {
     FAILED = 1;
   }
   required sint32 status = 1;
-  sint32 uid = 2;
+  optional sint32 uid = 2;
   optional string userlogininfo = 3;
 }
 
@@ -124,7 +124,7 @@ message ResWeChatSessionLogin {
     FAILED = 1;
   }
   required sint32 status = 1;
-  sint32 uid = 2;
+  optional sint32 uid = 2;
   optional string userlogininfo = 3;
 }
 

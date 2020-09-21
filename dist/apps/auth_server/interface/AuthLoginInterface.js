@@ -75,7 +75,7 @@ var AuthLoginInterface = /** @class */ (function () {
                                 sql_info = data[0];
                                 resbody = {
                                     status: 1,
-                                    uid: sql_info.uid,
+                                    uid: Number(sql_info.uid),
                                     logininfo: JSON.stringify(sql_info)
                                 };
                                 AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMELOGIN, utag, proto_type, resbody);
@@ -126,7 +126,7 @@ var AuthLoginInterface = /** @class */ (function () {
                         sql_info = data[0];
                         resbody = {
                             status: 1,
-                            uid: sql_info.uid,
+                            uid: Number(sql_info.uid),
                             logininfo: JSON.stringify(sql_info)
                         };
                         // Log.info("hcc>>login_by_guestkey: ", resbody)

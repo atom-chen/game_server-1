@@ -117,7 +117,7 @@ class AuthWeChatLoginInterface {
                 let sql_info = data[0]
                 let resbody = {
                     status: 1,
-                    uid: sql_info.uid,
+                    uid: Number(sql_info.uid),
                     userlogininfo: JSON.stringify(sql_info)
                 }
                 // Log.info("hcc>>do_login_by_wechat_unionid: ", resbody)
@@ -148,7 +148,7 @@ class AuthWeChatLoginInterface {
                     let sql_info = data[0]
                     let resbody = {
                         status: 1,
-                        uid: sql_info.uid,
+                        uid: Number(sql_info.uid),
                         userlogininfo: JSON.stringify(sql_info)
                     }
                     Log.info("hcc>>do_wechat_session_login_req: ", resbody)

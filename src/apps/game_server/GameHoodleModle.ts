@@ -71,7 +71,7 @@ class GameHoodleModle {
         if (ctype == 10000){
             cmdname = "lostconnect"
         }else{
-            cmdname = Stype.S_NAME[ctype];
+            cmdname = GameHoodleProto.XY_NAME[ctype];
         }
 
         Log.info("recv_cmd_msg: ", Stype.S_NAME[stype], cmdname, utag, unick);

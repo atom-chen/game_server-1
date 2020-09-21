@@ -21,6 +21,6 @@ ServiceManager.register_service(Stype.S_TYPE.GameHoodle, GameRouteService);
 let logic_server = GameAppConfig.logic_connect_servers;
 for (let key in logic_server) {
 	NetClient.connect_tcp_server(logic_server[key].host, logic_server[key].port, false, logic_server[key].stype, function (server_session: any) {
-		Log.info("hcc>>connect to room server success !!", server_session.session_key);
+		Log.info("hcc>>connect to game server success !!", server_session.session_key);
 	});
 }
