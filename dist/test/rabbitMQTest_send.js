@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var RabbitMQ_1 = __importDefault(require("../utils/RabbitMQ"));
 var Log_1 = __importDefault(require("../utils/Log"));
-var queueName = "hcc_queue_1";
+var queueName = "test_channel";
 setInterval(function () {
     RabbitMQ_1["default"].sendMsg(queueName, Buffer.from("hcc>>queueName"));
     Log_1["default"].info("send.....");

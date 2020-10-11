@@ -15,15 +15,20 @@ var GameRouteService_1 = __importDefault(require("./GameRouteService"));
 var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var GameRouteSaveSession_1 = __importDefault(require("./GameRouteSaveSession"));
+var GameRouteSaveSession_2 = __importDefault(require("./GameRouteSaveSession"));
 var server = GameAppConfig_1["default"].game_server;
 NetServer_1["default"].start_tcp_server(server.host, server.port, false, function (session) {
     GameRouteSaveSession_1["default"].set_gateway_session(session);
 });
 ServiceManager_1["default"].register_service(Stype_1["default"].S_TYPE.GameHoodle, GameRouteService_1["default"]);
 var logic_server = GameAppConfig_1["default"].logic_connect_servers;
-for (var key in logic_server) {
+var _loop_1 = function (key) {
     NetClient_1["default"].connect_tcp_server(logic_server[key].host, logic_server[key].port, false, logic_server[key].stype, function (server_session) {
-        Log_1["default"].info("hcc>>connect to room server success !!", server_session.session_key);
+        Log_1["default"].info("hcc>>connect to game server success !!");
+        GameRouteSaveSession_2["default"].set_logic_server_session(Number(key), server_session);
     });
+};
+for (var key in logic_server) {
+    _loop_1(key);
 }
 //# sourceMappingURL=GameRouteMain.js.map

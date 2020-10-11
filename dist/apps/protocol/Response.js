@@ -1,7 +1,7 @@
 "use strict";
 exports.__esModule = true;
 var Response = {
-    OK: 1,
+    OK: 0,
     INVALID_PARAMS: -100,
     SYSTEM_ERR: -101,
     ILLEGAL_ACCOUNT: -102,

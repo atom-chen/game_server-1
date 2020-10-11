@@ -19,7 +19,6 @@ var util = __importStar(require("util"));
 var Stype_1 = __importDefault(require("../apps/protocol/Stype"));
 var StickPackage = require("stickpackage");
 var server_session_map = {};
-var max_server_load_count = 1000; // 一个logic服务最大人数
 var NetClient = /** @class */ (function () {
     function NetClient() {
     }
@@ -31,7 +30,6 @@ var NetClient = /** @class */ (function () {
         });
         server_session.is_connected = false;
         server_session.stype = stype;
-        server_session.load_count = 0; //当前连接的服务的人数，有人连接就自增
         server_session.on("connect", function () {
             NetClient.on_session_connected(server_session, is_encrypt);
             if (server_session.msgCenter) {
@@ -39,8 +37,8 @@ var NetClient = /** @class */ (function () {
                     NetClient.on_recv_cmd_server_return(server_session, cmd_buf);
                 });
             }
-            var server_session_key = host + ":" + String(port);
-            NetClient.save_server_session(server_session, server_session_key);
+            // let server_session_key = host + ":" + String(port);
+            // NetClient.save_server_session(server_session, server_session_key);
             if (success_callfunc) {
                 success_callfunc(server_session); //这里将所连接的服务的session返回，各个进程自己维护服务session
             }
@@ -81,7 +79,7 @@ var NetClient = /** @class */ (function () {
         if (server_session.end) {
             server_session.end();
             server_session.is_connected = false;
-            NetClient.clear_server_session(server_session.server_ip_port_key);
+            // NetClient.clear_server_session(server_session.server_ip_port_key)
         }
     };
     //当前作为客户端，其他服务器断开链接
@@ -117,37 +115,6 @@ var NetClient = /** @class */ (function () {
                 }
             }
         }
-    };
-    NetClient.save_server_session = function (server_session, session_key) {
-        server_session_map[session_key] = server_session;
-        server_session.session_key = session_key;
-    };
-    NetClient.get_server_session = function (session_key) {
-        return server_session_map[session_key];
-    };
-    NetClient.clear_server_session = function (session_key) {
-        if (server_session_map[session_key]) {
-            delete server_session_map[session_key];
-        }
-    };
-    //没超负载的服务,且用户多的服务
-    //超负载就换下一个
-    NetClient.choose_server = function () {
-        var server_session = null;
-        for (var k in server_session_map) {
-            var session = server_session_map[k];
-            if (server_session == null) {
-                server_session = session;
-            }
-            else {
-                if (server_session.load_count) {
-                    if (server_session.load_count > session.load_count && server_session.load_count < max_server_load_count) {
-                        server_session = session;
-                    }
-                }
-            }
-        }
-        return server_session;
     };
     return NetClient;
 }());

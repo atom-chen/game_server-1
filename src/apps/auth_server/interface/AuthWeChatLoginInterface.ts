@@ -116,7 +116,7 @@ class AuthWeChatLoginInterface {
             }else{
                 let sql_info = data[0]
                 let resbody = {
-                    status: 1,
+                    status: Response.OK,
                     uid: Number(sql_info.uid),
                     userlogininfo: JSON.stringify(sql_info)
                 }
@@ -147,7 +147,7 @@ class AuthWeChatLoginInterface {
                 if(data.length > 0){
                     let sql_info = data[0]
                     let resbody = {
-                        status: 1,
+                        status: Response.OK,
                         uid: Number(sql_info.uid),
                         userlogininfo: JSON.stringify(sql_info)
                     }

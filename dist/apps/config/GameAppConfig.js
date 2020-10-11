@@ -53,6 +53,8 @@ var GameAppConfig = /** @class */ (function () {
     GameAppConfig.getRealLocalIP = function () {
         return Platform_1["default"].isWin32() ? Platform_1["default"].getLocalIP() : ALY_CLOUD_HOST;
     };
+    GameAppConfig.rabbit_channel_auth = "channel_auth_center";
+    GameAppConfig.rabbit_channel_game = "rabbit_channel_game";
     //网关服
     GameAppConfig.gateway_config = {
         host: LOCAL_HOST,
@@ -118,6 +120,24 @@ var GameAppConfig = /** @class */ (function () {
         password: "guest",
         protocol: "amqp"
     };
+    //用户中心redis
+    GameAppConfig.auth_center_redis = {
+        host: LOCAL_HOST,
+        port: 6379,
+        db_index: 0
+    };
+    // 大厅redis
+    GameAppConfig.lobby_redis = {
+        host: LOCAL_HOST,
+        port: 6379,
+        db_index: 1
+    };
+    //游戏redis
+    GameAppConfig.game_redis = {
+        host: LOCAL_HOST,
+        port: 6379,
+        db_index: 2
+    };
     ////////////////////
     //游戏逻辑服务，可拓展多个
     GameAppConfig.game_logic_server_1 = {
@@ -139,8 +159,9 @@ var GameAppConfig = /** @class */ (function () {
     //网关连接其他服务
     GameAppConfig.gw_connect_servers = [
         GameAppConfig.auth_server,
-        GameAppConfig.game_server,
-        GameAppConfig.system_server,
+        // GameAppConfig.game_server,
+        // GameAppConfig.system_server,
+        GameAppConfig.lobby_server,
     ];
     //逻辑路由服务连接到其他逻辑服务
     GameAppConfig.logic_connect_servers = [

@@ -14,7 +14,6 @@ import GamePlayAgainInterface from './interface/GamePlayAgainInterface';
 import GameConfigInterface from './interface/GameConfigInterface';
 import Player from './cell/Player';
 import PlayerManager from './manager/PlayerManager';
-import NetClient from '../../netbus/NetClient';
 import Stype from '../protocol/Stype';
 import GameHoodleProto from '../protocol/protofile/GameHoodleProto';
 
@@ -28,7 +27,7 @@ class GameHoodleModle {
 
     private constructor(){
         this._cmd_handler_map = {
-            [CommonProto.XY_ID.PUSH_USERLOSTCONNECTION]:      this.on_player_lost_connect, //hall
+            [CommonProto.XY_ID.PUSH_USERLOSTCONNECTION]:              this.on_player_lost_connect, //hall
             [GameHoodleProto.XY_ID.eLoginLogicReq]:                   this.on_player_login_logic_server, //hall
             [GameHoodleProto.XY_ID.eCreateRoomReq]:                   this.on_player_create_room, //hall
             [GameHoodleProto.XY_ID.eJoinRoomReq]:                     this.on_player_join_room, //hall
@@ -68,7 +67,7 @@ class GameHoodleModle {
             unick = player.get_unick();
         }
         let cmdname = "";
-        if (ctype == 10000){
+        if (ctype == CommonProto.XY_ID.PUSH_USERLOSTCONNECTION){
             cmdname = "lostconnect"
         }else{
             cmdname = GameHoodleProto.XY_NAME[ctype];
@@ -78,39 +77,6 @@ class GameHoodleModle {
         if (this._cmd_handler_map[ctype]){
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }
-        
-        //同时发一遍给room 服务
-        //选择一个没有超负载的服务进行发送消息，并进行标记，下次发消息也发给当前标记服务
-        //client_server_ip_port_map  保存客户端ip_port 和服务端ip_port的映射，使得下次发消息会发送到该服务端
-        // client_server_ip_port_map = {client_ip_port_key: server_ip_port_key}
-        /*
-        let client_ip = session.remoteAddress || "";
-        let client_port = session.remotePort || "";
-        let client_key = client_ip + ":" + client_port;
-        let client_server_ip_port_map: any = session.client_server_ip_port_map; //map: client_ip_port_key: server_ip_port__key
-        if (client_server_ip_port_map) {
-            let server_key = client_server_ip_port_map[client_key];
-            let server_session = NetClient.get_server_session(server_key);
-            if (server_session){
-                NetClient.send_encoded_cmd(server_session, raw_cmd);
-            }else{
-                server_session = NetClient.choose_server();
-                if (server_session) {
-                    NetClient.send_encoded_cmd(server_session, raw_cmd);
-                    client_server_ip_port_map[client_key] = server_session.server_ip_port_key;
-                    session.client_server_ip_port_map = client_server_ip_port_map;
-                }                    
-            }
-        } else {
-            let server_session = NetClient.choose_server();
-            if (server_session) {
-                NetClient.send_encoded_cmd(server_session, raw_cmd);
-                client_server_ip_port_map = {};
-                client_server_ip_port_map[client_key] = server_session.server_ip_port_key;
-                session.client_server_ip_port_map = client_server_ip_port_map;
-            }
-        }
-        */
     }
 
     //玩家离开逻辑服务

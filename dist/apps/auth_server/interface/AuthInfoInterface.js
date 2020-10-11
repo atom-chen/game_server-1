@@ -43,6 +43,7 @@ var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
 var AuthProto_1 = __importDefault(require("../../protocol/protofile/AuthProto"));
+var RedisAuth_1 = __importDefault(require("../../../database/RedisAuth"));
 var AuthInfoInterface = /** @class */ (function () {
     function AuthInfoInterface() {
     }
@@ -57,10 +58,11 @@ var AuthInfoInterface = /** @class */ (function () {
                         if (data && data.length > 0) {
                             sql_info = data[0];
                             resbody = {
-                                status: 1,
+                                status: Response_1["default"].OK,
                                 usercenterinfo: JSON.stringify(sql_info)
                             };
                             AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, resbody);
+                            RedisAuth_1["default"].set_uinfo_inredis(utag, sql_info);
                             return [2 /*return*/];
                         }
                         AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response_1["default"].ILLEGAL_ACCOUNT });

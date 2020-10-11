@@ -59,20 +59,18 @@ var RedisClient = Redis.createClient();
 RedisClient.on("error", function (error) {
     Log_1["default"].error(error);
 });
-/*
-
 ////////////////////////////////////////
 //string
 ////////////////////////////////////////
-RedisClient.set("hcc_test_1","123456");
-RedisClient.get("hcc_test_1",function (err:any, data:any) {
-    if(err){
-        Log.error(err);
+RedisClient.set("hcc_test_1", "123456");
+RedisClient.get("hcc_test_1", function (err, data) {
+    if (err) {
+        Log_1["default"].error(err);
         return;
     }
     // Log.info("hcc>recv: " , data);
 });
-
+/*
 ////////////////////////////////////////
 //hash table
 ////////////////////////////////////////
@@ -131,46 +129,49 @@ RedisClient.zrange("hcc_set_1", 0, 10, function (err, data) {
 ////////////////////////////////////////
 //
 ////////////////////////////////////////
+///*
 var engine = new RedisEngine_1["default"]();
 engine.connect();
-engine.zadd("hcc_set_2", 100, "aaa");
-engine.zadd("hcc_set_2", 200, "bbb");
-engine.zadd("hcc_set_2", 50, "ccc");
-engine.zadd("hcc_set_2", 900, "ddd");
 function testFunc() {
     return __awaiter(this, void 0, void 0, function () {
-        var ret;
+        var hkey2, ret_hash, ret_hase2, ret_hase3;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, engine.zrange("hcc_set_2", 0, 100)];
+                case 0:
+                    hkey2 = "hash_test_for_2";
+                    return [4 /*yield*/, engine.hset(hkey2, "hcc_key", "hcc_value")];
                 case 1:
-                    ret = _a.sent();
-                    Log_1["default"].info(ret);
+                    ret_hash = _a.sent();
+                    Log_1["default"].info("ret_hase:", ret_hash);
+                    return [4 /*yield*/, engine.hgetall(hkey2)];
+                case 2:
+                    ret_hase2 = _a.sent();
+                    Log_1["default"].info("ret_hase2", ret_hase2);
+                    return [4 /*yield*/, engine.hget(hkey2, "hcc_key")];
+                case 3:
+                    ret_hase3 = _a.sent();
+                    Log_1["default"].info("ret_hase3", ret_hase3);
                     return [2 /*return*/];
             }
         });
     });
 }
 testFunc();
-var table = {
-    name: "hcc",
-    age: "20",
-    sex: "boy"
-};
-engine.hmset("hcc_hmset_1", table);
-function hgettestFunc() {
-    return __awaiter(this, void 0, void 0, function () {
-        var ret;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, engine.hgetall("hcc_hmset_1")];
-                case 1:
-                    ret = _a.sent();
-                    Log_1["default"].info(ret);
-                    return [2 /*return*/];
-            }
-        });
-    });
+//*/
+/*
+RedisAuthCenter.connect();
+let uid = 1
+let uinfo = {
+    name:"hcc",
+    age:25,
+    sex:"boy",
 }
-hgettestFunc();
+RedisAuthCenter.set_uinfo_inredis(uid,uinfo);
+async function get_uinfo(){
+    let get_info = await RedisAuthCenter.get_uinfo_inredis(uid);
+    Log.info("get_info:" , get_info);
+}
+
+get_uinfo();
+*/ 
 //# sourceMappingURL=RedisTest.js.map

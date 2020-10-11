@@ -19,7 +19,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
 var GameHoodleModle_1 = __importDefault(require("./GameHoodleModle"));
-var Log_1 = __importDefault(require("../../utils/Log"));
 var GameHoodleService = /** @class */ (function (_super) {
     __extends(GameHoodleService, _super);
     function GameHoodleService() {
@@ -34,15 +33,9 @@ var GameHoodleService = /** @class */ (function (_super) {
     };
     // 收到连接的其他服务发过来的消息
     GameHoodleService.on_recv_server_player_cmd = function (session, stype, ctype, utag, proto_type, raw_cmd) {
-        // Log.info("hcc>>on_recv_server_player_cmd: " , stype, ctype, utag, proto_type)
-        // let gateway_session = GameSessionMgr.get_gateway_session();
-        // if(gateway_session){
-        // 	NetServer.send_encoded_cmd(gateway_session, raw_cmd); //发给网关
-        // }
     };
     // 收到客户端断开连接(和当前服务直接连接的客户端，当前作为服务端)
     GameHoodleService.on_player_disconnect = function (session, stype) {
-        Log_1["default"].info("client lost connect.......... stype:", stype);
     };
     return GameHoodleService;
 }(ServiceBase_1["default"]));

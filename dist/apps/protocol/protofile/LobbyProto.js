@@ -9,11 +9,35 @@ var LobbyProto = /** @class */ (function () {
     LobbyProto.XY_ID = {
         INVALED: 0,
         REQ_LOGINLOBBY: 20001,
-        RESP_LOBINLOBBY: 20002
+        RES_LOBINLOBBY: 20002,
+        REQ_CERATEROOM: 20003,
+        RES_CERATEROOM: 20004,
+        REQ_JOINROOM: 20005,
+        RES_JOINROOM: 20006,
+        REQ_EXITROOM: 20007,
+        RES_EXITROOM: 20008,
+        REQ_BACKROOM: 20009,
+        RES_BACKROOM: 20010,
+        REQ_DESSOLVEROOM: 20011,
+        RES_DESSOLVEROOM: 20012,
+        REQ_ROOMSTATUS: 20013,
+        RES_ROOMSTATUS: 20014
     };
     LobbyProto.XY_NAME = (_a = {},
-        _a[LobbyProto.XY_ID.REQ_LOGINLOBBY] = "reqLoginLobby",
-        _a[LobbyProto.XY_ID.RESP_LOBINLOBBY] = "resLoginLobby",
+        _a[LobbyProto.XY_ID.REQ_LOGINLOBBY] = "ReqLoginLobby",
+        _a[LobbyProto.XY_ID.RES_LOBINLOBBY] = "ResLoginLobby",
+        _a[LobbyProto.XY_ID.REQ_CERATEROOM] = "ReqCreateRoom",
+        _a[LobbyProto.XY_ID.RES_CERATEROOM] = "ResCreateRoom",
+        _a[LobbyProto.XY_ID.REQ_JOINROOM] = "ReqJoinRoom",
+        _a[LobbyProto.XY_ID.RES_JOINROOM] = "ResJoinRoom",
+        _a[LobbyProto.XY_ID.REQ_EXITROOM] = "ReqExitRoom",
+        _a[LobbyProto.XY_ID.RES_EXITROOM] = "ResExitRoom",
+        _a[LobbyProto.XY_ID.REQ_BACKROOM] = "ReqBackRoom",
+        _a[LobbyProto.XY_ID.RES_BACKROOM] = "ResBackRoom",
+        _a[LobbyProto.XY_ID.REQ_DESSOLVEROOM] = "ReqDessolveRoom",
+        _a[LobbyProto.XY_ID.RES_DESSOLVEROOM] = "ResDessolveRoom",
+        _a[LobbyProto.XY_ID.REQ_ROOMSTATUS] = "ReqRoomStatus",
+        _a[LobbyProto.XY_ID.RES_ROOMSTATUS] = "ResRoomStatus",
         _a);
     return LobbyProto;
 }());

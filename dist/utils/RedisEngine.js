@@ -72,20 +72,18 @@ var RedisEngine = /** @class */ (function () {
         this._redis_client.on("error", function (error) {
             Log_1["default"].error(error);
         });
-    };
-    //哈希存储
-    RedisEngine.prototype.hmset = function (query_key, data) {
-        if (!this._redis_client) {
-            return;
-        }
-        this._redis_client.hmset(query_key, data, function (error) {
-            if (error) {
-                Log_1["default"].error(error);
-            }
+        this._redis_client.on("clientError", function (error) {
+            Log_1["default"].error("redis clientError!!!", error);
+        });
+        this._redis_client.on("close", function (error) {
+            Log_1["default"].error("redis close!!!", error);
+        });
+        this._redis_client.on("end", function (error) {
+            Log_1["default"].error("redis end!!!", error);
         });
     };
-    //获取哈希值
-    RedisEngine.prototype.hgetall = function (query_key) {
+    //删除 成功返回1
+    RedisEngine.prototype["delete"] = function (key) {
         return __awaiter(this, void 0, void 0, function () {
             var async_func, result, error_1;
             return __generator(this, function (_a) {
@@ -94,12 +92,12 @@ var RedisEngine = /** @class */ (function () {
                         if (!this._redis_client) {
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.hgetall);
+                        async_func = util.promisify(this._redis_client.del);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, query_key)];
+                        return [4 /*yield*/, async_func.call(this._redis_client, key)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
@@ -112,21 +110,264 @@ var RedisEngine = /** @class */ (function () {
             });
         });
     };
+    //存字符串 成功返回 1
+    RedisEngine.prototype.set = function (key, value) {
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.set);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, key, value)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_2 = _a.sent();
+                        Log_1["default"].error(error_2);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    //获取字符串 成功返回字符串
+    RedisEngine.prototype.get = function (key) {
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.get);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, key)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_3 = _a.sent();
+                        Log_1["default"].error(error_3);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    //哈希存储一个完整table，成功返回'OK' ,data:table
+    RedisEngine.prototype.hmset = function (table_name, data) {
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.hmset);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, data)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_4 = _a.sent();
+                        Log_1["default"].error(error_4);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    //哈希存储，成功返回 1 , field:键 , value值
+    //table如果不存在会创建
+    RedisEngine.prototype.hset = function (table_name, field, value) {
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_5;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.hset);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, field, value)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_5 = _a.sent();
+                        Log_1["default"].error(error_5);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    //获取哈希全部字段和值
+    RedisEngine.prototype.hgetall = function (table_name) {
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_6;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.hgetall);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, table_name)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_6 = _a.sent();
+                        Log_1["default"].error(error_6);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    //获取哈希表某个字段
+    //存在返回值，不存在返回null
+    RedisEngine.prototype.hget = function (table_name, field) {
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_7;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.hget);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, field)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_7 = _a.sent();
+                        Log_1["default"].error(error_7);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    //删除哈希表某个字段，成功返回1， 否则返回0
+    RedisEngine.prototype.hdelete = function (table_name, field) {
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_8;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.hdel);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, field)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_8 = _a.sent();
+                        Log_1["default"].error(error_8);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    //查看table_name 中某个字段是否存在, 存在返回1，否则返回0
+    RedisEngine.prototype.hexist = function (table_name, field) {
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_9;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.hexists);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, field)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_9 = _a.sent();
+                        Log_1["default"].error(error_9);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
     //有序集合存储
     RedisEngine.prototype.zadd = function (add_key, count, mark) {
-        if (!this._redis_client) {
-            return;
-        }
-        this._redis_client.zadd(add_key, count, mark, function (error) {
-            if (error) {
-                Log_1["default"].error(error);
-            }
+        return __awaiter(this, void 0, void 0, function () {
+            var async_func, result, error_10;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!this._redis_client) {
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this._redis_client.zadd);
+                        if (!async_func) return [3 /*break*/, 4];
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
+                        return [4 /*yield*/, async_func.call(this._redis_client, add_key, count, mark)];
+                    case 2:
+                        result = _a.sent();
+                        return [2 /*return*/, result];
+                    case 3:
+                        error_10 = _a.sent();
+                        Log_1["default"].error(error_10);
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
+                }
+            });
         });
     };
     //有序集合:从大到小获取
     RedisEngine.prototype.zrevrange = function (query_key, from_num, to_num) {
         return __awaiter(this, void 0, void 0, function () {
-            var async_func, result, error_2;
+            var async_func, result, error_11;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -140,8 +381,8 @@ var RedisEngine = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
-                        error_2 = _a.sent();
-                        Log_1["default"].error(error_2);
+                        error_11 = _a.sent();
+                        Log_1["default"].error(error_11);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -151,7 +392,7 @@ var RedisEngine = /** @class */ (function () {
     //有序集合:从小到大获取
     RedisEngine.prototype.zrange = function (query_key, from_num, to_num) {
         return __awaiter(this, void 0, void 0, function () {
-            var async_func, result, error_3;
+            var async_func, result, error_12;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -165,8 +406,8 @@ var RedisEngine = /** @class */ (function () {
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
-                        error_3 = _a.sent();
-                        Log_1["default"].error(error_3);
+                        error_12 = _a.sent();
+                        Log_1["default"].error(error_12);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }

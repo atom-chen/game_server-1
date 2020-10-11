@@ -29,18 +29,105 @@ package lobby.client.proto;
 enum XY_ID {
 	INVALED = 0;
 	
-	REQ_LOGINLOBBY = 20001;
-	RES_LOBINLOBBY = 20002;
+	REQ_LOGINLOBBY 		= 20001;
+	RES_LOBINLOBBY 		= 20002;
+
+	REQ_CERATEROOM 		= 20003;
+	RES_CERATEROOM 		= 20004;
+
+	REQ_JOINROOM 		= 20005;
+	RES_JOINROOM 		= 20006;
+
+	REQ_EXITROOM 		= 20007;
+	RES_EXITROOM 		= 20008;
+
+	REQ_BACKROOM 		= 20009;
+	RES_BACKROOM 		= 20010;
+
+	REQ_DESSOLVEROOM 	= 20011;
+	RES_DESSOLVEROOM 	= 20012;
+	
+	REQ_ROOMSTATUS 		= 20013;
+	RES_ROOMSTATUS 		= 20014;
 }
 
-message reqLoginLobby {
-	bool isrobot = 1;
+message ReqLoginLobby {
+	optional bool isrobot = 1;
 }
 
-message resLoginLobby {
-	enum LOGIN_LOBBY_STATUS {
-		E_LOGIN_LOBBY_SUCCESS = 0;
-		E_LOGIN_LOBBY_FAILED = 1;
+message ResLoginLobby {
+	enum STATUS {
+		SUCCESS = 0;
+		FAILED = 1;
 	}
-	LOGIN_LOBBY_STATUS status = 1;
+	required sint32 status = 1;
+}
+
+message ReqCreateRoom {
+	required string gamerule = 1;
+}
+
+message ResCreateRoom {
+	enum STATUS {
+		SUCCESS = 0;
+		FAILED = 1;
+	}
+	required sint32 status = 1;
+}
+
+message ReqJoinRoom {
+	required string roomid = 1;
+}
+
+message ResJoinRoom {
+	enum STATUS {
+		SUCCESS = 0;
+		FAILED = 1;
+	}
+	required sint32 status = 1;
+}
+
+message ReqExitRoom {
+}
+
+message ResExitRoom {
+	enum STATUS {
+		SUCCESS = 0;
+		FAILED = 1;
+	}
+	required sint32 status = 1;
+	optional sint32 numberid = 2;
+}
+
+message ReqBackRoom {
+}
+
+message ResBackRoom {
+	enum STATUS {
+		SUCCESS = 0;
+		FAILED = 1;
+	}
+	required sint32 status = 1;
+}
+
+message ReqDessolveRoom {
+}
+
+message ResDessolveRoom {
+	enum STATUS {
+		SUCCESS = 0;
+		FAILED = 1;
+	}
+	required sint32 status = 1;
+}
+
+message ReqRoomStatus {
+}
+
+message ResRoomStatus {
+	enum STATUS {
+		SUCCESS = 0;
+		FAILED = 1;
+	}
+	required sint32 status = 1;
 }

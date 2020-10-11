@@ -183,7 +183,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                     case 3:
                         sql_info = data[0];
                         resbody = {
-                            status: 1,
+                            status: Response_1["default"].OK,
                             uid: Number(sql_info.uid),
                             userlogininfo: JSON.stringify(sql_info)
                         };
@@ -223,7 +223,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                         if (data.length > 0) {
                             sql_info = data[0];
                             resbody = {
-                                status: 1,
+                                status: Response_1["default"].OK,
                                 uid: Number(sql_info.uid),
                                 userlogininfo: JSON.stringify(sql_info)
                             };

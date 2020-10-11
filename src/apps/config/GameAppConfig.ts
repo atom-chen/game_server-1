@@ -53,6 +53,9 @@ class GameAppConfig {
 		return Platform.isWin32() ? Platform.getLocalIP() : ALY_CLOUD_HOST;
 	}
 
+	static rabbit_channel_auth = "channel_auth_center"
+	static rabbit_channel_game = "rabbit_channel_game"
+
 	//网关服
 	static gateway_config  ={
 		host: LOCAL_HOST,
@@ -128,6 +131,27 @@ class GameAppConfig {
 		protocol:"amqp",
 	}
 
+	//用户中心redis
+	static auth_center_redis = {
+		host: LOCAL_HOST,
+		port: 6379,
+		db_index:0,
+	}
+
+	// 大厅redis
+	static lobby_redis = {
+		host: LOCAL_HOST,
+		port: 6379,
+		db_index: 1,
+	}
+
+	//游戏redis
+	static game_redis = {
+		host: LOCAL_HOST,
+		port: 6379,
+		db_index: 2,
+	}
+
 	////////////////////
 	//游戏逻辑服务，可拓展多个
 	static game_logic_server_1 = {
@@ -152,9 +176,9 @@ class GameAppConfig {
 	//网关连接其他服务
 	static gw_connect_servers =  [
 		GameAppConfig.auth_server,
-		GameAppConfig.game_server,
-		GameAppConfig.system_server,
-
+		// GameAppConfig.game_server,
+		// GameAppConfig.system_server,
+		GameAppConfig.lobby_server,
 	]
 	
 	//逻辑路由服务连接到其他逻辑服务

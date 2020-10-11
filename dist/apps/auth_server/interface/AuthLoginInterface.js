@@ -74,7 +74,7 @@ var AuthLoginInterface = /** @class */ (function () {
                             if (data.length > 0) {
                                 sql_info = data[0];
                                 resbody = {
-                                    status: 1,
+                                    status: Response_1["default"].OK,
                                     uid: Number(sql_info.uid),
                                     logininfo: JSON.stringify(sql_info)
                                 };
@@ -125,7 +125,7 @@ var AuthLoginInterface = /** @class */ (function () {
                     case 3:
                         sql_info = data[0];
                         resbody = {
-                            status: 1,
+                            status: Response_1["default"].OK,
                             uid: Number(sql_info.uid),
                             logininfo: JSON.stringify(sql_info)
                         };
@@ -141,7 +141,7 @@ var AuthLoginInterface = /** @class */ (function () {
     };
     AuthLoginInterface.do_login_out_req = function (session, utag, proto_type, raw_cmd) {
         if (utag != 0) {
-            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_LOGINOUT, utag, proto_type, { status: 1 });
+            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_LOGINOUT, utag, proto_type, { status: Response_1["default"].OK });
         }
     };
     return AuthLoginInterface;

@@ -28,7 +28,7 @@ class AuthLoginInterface {
             if(data.length > 0){
                 let sql_info = data[0]
                 let resbody = {
-                    status: 1,
+                    status: Response.OK,
                     uid: Number(sql_info.uid),
                     logininfo: JSON.stringify(sql_info),
                 }
@@ -68,7 +68,7 @@ class AuthLoginInterface {
             }else{
              let sql_info = data[0]
                 let resbody = {
-                    status: 1,
+                    status: Response.OK,
                     uid: Number(sql_info.uid),
                     logininfo: JSON.stringify(sql_info),
                 }
@@ -82,7 +82,7 @@ class AuthLoginInterface {
 
     static do_login_out_req(session: any, utag: number, proto_type: number, raw_cmd: any){
         if(utag != 0){
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_LOGINOUT, utag, proto_type, {status: 1})
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_LOGINOUT, utag, proto_type, {status: Response.OK})
         }
     }
 
