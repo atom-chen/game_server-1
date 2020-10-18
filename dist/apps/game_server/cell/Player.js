@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,99 +53,108 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var NetServer_1 = __importDefault(require("../../../netbus/NetServer"));
-var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
-var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var State_1 = require("../config/State");
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
 var Stype_1 = __importDefault(require("../../protocol/Stype"));
-var Player = /** @class */ (function () {
-    function Player() {
-        //玩家基础信息
-        this._uid = 0;
-        this._session = null;
-        this._proto_type = -1;
-        this._ugame_info = {};
-        this._ucenter_info = {};
-        this._is_robot = false;
-        //房间相关
-        this._is_off_line = false;
-        this._is_host = false;
-        this._seat_id = -1;
+var PlayerBase_1 = __importDefault(require("./PlayerBase"));
+var RedisLobby_1 = __importDefault(require("../../../database/RedisLobby"));
+var RoomManager_1 = __importDefault(require("../manager/RoomManager"));
+var Player = /** @class */ (function (_super) {
+    __extends(Player, _super);
+    function Player(session, uid, proto_type) {
+        var _this = _super.call(this, session, uid, proto_type) || this;
         //居内数据
-        this._user_state = State_1.UserState.InView; //玩家状态
-        this._user_pos = { posx: 0, posy: 0 }; //玩家位置 
-        this._user_power = 0; //玩家权限
-        this._user_score = 0; //玩家得分
-        this._user_ball_info = ""; //json串，玩家小球信息
+        _this._user_state = State_1.UserState.InView; //玩家状态
+        _this._user_pos = { posx: 0, posy: 0 }; //玩家位置 
+        _this._user_power = 0; //玩家权限
+        _this._user_score = 0; //玩家得分
+        _this._user_ball_info = ""; //json串，玩家小球信息
         //玩家配置（身上的装备，弹珠等级，等等）
-        this._user_config = {};
-        //test
-        // this._ugame_info["test_gameinfo"] = "info_test";
-        // this._ugame_info["test_gameinfo2"] = "info_test2";
-        // this._ugame_info["test_gameinfo3"] = false;
+        _this._user_config = {};
+        return _this;
     }
-    //中心数据，游戏数据 auth_center->uinfo
-    Player.prototype.init_session = function (session, uid, proto_type) {
+    Player.prototype.init_data = function (session, uid, proto_type) {
         return __awaiter(this, void 0, void 0, function () {
-            var data, sql_info;
+            var room_info_obj, uids, index;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        this._session = session;
-                        this._uid = uid;
-                        this._proto_type = proto_type;
-                        return [4 /*yield*/, MySqlAuth_1["default"].get_uinfo_by_uid(uid)];
+                    case 0: return [4 /*yield*/, _super.prototype.init_data.call(this, session, uid, proto_type)];
                     case 1:
-                        data = _a.sent();
-                        // Log.info("hcc>>init_session: " , data);
-                        if (data && data.length > 0) {
-                            sql_info = data[0];
-                            this._ucenter_info = sql_info;
+                        _a.sent();
+                        return [4 /*yield*/, this.get_room_info()];
+                    case 2:
+                        room_info_obj = _a.sent();
+                        if (room_info_obj) {
+                            uids = room_info_obj.uids || [];
+                            for (index = 0; index < uids.length; index++) {
+                                if (uids[index] == this._uid) {
+                                    this._seat_id = index + 1;
+                                    break;
+                                }
+                            }
                         }
                         return [2 /*return*/, true];
                 }
             });
         });
     };
-    //获取uid
-    Player.prototype.get_uid = function () {
-        return this._uid;
+    ///////////////////////////////// room data
+    Player.prototype.get_room_info = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var room_info_str, room_info_obj;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, RedisLobby_1["default"].get_roominfo_by_uid(this._uid)];
+                    case 1:
+                        room_info_str = _a.sent();
+                        room_info_obj = {};
+                        try {
+                            room_info_obj = JSON.parse(room_info_str);
+                        }
+                        catch (error) {
+                            Log_1["default"].error("get_room_info error>>", error);
+                        }
+                        return [2 /*return*/, room_info_obj];
+                }
+            });
+        });
     };
-    Player.prototype.get_proto_type = function () {
-        return this._proto_type;
+    Player.prototype.get_roomid = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var room_info_str, room_info_obj;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, RedisLobby_1["default"].get_roominfo_by_uid(this._uid)];
+                    case 1:
+                        room_info_str = _a.sent();
+                        try {
+                            room_info_obj = JSON.parse(room_info_str);
+                            if (room_info_obj && room_info_obj.roomid) {
+                                return [2 /*return*/, room_info_obj.roomid];
+                            }
+                        }
+                        catch (error) {
+                            Log_1["default"].error("get_roomid error>>", error);
+                        }
+                        return [2 /*return*/, null];
+                }
+            });
+        });
     };
-    //获取numid
-    Player.prototype.get_numberid = function () {
-        return this._ucenter_info.numberid;
-    };
-    //设置游戏局内信息
-    Player.prototype.set_ugame_info = function (ugame_info) {
-        this._ugame_info = ugame_info;
-    };
-    //游戏服务信息
-    Player.prototype.get_ugame_info = function () {
-        return this._ugame_info;
-    };
-    //玩家中心信息
-    Player.prototype.get_ucenter_info = function () {
-        return this._ucenter_info;
-    };
-    //账号
-    Player.prototype.get_uname = function () {
-        return this._ucenter_info.uname;
-    };
-    //玩家名字
-    Player.prototype.get_unick = function () {
-        return this._ucenter_info.unick;
-    };
-    //金币
-    Player.prototype.get_uchip = function () {
-        return this._ugame_info.uchip;
-    };
-    //金币
-    Player.prototype.set_uchip = function (uchip) {
-        this._ugame_info.uchip = uchip;
+    Player.prototype.get_room = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var roomid, room;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.get_roomid()];
+                    case 1:
+                        roomid = _a.sent();
+                        room = RoomManager_1["default"].getInstance().get_room_by_roomid(roomid);
+                        return [2 /*return*/, room];
+                }
+            });
+        });
     };
     //小球信息
     Player.prototype.get_uball_info = function () {
@@ -153,30 +175,6 @@ var Player = /** @class */ (function () {
     };
     Player.prototype.get_user_config = function () {
         return this._user_config;
-    };
-    //设置是否掉线
-    Player.prototype.set_offline = function (is_offline) {
-        this._is_off_line = is_offline;
-    };
-    //获取是否掉线
-    Player.prototype.get_offline = function () {
-        return this._is_off_line;
-    };
-    //设置是否房主
-    Player.prototype.set_ishost = function (is_host) {
-        this._is_host = is_host;
-    };
-    //获取是否房主
-    Player.prototype.get_ishost = function () {
-        return this._is_host;
-    };
-    //设置玩家座位号
-    Player.prototype.set_seat_id = function (seatid) {
-        this._seat_id = seatid;
-    };
-    //获取玩家座位号
-    Player.prototype.get_seat_id = function () {
-        return this._seat_id;
     };
     //设置玩家状态
     Player.prototype.set_user_state = function (user_state) {
@@ -206,18 +204,9 @@ var Player = /** @class */ (function () {
     Player.prototype.get_user_score = function () {
         return this._user_score;
     };
-    Player.prototype.is_robot = function () {
-        return this._is_robot;
-    };
-    Player.prototype.set_robot = function (is_robot) {
-        this._is_robot = is_robot;
-    };
     //玩家信息汇总
     Player.prototype.get_player_info = function () {
-        var info = ArrayUtil_1["default"].ObjCat(this._ugame_info, this._ucenter_info);
-        info.isoffline = this._is_off_line;
-        info.ishost = this._is_host;
-        info.seatid = this._seat_id;
+        var info = _super.prototype.get_player_info.call(this);
         info.userstate = this._user_state;
         info.userpos = this._user_pos;
         info.userpower = this._user_power;
@@ -252,7 +241,32 @@ var Player = /** @class */ (function () {
         }
         NetServer_1["default"].send_cmd(this._session, Stype_1["default"].S_TYPE.GameHoodle, ctype, this._uid, this._proto_type, body);
     };
+    //发送给房间所有人
+    Player.prototype.send_all = function (ctype, body, not_uid) {
+        return __awaiter(this, void 0, void 0, function () {
+            var room_info, uids;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.get_room_info()];
+                    case 1:
+                        room_info = _a.sent();
+                        if (room_info) {
+                            uids = room_info.uids;
+                            if (uids) {
+                                uids.forEach(function (uid) {
+                                    if (uid != not_uid) {
+                                        NetServer_1["default"].send_cmd(_this._session, Stype_1["default"].S_TYPE.GameHoodle, ctype, uid, _this._proto_type, body);
+                                    }
+                                });
+                            }
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     return Player;
-}());
+}(PlayerBase_1["default"]));
 exports["default"] = Player;
 //# sourceMappingURL=Player.js.map

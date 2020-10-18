@@ -89,8 +89,8 @@ var GameAppConfig = /** @class */ (function () {
         port: 6087,
         stype: Stype_1["default"].S_TYPE.System
     };
-    //游戏服务1
-    GameAppConfig.game_server = {
+    //游戏route服务
+    GameAppConfig.game_route_server = {
         host: LOCAL_HOST,
         port: 6088,
         stype: Stype_1["default"].S_TYPE.GameHoodle
@@ -138,6 +138,12 @@ var GameAppConfig = /** @class */ (function () {
         port: 6379,
         db_index: 2
     };
+    //event redis 
+    GameAppConfig.event_redis = {
+        host: LOCAL_HOST,
+        port: 6379,
+        db_index: 1
+    };
     ////////////////////
     //游戏逻辑服务，可拓展多个
     GameAppConfig.game_logic_server_1 = {
@@ -159,7 +165,7 @@ var GameAppConfig = /** @class */ (function () {
     //网关连接其他服务
     GameAppConfig.gw_connect_servers = [
         GameAppConfig.auth_server,
-        // GameAppConfig.game_server,
+        GameAppConfig.game_route_server,
         // GameAppConfig.system_server,
         GameAppConfig.lobby_server,
     ];

@@ -1,0 +1,1 @@
+{"version":3,"file":"GameServerData.js","sourceRoot":"","sources":["../../../src/apps/game_server/GameServerData.ts"],"names":[],"mappings":";;AAAA;IAAA;IAUA,CAAC;IAPU,6BAAc,GAArB;QACI,OAAO,cAAc,CAAC,WAAW,CAAC;IACtC,CAAC;IAEM,6BAAc,GAArB,UAAsB,UAAe;QACjC,cAAc,CAAC,WAAW,GAAG,UAAU,CAAC;IAC5C,CAAC;IARc,0BAAW,GAAQ,IAAI,CAAC;IAS3C,qBAAC;CAAA,AAVD,IAUC;qBAVoB,cAAc"}

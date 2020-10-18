@@ -3,7 +3,7 @@ import Response from '../../protocol/Response';
 import Log from "../../../utils/Log";
 import AuthSendMsg from "../AuthSendMsg";
 import AuthProto from '../../protocol/protofile/AuthProto';
-import RedisAuthCenter from '../../../database/RedisAuth';
+import RedisAuth from '../../../database/RedisAuth';
 
 class AuthInfoInterface {
 
@@ -16,7 +16,9 @@ class AuthInfoInterface {
                 usercenterinfo: JSON.stringify(sql_info),
             }
             AuthSendMsg.send(session, AuthProto.XY_ID.RES_USERCENTERINFO, utag, proto_type, resbody);
-           RedisAuthCenter.set_uinfo_inredis(utag, sql_info);
+            await RedisAuth.set_uinfo_inredis(utag, sql_info);
+            // let outInfo = await RedisAuth.get_uinfo_inredis(utag);
+            // Log.info("hcc>>outInfo:" , outInfo);
             return;
         }
         AuthSendMsg.send(session, AuthProto.XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT });

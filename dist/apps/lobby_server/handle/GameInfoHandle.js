@@ -97,7 +97,7 @@ var GameInfoHandle = /** @class */ (function () {
                         return [4 /*yield*/, RedisGame_1["default"].set_gameinfo_inredis(utag, game_info)];
                     case 2:
                         ret = _a.sent();
-                        Log_1["default"].info("hcc>>on_user_get_ugame_info1111>>", game_info);
+                        // Log.info("hcc>>on_user_get_ugame_info1111>>", game_info);
                         Log_1["default"].info("hcc>>ret:", ret);
                         return [2 /*return*/, true];
                     case 3: return [4 /*yield*/, MySqlGame_1["default"].insert_ugame_user(utag, GameHoodleConfig_1["default"].KW_BORN_EXP, GameHoodleConfig_1["default"].KW_BORN_CHIP)];
@@ -114,7 +114,7 @@ var GameInfoHandle = /** @class */ (function () {
                         return [4 /*yield*/, RedisGame_1["default"].set_gameinfo_inredis(utag, game_info2)];
                     case 6:
                         ret = _a.sent();
-                        Log_1["default"].info("hcc>>on_user_get_ugame_info1222>>", game_info2);
+                        // Log.info("hcc>>on_user_get_ugame_info1222>>", game_info2);
                         Log_1["default"].info("hcc>>ret:", ret);
                         return [2 /*return*/, true];
                     case 7: return [2 /*return*/, false];

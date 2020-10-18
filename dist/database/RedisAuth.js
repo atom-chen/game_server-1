@@ -54,7 +54,7 @@ var RedisAuth = /** @class */ (function () {
     //uinfo: table
     RedisAuth.set_uinfo_inredis = function (uid, uinfo) {
         return __awaiter(this, void 0, void 0, function () {
-            var key, ret;
+            var key, ret, result_str;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -62,8 +62,9 @@ var RedisAuth = /** @class */ (function () {
                         return [4 /*yield*/, RedisAuth.engine().hmset(key, uinfo)];
                     case 1:
                         ret = _a.sent();
-                        Log_1["default"].info("redis center hmset ", key, ret);
-                        return [2 /*return*/];
+                        result_str = ret == "OK";
+                        Log_1["default"].info("hcc>>set_uinfo_inredis ", key, result_str);
+                        return [2 /*return*/, ret];
                 }
             });
         });

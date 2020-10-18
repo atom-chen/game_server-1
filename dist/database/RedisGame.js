@@ -42,6 +42,14 @@ exports.__esModule = true;
 var RedisEngine_1 = __importDefault(require("../utils/RedisEngine"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var game_info_key = "game_info_key_uid_";
+/*
+index:0,
+playercount:100,
+index:1
+playercount:200,
+index:3,
+playercount:90,
+*/
 var RedisGame = /** @class */ (function () {
     function RedisGame() {
     }
@@ -59,12 +67,11 @@ var RedisGame = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         key = game_info_key + uid;
-                        Log_1["default"].info("redis center hmset ", key);
                         return [4 /*yield*/, RedisGame.engine().hmset(key, uinfo)];
                     case 1:
                         ret = _a.sent();
-                        result_str = ret == "OK" ? "OK" : "fail";
-                        Log_1["default"].info("redis center hmset ", key, result_str);
+                        result_str = ret == "OK";
+                        Log_1["default"].info("hcc>>set_gameinfo_inredis hmset ", key, result_str);
                         return [2 /*return*/, ret];
                 }
             });

@@ -10,22 +10,27 @@ import Stype from '../protocol/Stype';
 import GameRouteService from './GameRouteService';
 import NetClient from '../../netbus/NetClient';
 import Log from '../../utils/Log';
-import LogicRouteSaveSession from './GameRouteSaveSession';
-import GameRouteSaveSession from './GameRouteSaveSession';
+import GameRouteData from './GameRouteData';
 import RedisLobby from '../../database/RedisLobby';
 
-let server = GameAppConfig.game_server
+let server = GameAppConfig.game_route_server
 NetServer.start_tcp_server(server.host, server.port, false, function (session:any) {
-	LogicRouteSaveSession.set_gateway_session(session);
+	GameRouteData.set_gateway_session(session);
 });
 ServiceManager.register_service(Stype.S_TYPE.GameHoodle, GameRouteService);
 
 let logic_server = GameAppConfig.logic_connect_servers;
 for (let key in logic_server) {
-	NetClient.connect_tcp_server(logic_server[key].host, logic_server[key].port, false, logic_server[key].stype, function (server_session: any) {
+	let host = logic_server[key].host;
+	let port = logic_server[key].port;
+	NetClient.connect_tcp_server(host, port, false, logic_server[key].stype, function (server_session: any) {
 		Log.info("hcc>>connect to game server success !!");
-		GameRouteSaveSession.set_logic_server_session(Number(key), server_session)
+		GameRouteData.set_logic_server_session(port, server_session);
 	});
+
+	NetClient.set_server_disconnect_func(port,function(server_session:any) {
+		GameRouteData.delete_logic_server_session(port);
+	})
 }
 
 //大厅redis

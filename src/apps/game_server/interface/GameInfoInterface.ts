@@ -80,6 +80,7 @@ class GameInfoInterface {
     
     //获取游戏服务信息
     static async do_player_get_ugame_info(utag:number){
+        /*
         let player: Player = playerMgr.get_player(utag);
         let data_game:any = await MySqlGame.get_ugame_uchip_by_uid(utag);
         if (data_game){
@@ -115,6 +116,7 @@ class GameInfoInterface {
             }
         }
         player.send_cmd(GameHoodleProto.XY_ID.eUserGameInfoRes, { status: Response.INVALIDI_OPT });
+        */
     }
 
     //获取弹珠信息
@@ -201,7 +203,7 @@ class GameInfoInterface {
                     if (Number(player.get_uchip()) >= propprice) {
                         let ret:any = await MySqlGame.add_ugame_uchip(player.get_uid(), propprice * (-1));
                         if (ret){
-                            player.set_uchip(player.get_uchip() - propprice);
+                            // player.set_uchip(player.get_uchip() - propprice);
                             // Log.info("hcc>>write_player_chip success", player.get_unick());
                             let is_success: boolean = GameInfoInterface.user_update_ball_info(player, GameHoodleConfig.BALL_UPDATE_TYPE.ADD_TYPE, propinfo.level, propcount);
                             if (is_success){

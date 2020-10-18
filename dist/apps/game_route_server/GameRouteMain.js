@@ -14,21 +14,29 @@ var Stype_1 = __importDefault(require("../protocol/Stype"));
 var GameRouteService_1 = __importDefault(require("./GameRouteService"));
 var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
 var Log_1 = __importDefault(require("../../utils/Log"));
-var GameRouteSaveSession_1 = __importDefault(require("./GameRouteSaveSession"));
-var GameRouteSaveSession_2 = __importDefault(require("./GameRouteSaveSession"));
-var server = GameAppConfig_1["default"].game_server;
+var GameRouteData_1 = __importDefault(require("./GameRouteData"));
+var RedisLobby_1 = __importDefault(require("../../database/RedisLobby"));
+var server = GameAppConfig_1["default"].game_route_server;
 NetServer_1["default"].start_tcp_server(server.host, server.port, false, function (session) {
-    GameRouteSaveSession_1["default"].set_gateway_session(session);
+    GameRouteData_1["default"].set_gateway_session(session);
 });
 ServiceManager_1["default"].register_service(Stype_1["default"].S_TYPE.GameHoodle, GameRouteService_1["default"]);
 var logic_server = GameAppConfig_1["default"].logic_connect_servers;
 var _loop_1 = function (key) {
-    NetClient_1["default"].connect_tcp_server(logic_server[key].host, logic_server[key].port, false, logic_server[key].stype, function (server_session) {
+    var host = logic_server[key].host;
+    var port = logic_server[key].port;
+    NetClient_1["default"].connect_tcp_server(host, port, false, logic_server[key].stype, function (server_session) {
         Log_1["default"].info("hcc>>connect to game server success !!");
-        GameRouteSaveSession_2["default"].set_logic_server_session(Number(key), server_session);
+        GameRouteData_1["default"].set_logic_server_session(port, server_session);
+    });
+    NetClient_1["default"].set_server_disconnect_func(port, function (server_session) {
+        GameRouteData_1["default"].delete_logic_server_session(port);
     });
 };
 for (var key in logic_server) {
     _loop_1(key);
 }
+//大厅redis
+var lobby_redis_config = GameAppConfig_1["default"].lobby_redis;
+RedisLobby_1["default"].connect(lobby_redis_config.host, lobby_redis_config.port, lobby_redis_config.db_index);
 //# sourceMappingURL=GameRouteMain.js.map

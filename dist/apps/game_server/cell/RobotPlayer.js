@@ -58,27 +58,20 @@ var querystring_1 = __importDefault(require("querystring"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
 var RobotPlayer = /** @class */ (function (_super) {
     __extends(RobotPlayer, _super);
-    function RobotPlayer() {
-        var _this = _super.call(this) || this;
+    function RobotPlayer(session, uid, proto_type) {
+        var _this = _super.call(this, session, uid, proto_type) || this;
         _this._is_robot = true;
         return _this;
     }
-    RobotPlayer.prototype.init_session = function (session, uid, proto_type) {
+    RobotPlayer.prototype.init_data = function (session, uid, proto_type) {
         return __awaiter(this, void 0, void 0, function () {
-            var issuccess, data_game, ugame_config, user_config_obj;
+            var ret, ugame_config, user_config_obj;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, _super.prototype.init_session.call(this, session, uid, proto_type)];
+                    case 0:
+                        ret = _super.prototype.init_data.call(this, session, uid, proto_type);
+                        return [4 /*yield*/, MySqlGame_1["default"].get_ugame_config_by_uid(this._uid)];
                     case 1:
-                        issuccess = _a.sent();
-                        return [4 /*yield*/, MySqlGame_1["default"].get_ugame_uchip_by_uid(uid)];
-                    case 2:
-                        data_game = _a.sent();
-                        if (data_game && data_game.length > 0) {
-                            this.set_ugame_info(data_game[0]);
-                        }
-                        return [4 /*yield*/, MySqlGame_1["default"].get_ugame_config_by_uid(uid)];
-                    case 3:
                         ugame_config = _a.sent();
                         if (ugame_config && ugame_config.length > 0) {
                             user_config_obj = querystring_1["default"].decode(ugame_config[0].user_config);
@@ -87,7 +80,7 @@ var RobotPlayer = /** @class */ (function (_super) {
                             }
                             this.set_user_config(user_config_obj);
                         }
-                        return [2 /*return*/, true];
+                        return [2 /*return*/, ret];
                 }
             });
         });

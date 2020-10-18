@@ -56,6 +56,7 @@ var RedisEngine = /** @class */ (function () {
         this._port = 0;
         this._db_index = 0;
         this._redis_client = null;
+        this._message_func = null;
     }
     RedisEngine.prototype.get_engine = function () {
         return this._redis_client;
@@ -81,6 +82,43 @@ var RedisEngine = /** @class */ (function () {
         this._redis_client.on("end", function (error) {
             Log_1["default"].error("redis end!!!", error);
         });
+        this._redis_client.on("subscribe", function (channel, count) {
+            Log_1["default"].info("redis subscribe:", channel, count);
+        });
+        var _this = this;
+        this._redis_client.on("message", function (channel, message) {
+            // Log.info("redis message:", channel, message);
+            if (_this._message_func) {
+                _this._message_func(channel, message);
+            }
+        });
+    };
+    //订阅频道消息
+    RedisEngine.prototype.listen_channel = function (channelName, func) {
+        if (!this.get_engine()) {
+            Log_1["default"].error("redis client is null!");
+            return;
+        }
+        this.get_engine().subscribe(channelName);
+        this._message_func = func;
+        Log_1["default"].info("listen channel: ", channelName, "success!!");
+    };
+    //取消订阅消息
+    RedisEngine.prototype.unlisten_channel = function (channelName) {
+        if (!this.get_engine()) {
+            Log_1["default"].error("redis client is null!");
+            return;
+        }
+        this.get_engine().unsubscribe(channelName);
+        Log_1["default"].info("unsubscribe channel: ", channelName, "success!!");
+    };
+    //发布消息到频道
+    RedisEngine.prototype.publish_msg = function (channelName, msg) {
+        if (!this.get_engine()) {
+            Log_1["default"].error("redis client is null!");
+            return;
+        }
+        this.get_engine().publish(channelName, msg);
     };
     //删除 成功返回1
     RedisEngine.prototype["delete"] = function (key) {
@@ -89,21 +127,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.del);
+                        async_func = util.promisify(this.get_engine().del);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, key)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), key)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_1 = _a.sent();
-                        Log_1["default"].error(error_1);
+                        Log_1["default"].error("delete>>", error_1);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -117,21 +156,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.set);
+                        async_func = util.promisify(this.get_engine().set);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, key, value)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), key, value)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_2 = _a.sent();
-                        Log_1["default"].error(error_2);
+                        Log_1["default"].error("set>>", error_2);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -145,21 +185,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.get);
+                        async_func = util.promisify(this.get_engine().get);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, key)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), key)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_3 = _a.sent();
-                        Log_1["default"].error(error_3);
+                        Log_1["default"].error("get>>", error_3);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -173,21 +214,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.hmset);
+                        async_func = util.promisify(this.get_engine().hmset);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, data)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), table_name, data)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_4 = _a.sent();
-                        Log_1["default"].error(error_4);
+                        Log_1["default"].error("hmset>>", error_4);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -202,21 +244,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.hset);
+                        async_func = util.promisify(this.get_engine().hset);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, field, value)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), table_name, field, value)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_5 = _a.sent();
-                        Log_1["default"].error(error_5);
+                        Log_1["default"].error("hset>>", error_5);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -230,21 +273,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.hgetall);
+                        async_func = util.promisify(this.get_engine().hgetall);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, table_name)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), table_name)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_6 = _a.sent();
-                        Log_1["default"].error(error_6);
+                        Log_1["default"].error("hgetall>>", error_6);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -259,21 +303,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.hget);
+                        async_func = util.promisify(this.get_engine().hget);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, field)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), table_name, field)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_7 = _a.sent();
-                        Log_1["default"].error(error_7);
+                        Log_1["default"].error("hget>>", error_7);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -287,21 +332,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.hdel);
+                        async_func = util.promisify(this.get_engine().hdel);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, field)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), table_name, field)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_8 = _a.sent();
-                        Log_1["default"].error(error_8);
+                        Log_1["default"].error("hdelete>>", error_8);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -315,21 +361,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.hexists);
+                        async_func = util.promisify(this.get_engine().hexists);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, table_name, field)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), table_name, field)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_9 = _a.sent();
-                        Log_1["default"].error(error_9);
+                        Log_1["default"].error("hexist>>", error_9);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -343,21 +390,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        if (!this._redis_client) {
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
                             return [2 /*return*/];
                         }
-                        async_func = util.promisify(this._redis_client.zadd);
+                        async_func = util.promisify(this.get_engine().zadd);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, add_key, count, mark)];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), add_key, count, mark)];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_10 = _a.sent();
-                        Log_1["default"].error(error_10);
+                        Log_1["default"].error("zadd>>", error_10);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -371,18 +419,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        async_func = util.promisify(this._redis_client.zrevrange);
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this.get_engine().zrevrange);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, query_key, from_num, to_num, "withscores")];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), query_key, from_num, to_num, "withscores")];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_11 = _a.sent();
-                        Log_1["default"].error(error_11);
+                        Log_1["default"].error("zrevrange>>", error_11);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }
@@ -396,18 +448,22 @@ var RedisEngine = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        async_func = util.promisify(this._redis_client.zrange);
+                        if (!this.get_engine()) {
+                            Log_1["default"].error("redis client is null!");
+                            return [2 /*return*/];
+                        }
+                        async_func = util.promisify(this.get_engine().zrange);
                         if (!async_func) return [3 /*break*/, 4];
                         _a.label = 1;
                     case 1:
                         _a.trys.push([1, 3, , 4]);
-                        return [4 /*yield*/, async_func.call(this._redis_client, query_key, from_num, to_num, "withscores")];
+                        return [4 /*yield*/, async_func.call(this.get_engine(), query_key, from_num, to_num, "withscores")];
                     case 2:
                         result = _a.sent();
                         return [2 /*return*/, result];
                     case 3:
                         error_12 = _a.sent();
-                        Log_1["default"].error(error_12);
+                        Log_1["default"].error("zrange>>", error_12);
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];
                 }

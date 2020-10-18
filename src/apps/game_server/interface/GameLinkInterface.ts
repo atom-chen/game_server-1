@@ -12,6 +12,9 @@ import ProtoManager from '../../../netbus/ProtoManager';
 import RobotManager from '../manager/RobotManager';
 import * as util from 'util';
 import GameHoodleProto from '../../protocol/protofile/GameHoodleProto';
+import GameCheck from './GameCheck';
+import RedisLobby from '../../../database/RedisLobby';
+import GameServerData from '../GameServerData';
 
 let playerMgr: PlayerManager    = PlayerManager.getInstance();
 let roomMgr: RoomManager        = RoomManager.getInstance();
@@ -20,18 +23,10 @@ let matchMgr: MatchManager      = MatchManager.getInstance();
 class GameLinkInterface {
 
     private static _player_lost_connect(player:Player){
-        if(util.isNullOrUndefined(player)){
+        if(!player){
             return;
         }
-        //设置房间内玩家掉线
-        let room = roomMgr.get_room_by_uid(player.get_uid());
-        if (room) {
-            player.set_offline(true)
-            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserOfflineRes, { seatid: player.get_seat_id() }, player);
-            GameFunction.broadcast_player_info_in_rooom(room, player);
-        }
-
-        //删掉玩家对象，但是如果在房间里面，玩家引用还会在房间里面，方便下次重连
+        
         let uname = player.get_unick();
         let numid = player.get_numberid();
         let issuccess = playerMgr.delete_player(player.get_uid());
@@ -39,6 +34,20 @@ class GameLinkInterface {
             Log.warn(uname + " ,numid:" + numid + " is lostconnect,totalPlyaerCount: " + playerMgr.get_player_count());
         }
 
+        RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());
+
+        //设置房间内玩家掉线
+        /*
+        let room = roomMgr.get_room_by_uid(player.get_uid());
+        if (room) {
+            player.set_offline(true)
+            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserOfflineRes, { seatid: player.get_seat_id() }, player);
+            GameFunction.broadcast_player_info_in_rooom(room, player);
+        }
+        */
+
+
+        /*
         //如果在匹配，就从匹配列表中删除
         let ret = matchMgr.stop_player_match(player.get_uid());
         if (ret) {
@@ -61,10 +70,14 @@ class GameLinkInterface {
                 Log.info("hcc>>do_player_lost_connect>>delete room :", ret, " ,roomid: ", roomID);
             }
         }
+        */
     }
 
     //玩家断线
     static do_player_lost_connect(utag:number, proto_type:number, raw_cmd:Buffer){
+        if (!GameCheck.check_player(utag)) {
+            return;
+        }
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if(body && body.is_robot == true){//机器人服务掉线，删掉所有机器人
             let robot_player_set = RobotManager.getInstance().get_robot_player_set();
@@ -82,22 +95,20 @@ class GameLinkInterface {
 
     //玩家登录逻辑服务
     static async do_player_login_logic_server(session: any, utag: number, proto_type: number, raw_cmd:any){
-        let player: Player = playerMgr.get_player(utag)
-        if (player) {
-            Log.info("player is exist, uid: ", utag , "is rotot: " , player.is_robot());
-            let issuccess:any =  await player.init_session(session, utag, proto_type);
-            if (issuccess){
-                let room = roomMgr.get_room_by_uid(utag);
-                if (room) {
-                    let oldPlayer: Player = room.get_player(utag);
-                    if (oldPlayer) {
-                        player.set_player_info(oldPlayer.get_player_info());
-                        room.add_player(player, true);
-                    }
+        let player: Player = playerMgr.get_player(utag);
+        if(player){
+            Log.info("player is exist, uid: ", utag, "is rotot: ", player.is_robot());
+            let issuccess: any = await player.init_data(session,utag,proto_type);
+            if(issuccess){
+                GameSendMsg.send(session, GameHoodleProto.XY_ID.eLoginLogicRes, utag, proto_type, { status: Response.OK })
+                RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());
+
+                ////////////////  连接逻辑服务后，同步其他玩家，房间内玩家数据
+                let room = await player.get_room()
+                if(room){
+                    GameFunction.broadcast_player_info_in_rooom(room, player.get_uid());
                 }
-                player.send_cmd(GameHoodleProto.XY_ID.eLoginLogicRes, { status: Response.OK })
-            }else{
-                player.send_cmd(GameHoodleProto.XY_ID.eLoginLogicRes, { status: Response.SYSTEM_ERR })
+                return;
             }
         }else{
             let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
@@ -108,20 +119,19 @@ class GameLinkInterface {
                 newPlayer = await playerMgr.alloc_player(session, utag, proto_type);
             }
             Log.info("hcc>> new player success!!! , isrobot: ", newPlayer.is_robot(), " ,uid:", newPlayer.get_uid());
-            if (newPlayer){
-                let room = roomMgr.get_room_by_uid(utag);
+            if (newPlayer) {
+                GameSendMsg.send(session, GameHoodleProto.XY_ID.eLoginLogicRes, utag, proto_type, { status: Response.OK })
+                RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());
+
+                ////////////////  连接逻辑服务后，同步其他玩家，房间内玩家数据
+                let room = await newPlayer.get_room()
                 if (room) {
-                    let oldPlayer: Player = room.get_player(utag);
-                    if (oldPlayer) {
-                        newPlayer.set_player_info(oldPlayer.get_player_info());
-                        room.add_player(newPlayer,true);
-                    }
+                    GameFunction.broadcast_player_info_in_rooom(room, newPlayer.get_uid());
                 }
-                newPlayer.send_cmd(GameHoodleProto.XY_ID.eLoginLogicRes, { status: Response.OK })
-            }else{
-                GameSendMsg.send(session, GameHoodleProto.XY_ID.eLoginLogicRes, utag, proto_type, { status: Response.SYSTEM_ERR })
+                return;
             }
         }
+        GameSendMsg.send(session, GameHoodleProto.XY_ID.eLoginLogicRes, utag, proto_type, { status: Response.SYSTEM_ERR })
     }
 }
 

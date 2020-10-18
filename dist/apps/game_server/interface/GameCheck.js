@@ -16,17 +16,11 @@ var GameCheck = /** @class */ (function () {
         if (player) {
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     };
     //检测是否非法房间
-    GameCheck.check_room = function (utag) {
-        var player = PlayerManager_1["default"].getInstance().get_player(utag);
-        if (!player) {
-            return false;
-        }
-        var room = RoomManager_1["default"].getInstance().get_room_by_uid(player.get_uid());
+    GameCheck.check_room = function (roomid) {
+        var room = RoomManager_1["default"].getInstance().get_room_by_roomid(roomid);
         if (!room) {
             return false;
         }
@@ -45,7 +39,7 @@ var GameCheck = /** @class */ (function () {
             }
         }
         Log_1["default"].info("check_game_start: readycount: ", ready_player_count);
-        if (ready_player_count == room.get_conf_player_count()) {
+        if (ready_player_count == room.get_max_player_count()) {
             return true;
         }
         return false;

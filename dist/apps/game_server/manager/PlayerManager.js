@@ -56,18 +56,17 @@ var PlayerManager = /** @class */ (function () {
                     case 0:
                         player = this._player_set[uid];
                         if (!player) return [3 /*break*/, 2];
-                        return [4 /*yield*/, player.init_session(session, uid, proto_type)];
+                        return [4 /*yield*/, player.init_data(session, uid, proto_type)];
                     case 1:
                         issuccess_1 = _a.sent();
                         // Log.info("alloc_player>> user: ", uid, " is exist!, issuccess: " , issuccess);
                         return [2 /*return*/, player];
                     case 2:
-                        player2 = new Player_1["default"]();
-                        this._player_set[uid] = player2;
-                        return [4 /*yield*/, player2.init_session(session, uid, proto_type)];
+                        player2 = new Player_1["default"](session, uid, proto_type);
+                        return [4 /*yield*/, player2.init_data(session, uid, proto_type)];
                     case 3:
                         issuccess = _a.sent();
-                        // Log.info("alloc_player>> user: ", uid, " is not exist!, issuccess: ", issuccess);
+                        this._player_set[uid] = player2;
                         return [2 /*return*/, player2];
                 }
             });
@@ -81,7 +80,6 @@ var PlayerManager = /** @class */ (function () {
     };
     PlayerManager.prototype.delete_player = function (uid) {
         if (this._player_set[uid]) {
-            this._player_set[uid] = null;
             delete this._player_set[uid];
             return true;
         }

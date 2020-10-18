@@ -55,16 +55,20 @@ var AuthInfoInterface = /** @class */ (function () {
                     case 0: return [4 /*yield*/, MySqlAuth_1["default"].get_uinfo_by_uid(utag)];
                     case 1:
                         data = _a.sent();
-                        if (data && data.length > 0) {
-                            sql_info = data[0];
-                            resbody = {
-                                status: Response_1["default"].OK,
-                                usercenterinfo: JSON.stringify(sql_info)
-                            };
-                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, resbody);
-                            RedisAuth_1["default"].set_uinfo_inredis(utag, sql_info);
-                            return [2 /*return*/];
-                        }
+                        if (!(data && data.length > 0)) return [3 /*break*/, 3];
+                        sql_info = data[0];
+                        resbody = {
+                            status: Response_1["default"].OK,
+                            usercenterinfo: JSON.stringify(sql_info)
+                        };
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, resbody);
+                        return [4 /*yield*/, RedisAuth_1["default"].set_uinfo_inredis(utag, sql_info)];
+                    case 2:
+                        _a.sent();
+                        // let outInfo = await RedisAuth.get_uinfo_inredis(utag);
+                        // Log.info("hcc>>outInfo:" , outInfo);
+                        return [2 /*return*/];
+                    case 3:
                         AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response_1["default"].ILLEGAL_ACCOUNT });
                         return [2 /*return*/];
                 }

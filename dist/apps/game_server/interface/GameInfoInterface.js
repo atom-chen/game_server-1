@@ -122,49 +122,8 @@ var GameInfoInterface = /** @class */ (function () {
     //获取游戏服务信息
     GameInfoInterface.do_player_get_ugame_info = function (utag) {
         return __awaiter(this, void 0, void 0, function () {
-            var player, data_game, data_game_len, ugameInfo, ugameInfoStr, body, ret_insert, data_game_ins_get, ugameInfo, ugameInfoStr, body;
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        player = playerMgr.get_player(utag);
-                        return [4 /*yield*/, MySqlGame_1["default"].get_ugame_uchip_by_uid(utag)];
-                    case 1:
-                        data_game = _a.sent();
-                        if (!data_game) return [3 /*break*/, 5];
-                        data_game_len = ArrayUtil_1["default"].GetArrayLen(data_game);
-                        if (!(data_game_len > 0)) return [3 /*break*/, 2];
-                        ugameInfo = data_game[0];
-                        ugameInfoStr = JSON.stringify(ugameInfo);
-                        body = {
-                            status: Response_1["default"].OK,
-                            userinfostring: ugameInfoStr
-                        };
-                        player.set_ugame_info(ugameInfo);
-                        player.send_cmd(GameHoodleProto_1["default"].XY_ID.eUserGameInfoRes, body);
-                        return [2 /*return*/];
-                    case 2: return [4 /*yield*/, MySqlGame_1["default"].insert_ugame_user(utag, GameHoodleConfig_1["default"].KW_BORN_EXP, GameHoodleConfig_1["default"].KW_BORN_CHIP)];
-                    case 3:
-                        ret_insert = _a.sent();
-                        if (!ret_insert) return [3 /*break*/, 5];
-                        return [4 /*yield*/, MySqlGame_1["default"].get_ugame_uchip_by_uid(utag)];
-                    case 4:
-                        data_game_ins_get = _a.sent();
-                        if (data_game_ins_get && data_game_ins_get.length > 0) {
-                            ugameInfo = data_game_ins_get[0];
-                            ugameInfoStr = JSON.stringify(ugameInfo);
-                            body = {
-                                status: Response_1["default"].OK,
-                                userinfostring: ugameInfoStr
-                            };
-                            player.set_ugame_info(ugameInfo);
-                            player.send_cmd(GameHoodleProto_1["default"].XY_ID.eUserGameInfoRes, body);
-                            return [2 /*return*/];
-                        }
-                        _a.label = 5;
-                    case 5:
-                        player.send_cmd(GameHoodleProto_1["default"].XY_ID.eUserGameInfoRes, { status: Response_1["default"].INVALIDI_OPT });
-                        return [2 /*return*/];
-                }
+                return [2 /*return*/];
             });
         });
     };
@@ -287,7 +246,6 @@ var GameInfoInterface = /** @class */ (function () {
                     case 2:
                         ret = _c.sent();
                         if (!ret) return [3 /*break*/, 4];
-                        player.set_uchip(player.get_uchip() - propprice);
                         is_success = GameInfoInterface.user_update_ball_info(player, GameHoodleConfig_1["default"].BALL_UPDATE_TYPE.ADD_TYPE, propinfo.level, propcount);
                         if (!is_success) return [3 /*break*/, 4];
                         return [4 /*yield*/, MySqlGame_1["default"].update_ugame_uball_info(player.get_uid(), player.get_uball_info())];

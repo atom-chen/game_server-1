@@ -13,7 +13,7 @@ let playerMgr: PlayerManager    = PlayerManager.getInstance();
 let roomMgr: RoomManager        = RoomManager.getInstance();
 
 class GameLogicInterface {
-
+    /*
     static do_player_shoot(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = playerMgr.get_player(utag);
         if (!GameCheck.check_room(utag)) {
@@ -41,7 +41,9 @@ class GameLogicInterface {
             // GameFunction.send_player_power(room); //在玩家停下来的时候发送权限，不在这里发
         }
     }
+    */
 
+    /*
     static do_player_ball_pos(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = PlayerManager.getInstance().get_player(utag);
         if (!GameCheck.check_room(utag)) {
@@ -86,7 +88,9 @@ class GameLogicInterface {
             GameFunction.send_player_power(room);
         }
     }
+    */
 
+    /*
     static async do_player_is_shooted(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = playerMgr.get_player(utag);
         if (!GameCheck.check_room(utag)) {
@@ -150,6 +154,7 @@ class GameLogicInterface {
             }
         }
     }
+    */
 }
 
 export default GameLogicInterface;

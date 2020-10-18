@@ -50,9 +50,11 @@ var RedisEngine_1 = __importDefault(require("../utils/RedisEngine"));
 var StringUtil_1 = __importDefault(require("../utils/StringUtil"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var util = __importStar(require("util"));
-var ROOMID_ROOMINFO_KEY = "ROOMID_ROOMINFO_KEY";
-var UID_ROOMINFO_KEY = "UID_ROOMINFO_KEY";
+var ROOMID_ROOMINFO_KEY = "hash_roomid_roominfo_key";
+var UID_ROOMINFO_KEY = "hash_uid_roominfo_key";
 var room_id_length = 6;
+var game_serverindex_playercount_key = "game_serverindex_playercount_key";
+var MAX_GAME_SERVER_PLAYER_COUNT = 1000; //
 /*
 1. 这两个地方同时保存了roominfo_json
 2. 修改的话，这两个地方同时需要修改
@@ -62,17 +64,16 @@ var room_id_length = 6;
 //////////////////////
 ROOMID_ROOMINFO_KEY =
 {
-    roomid_123123: {
+    roomid_111111: {
         roomid:roomid,
         uids:[111111,222222,333333,444444],
         gamerule:"str...",
         game_server_id:1,
         ex_info:"xx",
     },
-    roomid: {
+    roomid_222222: {
         ...
     },
-    ...
 }
 
 ///////////////////////
@@ -87,10 +88,9 @@ UID_ROOMINFO_KEY =
         game_server_id:1,
         ex_info:"xx",
     },
-    roomid: {
+    uid_1001935: {
         ...
     },
-    ...
 }
 */
 var RedisLobby = /** @class */ (function () {
@@ -189,37 +189,6 @@ var RedisLobby = /** @class */ (function () {
                     case 1:
                         ret = _a.sent();
                         return [2 /*return*/, !util.isNullOrUndefined(ret)];
-                }
-            });
-        });
-    };
-    //房间是否存在
-    //返回boolean
-    RedisLobby.roomid_is_exist = function (roomid) {
-        return __awaiter(this, void 0, void 0, function () {
-            var allroom, key, room_info_json, roominfo_obj;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, RedisLobby.get_all_roominfo()];
-                    case 1:
-                        allroom = _a.sent();
-                        for (key in allroom) {
-                            room_info_json = allroom[key];
-                            roominfo_obj = null;
-                            try {
-                                roominfo_obj = JSON.parse(room_info_json);
-                            }
-                            catch (error) {
-                                Log_1["default"].info(error);
-                            }
-                            if (roominfo_obj == null) {
-                                continue;
-                            }
-                            if (String(roominfo_obj.roomid) == roomid) {
-                                return [2 /*return*/, true];
-                            }
-                        }
-                        return [2 /*return*/, false];
                 }
             });
         });
@@ -419,9 +388,84 @@ var RedisLobby = /** @class */ (function () {
             });
         });
     };
-    //TODO 根据服务的负载，进行选择哪个game_server
+    //////////////////////////////////////
+    //保存服务id, 人数
+    RedisLobby.set_server_playercount = function (server_index, playercount) {
+        return __awaiter(this, void 0, void 0, function () {
+            var key, ret, result_str;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        key = game_serverindex_playercount_key;
+                        return [4 /*yield*/, RedisLobby.engine().hset(key, server_index, playercount)];
+                    case 1:
+                        ret = _a.sent();
+                        result_str = ret == 1;
+                        Log_1["default"].info("hcc>>redis set_server_playercount ", key, result_str);
+                        return [2 /*return*/, ret];
+                }
+            });
+        });
+    };
+    //获取服务人数信息
+    RedisLobby.get_server_playercount_info = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var key, ret;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        key = game_serverindex_playercount_key;
+                        return [4 /*yield*/, RedisLobby.engine().hgetall(key)];
+                    case 1:
+                        ret = _a.sent();
+                        Log_1["default"].info("hcc>>redis get_server_playercount_info ", key, ret);
+                        return [2 /*return*/, ret];
+                }
+            });
+        });
+    };
+    RedisLobby.is_server_exist = function (server_key) {
+        return __awaiter(this, void 0, void 0, function () {
+            var gameinfo, key;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, RedisLobby.get_server_playercount_info()];
+                    case 1:
+                        gameinfo = _a.sent();
+                        if (gameinfo) {
+                            for (key in gameinfo) {
+                                if (key == server_key) {
+                                    return [2 /*return*/, true];
+                                }
+                            }
+                        }
+                        return [2 /*return*/, false];
+                }
+            });
+        });
+    };
+    //根据服务的负载，进行选择哪个game_server
     RedisLobby.choose_game_server = function () {
-        return 1;
+        return __awaiter(this, void 0, void 0, function () {
+            var gameinfo, key, gameserver_key, playercount;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, RedisLobby.get_server_playercount_info()];
+                    case 1:
+                        gameinfo = _a.sent();
+                        if (gameinfo) {
+                            for (key in gameinfo) {
+                                gameserver_key = Number(key);
+                                playercount = Number(gameinfo[key]);
+                                if (playercount <= MAX_GAME_SERVER_PLAYER_COUNT) {
+                                    return [2 /*return*/, gameserver_key];
+                                }
+                            }
+                        }
+                        return [2 /*return*/, -1];
+                }
+            });
+        });
     };
     RedisLobby.redisEngine = new RedisEngine_1["default"]();
     return RedisLobby;

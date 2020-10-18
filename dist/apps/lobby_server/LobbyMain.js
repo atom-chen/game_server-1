@@ -15,6 +15,7 @@ var Stype_1 = __importDefault(require("../protocol/Stype"));
 var RedisLobby_1 = __importDefault(require("../../database/RedisLobby"));
 var MySqlGame_1 = __importDefault(require("../../database/MySqlGame"));
 var RedisGame_1 = __importDefault(require("../../database/RedisGame"));
+var RedisEvent_1 = __importDefault(require("../../database/RedisEvent"));
 var server = GameAppConfig_1["default"].lobby_server;
 NetServer_1["default"].start_tcp_server(server.host, server.port, false);
 ServiceManager_1["default"].register_service(Stype_1["default"].S_TYPE.Lobby, LobbyService_1["default"]);
@@ -27,6 +28,9 @@ RedisLobby_1["default"].connect(lobby_redis_config.host, lobby_redis_config.port
 //游戏redis
 var game_redis_config = GameAppConfig_1["default"].game_redis;
 RedisGame_1["default"].connect(game_redis_config.host, game_redis_config.port, game_redis_config.db_index);
+//事件reids
+var event_redis_config = GameAppConfig_1["default"].event_redis;
+RedisEvent_1["default"].connect(event_redis_config.host, event_redis_config.port, event_redis_config.db_index);
 /////////////////////////////
 /*
 //test

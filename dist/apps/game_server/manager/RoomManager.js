@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var Room_1 = __importDefault(require("../cell/Room"));
 var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
-var StringUtil_1 = __importDefault(require("../../../utils/StringUtil"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
@@ -23,7 +22,6 @@ var RoomManager = /** @class */ (function () {
                 // Log.info("tick count: roomid: " , room.get_room_id() , " count: ", tick_count);
                 if (tick_count >= GameHoodleConfig_1["default"].ROOM_MAX_DISMISS_TIME) {
                     room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eDessolveRes, { status: Response_1["default"].OK });
-                    room.kick_all_player();
                     _this.delete_room(room.get_room_id());
                 }
             }
@@ -32,22 +30,8 @@ var RoomManager = /** @class */ (function () {
     RoomManager.getInstance = function () {
         return RoomManager.Instance;
     };
-    RoomManager.prototype.generate_roomid = function () {
-        var roomid = StringUtil_1["default"].random_int_str(6);
-        if (!this._room_set[roomid]) {
-            return roomid;
-        }
-        else {
-            return this.generate_roomid();
-        }
-    };
-    RoomManager.prototype.alloc_room = function () {
-        var roomid = this.generate_roomid();
-        if (this._room_set[roomid]) {
-            Log_1["default"].warn("alloc_room: room is exist!!!!");
-            return this._room_set[roomid];
-        }
-        var room = new Room_1["default"](roomid);
+    RoomManager.prototype.alloc_room = function (roomid, roomdata) {
+        var room = new Room_1["default"](roomid, roomdata);
         this._room_set[roomid] = room;
         Log_1["default"].info("creat room success roomid: ", roomid, " ,roomCount: ", this.get_room_count());
         return room;
@@ -72,16 +56,6 @@ var RoomManager = /** @class */ (function () {
     };
     RoomManager.prototype.get_room_count = function () {
         return ArrayUtil_1["default"].GetArrayLen(this._room_set);
-    };
-    //uid 获取room, 用来判断玩家是否在房间里，或者已经创建了一个房间
-    RoomManager.prototype.get_room_by_uid = function (uid) {
-        for (var key in this._room_set) {
-            var room = this._room_set[key];
-            if (room.is_player_in_room(uid)) {
-                return room;
-            }
-        }
-        return null;
     };
     RoomManager.prototype.get_all_room = function () {
         return this._room_set;

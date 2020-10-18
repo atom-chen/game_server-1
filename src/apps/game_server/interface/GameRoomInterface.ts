@@ -15,7 +15,7 @@ let playerMgr: PlayerManager = PlayerManager.getInstance();
 let roomMgr: RoomManager     = RoomManager.getInstance();
 
 class GameRoomInterface {
-
+    /*
     static do_player_create_room(utag:number, proto_type:number, raw_cmd:any){
         let player: Player = playerMgr.get_player(utag);
         if (player.get_user_state() == UserState.MatchIng) {
@@ -231,6 +231,7 @@ class GameRoomInterface {
         player.send_cmd(GameHoodleProto.XY_ID.eBackRoomRes, { status: Response.OK })
         GameFunction.broadcast_player_info_in_rooom(room, player)
     }
+    */
 }
 
 export default GameRoomInterface;

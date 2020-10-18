@@ -24,35 +24,32 @@ interface CmdHandlerMap {
 class GameHoodleModle {
     private static readonly Instance: GameHoodleModle = new GameHoodleModle();
     _cmd_handler_map: CmdHandlerMap = {};
+    _redis_handler_map:any = {};
 
     private constructor(){
         this._cmd_handler_map = {
-            [CommonProto.XY_ID.PUSH_USERLOSTCONNECTION]:              this.on_player_lost_connect, //hall
-            [GameHoodleProto.XY_ID.eLoginLogicReq]:                   this.on_player_login_logic_server, //hall
-            [GameHoodleProto.XY_ID.eCreateRoomReq]:                   this.on_player_create_room, //hall
-            [GameHoodleProto.XY_ID.eJoinRoomReq]:                     this.on_player_join_room, //hall
-            [GameHoodleProto.XY_ID.eExitRoomReq]:                     this.on_player_exit_room, //hall
-            [GameHoodleProto.XY_ID.eDessolveReq]:                     this.on_player_dessolve_room, //hall
-            [GameHoodleProto.XY_ID.eGetRoomStatusReq]:                this.on_player_get_room_status, //hall
-            [GameHoodleProto.XY_ID.eBackRoomReq]:                     this.on_player_back_room, //hall
+            [CommonProto.XY_ID.PUSH_USERLOSTCONNECTION]:              this.on_player_lost_connect, //common
+            [GameHoodleProto.XY_ID.eLoginLogicReq]:                   this.on_player_login_logic_server, //game
             [GameHoodleProto.XY_ID.eCheckLinkGameReq]:                this.on_player_check_link_game, //game
+            [GameHoodleProto.XY_ID.eUserEmojReq]:                     this.on_player_use_emoj, //game
+
             [GameHoodleProto.XY_ID.eUserReadyReq]:                    this.on_player_ready, //game
             [GameHoodleProto.XY_ID.ePlayerShootReq]:                  this.on_player_shoot, //game
             [GameHoodleProto.XY_ID.ePlayerBallPosReq]:                this.on_player_ball_pos, //game
             [GameHoodleProto.XY_ID.ePlayerIsShootedReq]:              this.on_player_is_shooted, //game
-            [GameHoodleProto.XY_ID.eUserMatchReq]:                    this.on_player_match, //game match
-            [GameHoodleProto.XY_ID.eUserStopMatchReq]:                this.on_player_stop_match, //game match
-            [GameHoodleProto.XY_ID.eUserGameInfoReq]:                 this.on_player_get_ugame_info, // hall
-            [GameHoodleProto.XY_ID.eUserBallInfoReq]:                 this.on_player_get_ball_info, //hall
-            [GameHoodleProto.XY_ID.eUpdateUserBallReq]:               this.on_player_update_ball_info, //hall
-            [GameHoodleProto.XY_ID.eStoreListReq]:                    this.on_player_store_list, //hall
-            [GameHoodleProto.XY_ID.eBuyThingsReq]:                    this.on_player_buy_things, //hall
-            [GameHoodleProto.XY_ID.eUserConfigReq]:                   this.on_player_get_config, //hall
-            [GameHoodleProto.XY_ID.eUseHoodleBallReq]:                this.on_player_use_hoodleball, //hall
-            [GameHoodleProto.XY_ID.eUserEmojReq]:                     this.on_player_use_emoj, //game
-            [GameHoodleProto.XY_ID.eUserPlayAgainReq]:                this.on_player_play_again_req, //game
-            [GameHoodleProto.XY_ID.eUserPlayAgainAnswerReq]:          this.on_player_play_again_answer, //game
-            [GameHoodleProto.XY_ID.eRoomListConfigReq]:               this.on_player_room_list_req,//hall
+
+            // [GameHoodleProto.XY_ID.eUserMatchReq]:                    this.on_player_match, //game match
+            // [GameHoodleProto.XY_ID.eUserStopMatchReq]:                this.on_player_stop_match, //game match
+            // [GameHoodleProto.XY_ID.eUserGameInfoReq]:                 this.on_player_get_ugame_info, // lobby
+            // [GameHoodleProto.XY_ID.eUserBallInfoReq]:                 this.on_player_get_ball_info, //lobby
+            // [GameHoodleProto.XY_ID.eUpdateUserBallReq]:               this.on_player_update_ball_info, //lobby
+            // [GameHoodleProto.XY_ID.eStoreListReq]:                    this.on_player_store_list, //lobby
+            // [GameHoodleProto.XY_ID.eBuyThingsReq]:                    this.on_player_buy_things, //lobby
+            // [GameHoodleProto.XY_ID.eUserConfigReq]:                   this.on_player_get_config, //lobby
+            // [GameHoodleProto.XY_ID.eUseHoodleBallReq]:                this.on_player_use_hoodleball, //lobby
+            // [GameHoodleProto.XY_ID.eUserPlayAgainReq]:                this.on_player_play_again_req, //lobby
+            // [GameHoodleProto.XY_ID.eUserPlayAgainAnswerReq]:          this.on_player_play_again_answer, //lobby
+            // [GameHoodleProto.XY_ID.eRoomListConfigReq]:               this.on_player_room_list_req,//lobby
         }
     }
 
@@ -61,11 +58,6 @@ class GameHoodleModle {
     }
 
     public recv_cmd_msg(session:any, stype:number, ctype:number, utag:number, proto_type:number, raw_cmd:Buffer){
-        let player:Player = PlayerManager.getInstance().get_player(utag);
-        let unick = "none";
-        if(player){
-            unick = player.get_unick();
-        }
         let cmdname = "";
         if (ctype == CommonProto.XY_ID.PUSH_USERLOSTCONNECTION){
             cmdname = "lostconnect"
@@ -73,7 +65,7 @@ class GameHoodleModle {
             cmdname = GameHoodleProto.XY_NAME[ctype];
         }
 
-        Log.info("recv_cmd_msg: ", Stype.S_NAME[stype], cmdname, utag, unick);
+        Log.info("recv_cmd_msg: ", Stype.S_NAME[stype], cmdname, utag);
         if (this._cmd_handler_map[ctype]){
             this._cmd_handler_map[ctype].call(this, session, utag, proto_type, raw_cmd);
         }
@@ -81,9 +73,6 @@ class GameHoodleModle {
 
     //玩家离开逻辑服务
     on_player_lost_connect(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if(!GameCheck.check_player(utag)){
-            return;
-        }
         GameLinkInterface.do_player_lost_connect(utag, proto_type, raw_cmd);
     }
     //登录逻辑服务
@@ -91,80 +80,14 @@ class GameHoodleModle {
         GameLinkInterface.do_player_login_logic_server(session, utag, proto_type, raw_cmd);
     }
 
-    //创建房间
-    private on_player_create_room(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("create_room player is not exist!")
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eCreateRoomRes, utag, proto_type, {status: Response.INVALIDI_OPT})
-            return;
-        }
-        GameRoomInterface.do_player_create_room(utag, proto_type, raw_cmd);
-    }
-    //加入房间
-    private on_player_join_room(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("join_room error, player is not exist!")
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eJoinRoomRes, utag, proto_type, {status: Response.INVALIDI_OPT})
-            return;
-        }
-        GameRoomInterface.do_player_join_room(utag, proto_type, raw_cmd);
-    }
-    //离开房间
-    private on_player_exit_room(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("exit_room player is not exist!")
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eExitRoomRes, utag, proto_type, {status: Response.INVALIDI_OPT})
-            return;
-        }
-        GameRoomInterface.do_player_exit_room(utag);
-    }
-    //解散房间
-    private on_player_dessolve_room(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("dessolve_room error, player is not exist!")
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eDessolveRes, utag, proto_type, {status: Response.INVALIDI_OPT})
-            return;
-        }
-        GameRoomInterface.do_player_dessolve_room(utag);
-    }
-    //获取是否创建过房间
-    private on_player_get_room_status(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("get_room_status player is not exist!")
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eGetRoomStatusRes, utag, proto_type, {status: Response.SYSTEM_ERR})
-            return;
-        }
-       GameRoomInterface.do_player_get_room_status(utag);
-    }
-
-    //返回房间
-    private on_player_back_room(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("back_room player is not exist!")
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eBackRoomRes, utag, proto_type, {status: Response.INVALIDI_OPT})
-            return;
-        }
-        GameRoomInterface.do_player_back_room(utag);
-    }
-
     //进游戏房间后，服务推送房间内信息
     on_player_check_link_game(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("check_link_game player is not exist!")
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eCheckLinkGameRes, utag, proto_type, {status: Response.INVALIDI_OPT})
-            return;
-        }
-        GameProcessInterface.do_player_check_link_game(utag);
+        GameProcessInterface.do_player_check_link_game(session, utag, proto_type, raw_cmd);
     }
 
     //玩家准备
     on_player_ready(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("on_user_ready player is not exist!")
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eUserReadyRes, utag, proto_type, {status: Response.INVALIDI_OPT})
-            return;
-        }
-        GameProcessInterface.do_player_ready(utag);
+        GameProcessInterface.do_player_ready(session, utag, proto_type, raw_cmd);
     }
     
     //玩家射击
@@ -173,7 +96,7 @@ class GameHoodleModle {
             Log.warn("on_player_shoot player is not exist!")
             return;
         }
-        GameLogicInterface.do_player_shoot(utag, proto_type, raw_cmd);
+        // GameLogicInterface.do_player_shoot(utag, proto_type, raw_cmd);
     }
 
     //玩家位置信息
@@ -182,7 +105,7 @@ class GameHoodleModle {
             Log.warn("on_player_ball_pos player is not exist!")
             return;
         }
-        GameLogicInterface.do_player_ball_pos(utag, proto_type, raw_cmd);
+        // GameLogicInterface.do_player_ball_pos(utag, proto_type, raw_cmd);
     }
 
     //玩家被射中
@@ -191,7 +114,7 @@ class GameHoodleModle {
             Log.warn("on_player_is_shooted player is not exist!")
             return;
         }
-        GameLogicInterface.do_player_is_shooted(utag, proto_type, raw_cmd);
+        // GameLogicInterface.do_player_is_shooted(utag, proto_type, raw_cmd);
     }
 
     on_player_match(session:any, utag:number, proto_type:number, raw_cmd:any){
@@ -200,7 +123,7 @@ class GameHoodleModle {
             Log.warn("on_player_match player is not exist!")
             return;
         }
-        GameMatchInterface.do_player_match(utag, proto_type, raw_cmd);
+        // GameMatchInterface.do_player_match(utag, proto_type, raw_cmd);
     }
 
     on_player_stop_match(session:any, utag:number, proto_type:number, raw_cmd:any){
@@ -209,7 +132,7 @@ class GameHoodleModle {
             Log.warn("on_player_stop_match error player is not exist!")
             return;
         }
-        GameMatchInterface.do_player_stop_match(utag);
+        // GameMatchInterface.do_player_stop_match(utag);
     }
 
     //游戏服信息,没有去创建，有就返回原来数据
@@ -280,12 +203,7 @@ class GameHoodleModle {
     }
 
     on_player_use_emoj(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        if (!GameCheck.check_player(utag)) {
-            GameSendMsg.send(session, GameHoodleProto.XY_ID.eUserEmojRes, utag, proto_type, { status: Response.INVALIDI_OPT })
-            Log.warn("on_player_use_emoj error player is not exist!")
-            return;
-        }
-        GameEmojInterface.do_player_use_emoj(utag, proto_type, raw_cmd);
+        GameEmojInterface.do_player_use_emoj(session, utag, proto_type, raw_cmd);
     }
 
     on_player_play_again_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
@@ -294,7 +212,7 @@ class GameHoodleModle {
             Log.warn("on_player_play_again_req error player is not exist!")
             return;
         }
-        GamePlayAgainInterface.do_player_play_again_req(utag, proto_type, raw_cmd);
+        // GamePlayAgainInterface.do_player_play_again_req(utag, proto_type, raw_cmd);
     }
 
     on_player_play_again_answer(session: any, utag: number, proto_type: number, raw_cmd: any) {
@@ -303,7 +221,7 @@ class GameHoodleModle {
             Log.warn("on_player_play_again_answer error player is not exist!")
             return;
         }
-        GamePlayAgainInterface.do_player_play_again_answer(utag, proto_type, raw_cmd);
+        // GamePlayAgainInterface.do_player_play_again_answer(utag, proto_type, raw_cmd);
     }
 
     on_player_room_list_req(session: any, utag: number, proto_type: number, raw_cmd: any) {

@@ -32,7 +32,7 @@ export default class GameInfoHandle {
             if (data_game_len > 0) {
                 let game_info = data_game[0]
                 let ret = await RedisGame.set_gameinfo_inredis(utag, game_info);
-                Log.info("hcc>>on_user_get_ugame_info1111>>", game_info);
+                // Log.info("hcc>>on_user_get_ugame_info1111>>", game_info);
                 Log.info("hcc>>ret:", ret)
                 return true
             }else{
@@ -44,7 +44,7 @@ export default class GameInfoHandle {
                         if (data_game_len2 > 0) {
                             let game_info2 = data_game2[0]
                             let ret = await RedisGame.set_gameinfo_inredis(utag, game_info2);
-                            Log.info("hcc>>on_user_get_ugame_info1222>>", game_info2);
+                            // Log.info("hcc>>on_user_get_ugame_info1222>>", game_info2);
                             Log.info("hcc>>ret:" , ret)
                             return true
                         }

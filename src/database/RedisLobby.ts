@@ -2,10 +2,14 @@ import RedisEngine from '../utils/RedisEngine';
 import StringUtil from '../utils/StringUtil';
 import Log from '../utils/Log';
 import * as util from 'util';
+import GameAppConfig from '../apps/config/GameAppConfig';
 
-let ROOMID_ROOMINFO_KEY = "ROOMID_ROOMINFO_KEY"
-let UID_ROOMINFO_KEY    = "UID_ROOMINFO_KEY"
+let ROOMID_ROOMINFO_KEY = "hash_roomid_roominfo_key" 
+let UID_ROOMINFO_KEY = "hash_uid_roominfo_key" 
 let room_id_length = 6;
+let game_serverindex_playercount_key = "game_serverindex_playercount_key"
+let MAX_GAME_SERVER_PLAYER_COUNT = 1000;  //
+
 /*
 1. 这两个地方同时保存了roominfo_json
 2. 修改的话，这两个地方同时需要修改
@@ -105,28 +109,6 @@ export default class RedisLobby {
         return !util.isNullOrUndefined(ret);
     }
 
-    //房间是否存在
-    //返回boolean
-    public static async roomid_is_exist(roomid:string){
-        let allroom = await RedisLobby.get_all_roominfo();
-        for (let key in allroom) {
-            let room_info_json = allroom[key];
-            let roominfo_obj = null;
-            try {
-                roominfo_obj = JSON.parse(room_info_json);
-            } catch (error) {
-                Log.info(error);
-            }
-            if (roominfo_obj == null) {
-                continue;
-            }
-            if (String(roominfo_obj.roomid) == roomid) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
     //增加roominfo_json内玩家
     //同时更新
     public static async add_uid_in_roominfo(roomid:string, uid:number){
@@ -243,9 +225,48 @@ export default class RedisLobby {
         return new_roomid;
     }
 
-    //TODO 根据服务的负载，进行选择哪个game_server
-    public static choose_game_server(){
-        return 0;
+    //////////////////////////////////////
+    //保存服务id, 人数
+    static async set_server_playercount(server_index: any, playercount: number) {
+        let key = game_serverindex_playercount_key;
+        let ret = await RedisLobby.engine().hset(key, server_index, playercount);
+        let result_str = ret == 1;
+        Log.info("hcc>>redis set_server_playercount ", key, result_str);
+        return ret;
     }
 
+    //获取服务人数信息
+    static async get_server_playercount_info() {
+        let key = game_serverindex_playercount_key;
+        let ret = await RedisLobby.engine().hgetall(key);
+        Log.info("hcc>>redis get_server_playercount_info ", key, ret);
+        return ret;
+    }
+
+    public static async is_server_exist(server_key:string){
+        let gameinfo = await RedisLobby.get_server_playercount_info();
+        if (gameinfo) {
+            for (let key in gameinfo) {
+                if(key == server_key){
+                    return true
+                }
+            }
+        }
+        return false;
+    }
+
+    //根据服务的负载，进行选择哪个game_server
+    public static async choose_game_server(){
+        let gameinfo = await RedisLobby.get_server_playercount_info();
+        if(gameinfo){
+            for (let key in gameinfo){
+                let gameserver_key = Number(key);
+                let playercount = Number(gameinfo[key]);
+                if (playercount <= MAX_GAME_SERVER_PLAYER_COUNT){
+                    return gameserver_key;
+                }
+            }
+        }
+        return -1;
+    }
 }

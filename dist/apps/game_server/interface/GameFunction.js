@@ -45,7 +45,6 @@ var StringUtil_1 = __importDefault(require("../../../utils/StringUtil"));
 var MySqlGame_1 = __importDefault(require("../../../database/MySqlGame"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
-var RoomManager_1 = __importDefault(require("../manager/RoomManager"));
 var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
 var GameHoodleProto_1 = __importDefault(require("../../protocol/protofile/GameHoodleProto"));
 var GameFunction = /** @class */ (function () {
@@ -103,7 +102,7 @@ var GameFunction = /** @class */ (function () {
     };
     //设置玩家初始权限
     GameFunction.set_player_start_power = function (room) {
-        var can_play_seatid = StringUtil_1["default"].random_int(1, room.get_player_count());
+        var can_play_seatid = StringUtil_1["default"].random_int(1, room.get_max_player_count());
         var player_set = room.get_all_player();
         var player_array = [];
         for (var key in player_set) {
@@ -129,8 +128,8 @@ var GameFunction = /** @class */ (function () {
                 if (power == State_1.PlayerPower.canPlay) {
                     player.set_user_power(State_1.PlayerPower.canNotPlay);
                     next_power_seatid = player.get_seat_id() + 1;
-                    if (next_power_seatid > room.get_player_count()) {
-                        next_power_seatid = next_power_seatid % room.get_player_count();
+                    if (next_power_seatid > room.get_max_player_count()) {
+                        next_power_seatid = next_power_seatid % room.get_max_player_count();
                     }
                     //  Log.info("hcc>> cur power seat: " , player.get_seat_id());
                     //  Log.info("hcc>> next power seat: " , next_power_seatid);
@@ -185,8 +184,6 @@ var GameFunction = /** @class */ (function () {
                                 gold_win = (-1) * player_cur_chip;
                             }
                         }
-                        // Log.info(player.get_unick(),"hcc>>cal_player_chip_and_write: score: " , score, " ,gold_win: " , gold_win, " ,cur_chip: " , player.get_uchip()," ,after add: " , (player.get_uchip() + gold_win));
-                        player.set_uchip(player.get_uchip() + gold_win);
                         return [4 /*yield*/, MySqlGame_1["default"].add_ugame_uchip(player.get_uid(), gold_win)];
                     case 2:
                         ret = _c.sent();
@@ -206,7 +203,7 @@ var GameFunction = /** @class */ (function () {
     ///发送消息，房间相关
     ////////////////////////////////////////
     //向房间内所有人发送局内玩家信息
-    GameFunction.broadcast_player_info_in_rooom = function (room, not_to_player) {
+    GameFunction.broadcast_player_info_in_rooom = function (room, not_uid) {
         if (!room) {
             return;
         }
@@ -223,7 +220,7 @@ var GameFunction = /** @class */ (function () {
                     userinfo_array.push(userinfo);
                 }
             }
-            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eUserInfoRes, { userinfo: userinfo_array }, not_to_player);
+            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eUserInfoRes, { userinfo: userinfo_array }, not_uid);
         }
         catch (error) {
             Log_1["default"].error(error);
@@ -231,34 +228,45 @@ var GameFunction = /** @class */ (function () {
     };
     //向某个玩家发送局内玩家信息
     GameFunction.send_player_info = function (player) {
-        if (!player) {
-            return;
-        }
-        var room = RoomManager_1["default"].getInstance().get_room_by_uid(player.get_uid());
-        if (!room) {
-            return;
-        }
-        var player_set = room.get_all_player();
-        if (ArrayUtil_1["default"].GetArrayLen(player_set) <= 0) {
-            return;
-        }
-        var userinfo_array = [];
-        try {
-            for (var key in player_set) {
-                var player_1 = player_set[key];
-                if (player_1) {
-                    var userinfo = {
-                        numberid: String(player_1.get_numberid()),
-                        userinfostring: JSON.stringify(player_1.get_player_info())
-                    };
-                    userinfo_array.push(userinfo);
+        return __awaiter(this, void 0, void 0, function () {
+            var room, player_set, userinfo_array, key, player_1, userinfo;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!player) {
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, player.get_room()];
+                    case 1:
+                        room = _a.sent();
+                        if (!room) {
+                            return [2 /*return*/];
+                        }
+                        player_set = room.get_all_player();
+                        if (ArrayUtil_1["default"].GetArrayLen(player_set) <= 0) {
+                            return [2 /*return*/];
+                        }
+                        userinfo_array = [];
+                        try {
+                            for (key in player_set) {
+                                player_1 = player_set[key];
+                                if (player_1) {
+                                    userinfo = {
+                                        numberid: String(player_1.get_numberid()),
+                                        userinfostring: JSON.stringify(player_1.get_player_info())
+                                    };
+                                    userinfo_array.push(userinfo);
+                                }
+                            }
+                            player.send_cmd(GameHoodleProto_1["default"].XY_ID.eUserInfoRes, { userinfo: userinfo_array });
+                        }
+                        catch (error) {
+                            Log_1["default"].error(error);
+                        }
+                        return [2 /*return*/];
                 }
-            }
-            player.send_cmd(GameHoodleProto_1["default"].XY_ID.eUserInfoRes, { userinfo: userinfo_array });
-        }
-        catch (error) {
-            Log_1["default"].error(error);
-        }
+            });
+        });
     };
     //向房间内所有人发送某玩家准备的消息
     GameFunction.send_player_state = function (room, src_player, not_to_player) {
@@ -267,15 +275,17 @@ var GameFunction = /** @class */ (function () {
             seatid: Number(src_player.get_seat_id()),
             userstate: Number(src_player.get_user_state())
         };
-        room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eUserReadyRes, body, not_to_player);
+        var not_uid = not_to_player ? not_to_player.get_uid() : undefined;
+        room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eUserReadyRes, body, not_uid);
     };
     //发送局数
     GameFunction.send_play_count = function (room, not_to_player) {
         var body = {
-            playcount: String(room.get_play_count()),
-            totalplaycount: String(room.get_conf_play_count())
+            playcount: String(room.get_cur_play_count()),
+            totalplaycount: String(room.get_max_play_count())
         };
-        room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayCountRes, body, not_to_player);
+        var not_uid = not_to_player ? not_to_player.get_uid() : undefined;
+        room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayCountRes, body, not_uid);
     };
     ////////////////////////////////////
     /////发送消息,游戏逻辑相关
@@ -308,7 +318,8 @@ var GameFunction = /** @class */ (function () {
             only_player.send_cmd(GameHoodleProto_1["default"].XY_ID.ePlayerFirstBallPosRes, { positions: player_pos_array });
         }
         else {
-            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerFirstBallPosRes, { positions: player_pos_array }, not_player);
+            var not_uid = not_player ? not_player.get_uid() : undefined;
+            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerFirstBallPosRes, { positions: player_pos_array }, not_uid);
         }
     };
     //发送玩家权限
@@ -332,7 +343,8 @@ var GameFunction = /** @class */ (function () {
             only_player.send_cmd(GameHoodleProto_1["default"].XY_ID.ePlayerPowerRes, { status: Response_1["default"].OK, powers: player_power_array });
         }
         else {
-            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerPowerRes, { status: Response_1["default"].OK, powers: player_power_array }, not_player);
+            var not_uid = not_player ? not_player.get_uid() : undefined;
+            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerPowerRes, { status: Response_1["default"].OK, powers: player_power_array }, not_uid);
         }
     };
     //发送玩家射击 ,服务只做转发
@@ -347,7 +359,8 @@ var GameFunction = /** @class */ (function () {
             posy: String(shoot_info.posy),
             shootpower: Number(shoot_info.shootpower)
         };
-        room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerShootRes, body, not_player);
+        var not_uid = not_player ? not_player.get_uid() : undefined;
+        room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerShootRes, body, not_uid);
     };
     //发送玩家位置，球停下后
     GameFunction.send_player_ball_pos = function (room, not_player, only_player) {
@@ -371,7 +384,8 @@ var GameFunction = /** @class */ (function () {
             only_player.send_cmd(GameHoodleProto_1["default"].XY_ID.ePlayerBallPosRes, { status: Response_1["default"].OK, positions: player_pos_array });
         }
         else {
-            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerBallPosRes, { status: Response_1["default"].OK, positions: player_pos_array }, not_player);
+            var not_uid = not_player ? not_player.get_uid() : undefined;
+            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerBallPosRes, { status: Response_1["default"].OK, positions: player_pos_array }, not_uid);
         }
     };
     //发送玩家射中 ，只做转发
@@ -405,7 +419,7 @@ var GameFunction = /** @class */ (function () {
         }
         var body = {
             scores: player_score_array,
-            isfinal: room.get_play_count() == room.get_conf_play_count()
+            isfinal: room.get_cur_play_count() == room.get_max_play_count()
         };
         room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eGameResultRes, body);
     };
@@ -462,7 +476,8 @@ var GameFunction = /** @class */ (function () {
             only_player.send_cmd(GameHoodleProto_1["default"].XY_ID.ePlayerScoreRes, { scores: player_score_array });
         }
         else {
-            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerScoreRes, { scores: player_score_array }, not_player);
+            var not_uid = not_player ? not_player.get_uid() : undefined;
+            room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.ePlayerScoreRes, { scores: player_score_array }, not_uid);
         }
     };
     GameFunction._startx_left_array = [-480, -400, -300, -200, -100];

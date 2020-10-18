@@ -15,7 +15,7 @@ let roomMgr: RoomManager     = RoomManager.getInstance();
 let matchMgr: MatchManager   = MatchManager.getInstance();
 
 class GameMatchInterface {
-
+    /*
     static do_player_match(utag:number,proto_type:number, raw_cmd:any){
         let player: Player = playerMgr.get_player(utag);
         //如果在房间内，不能匹配
@@ -78,7 +78,8 @@ class GameMatchInterface {
         player.send_cmd(GameHoodleProto.XY_ID.eUserMatchRes, body)
         Log.info(player.get_unick(), "do_player_match user add matching success!")
     }
-
+    */
+    /*
     static do_player_stop_match(utag:number){
         let player: Player = playerMgr.get_player(utag);
         let uname = player.get_unick();
@@ -91,6 +92,7 @@ class GameMatchInterface {
         player.send_cmd(GameHoodleProto.XY_ID.eUserStopMatchRes, { status: Response.OK });
         Log.info(uname, "do_player_stop_match success!")
     }
+    */
 
 }
 

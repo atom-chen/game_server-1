@@ -3,10 +3,6 @@ import ProtoManager from '../../netbus/ProtoManager';
 import LobbyProto from '../protocol/protofile/LobbyProto';
 import CommonProto from '../protocol/protofile/CommonProto';
 import GameInfoHandle from './handle/GameInfoHandle';
-import LobbySendMsg from './LobbySendMsg';
-import Response from '../protocol/Response';
-import RedisLobby from '../../database/RedisLobby';
-import Stype from '../protocol/Stype';
 import RoomHandle from './handle/RoomHandle';
 
 interface CmdHandlerMap {
@@ -47,7 +43,6 @@ class LobbyModle {
 
     //玩家离开
     on_player_lost_connect(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        
     }
     
     // 登录大厅

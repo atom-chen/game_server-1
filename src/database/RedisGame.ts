@@ -3,6 +3,15 @@ import Log from "../utils/Log";
 
 let game_info_key = "game_info_key_uid_";
 
+/*
+index:0,
+playercount:100,
+index:1
+playercount:200,
+index:3,
+playercount:90,
+*/
+
 export default class RedisGame {
     private static redisEngine: RedisEngine = new RedisEngine();
 
@@ -17,10 +26,9 @@ export default class RedisGame {
     //uinfo: table
     static async set_gameinfo_inredis(uid:number, uinfo:any) {
         let key = game_info_key + uid;
-        Log.info("redis center hmset " , key);
         let ret = await RedisGame.engine().hmset(key, uinfo);
-        let result_str = ret == "OK" ? "OK" : "fail"
-        Log.info("redis center hmset ", key, result_str);
+        let result_str = ret == "OK" ;
+        Log.info("hcc>>set_gameinfo_inredis hmset ", key, result_str);
         return ret;
     }
 
@@ -28,4 +36,5 @@ export default class RedisGame {
         let key = game_info_key + uid;
         return await RedisGame.engine().hgetall(key);
     }
+
 }

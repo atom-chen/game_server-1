@@ -18,7 +18,6 @@ var ProtoManager_1 = __importDefault(require("./ProtoManager"));
 var util = __importStar(require("util"));
 var Stype_1 = __importDefault(require("../apps/protocol/Stype"));
 var StickPackage = require("stickpackage");
-var server_session_map = {};
 var NetClient = /** @class */ (function () {
     function NetClient() {
     }
@@ -37,8 +36,6 @@ var NetClient = /** @class */ (function () {
                     NetClient.on_recv_cmd_server_return(server_session, cmd_buf);
                 });
             }
-            // let server_session_key = host + ":" + String(port);
-            // NetClient.save_server_session(server_session, server_session_key);
             if (success_callfunc) {
                 success_callfunc(server_session); //这里将所连接的服务的session返回，各个进程自己维护服务session
             }
@@ -79,12 +76,20 @@ var NetClient = /** @class */ (function () {
         if (server_session.end) {
             server_session.end();
             server_session.is_connected = false;
-            // NetClient.clear_server_session(server_session.server_ip_port_key)
         }
     };
     //当前作为客户端，其他服务器断开链接
     NetClient.on_session_disconnect = function (server_session) {
         server_session.is_connected = false;
+        var server_key = server_session.remotePort;
+        if (NetClient.server_disconnect_func_array[server_key]) {
+            NetClient.server_disconnect_func_array[server_key](server_session);
+            delete NetClient.server_disconnect_func_array[server_key];
+        }
+    };
+    //server_key: port
+    NetClient.set_server_disconnect_func = function (server_key, func) {
+        NetClient.server_disconnect_func_array[server_key] = func;
     };
     // 发送数据包
     NetClient.send_cmd = function (server_session, stype, ctype, utag, proto_type, body) {
@@ -116,6 +121,7 @@ var NetClient = /** @class */ (function () {
             }
         }
     };
+    NetClient.server_disconnect_func_array = {};
     return NetClient;
 }());
 exports["default"] = NetClient;

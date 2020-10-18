@@ -10,22 +10,16 @@ class GameCheck {
     
     //检测是否非法玩家
     static check_player(utag: number) {
-        let player = PlayerManager.getInstance().get_player(utag);
-        if (player) {
+       let player = PlayerManager.getInstance().get_player(utag);
+        if(player){
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
-
+    
     //检测是否非法房间
-    static check_room(utag: number) {
-        let player: Player = PlayerManager.getInstance().get_player(utag);
-        if (!player) {
-            return false;
-        }
-
-        let room = RoomManager.getInstance().get_room_by_uid(player.get_uid())
+    static check_room(roomid: string) {
+        let room:Room = RoomManager.getInstance().get_room_by_roomid(roomid);
         if (!room) {
             return false;
         }
@@ -33,7 +27,7 @@ class GameCheck {
     }
 
     //检测游戏开始
-    static check_game_start(room: Room): boolean {
+    static check_game_start(room: Room) {
         let player_set = room.get_all_player();
         let ready_player_count = 0;
         for (let uid in player_set) {
@@ -45,7 +39,7 @@ class GameCheck {
             }
         }
         Log.info("check_game_start: readycount: ", ready_player_count);
-        if (ready_player_count == room.get_conf_player_count()) {
+        if (ready_player_count == room.get_max_player_count()) {
             return true;
         }
         return false;

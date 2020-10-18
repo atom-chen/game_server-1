@@ -2,8 +2,6 @@
 
 import ServiceBase from '../../netbus/ServiceBase';
 import GameHoodleModle from './GameHoodleModle';
-import Log from '../../utils/Log';
-import NetServer from '../../netbus/NetServer';
 
 class GameHoodleService extends ServiceBase {
 	 service_name:string = "GameHoodleService"; // 服务名称

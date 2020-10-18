@@ -96,8 +96,8 @@ class GameAppConfig {
 		stype: Stype.S_TYPE.System,
 	}
 
-	//游戏服务1
-	static game_server =  {
+	//游戏route服务
+	static game_route_server =  {
 		host: LOCAL_HOST,
 		port: 6088,
 		stype: Stype.S_TYPE.GameHoodle,
@@ -152,6 +152,13 @@ class GameAppConfig {
 		db_index: 2,
 	}
 
+	//event redis 
+	static event_redis  = {
+		host: LOCAL_HOST,
+		port: 6379,
+		db_index: 1,
+	}
+
 	////////////////////
 	//游戏逻辑服务，可拓展多个
 	static game_logic_server_1 = {
@@ -176,7 +183,7 @@ class GameAppConfig {
 	//网关连接其他服务
 	static gw_connect_servers =  [
 		GameAppConfig.auth_server,
-		// GameAppConfig.game_server,
+		GameAppConfig.game_route_server,
 		// GameAppConfig.system_server,
 		GameAppConfig.lobby_server,
 	]

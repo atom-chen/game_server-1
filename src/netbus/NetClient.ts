@@ -8,9 +8,9 @@ import * as util from 'util';
 import Stype from '../apps/protocol/Stype';
 let StickPackage = require("stickpackage")
 
-let server_session_map:any = {}
-
 class NetClient {
+
+    static server_disconnect_func_array:any = {};
 
     static connect_tcp_server(host: string, port: number, is_encrypt: boolean, stype?:number, success_callfunc?: Function) {
         let options: TcpSocket.NetConnectOpts = {port: port, host: host,};
@@ -30,9 +30,6 @@ class NetClient {
                 });
             }
             
-            // let server_session_key = host + ":" + String(port);
-            // NetClient.save_server_session(server_session, server_session_key);
-
             if (success_callfunc) {
                 success_callfunc(server_session);//这里将所连接的服务的session返回，各个进程自己维护服务session
             }
@@ -80,13 +77,22 @@ class NetClient {
         if (server_session.end){
             server_session.end();
             server_session.is_connected = false;
-            // NetClient.clear_server_session(server_session.server_ip_port_key)
         }
     }
 
     //当前作为客户端，其他服务器断开链接
     static on_session_disconnect(server_session:any) {
         server_session.is_connected = false;
+        let server_key = server_session.remotePort
+        if (NetClient.server_disconnect_func_array[server_key]){
+            NetClient.server_disconnect_func_array[server_key](server_session);
+            delete NetClient.server_disconnect_func_array[server_key];
+        }
+    }
+
+    //server_key: port
+    static set_server_disconnect_func(server_key:any, func:Function){
+        NetClient.server_disconnect_func_array[server_key] = func;
     }
 
     // 发送数据包
@@ -121,21 +127,6 @@ class NetClient {
             }
         }
     }
-
-    // static save_server_session(server_session:any, session_key:string){
-    //     server_session_map[session_key] = server_session;
-    //     server_session.session_key = session_key;
-    // }
-
-    // static get_server_session(session_key: string) {
-    //     return server_session_map[session_key];
-    // }
-
-    // static clear_server_session(session_key: string){
-    //     if (server_session_map[session_key]){
-    //         delete server_session_map[session_key];
-    //     }
-    // }
 }
 
 export default NetClient;

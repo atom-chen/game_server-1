@@ -19,14 +19,13 @@ class PlayerManager {
     async alloc_player(session:any, uid:number, proto_type:number){
         let player:Player = this._player_set[uid]
         if(player){
-            let issuccess: any = await player.init_session(session, uid, proto_type);
+            let issuccess: any = await player.init_data(session, uid, proto_type);
             // Log.info("alloc_player>> user: ", uid, " is exist!, issuccess: " , issuccess);
             return player;
         }
-        let player2:Player = new Player();
+        let player2:Player = new Player(session, uid, proto_type);
+        let issuccess: any = await player2.init_data(session, uid, proto_type);
         this._player_set[uid] = player2;
-        let issuccess: any = await player2.init_session(session, uid, proto_type);
-        // Log.info("alloc_player>> user: ", uid, " is not exist!, issuccess: ", issuccess);
         return player2;
     }
 
@@ -39,7 +38,6 @@ class PlayerManager {
 
     delete_player(uid:number):boolean{
         if(this._player_set[uid]){
-            this._player_set[uid] = null;
             delete this._player_set[uid];
             return true;
         }

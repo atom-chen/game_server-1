@@ -42,8 +42,6 @@ exports.__esModule = true;
 var RobotPlayer_1 = __importDefault(require("../cell/RobotPlayer"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var PlayerManager_1 = __importDefault(require("./PlayerManager"));
-var RoomManager_1 = __importDefault(require("./RoomManager"));
-var State_1 = require("../config/State");
 var playerMgr = PlayerManager_1["default"].getInstance();
 var RobotManager = /** @class */ (function () {
     function RobotManager() {
@@ -60,18 +58,17 @@ var RobotManager = /** @class */ (function () {
                     case 0:
                         player = playerMgr.get_player(uid);
                         if (!player) return [3 /*break*/, 2];
-                        return [4 /*yield*/, player.init_session(session, uid, proto_type)];
+                        return [4 /*yield*/, player.init_data(session, uid, proto_type)];
                     case 1:
                         issuccess = _a.sent();
                         player.set_robot(true);
                         Log_1["default"].info("hcc>>robot >> alloc_robot_player old: success!! uid: ", uid);
                         return [3 /*break*/, 4];
                     case 2:
-                        player = new RobotPlayer_1["default"]();
-                        return [4 /*yield*/, player.init_session(session, uid, proto_type)];
+                        player = new RobotPlayer_1["default"](session, uid, proto_type);
+                        return [4 /*yield*/, player.init_data(session, uid, proto_type)];
                     case 3:
                         issuccess = _a.sent();
-                        Log_1["default"].info("hcc>>robot >> alloc_robot_player success!! uid:", uid);
                         _a.label = 4;
                     case 4:
                         playerMgr.add_robot_player(player);
@@ -82,15 +79,15 @@ var RobotManager = /** @class */ (function () {
         });
     };
     RobotManager.prototype.get_free_robot_player = function () {
-        var player_set = this._robot_set;
-        for (var indx in player_set) {
-            var p = player_set[indx];
-            if (p.is_robot() && p.get_user_state() == State_1.UserState.InView) {
-                if (!RoomManager_1["default"].getInstance().get_room_by_uid(p.get_uid())) {
-                    return p;
-                }
-            }
-        }
+        // let player_set = this._robot_set;
+        // for(let indx in player_set){
+        //     let p:Player = player_set[indx];
+        //     if (p.is_robot() && p.get_user_state() == UserState.InView){
+        //         if (!RoomManager.getInstance().get_room_by_uid(p.get_uid())){
+        //             return p;
+        //         }
+        //     }
+        // }
     };
     RobotManager.prototype.get_robot_player_set = function () {
         return this._robot_set;

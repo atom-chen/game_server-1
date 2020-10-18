@@ -18,7 +18,9 @@ export default class RedisAuth {
     static async set_uinfo_inredis(uid:number, uinfo:any) {
         let key = auth_center_key + uid;
         let ret = await RedisAuth.engine().hmset(key, uinfo);
-        Log.info("redis center hmset " , key , ret);
+        let result_str = ret == "OK";
+        Log.info("hcc>>set_uinfo_inredis ", key, result_str);
+        return ret;
     }
 
     static async get_uinfo_inredis(uid:number){

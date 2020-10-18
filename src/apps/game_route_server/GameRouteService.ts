@@ -1,11 +1,9 @@
 import ServiceBase from "../../netbus/ServiceBase";
 import NetClient from "../../netbus/NetClient";
 import Log from "../../utils/Log";
-import GameRouteSaveSession from './GameRouteSaveSession';
+import GameRouteSaveSession from './GameRouteData';
 import NetServer from "../../netbus/NetServer";
-import CommonProto from '../protocol/protofile/CommonProto';
 import RedisLobby from '../../database/RedisLobby';
-import * as util from 'util';
 
 class GameRouteService extends ServiceBase {
     service_name: string = "LogicRouteService"; // 服务名`称
@@ -19,25 +17,30 @@ class GameRouteService extends ServiceBase {
             return
         }
 
-        let server_index = -1;
+        let server_key = -1;
         let roominfo_json = await RedisLobby.get_roominfo_by_uid(utag);
         if (roominfo_json){
             try {
                 let roominfo_obj = JSON.parse(roominfo_json);
-                server_index = roominfo_obj.game_serverid;
+                server_key = roominfo_obj.game_serverid;
+                // Log.info("hcc>>roominfo_json:", roominfo_obj);
             } catch (error) {
                 Log.error(error);
+                return;
             }
         }
-
-        if (util.isNullOrUndefined(server_index) || server_index < 0){
-            Log.warn("server_index is invalid!" , server_index);
+        Log.info("hcc>>server_key:", server_key);
+        if (server_key == null || server_key == undefined || server_key < 0 || typeof(server_key) != "number"){
+            Log.error("server_index is invalid!", server_key);
             return;
         }
-
-        let server_session = GameRouteSaveSession.get_logic_server_session(server_index);
+        
+        let server_session = GameRouteSaveSession.get_logic_server_session(server_key);
         if (server_session){
             NetClient.send_encoded_cmd(server_session, raw_cmd);
+            Log.info("hcc>>send data to:", server_key);
+        }else{
+            Log.error("hcc>>send data to:", server_key, "error!,  server is not started!!!!");
         }
     
     }

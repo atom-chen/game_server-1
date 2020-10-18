@@ -8,14 +8,22 @@ import ServiceManager from '../../netbus/ServiceManager';
 import MySqlGame from '../../database/MySqlGame';
 import GameHoodleService from './GameHoodleService';
 import MySqlAuth from '../../database/MySqlAuth';
-import MatchManager from './manager/MatchManager';
 import GameAppConfig from '../config/GameAppConfig';
 import Stype from '../protocol/Stype';
+import RedisLobby from '../../database/RedisLobby';
+import RedisGame from '../../database/RedisGame';
+import RedisAuth from '../../database/RedisAuth';
+import GameServerData from './GameServerData';
+import Log from '../../utils/Log';
+import GameRedisMsg from './GameRedisMsg';
+import RedisEvent from '../../database/RedisEvent';
 
-//作为服务端，开启tcp服务
+//开启tcp服务
 let game_server = GameAppConfig.game_logic_server_1;
 NetServer.start_tcp_server(game_server.host, game_server.port, false);
 ServiceManager.register_service(Stype.S_TYPE.GameHoodle, GameHoodleService);
+
+GameServerData.set_server_key(game_server.port);
 
 //游戏服务
 var db_game = GameAppConfig.game_database;
@@ -25,8 +33,32 @@ MySqlGame.connect(db_game.host, db_game.port, db_game.db_name, db_game.uname, db
 var db_auth = GameAppConfig.auth_database;
 MySqlAuth.connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db_auth.upwd)
 
+//大厅redis
+let lobby_redis_config = GameAppConfig.lobby_redis
+RedisLobby.connect(lobby_redis_config.host, lobby_redis_config.port, lobby_redis_config.db_index);
+
+//游戏redis
+let game_redis_config = GameAppConfig.game_redis
+RedisGame.connect(game_redis_config.host, game_redis_config.port, game_redis_config.db_index);
+
+//auth redis
+let auth_redis_config = GameAppConfig.auth_center_redis
+RedisAuth.connect(auth_redis_config.host, auth_redis_config.port, auth_redis_config.db_index);
+
+//设置人数为0，否则大厅那边找不到当前服务端口，登录不了逻辑服
+RedisLobby.set_server_playercount(GameServerData.get_server_key(), 0);
+
+//事件reids
+let event_redis_config = GameAppConfig.event_redis
+RedisEvent.connect(event_redis_config.host, event_redis_config.port, event_redis_config.db_index);
+
+RedisEvent.on_message(RedisEvent.channel_name.lobby_channel, function (channelName: string, message: string) {
+	Log.info("lobby>>recv msg: ", channelName, message);
+	GameRedisMsg.getInstance().recv_redis_msg(message);
+})
+
 //匹配场
-MatchManager.getInstance().start_match();
+// MatchManager.getInstance().start_match();
 
 ////////////////////////////////
 ////////////////////////////////

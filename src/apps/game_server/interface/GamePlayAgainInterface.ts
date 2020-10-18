@@ -17,6 +17,7 @@ let roomMgr: RoomManager = RoomManager.getInstance();
 class GamePlayAgainInterface {
 
     //玩家请求再次对局
+    /*
     static do_player_play_again_req(utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = playerMgr.get_player(utag);
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
@@ -46,7 +47,9 @@ class GamePlayAgainInterface {
             })
         }
     }
+    */
 
+    /*
     //玩家回应邀请
     static do_player_play_again_answer(utag: number, proto_type: number, raw_cmd: any) {//回应玩家utag
         let player: Player = playerMgr.get_player(utag); //被邀请的玩家
@@ -96,7 +99,9 @@ class GamePlayAgainInterface {
             }
         }
     }
+    */
 
+    /*
     private static player_play_again(player_list:any) {
         if (!player_list || ArrayUtil.GetArrayLen(player_list) <= 1){
             return;
@@ -116,7 +121,9 @@ class GamePlayAgainInterface {
         GamePlayAgainInterface.set_room_host(room);
         room.broadcast_in_room(GameHoodleProto.XY_ID.eUserPlayAgainStartRes,{status:Response.OK}); //通知玩家，开始游戏
     }
+    */
 
+    /*
     //设置房主:room房间
     private static set_room_host(room: Room) {
         let player_list = room.get_all_player();
@@ -136,6 +143,7 @@ class GamePlayAgainInterface {
             }
         }
     }
+    */
 }
 
 export default GamePlayAgainInterface;

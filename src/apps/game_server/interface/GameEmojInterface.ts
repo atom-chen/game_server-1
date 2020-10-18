@@ -7,6 +7,7 @@ import ProtoManager from '../../../netbus/ProtoManager';
 import RoomManager from '../manager/RoomManager';
 import GameCheck from './GameCheck';
 import GameHoodleProto from '../../protocol/protofile/GameHoodleProto';
+import GameSendMsg from '../GameSendMsg';
 
 let playerMgr: PlayerManager = PlayerManager.getInstance();
 let roomMgr: RoomManager = RoomManager.getInstance();
@@ -16,26 +17,26 @@ class GameEmojInterface {
 
     }
 
-    static do_player_use_emoj(utag: number, proto_type: number, raw_cmd: any) {
-        let player: Player = playerMgr.get_player(utag);
-        if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_unick(), "do_player_use_emoj room is not exist!")
+    static async do_player_use_emoj(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            GameSendMsg.send(session, GameHoodleProto.XY_ID.eUserEmojRes, utag, proto_type, { status: Response.INVALIDI_OPT })
+            Log.warn("on_player_use_emoj error player is not exist!")
             return;
         }
 
-        let room = roomMgr.get_room_by_uid(player.get_uid());
-        if (room) {
+        let player:Player = playerMgr.get_player(utag);
+        if(player){
             let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
             let resObj = {
-                seatid:player.get_seat_id(),
-                emojconfig : body.emojconfig,
+                seatid: player.get_seat_id(),
+                emojconfig: body.emojconfig,
             }
 
             let resBody = {
-                status:Response.OK,
+                status: Response.OK,
                 emojconfig: JSON.stringify(resObj),
             }
-            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserEmojRes,resBody);
+            player.send_all(GameHoodleProto.XY_ID.eUserEmojRes, resBody);
         }
     }
 

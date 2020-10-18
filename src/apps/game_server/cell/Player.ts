@@ -1,25 +1,13 @@
 import NetServer from '../../../netbus/NetServer';
-import MySqlAuth from '../../../database/MySqlAuth';
-import ArrayUtil from '../../../utils/ArrayUtil';
 import Log from '../../../utils/Log';
 import { UserState } from '../config/State';
 import GameHoodleConfig from '../config/GameHoodleConfig';
 import Stype from '../../protocol/Stype';
+import PlayerBase from './PlayerBase';
+import RedisLobby from '../../../database/RedisLobby';
+import RoomManager from '../manager/RoomManager';
 
-class Player{
-    
-    //玩家基础信息
-    _uid:number                     = 0;
-    _session:any                    = null;
-    _proto_type:number              = -1;
-    _ugame_info:any                 = {};
-    _ucenter_info:any               = {};
-    _is_robot:boolean               = false;
-
-    //房间相关
-    _is_off_line:boolean            = false;
-    _is_host:boolean                = false;
-    _seat_id:number                 = -1;
+class Player extends PlayerBase{
 
     //居内数据
     _user_state:any                 = UserState.InView; //玩家状态
@@ -31,74 +19,56 @@ class Player{
     //玩家配置（身上的装备，弹珠等级，等等）
     _user_config:any                = {};
 
-    constructor(){
-        //test
-        // this._ugame_info["test_gameinfo"] = "info_test";
-        // this._ugame_info["test_gameinfo2"] = "info_test2";
-        // this._ugame_info["test_gameinfo3"] = false;
+    constructor(session: any, uid: number, proto_type: number){
+        super(session, uid, proto_type);
     }
 
-    //中心数据，游戏数据 auth_center->uinfo
-    async init_session(session:any, uid:number, proto_type:number){
-        this._session = session;
-        this._uid = uid;        
-        this._proto_type = proto_type;
-        //用户中心服数据
-        let data:any = await MySqlAuth.get_uinfo_by_uid(uid);
-        // Log.info("hcc>>init_session: " , data);
-        if (data && data.length > 0){
-            let sql_info = data[0];
-            this._ucenter_info = sql_info;
+    async init_data(session: any, uid: number, proto_type: number) {
+        await super.init_data(session,uid,proto_type);
+        
+        //seatid 为uid所在数组下标+1,  seatid: [1,2,3,4]
+        let room_info_obj = await this.get_room_info()
+        if(room_info_obj){
+            let uids = room_info_obj.uids || [];
+            for (let index = 0; index < uids.length; index++) {
+                if(uids[index] == this._uid){
+                    this._seat_id = index+1;
+                    break;
+                }                
+            }
         }
         return true;
     }
 
-    //获取uid
-    get_uid(){
-        return this._uid;
+    ///////////////////////////////// room data
+    async get_room_info() {
+        let room_info_str = await RedisLobby.get_roominfo_by_uid(this._uid);
+        let room_info_obj: any = {};
+        try {
+            room_info_obj = JSON.parse(room_info_str);
+        } catch (error) {
+            Log.error("get_room_info error>>", error);
+        }
+        return room_info_obj;
     }
 
-    get_proto_type(){
-        return this._proto_type;
+    async get_roomid(){
+        let room_info_str = await RedisLobby.get_roominfo_by_uid(this._uid);
+        try {
+            let room_info_obj = JSON.parse(room_info_str);
+            if (room_info_obj && room_info_obj.roomid){
+                return room_info_obj.roomid;
+            }
+        } catch (error) {
+            Log.error("get_roomid error>>", error);
+        }
+        return null;
     }
 
-    //获取numid
-    get_numberid(){
-        return this._ucenter_info.numberid;
-    }
-
-    //设置游戏局内信息
-    set_ugame_info(ugame_info:any){
-        this._ugame_info = ugame_info;
-    }
-    
-    //游戏服务信息
-    get_ugame_info(){
-        return this._ugame_info;
-    }
-    
-    //玩家中心信息
-    get_ucenter_info(){
-        return this._ucenter_info;
-    }
-    
-    //账号
-    get_uname(){
-        return this._ucenter_info.uname;
-    }
-
-    //玩家名字
-    get_unick(){
-        return this._ucenter_info.unick;
-    }
-
-    //金币
-    get_uchip(){
-        return this._ugame_info.uchip;
-    }
-    //金币
-    set_uchip(uchip:number){
-        this._ugame_info.uchip = uchip;
+    async get_room(){
+        let roomid = await this.get_roomid();
+        let room = RoomManager.getInstance().get_room_by_roomid(roomid);
+        return room;
     }
 
     //小球信息
@@ -125,36 +95,6 @@ class Player{
 
     get_user_config(){
         return this._user_config;
-    }
-
-    //设置是否掉线
-    set_offline(is_offline:boolean){
-        this._is_off_line = is_offline;
-    }
-
-    //获取是否掉线
-    get_offline(){
-        return this._is_off_line;
-    }
-
-    //设置是否房主
-    set_ishost(is_host:boolean){
-        this._is_host = is_host;
-    }
-
-    //获取是否房主
-    get_ishost(){
-        return this._is_host;
-    }
-
-    //设置玩家座位号
-    set_seat_id(seatid:number){
-        this._seat_id = seatid;
-    }
-
-    //获取玩家座位号
-    get_seat_id(){
-        return this._seat_id;
     }
 
     //设置玩家状态
@@ -193,20 +133,9 @@ class Player{
         return this._user_score;
     }
 
-    is_robot(){
-        return this._is_robot;
-    }
-
-    set_robot(is_robot:boolean){
-        this._is_robot = is_robot;
-    }
-
     //玩家信息汇总
     get_player_info() {
-        let info = ArrayUtil.ObjCat(this._ugame_info, this._ucenter_info);
-        info.isoffline = this._is_off_line;
-        info.ishost = this._is_host;
-        info.seatid = this._seat_id;
+        let info = super.get_player_info()
         info.userstate = this._user_state;
         info.userpos = this._user_pos;
         info.userpower = this._user_power;
@@ -237,14 +166,28 @@ class Player{
     }
 
     //发送消息
-    send_cmd(ctype:number, body:any){
-        if(!this._session){
+    send_cmd(ctype: number, body: any) {
+        if (!this._session) {
             Log.error("send_cmd error, session is null!!");
             return;
         }
         NetServer.send_cmd(this._session, Stype.S_TYPE.GameHoodle, ctype, this._uid, this._proto_type, body);
     }
 
+    //发送给房间所有人
+    async send_all(ctype:number, body:any, not_uid?:number){
+        let room_info = await this.get_room_info();
+        if(room_info){
+            let uids:Array<number> = room_info.uids;
+            if(uids){
+                uids.forEach(uid => {
+                    if(uid != not_uid){
+                        NetServer.send_cmd(this._session, Stype.S_TYPE.GameHoodle, ctype, uid, this._proto_type, body);
+                    }
+                });
+            }
+        }
+    }
 }
 
 export default Player;

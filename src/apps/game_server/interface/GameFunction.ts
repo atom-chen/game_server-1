@@ -81,7 +81,7 @@ class GameFunction {
 
     //设置玩家初始权限
     public static set_player_start_power(room: Room):boolean{
-        let can_play_seatid = StringUtil.random_int(1,room.get_player_count());
+        let can_play_seatid = StringUtil.random_int(1, room.get_max_player_count());
         let player_set = room.get_all_player();
         let player_array = [];
         for(let key in player_set){
@@ -108,8 +108,8 @@ class GameFunction {
               if(power == PlayerPower.canPlay){
                  player.set_user_power(PlayerPower.canNotPlay);
                  next_power_seatid = player.get_seat_id() + 1;
-                 if(next_power_seatid > room.get_player_count()){
-                    next_power_seatid = next_power_seatid % room.get_player_count();
+                 if(next_power_seatid > room.get_max_player_count()){
+                     next_power_seatid = next_power_seatid % room.get_max_player_count();
                  }
                 //  Log.info("hcc>> cur power seat: " , player.get_seat_id());
                 //  Log.info("hcc>> next power seat: " , next_power_seatid);
@@ -155,7 +155,7 @@ class GameFunction {
                         }
                     }
                     // Log.info(player.get_unick(),"hcc>>cal_player_chip_and_write: score: " , score, " ,gold_win: " , gold_win, " ,cur_chip: " , player.get_uchip()," ,after add: " , (player.get_uchip() + gold_win));
-                    player.set_uchip(player.get_uchip() + gold_win);
+                    // player.set_uchip(player.get_uchip() + gold_win);
                     let ret = await MySqlGame.add_ugame_uchip(player.get_uid(),gold_win); //这里加await会阻塞，玩家会先被踢了,所以在外面也要加await
                     if (ret){
                         Log.info("hcc>> name: ", player.get_unick(), "add ", gold_win  ," coin success!!");
@@ -169,7 +169,7 @@ class GameFunction {
     ///发送消息，房间相关
     ////////////////////////////////////////
     //向房间内所有人发送局内玩家信息
-    static broadcast_player_info_in_rooom(room: Room, not_to_player?: Player) {
+    static broadcast_player_info_in_rooom(room: Room, not_uid?: number) {
         if (!room) {
             return;
         }
@@ -186,18 +186,18 @@ class GameFunction {
                     userinfo_array.push(userinfo);
                 }
             }
-            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserInfoRes, { userinfo: userinfo_array }, not_to_player)
+            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserInfoRes, { userinfo: userinfo_array }, not_uid);
         } catch (error) {
             Log.error(error);
         }
     }
 
     //向某个玩家发送局内玩家信息
-    static send_player_info(player: Player) {
+    static async send_player_info(player: Player) {
         if (!player) {
             return;
         }
-        let room = RoomManager.getInstance().get_room_by_uid(player.get_uid());
+        let room = await player.get_room();
         if (!room) {
             return;
         }
@@ -232,16 +232,18 @@ class GameFunction {
             seatid: Number(src_player.get_seat_id()),
             userstate: Number(src_player.get_user_state()),
         }
-        room.broadcast_in_room(GameHoodleProto.XY_ID.eUserReadyRes, body, not_to_player);
+        let not_uid = not_to_player ? not_to_player.get_uid() : undefined;
+        room.broadcast_in_room(GameHoodleProto.XY_ID.eUserReadyRes, body, not_uid);
     }
 
     //发送局数
     static send_play_count(room: Room, not_to_player?: Player) {
         let body = {
-            playcount: String(room.get_play_count()),
-            totalplaycount: String(room.get_conf_play_count()),
+            playcount: String(room.get_cur_play_count()),
+            totalplaycount: String(room.get_max_play_count()),
         }
-        room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayCountRes, body, not_to_player);
+        let not_uid = not_to_player ? not_to_player.get_uid() : undefined;
+        room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayCountRes, body, not_uid);
     }
 
     ////////////////////////////////////
@@ -274,7 +276,8 @@ class GameFunction {
         if(only_player){
             only_player.send_cmd(GameHoodleProto.XY_ID.ePlayerFirstBallPosRes,{positions: player_pos_array});
         }else{
-            room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerFirstBallPosRes,{positions: player_pos_array},not_player);
+            let not_uid = not_player ? not_player.get_uid() : undefined;
+            room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerFirstBallPosRes, { positions: player_pos_array }, not_uid);
         }
     }
 
@@ -300,7 +303,8 @@ class GameFunction {
             only_player.send_cmd(GameHoodleProto.XY_ID.ePlayerPowerRes,{status: Response.OK, powers: player_power_array});
         }
         else{
-            room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerPowerRes,{status: Response.OK, powers: player_power_array},not_player);
+            let not_uid = not_player ? not_player.get_uid() : undefined;
+            room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerPowerRes, { status: Response.OK, powers: player_power_array }, not_uid);
         }
     }
 
@@ -316,7 +320,8 @@ class GameFunction {
             posy: String(shoot_info.posy),
             shootpower:Number(shoot_info.shootpower),
         }
-        room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerShootRes, body, not_player)
+        let not_uid = not_player ? not_player.get_uid() : undefined;
+        room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerShootRes, body, not_uid)
     }
 
     //发送玩家位置，球停下后
@@ -340,7 +345,8 @@ class GameFunction {
         if(only_player){
             only_player.send_cmd(GameHoodleProto.XY_ID.ePlayerBallPosRes, {status: Response.OK, positions: player_pos_array});
         }else{
-            room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerBallPosRes, {status: Response.OK, positions: player_pos_array},not_player);
+            let not_uid = not_player ? not_player.get_uid() : undefined;
+            room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerBallPosRes, { status: Response.OK, positions: player_pos_array }, not_uid);
         }
     }
 
@@ -377,7 +383,7 @@ class GameFunction {
         }
         let body = {
             scores: player_score_array,
-            isfinal: room.get_play_count() == room.get_conf_play_count(),
+            isfinal: room.get_cur_play_count() == room.get_max_play_count(),
         }
         room.broadcast_in_room(GameHoodleProto.XY_ID.eGameResultRes, body);
     }
@@ -438,7 +444,8 @@ class GameFunction {
         if(only_player){
             only_player.send_cmd(GameHoodleProto.XY_ID.ePlayerScoreRes, {scores:player_score_array});
         }else{
-            room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerScoreRes, {scores:player_score_array},not_player);
+            let not_uid = not_player ? not_player.get_uid() : undefined;
+            room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerScoreRes, { scores: player_score_array }, not_uid);
         }
     }
 }

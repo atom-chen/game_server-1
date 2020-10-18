@@ -12,6 +12,7 @@ import RedisLobby from '../../database/RedisLobby';
 import Log from '../../utils/Log';
 import MySqlGame from '../../database/MySqlGame';
 import RedisGame from '../../database/RedisGame';
+import RedisEvent from '../../database/RedisEvent';
 
 let server = GameAppConfig.lobby_server
 NetServer.start_tcp_server(server.host, server.port, false);
@@ -29,6 +30,10 @@ RedisLobby.connect(lobby_redis_config.host, lobby_redis_config.port, lobby_redis
 //游戏redis
 let game_redis_config = GameAppConfig.game_redis
 RedisGame.connect(game_redis_config.host, game_redis_config.port, game_redis_config.db_index);
+
+//事件reids
+let event_redis_config = GameAppConfig.event_redis
+RedisEvent.connect(event_redis_config.host, event_redis_config.port, event_redis_config.db_index);
 
 /////////////////////////////
 /*

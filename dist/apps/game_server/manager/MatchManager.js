@@ -9,7 +9,6 @@ var State_1 = require("../config/State");
 var RoomManager_1 = __importDefault(require("./RoomManager"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
-var GameFunction_1 = __importDefault(require("../interface/GameFunction"));
 var RoomListConfig_1 = require("../config/RoomListConfig");
 var GameHoodleProto_1 = __importDefault(require("../../protocol/protofile/GameHoodleProto"));
 var roomMgr = RoomManager_1["default"].getInstance();
@@ -51,103 +50,111 @@ var MatchManager = /** @class */ (function () {
         var _this = this;
         //先找没满人的房间，再找匹配列表中的人
         var is_match_room_success = false;
-        setInterval(function () {
+        /*
+        setInterval(function() {
             is_match_room_success = false;
-            for (var roomlevel in _this._zoom_list) {
-                var zoom = _this._zoom_list[roomlevel];
-                var tmproomlevel = Number(roomlevel);
-                var not_full_room = _this.get_not_full_room(tmproomlevel);
-                if (not_full_room) {
+            for (let roomlevel in _this._zoom_list) {
+                let zoom = _this._zoom_list[roomlevel];
+                let tmproomlevel = Number(roomlevel);
+                let not_full_room = _this.get_not_full_room(tmproomlevel);
+                if (not_full_room){
                     // Log.info("not_full_room111, roomid:", not_full_room.get_room_id());
-                    var player = _this.get_matching_player(zoom);
-                    if (!player) {
+                    let player = _this.get_matching_player(zoom);
+                    if(!player){
                         player = _this.get_in_matching_player(zoom);
                     }
-                    if (player) {
-                        if (roomMgr.get_room_by_uid(player.get_uid())) {
+                    if(player){
+                        if (roomMgr.get_room_by_uid(player.get_uid())){
                             continue;
                         }
-                        if (player.is_robot() && not_full_room.have_robot_player()) {
+                        if(player.is_robot() && not_full_room.have_robot_player()){
                             continue;
                         }
                         // Log.info("not_full_room222, player: " , player.get_unick());
-                        var is_success = not_full_room.add_player(player);
+                        let is_success = not_full_room.add_player(player);
                         if (is_success) {
                             // Log.info("not_full_room333, player: ", player.get_unick());
                             _this.send_match_player(not_full_room.get_all_player());
                             player.set_offline(false);
                             _this.set_room_host(not_full_room);
-                            var body = {
-                                status: Response_1["default"].OK,
-                                matchsuccess: true
-                            };
-                            player.send_cmd(GameHoodleProto_1["default"].XY_ID.eUserMatchRes, body);
-                            GameFunction_1["default"].broadcast_player_info_in_rooom(not_full_room, player);
-                            _this.del_player_from_match_list_by_uid(player.get_uid(), zoom.match_list); //从待匹配列表删除
-                            _this.del_player_from_in_match_list_by_uid(player.get_uid(), zoom.in_match_list); //匹配完成的列表删除
+                            let body = {
+                                status: Response.OK,
+                                matchsuccess: true,
+                            }
+                            player.send_cmd(GameHoodleProto.XY_ID.eUserMatchRes, body);
+                            GameFunction.broadcast_player_info_in_rooom(not_full_room, player);
+                            _this.del_player_from_match_list_by_uid(player.get_uid(), zoom.match_list);//从待匹配列表删除
+                            _this.del_player_from_in_match_list_by_uid(player.get_uid(), zoom.in_match_list);//匹配完成的列表删除
                             is_match_room_success = true;
                         }
                     }
                 }
             }
-            if (is_match_room_success == false) {
+            
+            if (is_match_room_success == false){
                 _this.do_match_player();
             }
-            //    _this.log_match_list();
-        }, GameHoodleConfig_1["default"].MATCH_INTERVAL);
+        //    _this.log_match_list();
+        }, GameHoodleConfig.MATCH_INTERVAL);
+        */
     };
-    MatchManager.prototype.do_match_player = function () {
-        // Log.info("do_match_player111");
-        for (var roomlevel in this._zoom_list) {
-            var zoom = this._zoom_list[roomlevel];
-            var player = this.get_matching_player(zoom);
-            if (player) {
-                if (roomMgr.get_room_by_uid(player.get_uid())) {
-                    continue;
-                }
-                // Log.info("do_match_player222");
-                var match_count = ArrayUtil_1["default"].GetArrayLen(zoom.in_match_list);
-                if (match_count < GameHoodleConfig_1["default"].MATCH_GAME_RULE.playerCount) {
-                    var ret = this.add_player_to_in_match_list(player, zoom); //加入正式匹配列表
-                    if (ret) {
-                        var match_count_1 = ArrayUtil_1["default"].GetArrayLen(zoom.in_match_list);
-                        if (match_count_1 > 1) {
-                            this.send_match_player(zoom.in_match_list); //匹配到一个玩家 ，发送到客户端
-                            if (match_count_1 >= GameHoodleConfig_1["default"].MATCH_GAME_RULE.playerCount) { //匹配完成
-                                this.on_server_match_success(zoom.in_match_list, Number(roomlevel)); //发送到客户端，服务端已经匹配完成
-                                this.del_match_success_player_from_math_list(zoom.in_match_list, zoom.match_list); //匹配完成的人（in_match_list）从待匹配列表(match_list)删除
-                                this.del_in_match_player(zoom.in_match_list); //从匹配完成列表(in_match_list)中删除
+    /*
+        async do_match_player(){
+            // Log.info("do_match_player111");
+            for(let roomlevel in this._zoom_list){
+                let zoom = this._zoom_list[roomlevel];
+                let player = this.get_matching_player(zoom);
+                if(player){
+                    let room = await player.get_room();
+                    if (room) {
+                        continue;
+                    }
+                    // Log.info("do_match_player222");
+                    let match_count = ArrayUtil.GetArrayLen(zoom.in_match_list);
+                    if (match_count < GameHoodleConfig.MATCH_GAME_RULE.playerCount) {
+                        let ret = this.add_player_to_in_match_list(player, zoom);//加入正式匹配列表
+                        if (ret){
+                            let match_count = ArrayUtil.GetArrayLen(zoom.in_match_list);
+                            if(match_count > 1){
+                                this.send_match_player(zoom.in_match_list);//匹配到一个玩家 ，发送到客户端
+                                if (match_count >= GameHoodleConfig.MATCH_GAME_RULE.playerCount) { //匹配完成
+                                    this.on_server_match_success(zoom.in_match_list, Number(roomlevel));//发送到客户端，服务端已经匹配完成
+                                    this.del_match_success_player_from_math_list(zoom.in_match_list,zoom.match_list);//匹配完成的人（in_match_list）从待匹配列表(match_list)删除
+                                    this.del_in_match_player(zoom.in_match_list); //从匹配完成列表(in_match_list)中删除
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    };
-    //创建房间，进入玩家，发送到发送到客户端
-    //in_match_list:匹配成功玩家 Matching
-    MatchManager.prototype.on_server_match_success = function (in_match_list, roomlevel) {
-        var room = RoomManager_1["default"].getInstance().alloc_room();
-        room.set_game_rule(JSON.stringify(GameHoodleConfig_1["default"].MATCH_GAME_RULE));
-        room.set_is_match_room(true);
-        room.set_match_roomlevel(roomlevel);
-        for (var key in in_match_list) {
-            var player = in_match_list[key];
-            player.set_offline(false);
-            if (!room.add_player(player)) {
-                Log_1["default"].warn("on_server_match_success enter room error");
-                room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eUserMatchRes, { status: Response_1["default"].INVALIDI_OPT });
-                RoomManager_1["default"].getInstance().delete_room(room.get_room_id());
-                return;
+    */
+    /*
+        //创建房间，进入玩家，发送到发送到客户端
+        in_match_list:匹配成功玩家 Matching
+        on_server_match_success(in_match_list: any, roomlevel:number){
+            let room:Room = RoomManager.getInstance().alloc_room();
+            room.set_game_rule(JSON.stringify(GameHoodleConfig.MATCH_GAME_RULE));
+            room.set_is_match_room(true);
+            room.set_match_roomlevel(roomlevel);
+            for(let key in in_match_list){
+                let player = in_match_list[key];
+                player.set_offline(false);
+                if(!room.add_player(player)){
+                    Log.warn("on_server_match_success enter room error")
+                    room.broadcast_in_room(GameHoodleProto.XY_ID.eUserMatchRes,{status:Response.INVALIDI_OPT});
+                    RoomManager.getInstance().delete_room(room.get_room_id())
+                    return;
+                }
             }
+            this.set_room_host(room);
+            let body = {
+                status: Response.OK,
+                matchsuccess: true,
+            }
+            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserMatchRes,body);
         }
-        this.set_room_host(room);
-        var body = {
-            status: Response_1["default"].OK,
-            matchsuccess: true
-        };
-        room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eUserMatchRes, body);
-    };
+        */
     //设置房主: 匹配成功后，选择先匹配的玩家是房主
     //设置房主:room房间
     MatchManager.prototype.set_room_host = function (room) {
@@ -286,10 +293,10 @@ var MatchManager = /** @class */ (function () {
             Log_1["default"].info("hcc>>player uid: " + player.get_uid() + " is already in match");
             return false;
         }
-        if (roomMgr.get_room_by_uid(player.get_uid())) {
-            Log_1["default"].info("hcc>>player uid: " + player.get_uid() + " is already in room");
-            return false;
-        }
+        // if (roomMgr.get_room_by_uid(player.get_uid())) {
+        //     Log.info("hcc>>player uid: " + player.get_uid() + " is already in room");
+        //     return false;
+        // }
         zoom.match_list[player.get_uid()] = player;
         player.set_user_state(State_1.UserState.InView);
         return true;
@@ -302,10 +309,10 @@ var MatchManager = /** @class */ (function () {
         if (player.get_user_state() != State_1.UserState.InView) {
             return false;
         }
-        if (roomMgr.get_room_by_uid(player.get_uid())) {
-            Log_1["default"].info("hcc>>player uid: " + player.get_uid() + " is already in room");
-            return false;
-        }
+        // if (roomMgr.get_room_by_uid(player.get_uid())) {
+        //     Log.info("hcc>>player uid: " + player.get_uid() + " is already in room");
+        //     return false;
+        // }
         if (this.get_in_match_player_count(zoom) >= GameHoodleConfig_1["default"].MATCH_GAME_RULE.playerCount) {
             return false;
         }
@@ -409,23 +416,6 @@ var MatchManager = /** @class */ (function () {
         Log_1["default"].info("\n");
         Log_1["default"].info("matchlist_len:" + this.count_match_list() + " ==>" + name_str);
         Log_1["default"].info("in_matchlist_len:" + this.count_in_match_list() + " ==>" + in_match_name_str);
-    };
-    /////////////////////////////////////////
-    //查找房间逻辑,只找匹配房间，不找自建房
-    MatchManager.prototype.get_not_full_room = function (roomlevel) {
-        var room_list = RoomManager_1["default"].getInstance().get_all_room();
-        for (var key in room_list) {
-            var room = room_list[key];
-            // Log.info("playercount: ", room.get_player_count(), " ,confplayercount: ", room.get_conf_player_count());
-            if (room.get_match_roomlevel() == roomlevel) {
-                if (room.get_is_match_room() && room.get_player_count() < room.get_conf_player_count()) {
-                    if (room.get_game_state() == State_1.GameState.InView) {
-                        return room;
-                    }
-                }
-            }
-        }
-        return null;
     };
     MatchManager.Instance = new MatchManager();
     return MatchManager;
