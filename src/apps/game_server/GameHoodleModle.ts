@@ -73,7 +73,7 @@ class GameHoodleModle {
 
     //玩家离开逻辑服务
     on_player_lost_connect(session:any, utag:number, proto_type:number, raw_cmd:any){
-        GameLinkInterface.do_player_lost_connect(utag, proto_type, raw_cmd);
+        GameLinkInterface.do_player_lost_connect(session, utag, proto_type, raw_cmd);
     }
     //登录逻辑服务
     private on_player_login_logic_server(session:any, utag:number, proto_type:number, raw_cmd:any){
@@ -85,6 +85,10 @@ class GameHoodleModle {
         GameProcessInterface.do_player_check_link_game(session, utag, proto_type, raw_cmd);
     }
 
+    on_player_use_emoj(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        GameEmojInterface.do_player_use_emoj(session, utag, proto_type, raw_cmd);
+    }
+
     //玩家准备
     on_player_ready(session:any, utag:number, proto_type:number, raw_cmd:any){
         GameProcessInterface.do_player_ready(session, utag, proto_type, raw_cmd);
@@ -92,31 +96,20 @@ class GameHoodleModle {
     
     //玩家射击
     on_player_shoot(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("on_player_shoot player is not exist!")
-            return;
-        }
-        // GameLogicInterface.do_player_shoot(utag, proto_type, raw_cmd);
+        GameLogicInterface.do_player_shoot(session, utag, proto_type, raw_cmd);
     }
 
     //玩家位置信息
     on_player_ball_pos(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("on_player_ball_pos player is not exist!")
-            return;
-        }
-        // GameLogicInterface.do_player_ball_pos(utag, proto_type, raw_cmd);
+        GameLogicInterface.do_player_ball_pos(session, utag, proto_type, raw_cmd);
     }
 
     //玩家被射中
     on_player_is_shooted(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (!GameCheck.check_player(utag)){
-            Log.warn("on_player_is_shooted player is not exist!")
-            return;
-        }
-        // GameLogicInterface.do_player_is_shooted(utag, proto_type, raw_cmd);
+        GameLogicInterface.do_player_is_shooted(session, utag, proto_type, raw_cmd);
     }
 
+    /*
     on_player_match(session:any, utag:number, proto_type:number, raw_cmd:any){
         if (!GameCheck.check_player(utag)){
             GameSendMsg.send(session, GameHoodleProto.XY_ID.eUserMatchRes, utag, proto_type, {status: Response.INVALIDI_OPT})
@@ -202,10 +195,6 @@ class GameHoodleModle {
         GameInfoInterface.do_player_get_user_config(utag);
     }
 
-    on_player_use_emoj(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        GameEmojInterface.do_player_use_emoj(session, utag, proto_type, raw_cmd);
-    }
-
     on_player_play_again_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
         if (!GameCheck.check_player(utag)) {
             GameSendMsg.send(session, GameHoodleProto.XY_ID.eUserPlayAgainRes, utag, proto_type, { status: Response.INVALIDI_OPT })
@@ -232,6 +221,7 @@ class GameHoodleModle {
         }
         GameConfigInterface.do_player_room_list_req(utag, proto_type, raw_cmd);
     }
+    */
 }
 
 export default GameHoodleModle;

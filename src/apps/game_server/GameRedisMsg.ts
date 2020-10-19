@@ -6,6 +6,7 @@ import RoomManager from "./manager/RoomManager";
 import Room from './cell/Room';
 import RedisLobby from '../../database/RedisLobby';
 import GameFunction from './interface/GameFunction';
+import Player from './cell/Player';
 
 let playerMgr: PlayerManager = PlayerManager.getInstance();
 let roomMgr: RoomManager = RoomManager.getInstance();
@@ -40,7 +41,7 @@ export default class GameRedisMsg {
     public recv_redis_msg(message: string) {
         try {
             let body = JSON.parse(message);
-            Log.info("hcc>>on_message,", body);
+            // Log.info("hcc>>on_message,", body);
             if (body) {
                 let xy_name = body.xy_name;
                 let uid = body.uid;
@@ -57,10 +58,10 @@ export default class GameRedisMsg {
     }
 
     on_redis_create_room(uid:number, body:any){
-        Log.info("hcc>>on_redis_create_room" , body);
+        // Log.info("hcc>>on_redis_create_room" , body);
         let roomid = body.roomid;
         if(!roomid || roomid == ""){
-            Log.warn("on_redis_create_room failed!! roomid:" , roomid , "roomdata:", body);
+            Log.error("on_redis_create_room failed!! roomid:" , roomid , "roomdata:", body);
             return;
         }
         let room:Room = roomMgr.get_room_by_roomid(roomid)
@@ -72,10 +73,10 @@ export default class GameRedisMsg {
     }
 
     on_redis_back_room(uid: number, body: any) {
-        Log.info("hcc>>on_redis_back_room", body);
+        // Log.info("hcc>>on_redis_back_room", body);
         let roomid = body.roomid;
         if (!roomid || roomid == "") {
-            Log.warn("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
+            Log.error("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
             return;
         }
         let room: Room = roomMgr.get_room_by_roomid(roomid)
@@ -83,6 +84,12 @@ export default class GameRedisMsg {
             room.init_data(roomid, body);
         } else {
             room = roomMgr.alloc_room(roomid, body);
+        }
+
+        let player:Player =  playerMgr.get_player(uid)
+        if (player){
+            player.set_offline(false)
+            GameFunction.broadcast_player_info_in_rooom(room, player.get_uid());
         }
     }
 
@@ -104,7 +111,7 @@ export default class GameRedisMsg {
         let roomid = body.roomid;
         let uids:Array<number> = body.uids;
         if (!roomid || roomid == "" || !uids) {
-            Log.warn("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
+            // Log.warn("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
             return;
         }
 
@@ -128,7 +135,7 @@ export default class GameRedisMsg {
     }
 
     on_redis_join_room(uid: number, body: any) {
-        Log.info("hcc>>on_redis_join_room", body);
+        // Log.info("hcc>>on_redis_join_room", body);
         let roomid = body.roomid;
         let room: Room = roomMgr.get_room_by_roomid(roomid)
         if (room) {

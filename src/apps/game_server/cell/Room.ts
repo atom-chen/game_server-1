@@ -76,6 +76,16 @@ class Room {
         return player_set;
     }
 
+    get_player_by_seatid(seatid:number){
+        let player_set = this.get_all_player()
+        for (const key in player_set) {
+            let player: Player = player_set[key];
+            if (player.get_seat_id() == seatid) {
+                return player;
+            }
+        }
+    }
+
     //生成一个seatid,从1->maxplayercount
     /*
     born_seatid() {
@@ -117,7 +127,7 @@ class Room {
     */
 
     //当前房间内人数
-    get_max_player_count(){
+    get_cur_player_count(){
        return this._player_uid_set.length;
     }
 
@@ -127,7 +137,7 @@ class Room {
     }
 
     //房间配置的最多人数
-    get_max_max_player_count(){
+    get_max_player_count(){
         return this._max_player_count;
     }
 

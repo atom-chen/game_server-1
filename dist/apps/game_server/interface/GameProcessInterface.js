@@ -131,7 +131,7 @@ var GameProcessInterface = /** @class */ (function () {
                                 return [2 /*return*/];
                             }
                             //已经大结算了
-                            if (room.get_play_count() == room.get_conf_play_count()) {
+                            if (room.get_cur_play_count() == room.get_max_play_count()) {
                                 player.send_cmd(GameHoodleProto_1["default"].XY_ID.eUserReadyRes, { status: Response_1["default"].INVALIDI_OPT });
                                 Log_1["default"].warn("on_user_ready error ,game is over!");
                                 return [2 /*return*/];
@@ -156,7 +156,7 @@ var GameProcessInterface = /** @class */ (function () {
                                 //发送分数
                                 GameFunction_1["default"].send_player_score(room);
                                 //局数自加
-                                room.set_play_count(room.get_play_count() + 1);
+                                room.set_cur_play_count(room.get_cur_play_count() + 1);
                                 //发送局数
                                 GameFunction_1["default"].send_play_count(room);
                             }

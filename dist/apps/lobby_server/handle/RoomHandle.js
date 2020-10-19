@@ -73,9 +73,57 @@ var RoomHandle = /** @class */ (function () {
             });
         });
     };
+    RoomHandle.check_gamerule = function (gamerule_str) {
+        if (!gamerule_str || gamerule_str == "") {
+            return false;
+        }
+        var gamerule_obj = null;
+        try {
+            gamerule_obj = JSON.parse(gamerule_str);
+        }
+        catch (error) {
+            Log_1["default"].error("check_game_rule:", error);
+            return false;
+        }
+        if (!gamerule_obj) {
+            return false;
+        }
+        var playCount = gamerule_obj.playCount; //局数
+        var playerCount = gamerule_obj.playerCount; //人数
+        if (!playCount || !playerCount) {
+            return false;
+        }
+        return true;
+    };
+    RoomHandle.get_gameinfo_obj = function (gameinfo_str) {
+        if (!gameinfo_str) {
+            return null;
+        }
+        var gameinfo_obj = null;
+        try {
+            gameinfo_obj = JSON.parse(gameinfo_str);
+        }
+        catch (error) {
+            Log_1["default"].error("get_gameinfo_obj", error);
+        }
+        return gameinfo_obj;
+    };
+    RoomHandle.get_gamerule_obj = function (gamerule_str) {
+        if (!gamerule_str) {
+            return null;
+        }
+        var gamerule_obj = null;
+        try {
+            gamerule_obj = JSON.parse(gamerule_str);
+        }
+        catch (error) {
+            Log_1["default"].error("get_gamerule_obj", error);
+        }
+        return gamerule_obj;
+    };
     RoomHandle.do_req_create_room = function (session, utag, proto_type, raw_cmd) {
         return __awaiter(this, void 0, void 0, function () {
-            var game_info, isExist, roomid, decode_body, game_server_key, roominfo_obj, room_info_json, ret, ret2, msg, body;
+            var game_info, isExist, roomid, decode_body, game_server_key, gamerule, rulecheck, roominfo_obj, room_info_json, ret, ret2, msg, body;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, GameInfoHandle_1["default"].do_get_ugame_info(utag)];
@@ -112,11 +160,17 @@ var RoomHandle = /** @class */ (function () {
                             LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_CERATEROOM, utag, proto_type, { status: Response_1["default"].SYSTEM_ERR });
                             return [2 /*return*/];
                         }
+                        gamerule = decode_body.gamerule;
+                        rulecheck = RoomHandle.check_gamerule(gamerule);
+                        if (!rulecheck) {
+                            LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_CERATEROOM, utag, proto_type, { status: Response_1["default"].SYSTEM_ERR });
+                            return [2 /*return*/];
+                        }
                         roominfo_obj = {
                             roomid: roomid,
                             uids: [utag],
                             game_serverid: game_server_key,
-                            gamerule: decode_body.gamerule || ""
+                            gamerule: gamerule
                         };
                         Log_1["default"].info("hcc>>createroominfo: ", roominfo_obj);
                         room_info_json = "";
@@ -186,24 +240,12 @@ var RoomHandle = /** @class */ (function () {
                             LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_JOINROOM, utag, proto_type, { status: Response_1["default"].SYSTEM_ERR });
                             return [2 /*return*/];
                         }
-                        roominfo_obj = null;
-                        try {
-                            roominfo_obj = JSON.parse(roominfo_str);
-                        }
-                        catch (error) {
-                            Log_1["default"].error("do_req_join_room>>", error);
-                        }
+                        roominfo_obj = RoomHandle.get_gameinfo_obj(roominfo_str);
                         if (!roominfo_obj) {
                             LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_JOINROOM, utag, proto_type, { status: Response_1["default"].SYSTEM_ERR });
                             return [2 /*return*/];
                         }
-                        gamerule_obj = null;
-                        try {
-                            gamerule_obj = JSON.parse(roominfo_obj.gamerule);
-                        }
-                        catch (error) {
-                            Log_1["default"].error("do_req_join_room22>>", error);
-                        }
+                        gamerule_obj = RoomHandle.get_gamerule_obj(roominfo_obj.gamerule);
                         if (!gamerule_obj) {
                             LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_JOINROOM, utag, proto_type, { status: Response_1["default"].SYSTEM_ERR });
                             return [2 /*return*/];
@@ -382,18 +424,20 @@ var RoomHandle = /** @class */ (function () {
                             LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_BACKROOM, utag, proto_type, { status: Response_1["default"].SYSTEM_ERR });
                             return [2 /*return*/];
                         }
-                        LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_BACKROOM, utag, proto_type, { status: Response_1["default"].OK });
                         return [4 /*yield*/, RoomHandle.get_roominfo_obj_by_uid(utag)];
                     case 3:
                         roominfo_obj = _a.sent();
-                        if (roominfo_obj) {
-                            msg = {
-                                xy_name: RedisEvent_1["default"].redis_lobby_msg_name.back_room,
-                                uid: utag
-                            };
-                            body = ArrayUtil_1["default"].ObjCat(msg, roominfo_obj);
-                            RedisEvent_1["default"].publish_msg(RedisEvent_1["default"].channel_name.lobby_channel, JSON.stringify(body));
+                        if (!roominfo_obj) { //玩家不在房间
+                            LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_BACKROOM, utag, proto_type, { status: Response_1["default"].SYSTEM_ERR });
+                            return [2 /*return*/];
                         }
+                        msg = {
+                            xy_name: RedisEvent_1["default"].redis_lobby_msg_name.back_room,
+                            uid: utag
+                        };
+                        body = ArrayUtil_1["default"].ObjCat(msg, roominfo_obj);
+                        RedisEvent_1["default"].publish_msg(RedisEvent_1["default"].channel_name.lobby_channel, JSON.stringify(body));
+                        LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_BACKROOM, utag, proto_type, { status: Response_1["default"].OK });
                         return [2 /*return*/];
                 }
             });

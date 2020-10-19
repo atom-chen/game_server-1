@@ -74,7 +74,7 @@ var GameRedisMsg = /** @class */ (function () {
     GameRedisMsg.prototype.recv_redis_msg = function (message) {
         try {
             var body = JSON.parse(message);
-            Log_1["default"].info("hcc>>on_message,", body);
+            // Log.info("hcc>>on_message,", body);
             if (body) {
                 var xy_name = body.xy_name;
                 var uid = body.uid;
@@ -91,10 +91,10 @@ var GameRedisMsg = /** @class */ (function () {
         }
     };
     GameRedisMsg.prototype.on_redis_create_room = function (uid, body) {
-        Log_1["default"].info("hcc>>on_redis_create_room", body);
+        // Log.info("hcc>>on_redis_create_room" , body);
         var roomid = body.roomid;
         if (!roomid || roomid == "") {
-            Log_1["default"].warn("on_redis_create_room failed!! roomid:", roomid, "roomdata:", body);
+            Log_1["default"].error("on_redis_create_room failed!! roomid:", roomid, "roomdata:", body);
             return;
         }
         var room = roomMgr.get_room_by_roomid(roomid);
@@ -106,10 +106,10 @@ var GameRedisMsg = /** @class */ (function () {
         }
     };
     GameRedisMsg.prototype.on_redis_back_room = function (uid, body) {
-        Log_1["default"].info("hcc>>on_redis_back_room", body);
+        // Log.info("hcc>>on_redis_back_room", body);
         var roomid = body.roomid;
         if (!roomid || roomid == "") {
-            Log_1["default"].warn("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
+            Log_1["default"].error("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
             return;
         }
         var room = roomMgr.get_room_by_roomid(roomid);
@@ -140,7 +140,7 @@ var GameRedisMsg = /** @class */ (function () {
                         roomid = body.roomid;
                         uids = body.uids;
                         if (!roomid || roomid == "" || !uids) {
-                            Log_1["default"].warn("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
+                            // Log.warn("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
                             return [2 /*return*/];
                         }
                         index = uids.indexOf(uid);
@@ -167,7 +167,7 @@ var GameRedisMsg = /** @class */ (function () {
         });
     };
     GameRedisMsg.prototype.on_redis_join_room = function (uid, body) {
-        Log_1["default"].info("hcc>>on_redis_join_room", body);
+        // Log.info("hcc>>on_redis_join_room", body);
         var roomid = body.roomid;
         var room = roomMgr.get_room_by_roomid(roomid);
         if (room) {

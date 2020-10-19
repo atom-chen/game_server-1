@@ -15,6 +15,7 @@ import GameHoodleProto from '../../protocol/protofile/GameHoodleProto';
 import GameCheck from './GameCheck';
 import RedisLobby from '../../../database/RedisLobby';
 import GameServerData from '../GameServerData';
+import Room from '../cell/Room';
 
 let playerMgr: PlayerManager    = PlayerManager.getInstance();
 let roomMgr: RoomManager        = RoomManager.getInstance();
@@ -22,30 +23,28 @@ let matchMgr: MatchManager      = MatchManager.getInstance();
 
 class GameLinkInterface {
 
-    private static _player_lost_connect(player:Player){
+    private static async _player_lost_connect(player:Player){
         if(!player){
             return;
         }
+    
+        //设置房间内玩家掉线
+        let room:Room = await player.get_room();
+        if (room) {
+            player.set_offline(true)
+            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserOfflineRes, { seatid: player.get_seat_id() }, player.get_uid());
+            GameFunction.broadcast_player_info_in_rooom(room, player.get_uid());
+        }
         
+        /*
         let uname = player.get_unick();
         let numid = player.get_numberid();
         let issuccess = playerMgr.delete_player(player.get_uid());
         if (issuccess) {
             Log.warn(uname + " ,numid:" + numid + " is lostconnect,totalPlyaerCount: " + playerMgr.get_player_count());
         }
-
         RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());
-
-        //设置房间内玩家掉线
-        /*
-        let room = roomMgr.get_room_by_uid(player.get_uid());
-        if (room) {
-            player.set_offline(true)
-            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserOfflineRes, { seatid: player.get_seat_id() }, player);
-            GameFunction.broadcast_player_info_in_rooom(room, player);
-        }
         */
-
 
         /*
         //如果在匹配，就从匹配列表中删除
@@ -74,7 +73,7 @@ class GameLinkInterface {
     }
 
     //玩家断线
-    static do_player_lost_connect(utag:number, proto_type:number, raw_cmd:Buffer){
+    static do_player_lost_connect(session:any, utag:number, proto_type:number, raw_cmd:Buffer){
         if (!GameCheck.check_player(utag)) {
             return;
         }
@@ -97,7 +96,7 @@ class GameLinkInterface {
     static async do_player_login_logic_server(session: any, utag: number, proto_type: number, raw_cmd:any){
         let player: Player = playerMgr.get_player(utag);
         if(player){
-            Log.info("player is exist, uid: ", utag, "is rotot: ", player.is_robot());
+            Log.info("player is exist, uid: ", utag, "is rotot: ", player.is_robot(), "playerCount:", playerMgr.get_player_count());
             let issuccess: any = await player.init_data(session,utag,proto_type);
             if(issuccess){
                 GameSendMsg.send(session, GameHoodleProto.XY_ID.eLoginLogicRes, utag, proto_type, { status: Response.OK })
@@ -118,7 +117,7 @@ class GameLinkInterface {
             } else {
                 newPlayer = await playerMgr.alloc_player(session, utag, proto_type);
             }
-            Log.info("hcc>> new player success!!! , isrobot: ", newPlayer.is_robot(), " ,uid:", newPlayer.get_uid());
+            Log.info("hcc>> new player success!!! , isrobot: ", newPlayer.is_robot(), " ,uid:", newPlayer.get_uid(), "playerCount:", playerMgr.get_player_count());
             if (newPlayer) {
                 GameSendMsg.send(session, GameHoodleProto.XY_ID.eLoginLogicRes, utag, proto_type, { status: Response.OK })
                 RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());

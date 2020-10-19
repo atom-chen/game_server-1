@@ -72,7 +72,7 @@ class GameProcessInterface {
             return;
         }
 
-        let room = await player.get_room()
+        let room:Room = await player.get_room()
         if (room) {
             //已经在游戏中了
             if (room.get_game_state() == GameState.Gameing) {
@@ -82,7 +82,7 @@ class GameProcessInterface {
             }
 
             //已经大结算了
-            if (room.get_play_count() == room.get_conf_play_count()) {
+            if (room.get_cur_play_count() == room.get_max_play_count()) {
                 player.send_cmd(GameHoodleProto.XY_ID.eUserReadyRes, { status: Response.INVALIDI_OPT })
                 Log.warn("on_user_ready error ,game is over!")
                 return;
@@ -110,7 +110,7 @@ class GameProcessInterface {
                 //发送分数
                 GameFunction.send_player_score(room);
                 //局数自加
-                room.set_play_count(room.get_play_count() + 1);
+                room.set_cur_play_count(room.get_cur_play_count() + 1);
                 //发送局数
                 GameFunction.send_play_count(room);
             }

@@ -109,14 +109,14 @@ var Room = /** @class */ (function () {
     }
     */
     //当前房间内人数
-    Room.prototype.get_max_player_count = function () {
+    Room.prototype.get_cur_player_count = function () {
         return this._player_uid_set.length;
     };
     //房间在线人数
     Room.prototype.get_online_max_player_count = function () {
     };
     //房间配置的最多人数
-    Room.prototype.get_max_max_player_count = function () {
+    Room.prototype.get_max_player_count = function () {
         return this._max_player_count;
     };
     //配置的最多局数

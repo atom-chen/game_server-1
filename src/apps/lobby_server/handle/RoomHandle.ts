@@ -23,6 +23,56 @@ export default class RoomHandle {
         return roominfoObj;
     }
 
+    private static check_gamerule(gamerule_str:string):boolean{
+        if (!gamerule_str || gamerule_str == ""){
+            return false;
+        }
+        let gamerule_obj = null;
+        try {
+            gamerule_obj = JSON.parse(gamerule_str);
+        } catch (error) {
+            Log.error("check_game_rule:" , error);
+            return false;
+        }
+        if(!gamerule_obj){
+            return false;
+        }
+
+        let playCount = gamerule_obj.playCount; //局数
+        let playerCount = gamerule_obj.playerCount; //人数
+        if(!playCount || !playerCount){
+            return false;
+        }
+        return true;
+    }
+
+    private static get_gameinfo_obj(gameinfo_str:string){
+        if (!gameinfo_str) {
+            return null;
+        }
+        let gameinfo_obj = null;
+        try {
+            gameinfo_obj = JSON.parse(gameinfo_str);
+        } catch (error) {
+            Log.error("get_gameinfo_obj",error);
+        }
+
+        return gameinfo_obj;
+    }
+
+    private static get_gamerule_obj(gamerule_str:string){
+        if(!gamerule_str){
+            return null;
+        }
+        let gamerule_obj = null;
+        try {
+            gamerule_obj = JSON.parse(gamerule_str);
+        } catch (error) {
+            Log.error("get_gamerule_obj", error);
+        }
+        return gamerule_obj;
+    }
+
     public static async do_req_create_room(session: any, utag: number, proto_type: number, raw_cmd: any) {
         let game_info = await GameInfoHandle.do_get_ugame_info(utag);
         // Log.info("hcc>>game_info", game_info); //玩家信息不存在
@@ -55,11 +105,19 @@ export default class RoomHandle {
             LobbySendMsg.send(session, LobbyProto.XY_ID.RES_CERATEROOM, utag, proto_type, { status: Response.SYSTEM_ERR });
             return;
         }
+
+        let gamerule = decode_body.gamerule;
+        let rulecheck = RoomHandle.check_gamerule(gamerule);
+        if(!rulecheck){
+            LobbySendMsg.send(session, LobbyProto.XY_ID.RES_CERATEROOM, utag, proto_type, { status: Response.SYSTEM_ERR });
+            return;
+        }
+
         let roominfo_obj = {
             roomid: roomid,
             uids: [utag],
             game_serverid: game_server_key,
-            gamerule: decode_body.gamerule || "",
+            gamerule: gamerule,
         }
 
         Log.info("hcc>>createroominfo: ", roominfo_obj)
@@ -119,25 +177,13 @@ export default class RoomHandle {
             return;
         }
 
-       let roominfo_obj = null;
-       try {
-           roominfo_obj = JSON.parse(roominfo_str);
-       } catch (error) {
-           Log.error("do_req_join_room>>" , error);
-       }
-
+       let roominfo_obj = RoomHandle.get_gameinfo_obj(roominfo_str);
        if(!roominfo_obj){
            LobbySendMsg.send(session, LobbyProto.XY_ID.RES_JOINROOM, utag, proto_type, { status: Response.SYSTEM_ERR });
             return;
        }
 
-       let gamerule_obj = null;
-       try {
-           gamerule_obj = JSON.parse(roominfo_obj.gamerule);
-       } catch (error) {
-           Log.error("do_req_join_room22>>", error);
-       }
-
+        let gamerule_obj = RoomHandle.get_gamerule_obj(roominfo_obj.gamerule);
         if (!gamerule_obj) {
             LobbySendMsg.send(session, LobbyProto.XY_ID.RES_JOINROOM, utag, proto_type, { status: Response.SYSTEM_ERR });
             return;
@@ -170,6 +216,7 @@ export default class RoomHandle {
             }
         }
     }
+
     public static async do_req_exit_room(session: any, utag: number, proto_type: number, raw_cmd: any) {
         let game_info = await GameInfoHandle.do_get_ugame_info(utag);
         // Log.info("hcc>>game_info", game_info); //玩家信息不存在
@@ -280,17 +327,20 @@ export default class RoomHandle {
             LobbySendMsg.send(session, LobbyProto.XY_ID.RES_BACKROOM, utag, proto_type, { status: Response.SYSTEM_ERR });
             return;
         }
-        LobbySendMsg.send(session, LobbyProto.XY_ID.RES_BACKROOM, utag, proto_type, { status: Response.OK });
-
+        
         let roominfo_obj = await RoomHandle.get_roominfo_obj_by_uid(utag);
-        if (roominfo_obj) {
-            let msg = {
-                xy_name: RedisEvent.redis_lobby_msg_name.back_room,
-                uid: utag,
-            }
-            let body = ArrayUtil.ObjCat(msg, roominfo_obj);
-            RedisEvent.publish_msg(RedisEvent.channel_name.lobby_channel, JSON.stringify(body));
+        if (!roominfo_obj) {//玩家不在房间
+            LobbySendMsg.send(session, LobbyProto.XY_ID.RES_BACKROOM, utag, proto_type, { status: Response.SYSTEM_ERR });
+            return;
         }
+
+        let msg = {
+            xy_name: RedisEvent.redis_lobby_msg_name.back_room,
+            uid: utag,
+        }
+        let body = ArrayUtil.ObjCat(msg, roominfo_obj);
+        RedisEvent.publish_msg(RedisEvent.channel_name.lobby_channel, JSON.stringify(body));
+        LobbySendMsg.send(session, LobbyProto.XY_ID.RES_BACKROOM, utag, proto_type, { status: Response.OK });
     }
 
     public static async do_req_room_status(session: any, utag: number, proto_type: number, raw_cmd: any) {

@@ -62,13 +62,16 @@ var GameLinkInterface = /** @class */ (function () {
         if (!player) {
             return;
         }
-        var uname = player.get_unick();
-        var numid = player.get_numberid();
-        var issuccess = playerMgr.delete_player(player.get_uid());
+        /*
+        let uname = player.get_unick();
+        let numid = player.get_numberid();
+        let issuccess = playerMgr.delete_player(player.get_uid());
         if (issuccess) {
-            Log_1["default"].warn(uname + " ,numid:" + numid + " is lostconnect,totalPlyaerCount: " + playerMgr.get_player_count());
+            Log.warn(uname + " ,numid:" + numid + " is lostconnect,totalPlyaerCount: " + playerMgr.get_player_count());
         }
-        RedisLobby_1["default"].set_server_playercount(GameServerData_1["default"].get_server_key(), playerMgr.get_player_count());
+
+        RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());
+        */
         //设置房间内玩家掉线
         /*
         let room = roomMgr.get_room_by_uid(player.get_uid());

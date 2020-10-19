@@ -309,8 +309,8 @@ class GameFunction {
     }
 
     //发送玩家射击 ,服务只做转发
-    public static send_player_shoot(room:Room, shoot_info:any, not_player:Player){
-        if(!room || !shoot_info || !not_player){
+    public static send_player_shoot(room: Room, shoot_info: any, not_uid:number){
+        if(!room || !shoot_info){
             return;
         }
         let body = {
@@ -320,7 +320,6 @@ class GameFunction {
             posy: String(shoot_info.posy),
             shootpower:Number(shoot_info.shootpower),
         }
-        let not_uid = not_player ? not_player.get_uid() : undefined;
         room.broadcast_in_room(GameHoodleProto.XY_ID.ePlayerShootRes, body, not_uid)
     }
 

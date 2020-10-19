@@ -8,25 +8,29 @@ import ProtoManager from '../../../netbus/ProtoManager';
 import GameFunction from './GameFunction';
 import GameCheck from './GameCheck';
 import { RoomListConfig } from '../config/RoomListConfig';
+import Room from '../cell/Room';
 
 let playerMgr: PlayerManager    = PlayerManager.getInstance();
 let roomMgr: RoomManager        = RoomManager.getInstance();
 
 class GameLogicInterface {
-    /*
-    static do_player_shoot(utag: number, proto_type: number, raw_cmd: any) {
-        let player: Player = playerMgr.get_player(utag);
-        if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_unick(),"on_player_shoot room is not exist!")
+    static async do_player_shoot(session:any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            Log.warn("on_player_shoot player is not exist!")
             return;
         }
+        let player: Player = playerMgr.get_player(utag);
+        if(!player){
+            return;
+        }
+
         let userstate = player.get_user_state()
         if (userstate != UserState.Playing) {
             Log.warn(player.get_unick(), "on_player_shoot user is not in playing state!")
             return;
         }
 
-        let room = roomMgr.get_room_by_uid(player.get_uid());
+        let room:Room = await player.get_room();
         if (room) {
             if (room.get_game_state() != GameState.Gameing) {
                 Log.warn(player.get_unick(),"on_player_shoot room is not in playing state!")
@@ -34,22 +38,18 @@ class GameLogicInterface {
             }
             //发送玩家射击信息
             let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-            GameFunction.send_player_shoot(room, body, player);
+            GameFunction.send_player_shoot(room, body, player.get_uid());
             //设置下一个玩家射击权限
             GameFunction.set_next_player_power(room);
-            //发送权限
-            // GameFunction.send_player_power(room); //在玩家停下来的时候发送权限，不在这里发
         }
     }
-    */
 
-    /*
-    static do_player_ball_pos(utag: number, proto_type: number, raw_cmd: any) {
-        let player: Player = PlayerManager.getInstance().get_player(utag);
-        if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_unick(), "on_player_ball_pos room is not exist!")
+    static async do_player_ball_pos(session:any, utag: number, proto_type: number, raw_cmd: any) {
+        if (!GameCheck.check_player(utag)) {
+            Log.warn("on_player_shoot player is not exist!")
             return;
         }
+        let player: Player = playerMgr.get_player(utag);
 
         let userstate = player.get_user_state()
         if (userstate != UserState.Playing) {
@@ -57,7 +57,7 @@ class GameLogicInterface {
             return;
         }
 
-        let room = roomMgr.get_room_by_uid(player.get_uid());
+        let room:Room = await player.get_room();
         if (room) {
             if (room.get_game_state() != GameState.Gameing) {
                 Log.warn(player.get_unick(), "on_player_ball_pos room is not in playing state!")
@@ -88,14 +88,11 @@ class GameLogicInterface {
             GameFunction.send_player_power(room);
         }
     }
-    */
 
-    /*
-    static async do_player_is_shooted(utag: number, proto_type: number, raw_cmd: any) {
+    static async do_player_is_shooted(session:any, utag: number, proto_type: number, raw_cmd: any) {
         let player: Player = playerMgr.get_player(utag);
-        if (!GameCheck.check_room(utag)) {
-            Log.warn(player.get_unick(), "on_player_is_shooted room is not exist!")
-            return;
+        if (!player) {
+            return
         }
 
         let userstate = player.get_user_state()
@@ -104,7 +101,7 @@ class GameLogicInterface {
             return;
         }
 
-        let room = roomMgr.get_room_by_uid(player.get_uid());
+        let room:Room = await player.get_room();
         if (room) {
             if (room.get_game_state() != GameState.Gameing) {
                 Log.warn(player.get_unick(), "on_player_is_shooted room is not in playing state!")
@@ -146,15 +143,13 @@ class GameLogicInterface {
             //发送结算
             GameFunction.send_game_result(room);
             //大结算: 踢出所有玩家，房间解散
-            if (room.get_play_count() == room.get_conf_play_count()) {
+            if (room.get_cur_play_count() == room.get_max_play_count()) {
                 await GameFunction.cal_player_chip_and_write(room); //计算金币,需要加await，不然会先执行下面的
                 GameFunction.send_game_total_result(room);
-                room.kick_all_player();
                 roomMgr.delete_room(room.get_room_id());
             }
         }
     }
-    */
 }
 
 export default GameLogicInterface;
