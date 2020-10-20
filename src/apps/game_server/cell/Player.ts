@@ -40,7 +40,8 @@ class Player extends PlayerBase{
         return true;
     }
 
-    ///////////////////////////////// room data
+    /////////////////////////////////
+    //获取此玩家所在房间信息
     async get_room_info() {
         let room_info_str = await RedisLobby.get_roominfo_by_uid(this._uid);
         let room_info_obj: any = {};
@@ -52,23 +53,48 @@ class Player extends PlayerBase{
         return room_info_obj;
     }
 
+    //获取次玩家所在房间id
     async get_roomid(){
-        let room_info_str = await RedisLobby.get_roominfo_by_uid(this._uid);
-        try {
-            let room_info_obj = JSON.parse(room_info_str);
-            if (room_info_obj && room_info_obj.roomid){
-                return room_info_obj.roomid;
-            }
-        } catch (error) {
-            Log.error("get_roomid error>>", error);
+        let room_info_obj = await this.get_room_info();
+        if (room_info_obj){
+            return room_info_obj.roomid;
         }
-        return null;
     }
 
+    //获取此玩家所在房间对象
     async get_room(){
         let roomid = await this.get_roomid();
         let room = RoomManager.getInstance().get_room_by_roomid(roomid);
         return room;
+    }
+
+    //获取房间内所有玩家UID
+    async get_all_uids(){
+        let room_info_obj = await this.get_room_info();
+        if(room_info_obj){
+            return room_info_obj.uids;
+        }
+    }
+
+    //发送给房间所有人
+    async send_all(ctype: number, body: any, not_uid?: number) {
+        let uids: Array<number> = await this.get_all_uids();
+        if (uids) {
+            uids.forEach(uid => {
+                if (uid != not_uid) {
+                    NetServer.send_cmd(this._session, Stype.S_TYPE.GameHoodle, ctype, uid, this._proto_type, body);
+                }
+            });
+        }
+    }
+
+    //发送消息
+    send_cmd(ctype: number, body: any) {
+        if (!this._session) {
+            Log.error("send_cmd error, session is null!!");
+            return;
+        }
+        NetServer.send_cmd(this._session, Stype.S_TYPE.GameHoodle, ctype, this._uid, this._proto_type, body);
     }
 
     //小球信息
@@ -163,30 +189,6 @@ class Player extends PlayerBase{
         this.set_user_power(0);
         this.set_user_score(0);
         this.set_user_pos({posx:0,posy:0});
-    }
-
-    //发送消息
-    send_cmd(ctype: number, body: any) {
-        if (!this._session) {
-            Log.error("send_cmd error, session is null!!");
-            return;
-        }
-        NetServer.send_cmd(this._session, Stype.S_TYPE.GameHoodle, ctype, this._uid, this._proto_type, body);
-    }
-
-    //发送给房间所有人
-    async send_all(ctype:number, body:any, not_uid?:number){
-        let room_info = await this.get_room_info();
-        if(room_info){
-            let uids:Array<number> = room_info.uids;
-            if(uids){
-                uids.forEach(uid => {
-                    if(uid != not_uid){
-                        NetServer.send_cmd(this._session, Stype.S_TYPE.GameHoodle, ctype, uid, this._proto_type, body);
-                    }
-                });
-            }
-        }
     }
 }
 

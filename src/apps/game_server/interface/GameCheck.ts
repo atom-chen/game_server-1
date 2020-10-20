@@ -16,15 +16,6 @@ class GameCheck {
         }
         return false;
     }
-    
-    //检测是否非法房间
-    static check_room(roomid: string) {
-        let room:Room = RoomManager.getInstance().get_room_by_roomid(roomid);
-        if (!room) {
-            return false;
-        }
-        return true;
-    }
 
     //检测游戏开始
     static check_game_start(room: Room) {

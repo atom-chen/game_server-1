@@ -4,6 +4,7 @@ import Log from '../../../utils/Log';
 import GameHoodleConfig from '../config/GameHoodleConfig';
 import Response from '../../protocol/Response';
 import GameHoodleProto from '../../protocol/protofile/GameHoodleProto';
+import RedisLobby from '../../../database/RedisLobby';
 
 class RoomManager {
     private static readonly Instance: RoomManager = new RoomManager();
@@ -14,6 +15,7 @@ class RoomManager {
         //删除创建超过10分钟的房间
         let _this = this;
         setInterval(function() {
+            /*
             for(let idx in _this._room_set){
                 let room:Room = _this._room_set[idx];
                 room.set_tick_count(room.get_tick_count() + 1);
@@ -24,6 +26,7 @@ class RoomManager {
                     _this.delete_room(room.get_room_id());
                 }
             }
+        */
         },1000);
     }
 
@@ -50,6 +53,7 @@ class RoomManager {
         if(this._room_set[roomid]){
             delete this._room_set[roomid];
             Log.info("delete_room:", roomid, "success, roomCount: " , this.get_room_count());
+            RedisLobby.delete_room(roomid);
             return true;
         }else{
             Log.warn("delete_room:", roomid, "is not in game server!!!!");

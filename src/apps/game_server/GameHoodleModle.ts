@@ -38,18 +38,19 @@ class GameHoodleModle {
             [GameHoodleProto.XY_ID.ePlayerBallPosReq]:                this.on_player_ball_pos, //game
             [GameHoodleProto.XY_ID.ePlayerIsShootedReq]:              this.on_player_is_shooted, //game
 
-            // [GameHoodleProto.XY_ID.eUserMatchReq]:                    this.on_player_match, //game match
-            // [GameHoodleProto.XY_ID.eUserStopMatchReq]:                this.on_player_stop_match, //game match
             // [GameHoodleProto.XY_ID.eUserGameInfoReq]:                 this.on_player_get_ugame_info, // lobby
             // [GameHoodleProto.XY_ID.eUserBallInfoReq]:                 this.on_player_get_ball_info, //lobby
             // [GameHoodleProto.XY_ID.eUpdateUserBallReq]:               this.on_player_update_ball_info, //lobby
-            // [GameHoodleProto.XY_ID.eStoreListReq]:                    this.on_player_store_list, //lobby
             // [GameHoodleProto.XY_ID.eBuyThingsReq]:                    this.on_player_buy_things, //lobby
             // [GameHoodleProto.XY_ID.eUserConfigReq]:                   this.on_player_get_config, //lobby
             // [GameHoodleProto.XY_ID.eUseHoodleBallReq]:                this.on_player_use_hoodleball, //lobby
+            // [GameHoodleProto.XY_ID.eRoomListConfigReq]:               this.on_player_room_list_req,//lobby
+
+            // [GameHoodleProto.XY_ID.eUserMatchReq]:                    this.on_player_match, //game match
+            // [GameHoodleProto.XY_ID.eUserStopMatchReq]:                this.on_player_stop_match, //game match
+            // [GameHoodleProto.XY_ID.eStoreListReq]:                    this.on_player_store_list, //lobby
             // [GameHoodleProto.XY_ID.eUserPlayAgainReq]:                this.on_player_play_again_req, //lobby
             // [GameHoodleProto.XY_ID.eUserPlayAgainAnswerReq]:          this.on_player_play_again_answer, //lobby
-            // [GameHoodleProto.XY_ID.eRoomListConfigReq]:               this.on_player_room_list_req,//lobby
         }
     }
 

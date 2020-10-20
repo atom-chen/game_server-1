@@ -86,6 +86,30 @@ class Room {
         }
     }
 
+    broadcast_in_room(ctype: number, body: any, not_to_uid?: number) {
+        if (!ctype) {
+            return;
+        }
+        let all_player = this.get_all_player();
+        if (not_to_uid) {
+            for (const key in all_player) {
+                let player: Player = all_player[key];
+                if (player) {
+                    if (player.get_uid() != not_to_uid) {
+                        player.send_cmd(ctype, body)
+                    }
+                }
+            }
+        } else {
+            for (const key in all_player) {
+                let player: Player = all_player[key];
+                if (player) {
+                    player.send_cmd(ctype, body)
+                }
+            }
+        }
+    }
+
     //生成一个seatid,从1->maxplayercount
     /*
     born_seatid() {
@@ -202,30 +226,6 @@ class Room {
 
     have_robot_player(){
       
-    }
-
-    broadcast_in_room(ctype:number, body:any ,not_to_uid?:number){
-        if(!ctype){
-            return;
-        }
-        let all_player = this.get_all_player();
-        if (not_to_uid){
-            for (const key in all_player) {
-                let player: Player = all_player[key];
-                if(player){
-                    if(player.get_uid() != not_to_uid){
-                        player.send_cmd(ctype,body)
-                    }
-                }
-            }
-        }else{
-            for (const key in all_player) {
-                let player: Player = all_player[key];
-                if(player){
-                    player.send_cmd(ctype,body)
-                }
-            }
-        }
     }
 }
 

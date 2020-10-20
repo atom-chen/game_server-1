@@ -3,14 +3,10 @@ import Player from '../cell/Player';
 import Log from '../../../utils/Log';
 import Response from '../../protocol/Response';
 import PlayerManager from '../manager/PlayerManager';
-import RoomManager from '../manager/RoomManager';
 import GameFunction from './GameFunction';
-import MatchManager from '../manager/MatchManager';
 import GameSendMsg from '../GameSendMsg';
-import { GameState } from '../config/State';
 import ProtoManager from '../../../netbus/ProtoManager';
 import RobotManager from '../manager/RobotManager';
-import * as util from 'util';
 import GameHoodleProto from '../../protocol/protofile/GameHoodleProto';
 import GameCheck from './GameCheck';
 import RedisLobby from '../../../database/RedisLobby';
@@ -18,8 +14,6 @@ import GameServerData from '../GameServerData';
 import Room from '../cell/Room';
 
 let playerMgr: PlayerManager    = PlayerManager.getInstance();
-let roomMgr: RoomManager        = RoomManager.getInstance();
-let matchMgr: MatchManager      = MatchManager.getInstance();
 
 class GameLinkInterface {
 
@@ -32,44 +26,9 @@ class GameLinkInterface {
         let room:Room = await player.get_room();
         if (room) {
             player.set_offline(true)
-            room.broadcast_in_room(GameHoodleProto.XY_ID.eUserOfflineRes, { seatid: player.get_seat_id() }, player.get_uid());
+            player.send_all(GameHoodleProto.XY_ID.eUserOfflineRes, { seatid: player.get_seat_id() }, player.get_uid());
             GameFunction.broadcast_player_info_in_rooom(room, player.get_uid());
         }
-        
-        /*
-        let uname = player.get_unick();
-        let numid = player.get_numberid();
-        let issuccess = playerMgr.delete_player(player.get_uid());
-        if (issuccess) {
-            Log.warn(uname + " ,numid:" + numid + " is lostconnect,totalPlyaerCount: " + playerMgr.get_player_count());
-        }
-        RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());
-        */
-
-        /*
-        //如果在匹配，就从匹配列表中删除
-        let ret = matchMgr.stop_player_match(player.get_uid());
-        if (ret) {
-            Log.info(uname, "delete from match")
-        }
-
-        //如果在匹配房间内游戏还没开始，达到条件房间就解散(在线玩家为0)
-        if (room && room.get_is_match_room()) {
-            if (room.get_game_state() != GameState.InView) { //游戏已经开始，不能直接解散
-                return;
-            }
-            //游戏还没开始，而且没有在线玩家，房间解散
-            let playerCount = room.get_player_count();
-            let onlinePlayerCount = room.get_online_player_count();
-            Log.info("hcc>>do_player_lost_connect: playerCouont: ", playerCount, " ,onlinePlayerCount: ", onlinePlayerCount);
-            if (playerCount == 0 || onlinePlayerCount == 0) {
-                room.kick_all_player();
-                let roomID = room.get_room_id();
-                let ret = roomMgr.delete_room(roomID);
-                Log.info("hcc>>do_player_lost_connect>>delete room :", ret, " ,roomid: ", roomID);
-            }
-        }
-        */
     }
 
     //玩家断线

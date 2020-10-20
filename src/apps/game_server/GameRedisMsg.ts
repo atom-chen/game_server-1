@@ -98,6 +98,7 @@ export default class GameRedisMsg {
         for (let index = 0; index < uids.length; index++) {
             playerMgr.delete_player(uids[index]);
         }
+        RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());
         Log.info("hcc>>on_redis_dessolve_room", body, ",playercoutn:" , playerMgr.get_player_count());
 
         let roomid = body.roomid;
@@ -106,6 +107,7 @@ export default class GameRedisMsg {
 
    async on_redis_exit_room(uid: number, body: any) {
         playerMgr.delete_player(uid);
+        RedisLobby.set_server_playercount(GameServerData.get_server_key(), playerMgr.get_player_count());
         Log.info("hcc>>on_redis_exit_room", body," ,playercount:" , playerMgr.get_player_count());
 
         let roomid = body.roomid;

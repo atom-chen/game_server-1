@@ -7,7 +7,6 @@ import StringUtil from '../../../utils/StringUtil';
 import MySqlGame from '../../../database/MySqlGame';
 import GameHoodleConfig from "../config/GameHoodleConfig";
 import Response from '../../protocol/Response';
-import RoomManager from "../manager/RoomManager";
 import ArrayUtil from "../../../utils/ArrayUtil";
 import GameHoodleProto from "../../protocol/protofile/GameHoodleProto";
 
