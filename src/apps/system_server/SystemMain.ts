@@ -4,8 +4,8 @@
 */
 
 import GameAppConfig from "../config/GameAppConfig"
-import NetServer from "../../netbus/NetServer"
-import ServiceManager from "../../netbus/ServiceManager"
+import NetServer from "../../netengine/NetServer"
+import ServiceManager from "../../netengine/ServiceManager"
 import SystemService from './SystemService';
 import MySqlSystem from "../../database/MysqlSystem"
 import MySqlGame from '../../database/MySqlGame';

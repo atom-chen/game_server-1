@@ -51,7 +51,7 @@ var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
-var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../../../netengine/ProtoManager"));
 var util = __importStar(require("util"));
 var https = __importStar(require("https"));
 var iconv = __importStar(require("iconv-lite"));
@@ -67,6 +67,10 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var body, logincode, wechatuserinfo, userinfoObj, obj_encryptedData_1, obj_iv_1, obj_rawData, obj_signature, obj_userInfo, wechat_login_address;
             return __generator(this, function (_a) {
+                if (utag == 0) {
+                    AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response_1["default"].ERROR_1 });
+                    return [2 /*return*/];
+                }
                 body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
                 logincode = body.logincode;
                 wechatuserinfo = body.userlogininfo;
@@ -183,7 +187,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                     case 3:
                         sql_info = data[0];
                         resbody = {
-                            status: Response_1["default"].OK,
+                            status: Response_1["default"].SUCCESS,
                             uid: Number(sql_info.uid),
                             userlogininfo: JSON.stringify(sql_info)
                         };
@@ -200,7 +204,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                         _a.label = 5;
                     case 5: return [2 /*return*/];
                     case 6:
-                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response_1["default"].ERROR_1 });
                         return [2 /*return*/];
                 }
             });
@@ -213,6 +217,10 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (utag == 0) {
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response_1["default"].ERROR_1 });
+                            return [2 /*return*/];
+                        }
                         body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
                         if (!body) return [3 /*break*/, 3];
                         wechatsessionkey = body.wechatsessionkey;
@@ -223,7 +231,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                         if (data.length > 0) {
                             sql_info = data[0];
                             resbody = {
-                                status: Response_1["default"].OK,
+                                status: Response_1["default"].SUCCESS,
                                 uid: Number(sql_info.uid),
                                 userlogininfo: JSON.stringify(sql_info)
                             };
@@ -233,7 +241,7 @@ var AuthWeChatLoginInterface = /** @class */ (function () {
                         }
                         _a.label = 2;
                     case 2:
-                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response_1["default"].ERROR_2 });
                         _a.label = 3;
                     case 3: return [2 /*return*/];
                 }

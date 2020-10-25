@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var Response_1 = __importDefault(require("../protocol/Response"));
-var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../../netengine/ProtoManager"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var RobotGameInterface_1 = __importDefault(require("./interface/RobotGameInterface"));
 var Stype_1 = __importDefault(require("../protocol/Stype"));
@@ -31,7 +31,7 @@ var RobotAuthModel = /** @class */ (function () {
         var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
         if (body) {
             var status_1 = body.status;
-            if (Response_1["default"].OK == status_1) {
+            if (Response_1["default"].SUCCESS == status_1) {
                 RobotGameInterface_1["default"].robot_login_logic_server(session, utag);
             }
             else {

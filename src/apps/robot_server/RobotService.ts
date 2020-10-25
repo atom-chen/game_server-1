@@ -1,6 +1,6 @@
 //机器人服务
 
-import ServiceBase from "../../netbus/ServiceBase"
+import ServiceBase from "../../netengine/ServiceBase"
 import RobotGameModel from "./RobotGameModel";
 import RobotAuthModel from './RobotAuthModel';
 import Stype from '../protocol/Stype';

@@ -45,7 +45,7 @@ var Response_1 = __importDefault(require("../../protocol/Response"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var LoginRewardConfig_1 = require("../config/LoginRewardConfig");
 var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
-var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../../../netengine/ProtoManager"));
 var TimeUtil_1 = __importDefault(require("../../../utils/TimeUtil"));
 var MySqlGame_1 = __importDefault(require("../../../database/MySqlGame"));
 var SystemProto_1 = __importDefault(require("../../protocol/protofile/SystemProto"));
@@ -59,7 +59,12 @@ var LoginRewardInterface = /** @class */ (function () {
             var data, ret, sql_info, bonues_days, bonues_time, config, day, config_obj, day_index, istodaysign, resbody;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, MysqlSystem_1["default"].get_login_bonues_info_by_uid(utag)];
+                    case 0:
+                        if (utag == 0) {
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response_1["default"].ERROR_1 });
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, MysqlSystem_1["default"].get_login_bonues_info_by_uid(utag)];
                     case 1:
                         data = _a.sent();
                         if (!data) return [3 /*break*/, 5];
@@ -92,7 +97,7 @@ var LoginRewardInterface = /** @class */ (function () {
                         }
                         istodaysign = bonues_time == TimeUtil_1["default"].timestamp_today();
                         resbody = {
-                            status: 1,
+                            status: Response_1["default"].SUCCESS,
                             signdays: bonues_days,
                             istodaysign: istodaysign,
                             config: JSON.stringify(config)
@@ -102,7 +107,7 @@ var LoginRewardInterface = /** @class */ (function () {
                         _a.label = 4;
                     case 4: return [3 /*break*/, 6];
                     case 5:
-                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response_1["default"].ERROR_1 });
                         _a.label = 6;
                     case 6: return [2 /*return*/];
                 }
@@ -116,6 +121,10 @@ var LoginRewardInterface = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (utag == 0) {
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response_1["default"].ERROR_2 });
+                            return [2 /*return*/];
+                        }
                         body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
                         if (!body) return [3 /*break*/, 4];
                         signofday = body.signofday;
@@ -146,7 +155,7 @@ var LoginRewardInterface = /** @class */ (function () {
                                 propcount: LoginRewardConfig_1.LoginRewardConfig[signofday].propcount
                             };
                             resbody = {
-                                status: Response_1["default"].OK,
+                                status: Response_1["default"].SUCCESS,
                                 rewardconfig: JSON.stringify(rewardObj)
                             };
                             SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, resbody);
@@ -155,7 +164,7 @@ var LoginRewardInterface = /** @class */ (function () {
                         }
                         _a.label = 4;
                     case 4:
-                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response_1["default"].ERROR_1 });
                         return [2 /*return*/];
                 }
             });

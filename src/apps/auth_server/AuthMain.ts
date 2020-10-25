@@ -4,9 +4,9 @@
 */
 
 import GameAppConfig from '../config/GameAppConfig';
-import NetServer from "../../netbus/NetServer"
+import NetServer from "../../netengine/NetServer"
 import AuthService from "./AuthService"
-import ServiceManager from "../../netbus/ServiceManager"
+import ServiceManager from "../../netengine/ServiceManager"
 import MySqlAuth from "../../database/MySqlAuth"
 import Stype from '../protocol/Stype';
 import RedisAuthCenter from '../../database/RedisAuth';

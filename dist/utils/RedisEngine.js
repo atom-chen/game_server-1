@@ -56,10 +56,14 @@ var RedisEngine = /** @class */ (function () {
         this._port = 0;
         this._db_index = 0;
         this._redis_client = null;
-        this._message_func = null;
+        this._redis_client_dup = null;
+        this._message_func = {};
     }
     RedisEngine.prototype.get_engine = function () {
         return this._redis_client;
+    };
+    RedisEngine.prototype.get_dup_engine = function () {
+        return this._redis_client_dup;
     };
     RedisEngine.prototype.connect = function (host, port, db_index) {
         this._db_index = db_index || 0;
@@ -70,6 +74,7 @@ var RedisEngine = /** @class */ (function () {
             port: this._port,
             db: this._db_index
         });
+        this._redis_client_dup = this._redis_client.duplicate();
         this._redis_client.on("error", function (error) {
             Log_1["default"].error(error);
         });
@@ -88,8 +93,8 @@ var RedisEngine = /** @class */ (function () {
         var _this = this;
         this._redis_client.on("message", function (channel, message) {
             // Log.info("redis message:", channel, message);
-            if (_this._message_func) {
-                _this._message_func(channel, message);
+            if (_this._message_func[channel]) {
+                _this._message_func[channel](channel, message);
             }
         });
     };
@@ -100,7 +105,7 @@ var RedisEngine = /** @class */ (function () {
             return;
         }
         this.get_engine().subscribe(channelName);
-        this._message_func = func;
+        this._message_func[channelName] = func;
         Log_1["default"].info("listen channel: ", channelName, "success!!");
     };
     //取消订阅消息

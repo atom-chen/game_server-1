@@ -1,4 +1,5 @@
 "use strict";
+//接收redis消息
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -45,7 +46,7 @@ var RedisEvent_1 = __importDefault(require("../../database/RedisEvent"));
 var GameServerData_1 = __importDefault(require("./GameServerData"));
 var RoomManager_1 = __importDefault(require("./manager/RoomManager"));
 var RedisLobby_1 = __importDefault(require("../../database/RedisLobby"));
-var GameFunction_1 = __importDefault(require("./interface/GameFunction"));
+var SendLogicInfo_1 = __importDefault(require("./handler/SendLogicInfo"));
 var playerMgr = PlayerManager_1["default"].getInstance();
 var roomMgr = RoomManager_1["default"].getInstance();
 /*
@@ -54,6 +55,7 @@ roomdata = {
     uids:[1902,1903,1904],
     game_serverid:6090,
     gamerule: '{"playerCount":2,"playCount":3}', //string
+    game_state : 1,
 }
 */
 var GameRedisMsg = /** @class */ (function () {
@@ -61,11 +63,11 @@ var GameRedisMsg = /** @class */ (function () {
         var _a;
         this._redis_handler_map = {};
         this._redis_handler_map = (_a = {},
-            _a[RedisEvent_1["default"].redis_lobby_msg_name.create_room] = this.on_redis_create_room,
-            _a[RedisEvent_1["default"].redis_lobby_msg_name.back_room] = this.on_redis_back_room,
-            _a[RedisEvent_1["default"].redis_lobby_msg_name.dessolve_room] = this.on_redis_dessolve_room,
-            _a[RedisEvent_1["default"].redis_lobby_msg_name.exit_room] = this.on_redis_exit_room,
-            _a[RedisEvent_1["default"].redis_lobby_msg_name.join_room] = this.on_redis_join_room,
+            _a[RedisEvent_1["default"].redis_lobby_channel_msg.create_room] = this.on_redis_create_room,
+            _a[RedisEvent_1["default"].redis_lobby_channel_msg.back_room] = this.on_redis_back_room,
+            _a[RedisEvent_1["default"].redis_lobby_channel_msg.dessolve_room] = this.on_redis_dessolve_room,
+            _a[RedisEvent_1["default"].redis_lobby_channel_msg.exit_room] = this.on_redis_exit_room,
+            _a[RedisEvent_1["default"].redis_lobby_channel_msg.join_room] = this.on_redis_join_room,
             _a);
     }
     GameRedisMsg.getInstance = function () {
@@ -74,7 +76,6 @@ var GameRedisMsg = /** @class */ (function () {
     GameRedisMsg.prototype.recv_redis_msg = function (message) {
         try {
             var body = JSON.parse(message);
-            // Log.info("hcc>>on_message,", body);
             if (body) {
                 var xy_name = body.xy_name;
                 var uid = body.uid;
@@ -91,7 +92,6 @@ var GameRedisMsg = /** @class */ (function () {
         }
     };
     GameRedisMsg.prototype.on_redis_create_room = function (uid, body) {
-        // Log.info("hcc>>on_redis_create_room" , body);
         var roomid = body.roomid;
         if (!roomid || roomid == "") {
             Log_1["default"].error("on_redis_create_room failed!! roomid:", roomid, "roomdata:", body);
@@ -106,7 +106,6 @@ var GameRedisMsg = /** @class */ (function () {
         }
     };
     GameRedisMsg.prototype.on_redis_back_room = function (uid, body) {
-        // Log.info("hcc>>on_redis_back_room", body);
         var roomid = body.roomid;
         if (!roomid || roomid == "") {
             Log_1["default"].error("on_redis_back_room failed!! roomid:", roomid, "roomdata:", body);
@@ -119,12 +118,18 @@ var GameRedisMsg = /** @class */ (function () {
         else {
             room = roomMgr.alloc_room(roomid, body);
         }
+        var player = playerMgr.get_player(uid);
+        if (player) {
+            player.set_offline(false);
+            SendLogicInfo_1["default"].broadcast_player_info_in_rooom(room, player.get_uid());
+        }
     };
     GameRedisMsg.prototype.on_redis_dessolve_room = function (uid, body) {
         var uids = body.uids;
         for (var index = 0; index < uids.length; index++) {
             playerMgr.delete_player(uids[index]);
         }
+        RedisLobby_1["default"].set_server_playercount(GameServerData_1["default"].get_server_key(), playerMgr.get_player_count());
         Log_1["default"].info("hcc>>on_redis_dessolve_room", body, ",playercoutn:", playerMgr.get_player_count());
         var roomid = body.roomid;
         roomMgr.delete_room(roomid);
@@ -136,6 +141,7 @@ var GameRedisMsg = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         playerMgr.delete_player(uid);
+                        RedisLobby_1["default"].set_server_playercount(GameServerData_1["default"].get_server_key(), playerMgr.get_player_count());
                         Log_1["default"].info("hcc>>on_redis_exit_room", body, " ,playercount:", playerMgr.get_player_count());
                         roomid = body.roomid;
                         uids = body.uids;
@@ -151,10 +157,7 @@ var GameRedisMsg = /** @class */ (function () {
                         if (room) {
                             room.init_data(roomid, body);
                         }
-                        else {
-                            room = roomMgr.alloc_room(roomid, body);
-                        }
-                        GameFunction_1["default"].broadcast_player_info_in_rooom(room, uid);
+                        SendLogicInfo_1["default"].broadcast_player_info_in_rooom(room, uid);
                         return [4 /*yield*/, RedisLobby_1["default"].get_roominfo_by_roomid(roomid)];
                     case 1:
                         roominfo = _a.sent();
@@ -167,7 +170,6 @@ var GameRedisMsg = /** @class */ (function () {
         });
     };
     GameRedisMsg.prototype.on_redis_join_room = function (uid, body) {
-        // Log.info("hcc>>on_redis_join_room", body);
         var roomid = body.roomid;
         var room = roomMgr.get_room_by_roomid(roomid);
         if (room) {

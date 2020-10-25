@@ -50,11 +50,11 @@ var RedisEngine_1 = __importDefault(require("../utils/RedisEngine"));
 var StringUtil_1 = __importDefault(require("../utils/StringUtil"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var util = __importStar(require("util"));
+var GameAppConfig_1 = __importDefault(require("../apps/config/GameAppConfig"));
 var ROOMID_ROOMINFO_KEY = "hash_roomid_roominfo_key";
 var UID_ROOMINFO_KEY = "hash_uid_roominfo_key";
 var room_id_length = 6;
 var game_serverindex_playercount_key = "game_serverindex_playercount_key";
-var MAX_GAME_SERVER_PLAYER_COUNT = 1000; //
 /*
 1. 这两个地方同时保存了roominfo_json
 2. 修改的话，这两个地方同时需要修改
@@ -235,6 +235,44 @@ var RedisLobby = /** @class */ (function () {
             });
         });
     };
+    RedisLobby.set_game_state = function (roomid, game_state) {
+        return __awaiter(this, void 0, void 0, function () {
+            var roomid_key, ret, roominfo_obj, uids, roominfo_json_2;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        roomid_key = RedisLobby.get_roomid_key(roomid);
+                        return [4 /*yield*/, RedisLobby.engine().hget(ROOMID_ROOMINFO_KEY, roomid_key)];
+                    case 1:
+                        ret = _a.sent();
+                        if (!ret) return [3 /*break*/, 3];
+                        roominfo_obj = JSON.parse(ret);
+                        if (roominfo_obj) {
+                            roominfo_obj.game_state = game_state;
+                        }
+                        uids = roominfo_obj.uids;
+                        if (!uids) return [3 /*break*/, 3];
+                        roominfo_json_2 = JSON.stringify(roominfo_obj);
+                        return [4 /*yield*/, RedisLobby.save_roomid_roominfo_inredis(roomid, roominfo_json_2)];
+                    case 2:
+                        _a.sent();
+                        uids.forEach(function (uid) { return __awaiter(_this, void 0, void 0, function () {
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0: return [4 /*yield*/, RedisLobby.save_uid_roominfo_inredis(uid, roominfo_json_2)];
+                                    case 1:
+                                        _a.sent();
+                                        return [2 /*return*/];
+                                }
+                            });
+                        }); });
+                        return [2 /*return*/, true];
+                    case 3: return [2 /*return*/, false];
+                }
+            });
+        });
+    };
     //删除玩家uid和获取roominfo_json的映射
     //返回boolean
     //内部使用
@@ -257,7 +295,7 @@ var RedisLobby = /** @class */ (function () {
     //同时更新 roominfo_json
     RedisLobby.delete_uid_in_roominfo = function (roomid, uid) {
         return __awaiter(this, void 0, void 0, function () {
-            var roomid_key, ret, roominfo_obj, uids, index, roominfo_json_2;
+            var roomid_key, ret, roominfo_obj, uids, index, roominfo_json_3;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -280,15 +318,15 @@ var RedisLobby = /** @class */ (function () {
                         _a.sent();
                         return [3 /*break*/, 5];
                     case 3:
-                        roominfo_json_2 = JSON.stringify(roominfo_obj);
-                        return [4 /*yield*/, RedisLobby.save_roomid_roominfo_inredis(roomid, roominfo_json_2)];
+                        roominfo_json_3 = JSON.stringify(roominfo_obj);
+                        return [4 /*yield*/, RedisLobby.save_roomid_roominfo_inredis(roomid, roominfo_json_3)];
                     case 4:
                         _a.sent();
                         //
                         uids.forEach(function (uid) { return __awaiter(_this, void 0, void 0, function () {
                             return __generator(this, function (_a) {
                                 switch (_a.label) {
-                                    case 0: return [4 /*yield*/, RedisLobby.save_uid_roominfo_inredis(uid, roominfo_json_2)];
+                                    case 0: return [4 /*yield*/, RedisLobby.save_uid_roominfo_inredis(uid, roominfo_json_3)];
                                     case 1:
                                         _a.sent();
                                         return [2 /*return*/];
@@ -390,14 +428,14 @@ var RedisLobby = /** @class */ (function () {
     };
     //////////////////////////////////////
     //保存服务id, 人数
-    RedisLobby.set_server_playercount = function (server_index, playercount) {
+    RedisLobby.set_server_playercount = function (server_key, playercount) {
         return __awaiter(this, void 0, void 0, function () {
             var key, ret, result_str;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         key = game_serverindex_playercount_key;
-                        return [4 /*yield*/, RedisLobby.engine().hset(key, server_index, playercount)];
+                        return [4 /*yield*/, RedisLobby.engine().hset(key, server_key, playercount)];
                     case 1:
                         ret = _a.sent();
                         result_str = ret == 1;
@@ -424,6 +462,7 @@ var RedisLobby = /** @class */ (function () {
             });
         });
     };
+    //服务是否存在
     RedisLobby.is_server_exist = function (server_key) {
         return __awaiter(this, void 0, void 0, function () {
             var gameinfo, key;
@@ -444,6 +483,23 @@ var RedisLobby = /** @class */ (function () {
             });
         });
     };
+    //删除某个服务的信息
+    //返回boolean
+    RedisLobby.delete_server_info = function (server_key) {
+        return __awaiter(this, void 0, void 0, function () {
+            var key, ret;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        key = game_serverindex_playercount_key;
+                        return [4 /*yield*/, RedisLobby.engine().hdelete(key, server_key)];
+                    case 1:
+                        ret = _a.sent();
+                        return [2 /*return*/, ret == 1];
+                }
+            });
+        });
+    };
     //根据服务的负载，进行选择哪个game_server
     RedisLobby.choose_game_server = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -457,7 +513,7 @@ var RedisLobby = /** @class */ (function () {
                             for (key in gameinfo) {
                                 gameserver_key = Number(key);
                                 playercount = Number(gameinfo[key]);
-                                if (playercount <= MAX_GAME_SERVER_PLAYER_COUNT) {
+                                if (playercount < GameAppConfig_1["default"].MAX_GAME_SERVER_PLAYER_COUNT) {
                                     return [2 /*return*/, gameserver_key];
                                 }
                             }

@@ -1,1 +1,0 @@
-{"version":3,"file":"GameRoomInterface.js","sourceRoot":"","sources":["../../../../src/apps/game_server/interface/GameRoomInterface.ts"],"names":[],"mappings":";;;;;AAKA,2EAAqD;AACrD,uEAAiD;AAOjD,IAAI,SAAS,GAAkB,0BAAa,CAAC,WAAW,EAAE,CAAC;AAC3D,IAAI,OAAO,GAAoB,wBAAW,CAAC,WAAW,EAAE,CAAC;AAEzD;IAAA;IA0NA,CAAC;IAAD,wBAAC;AAAD,CAAC,AA1ND,IA0NC;AAED,qBAAe,iBAAiB,CAAC"}

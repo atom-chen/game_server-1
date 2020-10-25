@@ -8,11 +8,15 @@ import RedisAuth from '../../../database/RedisAuth';
 class AuthInfoInterface {
 
     static async do_get_user_center_info_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (utag == 0) {
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response.ERROR_1 })
+            return;
+        }
         let data:any = await MySqlAuth.get_uinfo_by_uid(utag);
         if (data && data.length > 0){
             let sql_info = data[0]
             let resbody = {
-                status: Response.OK,
+                status: Response.SUCCESS,
                 usercenterinfo: JSON.stringify(sql_info),
             }
             AuthSendMsg.send(session, AuthProto.XY_ID.RES_USERCENTERINFO, utag, proto_type, resbody);
@@ -21,7 +25,7 @@ class AuthInfoInterface {
             // Log.info("hcc>>outInfo:" , outInfo);
             return;
         }
-        AuthSendMsg.send(session, AuthProto.XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT });
+        AuthSendMsg.send(session, AuthProto.XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response.ERROR_2 });
     }
 
 }

@@ -19,7 +19,7 @@ class RobotGameInterface {
             let utagtmp = Number(_utag);
             let room_level = robot_obj.roomlevel;
             if (utagtmp == utag){
-                RobotSend.send_game(server_session, GameHoodleProto.XY_ID.eUserMatchReq, utag, { roomlevel: room_level });
+                // RobotSend.send_game(server_session, GameHoodleProto.XY_ID.eUserMatchReq, utag, { roomlevel: room_level });
                 break;
             }
         }

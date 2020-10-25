@@ -1,18 +1,18 @@
 //网关服务
 
-import NetServer from '../../netbus/NetServer';
-import ProtoTools from "../../netbus/ProtoTools"
+import NetServer from '../../netengine/NetServer';
+import ProtoTools from "../../netengine/ProtoTools"
 import ProtoCmd from "../protocol/ProtoCmd"
-import ProtoManager from "../../netbus/ProtoManager"
-import Respones from "../protocol/Response"
-import ServiceBase from "../../netbus/ServiceBase"
+import ProtoManager from "../../netengine/ProtoManager"
+import ServiceBase from "../../netengine/ServiceBase"
 import CommonProto from '../protocol/protofile/CommonProto';
 import Log from '../../utils/Log';
 import GatewayHandle from './GatewayHandle';
 import * as util from 'util';
-import NetClient from '../../netbus/NetClient';
+import NetClient from '../../netengine/NetClient';
 import Stype from '../protocol/Stype';
 import AuthProto from '../protocol/protofile/AuthProto';
+import Response from '../protocol/Response';
 
 /**
  * 未登陆：uid == 0, utag = session.session_key
@@ -63,7 +63,7 @@ class GatewayService extends ServiceBase {
 				return;
 			}
 			let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-			if (body.status == Respones.OK) {
+			if (body.status == Response.SUCCESS) {
 				// 以前你登陆过,发送一个命令给这个客户端，告诉它说以前有人登陆
 				let prev_session = GatewayHandle.get_client_session_by_uid(body.uid);
 				if (prev_session) {

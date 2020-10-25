@@ -8,9 +8,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var GameAppConfig_1 = __importDefault(require("../config/GameAppConfig"));
-var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
+var NetServer_1 = __importDefault(require("../../netengine/NetServer"));
 var AuthService_1 = __importDefault(require("./AuthService"));
-var ServiceManager_1 = __importDefault(require("../../netbus/ServiceManager"));
+var ServiceManager_1 = __importDefault(require("../../netengine/ServiceManager"));
 var MySqlAuth_1 = __importDefault(require("../../database/MySqlAuth"));
 var Stype_1 = __importDefault(require("../protocol/Stype"));
 var RedisAuth_1 = __importDefault(require("../../database/RedisAuth"));

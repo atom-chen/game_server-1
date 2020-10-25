@@ -51,7 +51,6 @@ var TimeUtil_1 = __importDefault(require("../utils/TimeUtil"));
 var util = __importStar(require("util"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var MAX_NUMBER_ID = 1000000;
-var table_name = "uinfo";
 var MySqlAuth = /** @class */ (function () {
     function MySqlAuth() {
     }

@@ -19,6 +19,8 @@ export default class LobbyProto {
         RES_DESSOLVEROOM : 20012,
         REQ_ROOMSTATUS : 20013,
         RES_ROOMSTATUS : 20014,
+        REQ_GAMEINFO : 20015,
+        RES_GAMEINFO : 20016,
     }
 
     public static XY_NAME = {
@@ -43,6 +45,9 @@ export default class LobbyProto {
 
         [LobbyProto.XY_ID.REQ_ROOMSTATUS]: "ReqRoomStatus",
         [LobbyProto.XY_ID.RES_ROOMSTATUS]: "ResRoomStatus",
+
+        [LobbyProto.XY_ID.REQ_GAMEINFO]: "ReqGameInfo",
+        [LobbyProto.XY_ID.RES_GAMEINFO]: "ResGameInfo",
     }
 
 }

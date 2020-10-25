@@ -30,7 +30,7 @@ var RobotGameInterface = /** @class */ (function () {
             var utagtmp = Number(_utag);
             var room_level = robot_obj.roomlevel;
             if (utagtmp == utag) {
-                RobotSend_1["default"].send_game(server_session, GameHoodleProto_1["default"].XY_ID.eUserMatchReq, utag, { roomlevel: room_level });
+                // RobotSend.send_game(server_session, GameHoodleProto.XY_ID.eUserMatchReq, utag, { roomlevel: room_level });
                 break;
             }
         }

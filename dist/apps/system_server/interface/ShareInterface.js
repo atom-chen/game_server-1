@@ -56,7 +56,12 @@ var ShareInterface = /** @class */ (function () {
             var sql_ret, ret_len, info, user_config_obj, share_time, ret_config, ret, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, MySqlGame_1["default"].get_ugame_config_by_uid(utag)];
+                    case 0:
+                        if (utag == 0) {
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERSHARE, utag, proto_type, { status: Response_1["default"].ERROR_3 });
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, MySqlGame_1["default"].get_ugame_config_by_uid(utag)];
                     case 1:
                         sql_ret = _a.sent();
                         if (!sql_ret) return [3 /*break*/, 9];
@@ -78,7 +83,7 @@ var ShareInterface = /** @class */ (function () {
                     case 4:
                         ret = _a.sent();
                         if (ret) {
-                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERSHARE, utag, proto_type, { status: Response_1["default"].OK });
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERSHARE, utag, proto_type, { status: Response_1["default"].SUCCESS });
                             Log_1["default"].info("hcc>>dn_user_share_req>> not share, share success!", utag);
                         }
                         return [2 /*return*/];
@@ -93,7 +98,7 @@ var ShareInterface = /** @class */ (function () {
                         return [3 /*break*/, 9];
                     case 9:
                         //已经签到或者签到失败
-                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERSHARE, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERSHARE, utag, proto_type, { status: Response_1["default"].ERROR_1 });
                         return [2 /*return*/];
                 }
             });

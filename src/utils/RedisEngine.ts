@@ -9,13 +9,18 @@ class RedisEngine {
     private _port: number = 0;
     private _db_index:number = 0;
     private _redis_client:any = null;
-    private _message_func:any = null;
+    private _redis_client_dup:any = null;
+    private _message_func:any = {};
 
     constructor(){
     }
 
     get_engine():Redis.RedisClient{
         return this._redis_client;
+    }
+
+    get_dup_engine(){
+        return this._redis_client_dup;
     }
 
     connect(host?: string, port?: number, db_index?: number,){
@@ -27,6 +32,8 @@ class RedisEngine {
             port: this._port,
             db: this._db_index,
         });
+
+        this._redis_client_dup = this._redis_client.duplicate();
 
         this._redis_client.on("error",function(error:any){
             Log.error(error);
@@ -51,8 +58,8 @@ class RedisEngine {
         let _this = this;
         this._redis_client.on("message", function (channel: string, message:string) {
             // Log.info("redis message:", channel, message);
-            if (_this._message_func){
-                _this._message_func(channel, message)
+            if (_this._message_func[channel]){
+                _this._message_func[channel](channel, message)
             }
         })
     }
@@ -64,7 +71,7 @@ class RedisEngine {
             return;
         }
         this.get_engine().subscribe(channelName);
-        this._message_func = func;
+        this._message_func[channelName] = func;
         Log.info("listen channel: " , channelName , "success!!");
     }
 

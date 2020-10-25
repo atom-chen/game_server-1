@@ -21,7 +21,9 @@ var LobbyProto = /** @class */ (function () {
         REQ_DESSOLVEROOM: 20011,
         RES_DESSOLVEROOM: 20012,
         REQ_ROOMSTATUS: 20013,
-        RES_ROOMSTATUS: 20014
+        RES_ROOMSTATUS: 20014,
+        REQ_GAMEINFO: 20015,
+        RES_GAMEINFO: 20016
     };
     LobbyProto.XY_NAME = (_a = {},
         _a[LobbyProto.XY_ID.REQ_LOGINLOBBY] = "ReqLoginLobby",
@@ -38,6 +40,8 @@ var LobbyProto = /** @class */ (function () {
         _a[LobbyProto.XY_ID.RES_DESSOLVEROOM] = "ResDessolveRoom",
         _a[LobbyProto.XY_ID.REQ_ROOMSTATUS] = "ReqRoomStatus",
         _a[LobbyProto.XY_ID.RES_ROOMSTATUS] = "ResRoomStatus",
+        _a[LobbyProto.XY_ID.REQ_GAMEINFO] = "ReqGameInfo",
+        _a[LobbyProto.XY_ID.RES_GAMEINFO] = "ResGameInfo",
         _a);
     return LobbyProto;
 }());

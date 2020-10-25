@@ -1,4 +1,4 @@
-import ProtoManager from "../../../netbus/ProtoManager";
+import ProtoManager from "../../../netengine/ProtoManager";
 import GameHoodleConfig from "../../game_server/config/GameHoodleConfig";
 import MySqlGame from "../../../database/MySqlGame";
 import SystemSend from '../SystemSend';
@@ -13,12 +13,16 @@ class AddUchipInterface {
 
     //增加玩家道具接口
     static async do_user_add_chip_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (utag == 0) {
+            SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.ERROR_1 });
+            return;
+        }
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if(body){
             let propid = body.propid;
             let propcount = body.propcount;
             if (propcount <= 0){
-                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.INVALIDI_OPT });
+                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.ERROR_2 });
                 return;
             }
             let config = body.config;
@@ -26,7 +30,7 @@ class AddUchipInterface {
                 let ret = await MySqlGame.add_ugame_uchip(utag, propcount);
                 if(ret){
                     let res_body = {
-                        status: Response.OK,
+                        status: Response.SUCCESS,
                         propid: propid,
                         propcount: propcount,
                         config: config,
@@ -34,7 +38,7 @@ class AddUchipInterface {
                     SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag,proto_type,res_body);
                     return;
                 }
-                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, {status:Response.INVALIDI_OPT});
+                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, {status:Response.ERROR_3});
             }else if(propid == GameHoodleConfig.KW_PROP_ID_BALL){
                 if(util.isNullOrUndefined(config)){
                     return;
@@ -62,7 +66,7 @@ class AddUchipInterface {
                                 let ret = await MySqlGame.update_ugame_uball_info(utag, JSON.stringify(uball_info_obj));
                                 if(ret){
                                     let res_body = {
-                                        status: Response.OK,
+                                        status: Response.SUCCESS,
                                         propid: propid,
                                         propcount: propcount,
                                         config: config,
@@ -76,7 +80,7 @@ class AddUchipInterface {
                         }
                     }
                 }
-                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.INVALIDI_OPT });
+                SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.ERROR_4 });
             }
         }
     }

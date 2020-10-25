@@ -1,9 +1,9 @@
 import Log from '../../utils/Log';
-import ProtoManager from '../../netbus/ProtoManager';
+import ProtoManager from '../../netengine/ProtoManager';
 import LobbyProto from '../protocol/protofile/LobbyProto';
 import CommonProto from '../protocol/protofile/CommonProto';
-import GameInfoHandle from './handle/GameInfoHandle';
-import RoomHandle from './handle/RoomHandle';
+import RoomHandle from './handler/RoomHandle';
+import GameInfoHandle from './handler/GameInfoHandle';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -26,6 +26,7 @@ class LobbyModle {
             [LobbyProto.XY_ID.REQ_DESSOLVEROOM]: this.on_req_dessolve_room,
             [LobbyProto.XY_ID.REQ_BACKROOM]: this.on_req_back_room,
             [LobbyProto.XY_ID.REQ_ROOMSTATUS]: this.on_req_room_status,
+            [LobbyProto.XY_ID.REQ_GAMEINFO]: this.on_req_game_info,
         }
     }
 
@@ -63,29 +64,34 @@ class LobbyModle {
         RoomHandle.do_req_create_room(session, utag, proto_type, raw_cmd);
     }
     
-    //加入 OK 
+    //加入
     on_req_join_room(session: any, utag: number, proto_type: number, raw_cmd: any) {
         RoomHandle.do_req_join_room(session, utag, proto_type, raw_cmd);
     }
 
-    //退出 OK 
+    //退出
     on_req_exit_room(session: any, utag: number, proto_type: number, raw_cmd: any){
         RoomHandle.do_req_exit_room(session, utag, proto_type, raw_cmd);
     }
     
-    //返回 OK 
+    //返回
     on_req_back_room(session: any, utag: number, proto_type: number, raw_cmd: any) {
         RoomHandle.do_req_back_room(session, utag, proto_type, raw_cmd);
     }
     
-    //解散 OK 
+    //解散
     on_req_dessolve_room(session: any, utag: number, proto_type: number, raw_cmd: any) {
         RoomHandle.do_req_dessolve_room(session, utag, proto_type, raw_cmd);
     }
 
-    //查询玩家是否在房间内 OK 
+    //查询玩家是否在房间内
     on_req_room_status(session: any, utag: number, proto_type: number, raw_cmd: any) {
         RoomHandle.do_req_room_status(session, utag, proto_type, raw_cmd);
+    }
+
+    //获取玩家游戏数据库信息
+    on_req_game_info(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        GameInfoHandle.do_req_game_info(session, utag, proto_type, raw_cmd);
     }
     
 }

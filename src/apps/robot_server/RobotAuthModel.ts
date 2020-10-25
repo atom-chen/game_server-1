@@ -1,5 +1,5 @@
 import Response from '../protocol/Response';
-import ProtoManager from '../../netbus/ProtoManager';
+import ProtoManager from '../../netengine/ProtoManager';
 import Log from '../../utils/Log';
 import RobotGameInterface from './interface/RobotGameInterface';
 import RobotSend from './RobotSend';
@@ -36,7 +36,7 @@ class RobotAuthModel {
         let body = ProtoManager.decode_cmd(proto_type,raw_cmd);
         if(body){
             let status = body.status;
-            if(Response.OK == status){
+            if (Response.SUCCESS == status){
                 RobotGameInterface.robot_login_logic_server(session, utag);
             }else{
                 Log.info("hcc>>on_guest_login_auth_res login auth failed..");

@@ -1,8 +1,8 @@
 var net = require("net");
 
-import ProtoManager from "../netbus/ProtoManager"
+import ProtoManager from "../netengine/ProtoManager"
 import Platform from "../utils/Platform"
-import TcpPkg from "../netbus/TcpPkg"
+import TcpPkg from "../netengine/TcpPkg"
 import Log from '../utils/Log';
 
 var local = "127.0.0.1"

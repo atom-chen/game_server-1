@@ -1,6 +1,6 @@
 //接收客户端协议模块
 import Response from '../protocol/Response';
-import ProtoManager from '../../netbus/ProtoManager';
+import ProtoManager from '../../netengine/ProtoManager';
 import AuthSendMsg from './AuthSendMsg';
 import CommonProto from '../protocol/protofile/CommonProto';
 import Log from '../../utils/Log';
@@ -45,63 +45,33 @@ class AuthModel {
     }
     
     on_player_lost_connect(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-        Log.info("on_player_lost_connect utag:", utag, body)
     }
 
     on_uname_login_req(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (utag == 0) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
-            return;
-        }
         AuthLoginInterface.do_uname_login_req(session, utag, proto_type, raw_cmd);
     }
     
     on_guest_login_req(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (utag == 0) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
-            return;
-        }
         AuthLoginInterface.do_guest_login_req(session, utag, proto_type, raw_cmd);
     }
 
     on_uname_regist_req(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (utag == 0) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
-            return;
-        }
         AuthRegistInterface.do_uname_regist_req(session, utag, proto_type, raw_cmd);
     }
 
     on_get_user_center_info_req(session:any, utag:number, proto_type:number, raw_cmd:any){
-        if (utag == 0) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
-            return;
-        }
         AuthInfoInterface.do_get_user_center_info_req(session, utag, proto_type, raw_cmd);
     }
 
     on_login_out_req(session:any, utag:number, proto_type:number,raw_cmd:any){
-        if (utag == 0) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_LOGINOUT, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
-            return;
-        }
         AuthLoginInterface.do_login_out_req(session, utag, proto_type, raw_cmd);
     }
 
     on_wechat_login_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        if (utag == 0) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT})
-            return;
-        }
         AuthWeChatLoginInterface.do_wechat_login_req(session, utag, proto_type, raw_cmd);
     }
 
     on_wechat_session_login_req(session: any, utag: number, proto_type: number, raw_cmd: any){
-        if (utag == 0) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response.ILLEGAL_ACCOUNT })
-            return;
-        }
         AuthWeChatLoginInterface.do_wechat_session_login_req(session, utag, proto_type, raw_cmd);
     }
 }

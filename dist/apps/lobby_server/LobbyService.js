@@ -17,7 +17,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
+var ServiceBase_1 = __importDefault(require("../../netengine/ServiceBase"));
 var LobbyModle_1 = __importDefault(require("./LobbyModle"));
 var RoomService = /** @class */ (function (_super) {
     __extends(RoomService, _super);

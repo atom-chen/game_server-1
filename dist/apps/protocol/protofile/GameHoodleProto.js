@@ -11,18 +11,18 @@ var GameHoodleProto = /** @class */ (function () {
         ///////////////////////////////////
         //房间相关协议
         ///////////////////////////////////
-        eCreateRoomReq: 1,
-        eCreateRoomRes: 2,
-        eJoinRoomReq: 3,
-        eJoinRoomRes: 4,
-        eExitRoomReq: 5,
-        eExitRoomRes: 6,
-        eDessolveReq: 7,
-        eDessolveRes: 8,
-        eGetRoomStatusReq: 9,
-        eGetRoomStatusRes: 10,
-        eBackRoomReq: 11,
-        eBackRoomRes: 12,
+        // eCreateRoomReq: 1, 		//创建包厢
+        // eCreateRoomRes: 2,
+        // eJoinRoomReq: 3,		//加入包厢
+        // eJoinRoomRes: 4,
+        // eExitRoomReq: 5,		//退出包厢
+        // eExitRoomRes: 6,
+        // eDessolveReq: 7,		//解散包厢
+        // eDessolveRes: 8,
+        // eGetRoomStatusReq: 9,		//包厢状态
+        // eGetRoomStatusRes: 10,
+        // eBackRoomReq: 11,		//返回包厢
+        // eBackRoomRes: 12,
         ////////////////////////////////://
         //游戏相关协议
         ////////////////////////////////://
@@ -42,6 +42,8 @@ var GameHoodleProto = /** @class */ (function () {
         ////////////////////////////////://
         //游戏具体玩法相关
         ////////////////////////////////://
+        eUserEmojReq: 55,
+        eUserEmojRes: 56,
         ePlayerFirstBallPosRes: 26,
         ePlayerPowerRes: 27,
         ePlayerShootReq: 28,
@@ -52,52 +54,25 @@ var GameHoodleProto = /** @class */ (function () {
         ePlayerIsShootedRes: 33,
         eGameResultRes: 34,
         eTotalGameResultRes: 35,
-        ePlayerScoreRes: 36,
-        eUserMatchReq: 37,
-        eUserMatchRes: 38,
-        eUserStopMatchReq: 39,
-        eUserStopMatchRes: 40,
-        eUserGameInfoReq: 41,
-        eUserGameInfoRes: 42,
-        eUserBallInfoReq: 43,
-        eUserBallInfoRes: 44,
-        eUpdateUserBallReq: 45,
-        eUpdateUserBallRes: 46,
-        eStoreListReq: 47,
-        eStoreListRes: 48,
-        eBuyThingsReq: 49,
-        eBuyThingsRes: 50,
-        eUseHoodleBallReq: 51,
-        eUseHoodleBallRes: 52,
-        eUserConfigReq: 53,
-        eUserConfigRes: 54,
-        eUserEmojReq: 55,
-        eUserEmojRes: 56,
-        eUserPlayAgainReq: 57,
-        eUserPlayAgainRes: 58,
-        eUserPlayAgainAnswerReq: 59,
-        eUserPlayAgainAnswerRes: 60,
-        eUserPlayAgainStartRes: 61,
-        eRoomListConfigReq: 62,
-        eRoomListConfigRes: 63
+        ePlayerScoreRes: 36
     };
     GameHoodleProto.XY_NAME = (_a = {},
         ///////////////////////////////////
         //房间相关协议
         ///////////////////////////////////
-        _a[GameHoodleProto.XY_ID.INVALED] = "INVALED",
-        _a[GameHoodleProto.XY_ID.eCreateRoomReq] = "CreateRoomReq",
-        _a[GameHoodleProto.XY_ID.eCreateRoomRes] = "CreateRoomRes",
-        _a[GameHoodleProto.XY_ID.eJoinRoomReq] = "JoinRoomReq",
-        _a[GameHoodleProto.XY_ID.eJoinRoomRes] = "JoinRoomRes",
-        _a[GameHoodleProto.XY_ID.eExitRoomReq] = "ExitRoomReq",
-        _a[GameHoodleProto.XY_ID.eExitRoomRes] = "ExitRoomRes",
-        _a[GameHoodleProto.XY_ID.eDessolveReq] = "DessolveReq",
-        _a[GameHoodleProto.XY_ID.eDessolveRes] = "DessolveRes",
-        _a[GameHoodleProto.XY_ID.eGetRoomStatusReq] = "GetRoomStatusReq",
-        _a[GameHoodleProto.XY_ID.eGetRoomStatusRes] = "GetRoomStatusRes",
-        _a[GameHoodleProto.XY_ID.eBackRoomReq] = "BackRoomReq",
-        _a[GameHoodleProto.XY_ID.eBackRoomRes] = "BackRoomRes",
+        // [GameHoodleProto.XY_ID.INVALED]: "INVALED",
+        // [GameHoodleProto.XY_ID.eCreateRoomReq]: "CreateRoomReq", 			// 创建包厢
+        // [GameHoodleProto.XY_ID.eCreateRoomRes]: "CreateRoomRes",
+        // [GameHoodleProto.XY_ID.eJoinRoomReq]: "JoinRoomReq",				// 加入包厢
+        // [GameHoodleProto.XY_ID.eJoinRoomRes]: "JoinRoomRes",
+        // [GameHoodleProto.XY_ID.eExitRoomReq]: "ExitRoomReq",				// 退出包厢
+        // [GameHoodleProto.XY_ID.eExitRoomRes]: "ExitRoomRes",
+        // [GameHoodleProto.XY_ID.eDessolveReq]: "DessolveReq",				// 解散包厢
+        // [GameHoodleProto.XY_ID.eDessolveRes]: "DessolveRes",
+        // [GameHoodleProto.XY_ID.eGetRoomStatusReq]: "GetRoomStatusReq",		// 包厢状态
+        // [GameHoodleProto.XY_ID.eGetRoomStatusRes]: "GetRoomStatusRes",
+        // [GameHoodleProto.XY_ID.eBackRoomReq]: "BackRoomReq",			// 返回包厢
+        // [GameHoodleProto.XY_ID.eBackRoomRes]: "BackRoomRes",
         ///////////////////////////////////
         //游戏通用协议
         ///////////////////////////////////
@@ -128,33 +103,8 @@ var GameHoodleProto = /** @class */ (function () {
         _a[GameHoodleProto.XY_ID.eGameResultRes] = "GameResultRes",
         _a[GameHoodleProto.XY_ID.eTotalGameResultRes] = "TotalGameResultRes",
         _a[GameHoodleProto.XY_ID.ePlayerScoreRes] = "PlayerScoreRes",
-        _a[GameHoodleProto.XY_ID.eUserMatchReq] = "UserMatchReq",
-        _a[GameHoodleProto.XY_ID.eUserMatchRes] = "UserMatchRes",
-        _a[GameHoodleProto.XY_ID.eUserStopMatchReq] = "UserStopMatchReq",
-        _a[GameHoodleProto.XY_ID.eUserStopMatchRes] = "UserStopMatchRes",
-        _a[GameHoodleProto.XY_ID.eUserGameInfoReq] = "UserGameInfoReq",
-        _a[GameHoodleProto.XY_ID.eUserGameInfoRes] = "UserGameInfoRes",
-        _a[GameHoodleProto.XY_ID.eUserBallInfoReq] = "UserBallInfoReq",
-        _a[GameHoodleProto.XY_ID.eUserBallInfoRes] = "UserBallInfoRes",
-        _a[GameHoodleProto.XY_ID.eUpdateUserBallReq] = "UpdateUserBallReq",
-        _a[GameHoodleProto.XY_ID.eUpdateUserBallRes] = "UpdateUserBallRes",
-        _a[GameHoodleProto.XY_ID.eStoreListReq] = "StoreListReq",
-        _a[GameHoodleProto.XY_ID.eStoreListRes] = "StoreListRes",
-        _a[GameHoodleProto.XY_ID.eBuyThingsReq] = "BuyThingsReq",
-        _a[GameHoodleProto.XY_ID.eBuyThingsRes] = "BuyThingsRes",
-        _a[GameHoodleProto.XY_ID.eUseHoodleBallReq] = "UseHoodleBallReq",
-        _a[GameHoodleProto.XY_ID.eUseHoodleBallRes] = "UseHoodleBallRes",
-        _a[GameHoodleProto.XY_ID.eUserConfigReq] = "UserConfigReq",
-        _a[GameHoodleProto.XY_ID.eUserConfigRes] = "UserConfigRes",
         _a[GameHoodleProto.XY_ID.eUserEmojReq] = "UserEmojReq",
         _a[GameHoodleProto.XY_ID.eUserEmojRes] = "UserEmojRes",
-        _a[GameHoodleProto.XY_ID.eUserPlayAgainReq] = "UserPlayAgainReq",
-        _a[GameHoodleProto.XY_ID.eUserPlayAgainRes] = "UserPlayAgainRes",
-        _a[GameHoodleProto.XY_ID.eUserPlayAgainAnswerReq] = "UserPlayAgainAnswerReq",
-        _a[GameHoodleProto.XY_ID.eUserPlayAgainAnswerRes] = "UserPlayAgainAnswerRes",
-        _a[GameHoodleProto.XY_ID.eUserPlayAgainStartRes] = "UserPlayAgainStartRes",
-        _a[GameHoodleProto.XY_ID.eRoomListConfigReq] = "RoomListConfigReq",
-        _a[GameHoodleProto.XY_ID.eRoomListConfigRes] = "RoomListConfigRes",
         _a);
     return GameHoodleProto;
 }());

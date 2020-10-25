@@ -1,6 +1,6 @@
 //协议发送
 
-import NetServer from "../../netbus/NetServer";
+import NetServer from "../../netengine/NetServer";
 import Stype from '../protocol/Stype';
 
 class AuthSendMsg {

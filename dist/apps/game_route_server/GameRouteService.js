@@ -52,11 +52,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
-var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
+var ServiceBase_1 = __importDefault(require("../../netengine/ServiceBase"));
+var NetClient_1 = __importDefault(require("../../netengine/NetClient"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var GameRouteData_1 = __importDefault(require("./GameRouteData"));
-var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
+var NetServer_1 = __importDefault(require("../../netengine/NetServer"));
 var RedisLobby_1 = __importDefault(require("../../database/RedisLobby"));
 var GameRouteService = /** @class */ (function (_super) {
     __extends(GameRouteService, _super);
@@ -86,22 +86,20 @@ var GameRouteService = /** @class */ (function (_super) {
                             try {
                                 roominfo_obj = JSON.parse(roominfo_json);
                                 server_key = roominfo_obj.game_serverid;
-                                // Log.info("hcc>>roominfo_json:", roominfo_obj);
                             }
                             catch (error) {
-                                Log_1["default"].error(error);
+                                Log_1["default"].error("on_recv_client_player_cmd>>", error);
                                 return [2 /*return*/];
                             }
                         }
-                        Log_1["default"].info("hcc>>server_key:", server_key);
+                        Log_1["default"].info("send to server port:", server_key);
                         if (server_key == null || server_key == undefined || server_key < 0 || typeof (server_key) != "number") {
                             Log_1["default"].error("server_index is invalid!", server_key);
                             return [2 /*return*/];
                         }
                         server_session = GameRouteData_1["default"].get_logic_server_session(server_key);
-                        if (server_session) {
+                        if (server_session && server_session.is_connected) {
                             NetClient_1["default"].send_encoded_cmd(server_session, raw_cmd);
-                            Log_1["default"].info("hcc>>send data to:", server_key);
                         }
                         else {
                             Log_1["default"].error("hcc>>send data to:", server_key, "error!,  server is not started!!!!");

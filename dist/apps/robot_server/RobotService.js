@@ -17,7 +17,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
+var ServiceBase_1 = __importDefault(require("../../netengine/ServiceBase"));
 var RobotGameModel_1 = __importDefault(require("./RobotGameModel"));
 var RobotAuthModel_1 = __importDefault(require("./RobotAuthModel"));
 var Stype_1 = __importDefault(require("../protocol/Stype"));

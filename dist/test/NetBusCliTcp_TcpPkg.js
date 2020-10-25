@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var net = require("net");
-var ProtoManager_1 = __importDefault(require("../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../netengine/ProtoManager"));
 var Platform_1 = __importDefault(require("../utils/Platform"));
-var TcpPkg_1 = __importDefault(require("../netbus/TcpPkg"));
+var TcpPkg_1 = __importDefault(require("../netengine/TcpPkg"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var local = "127.0.0.1";
 var remote = "www.hccfun.com";

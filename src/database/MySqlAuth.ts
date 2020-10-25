@@ -4,7 +4,6 @@ import * as util from "util"
 import Log from '../utils/Log';
 
 let MAX_NUMBER_ID = 1000000;
-let table_name = "uinfo";
 
 class MySqlAuth {
 	private static mysqlEngine: MySqlEngine = new MySqlEngine();

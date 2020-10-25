@@ -1,14 +1,14 @@
-import Room from '../cell/Room';
+import Room from '../objects/Room';
 import ArrayUtil from '../../../utils/ArrayUtil';
-import Player from '../cell/Player';
+import Player from '../objects/Player';
 import Log from '../../../utils/Log';
-import { UserState, PlayerPower, GameState } from '../config/State';
 import RoomManager from './RoomManager';
 import GameHoodleConfig from '../config/GameHoodleConfig';
 import Response from '../../protocol/Response';
-import GameFunction from '../interface/GameFunction';
+import GameFunction from '../handler/GameFunction';
 import { RoomListConfig } from '../config/RoomListConfig';
 import GameHoodleProto from '../../protocol/protofile/GameHoodleProto';
+import State from '../../config/State';
 
 let roomMgr: RoomManager = RoomManager.getInstance();
 
@@ -82,7 +82,7 @@ class MatchManager {
                             player.set_offline(false);
                             _this.set_room_host(not_full_room);
                             let body = {
-                                status: Response.OK,
+                                status: Response.SUCCESS,
                                 matchsuccess: true,
                             }
                             player.send_cmd(GameHoodleProto.XY_ID.eUserMatchRes, body);
@@ -146,14 +146,14 @@ class MatchManager {
             player.set_offline(false);
             if(!room.add_player(player)){
                 Log.warn("on_server_match_success enter room error")
-                room.broadcast_in_room(GameHoodleProto.XY_ID.eUserMatchRes,{status:Response.INVALIDI_OPT});
+                room.broadcast_in_room(GameHoodleProto.XY_ID.eUserMatchRes,{status:Response.ERROR_1});
                 RoomManager.getInstance().delete_room(room.get_room_id())
                 return;
             }
         }
         this.set_room_host(room);
         let body = {
-            status: Response.OK,
+            status: Response.SUCCESS,
             matchsuccess: true,
         }
         room.broadcast_in_room(GameHoodleProto.XY_ID.eUserMatchRes,body);
@@ -185,6 +185,7 @@ class MatchManager {
     }
 
     //发送匹配列表中的玩家
+    /*
     send_match_player(in_match_list:any){
         let userinfo_array = [];
         for(let key in in_match_list){
@@ -199,7 +200,7 @@ class MatchManager {
         }
 
         let body = {
-            status: Response.OK,
+            status: Response.SUCCESS,
             matchsuccess: false,
             userinfo: userinfo_array,
         }
@@ -211,6 +212,7 @@ class MatchManager {
             }
         }
     }
+    */
 
     //获取正在等待列表中，未进入匹配的玩家  inview状态
     //先找玩家，再找机器人
@@ -218,7 +220,7 @@ class MatchManager {
         //先找玩家
         for (let key in zoom.match_list){
             let player: Player = zoom.match_list[key];
-            if (player.get_user_state() == UserState.InView){
+            if (player.get_user_state() == State.UserState.InView){
                 if (!player.is_robot()){
                     return player;
                 }
@@ -227,7 +229,7 @@ class MatchManager {
         //再找机器人
         for (let key in zoom.match_list) {
             let player: Player = zoom.match_list[key];
-            if (player.get_user_state() == UserState.InView) {
+            if (player.get_user_state() == State.UserState.InView) {
                 return player;
             }
         }  
@@ -238,7 +240,7 @@ class MatchManager {
     get_in_matching_player(zoom:any){
         for (let key in zoom.in_match_list) {
             let p: Player = zoom.in_match_list[key];
-            if (p.get_user_state() == UserState.MatchIng) {
+            if (p.get_user_state() == State.UserState.MatchIng) {
                 if(!p.is_robot()){
                     return p;
                 }
@@ -247,7 +249,7 @@ class MatchManager {
 
         for (let key in zoom.in_match_list) {
             let p: Player = zoom.in_match_list[key];
-            if (p.get_user_state() == UserState.MatchIng) {
+            if (p.get_user_state() == State.UserState.MatchIng) {
                 return p;
             }
         }
@@ -258,7 +260,7 @@ class MatchManager {
         let count:number = 0;
         for(let key in zoom.in_match_list){
             let player: Player = zoom.in_match_list[key];
-            if(player && player.get_user_state() == UserState.MatchIng){
+            if (player && player.get_user_state() == State.UserState.MatchIng){
                 count++;
             }
         }
@@ -282,7 +284,7 @@ class MatchManager {
         for(let key in in_match_list){
             let player:Player = in_match_list[key];
             if(player){
-                player.set_user_state(UserState.InView);
+                player.set_user_state(State.UserState.InView);
                 key_set.push(player.get_uid())
             }
         }
@@ -316,7 +318,7 @@ class MatchManager {
         // }
 
         zoom.match_list[player.get_uid()] = player;
-        player.set_user_state(UserState.InView);
+        player.set_user_state(State.UserState.InView);
         return true;
     }
 
@@ -326,7 +328,7 @@ class MatchManager {
             return false;
         }
 
-        if(player.get_user_state() != UserState.InView){
+        if (player.get_user_state() != State.UserState.InView){
             return false;
         }
 
@@ -354,7 +356,7 @@ class MatchManager {
         }
 
         zoom.in_match_list[player.get_uid()] = player;
-        player.set_user_state(UserState.MatchIng);
+        player.set_user_state(State.UserState.MatchIng);
         return true;
     }
 
@@ -362,7 +364,7 @@ class MatchManager {
     del_player_from_match_list_by_uid(uid:number, match_list:any){
         let player:Player = match_list[uid];
         if(player){
-            player.set_user_state(UserState.InView);
+            player.set_user_state(State.UserState.InView);
             match_list[uid] = null;
             delete match_list[uid];
             return true;
@@ -374,7 +376,7 @@ class MatchManager {
     del_player_from_in_match_list_by_uid(uid:number, in_match_list:any){
         let player:Player = in_match_list[uid];
         if(player){
-            player.set_user_state(UserState.InView);
+            player.set_user_state(State.UserState.InView);
             in_match_list[uid] = null;
             delete in_match_list[uid];
             return true;

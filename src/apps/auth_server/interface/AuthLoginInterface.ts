@@ -1,25 +1,29 @@
 import MySqlAuth from "../../../database/MySqlAuth"
 import Response from '../../protocol/Response';
 import AuthSendMsg from "../AuthSendMsg";
-import ProtoManager from '../../../netbus/ProtoManager';
+import ProtoManager from '../../../netengine/ProtoManager';
 import StringUtil from "../../../utils/StringUtil";
 import AuthProto from '../../protocol/protofile/AuthProto';
 
 class AuthLoginInterface {
 
     static async do_uname_login_req(session: any, utag: number, proto_type: number, raw_cmd: any){
+        if (utag == 0) {
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.ERROR_1 })
+            return;
+        }
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (!body) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.ERROR_2 })
             return;
         }
         if (!body.uname || !body.upwd) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.ERROR_3 })
             return;
         }
 
         if (body.uname.length < 6 || body.upwd.length < 6) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.ERROR_4 })
             return;
         }
 
@@ -28,7 +32,7 @@ class AuthLoginInterface {
             if(data.length > 0){
                 let sql_info = data[0]
                 let resbody = {
-                    status: Response.OK,
+                    status: Response.SUCCESS,
                     uid: Number(sql_info.uid),
                     logininfo: JSON.stringify(sql_info),
                 }
@@ -36,22 +40,26 @@ class AuthLoginInterface {
                 return;
             }
         }
-        AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.UNAME_OR_UPWD_ERR })
+        AuthSendMsg.send(session, AuthProto.XY_ID.RES_UNAMELOGIN, utag, proto_type, { status: Response.ERROR_4 })
     }
 
     static async do_guest_login_req(session: any, utag: number, proto_type: number, raw_cmd: any){
+        if (utag == 0) {
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.ERROR_1 })
+            return;
+        }
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (!body) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.ERROR_2 })
             return;
         }
 
         if (!body.guestkey) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.ERROR_3 })
             return;
         }
         if (body.guestkey.length < 32) {
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.ERROR_4 })
             return;
         }
         
@@ -68,7 +76,7 @@ class AuthLoginInterface {
             }else{
              let sql_info = data[0]
                 let resbody = {
-                    status: Response.OK,
+                    status: Response.SUCCESS,
                     uid: Number(sql_info.uid),
                     logininfo: JSON.stringify(sql_info),
                 }
@@ -77,12 +85,16 @@ class AuthLoginInterface {
                 return;
             }
         }
-        AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.UNAME_OR_UPWD_ERR })
+        AuthSendMsg.send(session, AuthProto.XY_ID.RES_GUESTLOGIN, utag, proto_type, { status: Response.ERROR_4 })
     }
 
     static do_login_out_req(session: any, utag: number, proto_type: number, raw_cmd: any){
+        if (utag == 0) {
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_LOGINOUT, utag, proto_type, { status: Response.ERROR_1 })
+            return;
+        }
         if(utag != 0){
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_LOGINOUT, utag, proto_type, {status: Response.OK})
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_LOGINOUT, utag, proto_type, { status: Response.SUCCESS})
         }
     }
 

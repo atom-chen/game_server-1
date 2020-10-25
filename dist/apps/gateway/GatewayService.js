@@ -24,19 +24,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 exports.__esModule = true;
-var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
-var ProtoTools_1 = __importDefault(require("../../netbus/ProtoTools"));
+var NetServer_1 = __importDefault(require("../../netengine/NetServer"));
+var ProtoTools_1 = __importDefault(require("../../netengine/ProtoTools"));
 var ProtoCmd_1 = __importDefault(require("../protocol/ProtoCmd"));
-var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
-var Response_1 = __importDefault(require("../protocol/Response"));
-var ServiceBase_1 = __importDefault(require("../../netbus/ServiceBase"));
+var ProtoManager_1 = __importDefault(require("../../netengine/ProtoManager"));
+var ServiceBase_1 = __importDefault(require("../../netengine/ServiceBase"));
 var CommonProto_1 = __importDefault(require("../protocol/protofile/CommonProto"));
 var Log_1 = __importDefault(require("../../utils/Log"));
 var GatewayHandle_1 = __importDefault(require("./GatewayHandle"));
 var util = __importStar(require("util"));
-var NetClient_1 = __importDefault(require("../../netbus/NetClient"));
+var NetClient_1 = __importDefault(require("../../netengine/NetClient"));
 var Stype_1 = __importDefault(require("../protocol/Stype"));
 var AuthProto_1 = __importDefault(require("../protocol/protofile/AuthProto"));
+var Response_1 = __importDefault(require("../protocol/Response"));
 /**
  * 未登陆：uid == 0, utag = session.session_key
  * 登陆过后：uid == utag
@@ -90,7 +90,7 @@ var GatewayService = /** @class */ (function (_super) {
                 return;
             }
             var body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
-            if (body.status == Response_1["default"].OK) {
+            if (body.status == Response_1["default"].SUCCESS) {
                 // 以前你登陆过,发送一个命令给这个客户端，告诉它说以前有人登陆
                 var prev_session = GatewayHandle_1["default"].get_client_session_by_uid(body.uid);
                 if (prev_session) {

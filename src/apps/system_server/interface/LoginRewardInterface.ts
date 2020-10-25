@@ -4,7 +4,7 @@ import Response from '../../protocol/Response';
 import Log from '../../../utils/Log';
 import { LoginRewardConfig } from '../config/LoginRewardConfig';
 import ArrayUtil from '../../../utils/ArrayUtil';
-import ProtoManager from '../../../netbus/ProtoManager';
+import ProtoManager from '../../../netengine/ProtoManager';
 import TimeUtil from '../../../utils/TimeUtil';
 import MySqlGame from '../../../database/MySqlGame';
 import SystemProto from '../../protocol/protofile/SystemProto';
@@ -15,6 +15,11 @@ class LoginRewardInterface {
 
     //请求签到配置
     static async do_user_login_reward_config(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (utag == 0) {
+            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response.ERROR_1 });
+            return;
+        }
+
         let data:any = await MySqlSystem.get_login_bonues_info_by_uid(utag);
         if(data){
             if(data.length <= 0){
@@ -43,7 +48,7 @@ class LoginRewardInterface {
                 }
                 let istodaysign = bonues_time == TimeUtil.timestamp_today()
                 let resbody = {
-                    status: 1,
+                    status: Response.SUCCESS,
                     signdays: bonues_days,
                     istodaysign: istodaysign,
                     config: JSON.stringify(config),
@@ -52,12 +57,16 @@ class LoginRewardInterface {
                 SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, resbody);
             }
         }else{
-            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response.INVALID_PARAMS });
+            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response.ERROR_1 });
         }
     }
 
     //执行签到
     static async do_user_login_reward_sign(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (utag == 0) {
+            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response.ERROR_2 });
+            return;
+        }
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (body) {
             let signofday = body.signofday;
@@ -83,7 +92,7 @@ class LoginRewardInterface {
                                         propcount: LoginRewardConfig[signofday].propcount,
                                     }
                                     let resbody = {
-                                        status: Response.OK,
+                                        status: Response.SUCCESS,
                                         rewardconfig: JSON.stringify(rewardObj),
                                     }
                                     SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, resbody);
@@ -96,7 +105,7 @@ class LoginRewardInterface {
                 }
             }
         }
-        SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response.INVALIDI_OPT });
+        SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response.ERROR_1 });
     }
 
     //test use async await

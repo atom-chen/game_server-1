@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var RobotPlayer_1 = __importDefault(require("../cell/RobotPlayer"));
+var RobotPlayer_1 = __importDefault(require("../objects/RobotPlayer"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var PlayerManager_1 = __importDefault(require("./PlayerManager"));
 var playerMgr = PlayerManager_1["default"].getInstance();
@@ -52,7 +52,7 @@ var RobotManager = /** @class */ (function () {
     };
     RobotManager.prototype.alloc_robot_player = function (session, uid, proto_type) {
         return __awaiter(this, void 0, void 0, function () {
-            var player, issuccess, issuccess;
+            var player;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -60,7 +60,7 @@ var RobotManager = /** @class */ (function () {
                         if (!player) return [3 /*break*/, 2];
                         return [4 /*yield*/, player.init_data(session, uid, proto_type)];
                     case 1:
-                        issuccess = _a.sent();
+                        _a.sent();
                         player.set_robot(true);
                         Log_1["default"].info("hcc>>robot >> alloc_robot_player old: success!! uid: ", uid);
                         return [3 /*break*/, 4];
@@ -68,7 +68,7 @@ var RobotManager = /** @class */ (function () {
                         player = new RobotPlayer_1["default"](session, uid, proto_type);
                         return [4 /*yield*/, player.init_data(session, uid, proto_type)];
                     case 3:
-                        issuccess = _a.sent();
+                        _a.sent();
                         _a.label = 4;
                     case 4:
                         playerMgr.add_robot_player(player);
@@ -77,17 +77,6 @@ var RobotManager = /** @class */ (function () {
                 }
             });
         });
-    };
-    RobotManager.prototype.get_free_robot_player = function () {
-        // let player_set = this._robot_set;
-        // for(let indx in player_set){
-        //     let p:Player = player_set[indx];
-        //     if (p.is_robot() && p.get_user_state() == UserState.InView){
-        //         if (!RoomManager.getInstance().get_room_by_uid(p.get_uid())){
-        //             return p;
-        //         }
-        //     }
-        // }
     };
     RobotManager.prototype.get_robot_player_set = function () {
         return this._robot_set;

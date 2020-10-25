@@ -1,7 +1,6 @@
-import Player from '../cell/Player';
+import Player from '../objects/Player';
 import ArrayUtil from '../../../utils/ArrayUtil';
-import Log from '../../../utils/Log';
-import RobotPlayer from '../cell/RobotPlayer';
+import RobotPlayer from '../objects/RobotPlayer';
 
 class PlayerManager {
     private static readonly Instance: PlayerManager = new PlayerManager();
@@ -19,12 +18,11 @@ class PlayerManager {
     async alloc_player(session:any, uid:number, proto_type:number){
         let player:Player = this._player_set[uid]
         if(player){
-            let issuccess: any = await player.init_data(session, uid, proto_type);
-            // Log.info("alloc_player>> user: ", uid, " is exist!, issuccess: " , issuccess);
+            await player.init_data(session, uid, proto_type);
             return player;
         }
         let player2:Player = new Player(session, uid, proto_type);
-        let issuccess: any = await player2.init_data(session, uid, proto_type);
+        await player2.init_data(session, uid, proto_type);
         this._player_set[uid] = player2;
         return player2;
     }

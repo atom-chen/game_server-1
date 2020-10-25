@@ -1,15 +1,15 @@
 import Response from '../protocol/Response';
-import ProtoManager from '../../netbus/ProtoManager';
+import ProtoManager from '../../netengine/ProtoManager';
 import Log from '../../utils/Log';
 import RobotSend from './RobotSend';
 import RobotMgr from './manager/RobotMgr';
 import Robot from './cell/Robot';
 import * as util from 'util';
-import { PlayerPower } from '../game_server/config/State';
 import RobotListConfig from './config/RobotListConfig';
 import RobotGameInterface from './interface/RobotGameInterface';
 import Stype from '../protocol/Stype';
 import GameHoodleProto from '../protocol/protofile/GameHoodleProto';
+import State from '../config/State';
 
 interface CmdHandlerMap {
     [cmdtype: number]: Function;
@@ -26,19 +26,19 @@ class RobotGameModel {
 
     private constructor() {
         this._cmd_handler_map = {
-            [GameHoodleProto.XY_ID.eLoginLogicRes]: this.on_player_login_logic_res,
-            [GameHoodleProto.XY_ID.eGetRoomStatusRes]: this.on_player_status_res,
-            [GameHoodleProto.XY_ID.eUserMatchRes]: this.on_event_match_res,
-            [GameHoodleProto.XY_ID.eUserInfoRes]: this.on_event_user_info_res,
-            [GameHoodleProto.XY_ID.eGameStartRes]: this.on_event_game_start_res,
-            [GameHoodleProto.XY_ID.ePlayerPowerRes]: this.on_event_power_res,
-            [GameHoodleProto.XY_ID.eGameResultRes]: this.on_event_game_result_res,
-            [GameHoodleProto.XY_ID.eTotalGameResultRes]: this.on_event_game_total_result_res,
-            [GameHoodleProto.XY_ID.eUserEmojRes]: this.on_event_emoj_res,
-            [GameHoodleProto.XY_ID.ePlayerShootRes]: this.on_event_player_shoot_res,
-            [GameHoodleProto.XY_ID.ePlayerBallPosRes]: this.on_event_ball_pos_res,
-            [GameHoodleProto.XY_ID.eDessolveRes]: this.on_event_desolve_res,
-            [GameHoodleProto.XY_ID.eBackRoomRes]: this.on_event_back_room_res,
+            // [GameHoodleProto.XY_ID.eLoginLogicRes]: this.on_player_login_logic_res,
+            // [GameHoodleProto.XY_ID.eGetRoomStatusRes]: this.on_player_status_res,
+            // [GameHoodleProto.XY_ID.eUserMatchRes]: this.on_event_match_res,
+            // [GameHoodleProto.XY_ID.eUserInfoRes]: this.on_event_user_info_res,
+            // [GameHoodleProto.XY_ID.eGameStartRes]: this.on_event_game_start_res,
+            // [GameHoodleProto.XY_ID.ePlayerPowerRes]: this.on_event_power_res,
+            // [GameHoodleProto.XY_ID.eGameResultRes]: this.on_event_game_result_res,
+            // [GameHoodleProto.XY_ID.eTotalGameResultRes]: this.on_event_game_total_result_res,
+            // [GameHoodleProto.XY_ID.eUserEmojRes]: this.on_event_emoj_res,
+            // [GameHoodleProto.XY_ID.ePlayerShootRes]: this.on_event_player_shoot_res,
+            // [GameHoodleProto.XY_ID.ePlayerBallPosRes]: this.on_event_ball_pos_res,
+            // [GameHoodleProto.XY_ID.eDessolveRes]: this.on_event_desolve_res,
+            // [GameHoodleProto.XY_ID.eBackRoomRes]: this.on_event_back_room_res,
         }
     }
 
@@ -56,15 +56,15 @@ class RobotGameModel {
     // send match to game server
     private on_player_login_logic_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer){
         Log.info("hcc>>on_player_login_logic_res.....,utag: ", utag);
-        RobotSend.send_game(session, GameHoodleProto.XY_ID.eUserGameInfoReq, utag);
-        RobotSend.send_game(session, GameHoodleProto.XY_ID.eRoomListConfigReq, utag);
-        RobotSend.send_game(session, GameHoodleProto.XY_ID.eGetRoomStatusReq,utag);
+        // RobotSend.send_game(session, GameHoodleProto.XY_ID.eUserGameInfoReq, utag);
+        // RobotSend.send_game(session, GameHoodleProto.XY_ID.eRoomListConfigReq, utag);
+        // RobotSend.send_game(session, GameHoodleProto.XY_ID.eGetRoomStatusReq,utag);
     }
 
     private on_player_status_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-        if (res_body && res_body.status == Response.OK){ //at room
-            RobotSend.send_game(session, GameHoodleProto.XY_ID.eBackRoomReq, utag);
+        if (res_body && res_body.status == Response.SUCCESS){ //at room
+            // RobotSend.send_game(session, GameHoodleProto.XY_ID.eBackRoomReq, utag);
         }else{ //not at room, free
             RobotGameInterface.go_to_match_game(session, utag);
         }
@@ -73,7 +73,7 @@ class RobotGameModel {
     //as soon as match success, send ready to game server
     private on_event_match_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer){
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-        if(res_body && res_body.status == Response.OK){
+        if (res_body && res_body.status == Response.SUCCESS){
             if (res_body.matchsuccess){
                 setTimeout(() => {
                     RobotSend.send_game(session, GameHoodleProto.XY_ID.eUserReadyReq,utag);
@@ -121,7 +121,7 @@ class RobotGameModel {
                     for(let key in res_body.powers){
                         let res_seatid = res_body.powers[key].seatid;
                         let res_power = res_body.powers[key].power;
-                        if (robot_seatid == res_seatid && res_power == PlayerPower.canPlay){
+                        if (robot_seatid == res_seatid && res_power == State.PlayerPower.canPlay){
                             let other_pos:any = RobotMgrIns.get_other_pos(utag);
                             let req_body = {
                                 seatid: robot_seatid,
@@ -185,7 +185,7 @@ class RobotGameModel {
     private on_event_desolve_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         if (res_body) {
-            if(res_body.status == Response.OK){
+            if (res_body.status == Response.SUCCESS){
                 RobotGameInterface.go_to_match_game(session, utag);
             }
         }
@@ -193,7 +193,7 @@ class RobotGameModel {
 
     private on_event_back_room_res(session: any, utag: number, proto_type: number, raw_cmd: Buffer) {
         let res_body = ProtoManager.decode_cmd(proto_type, raw_cmd);
-        if (res_body && res_body.status == Response.OK){
+        if (res_body && res_body.status == Response.SUCCESS){
             RobotSend.send_game(session, GameHoodleProto.XY_ID.eCheckLinkGameReq,utag);
         }
     }

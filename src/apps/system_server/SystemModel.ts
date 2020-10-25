@@ -1,8 +1,6 @@
-import Response from '../protocol/Response';
-import ProtoManager from '../../netbus/ProtoManager';
+import ProtoManager from '../../netengine/ProtoManager';
 import CommonProto from '../protocol/protofile/CommonProto';
 import Log from '../../utils/Log';
-import SystemSend from './SystemSend';
 import LoginRewardInterface from './interface/LoginRewardInterface';
 import ShareInterface from './interface/ShareInterface';
 import AddUchipInterface from './interface/AddUchipInterface';
@@ -44,40 +42,21 @@ class SystemModel {
     }
 
     on_player_lost_connect(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        let body = this.decode_cmd(proto_type, raw_cmd);
-        Log.info("on_player_lost_connect utag:", utag, body)
     }
 
     on_user_login_reward_config(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        if (utag == 0) {
-            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type,{status: Response.INVALIDI_OPT});
-            return;
-        }
         LoginRewardInterface.do_user_login_reward_config(session, utag, proto_type, raw_cmd);
     }
 
     on_user_login_reward_sign(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        if (utag == 0) {
-            SystemSend.send(session, SystemProto.XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response.INVALIDI_OPT });
-            return;
-        }
         LoginRewardInterface.do_user_login_reward_sign(session, utag, proto_type, raw_cmd);
     }
 
     on_user_share_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        if(utag == 0){
-            SystemSend.send(session, SystemProto.XY_ID.RES_USERSHARE, utag, proto_type, { status: Response.INVALIDI_OPT });
-            return;
-        }
         ShareInterface.dn_user_share_req(session, utag, proto_type, raw_cmd);
     }
 
     on_user_add_chip_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
-        if (utag == 0) {
-            SystemSend.send(session, SystemProto.XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response.INVALIDI_OPT });
-            return;
-        }
-
         AddUchipInterface.do_user_add_chip_req(session, utag, proto_type, raw_cmd);
     }
 }

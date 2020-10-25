@@ -55,6 +55,7 @@ class GameAppConfig {
 
 	static rabbit_channel_auth = "channel_auth_center"
 	static rabbit_channel_game = "rabbit_channel_game"
+	static MAX_GAME_SERVER_PLAYER_COUNT = 1000;  //单个逻辑服务承载最大人数
 
 	//网关服
 	static gateway_config  ={
@@ -186,11 +187,6 @@ class GameAppConfig {
 		GameAppConfig.game_route_server,
 		// GameAppConfig.system_server,
 		GameAppConfig.lobby_server,
-	]
-	
-	//逻辑路由服务连接到其他逻辑服务
-	static logic_connect_servers = [
-		GameAppConfig.game_logic_server_1,
 	]
 }
 

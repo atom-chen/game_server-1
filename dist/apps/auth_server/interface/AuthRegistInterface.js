@@ -43,7 +43,7 @@ var MySqlAuth_1 = __importDefault(require("../../../database/MySqlAuth"));
 var Response_1 = __importDefault(require("../../protocol/Response"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var AuthSendMsg_1 = __importDefault(require("../AuthSendMsg"));
-var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../../../netengine/ProtoManager"));
 var StringUtil_1 = __importDefault(require("../../../utils/StringUtil"));
 var AuthProto_1 = __importDefault(require("../../protocol/protofile/AuthProto"));
 var AuthRegistInterface = /** @class */ (function () {
@@ -55,21 +55,25 @@ var AuthRegistInterface = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (utag == 0) {
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].ERROR_1 });
+                            return [2 /*return*/];
+                        }
                         body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
                         // Log.info("uname_regist cmd: ", body)
                         if (!body) {
                             Log_1["default"].warn("uname_regist error, regist body is null");
-                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].ERROR_2 });
                             return [2 /*return*/];
                         }
                         if (!body.uname || !body.upwdmd5) {
                             Log_1["default"].warn("uname_regist error, regist uname or upwdmd5 is null");
-                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].ERROR_3 });
                             return [2 /*return*/];
                         }
                         if (body.uname.length < 6 || body.upwdmd5.length < 6) {
                             Log_1["default"].warn("uname_regist error, regist uname or upwdmd5 length is < 6");
-                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].INVALID_PARAMS });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].ERROR_4 });
                             return [2 /*return*/];
                         }
                         unick = "user";
@@ -83,12 +87,12 @@ var AuthRegistInterface = /** @class */ (function () {
                     case 2:
                         insert_ret = _a.sent();
                         if (insert_ret) {
-                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: 1 });
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].SUCCESS });
                             return [2 /*return*/];
                         }
                         _a.label = 3;
                     case 3:
-                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].ILLEGAL_ACCOUNT });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_UNAMEREGIST, utag, proto_type, { status: Response_1["default"].ERROR_5 });
                         return [2 /*return*/];
                 }
             });

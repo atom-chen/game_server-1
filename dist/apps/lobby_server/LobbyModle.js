@@ -4,11 +4,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var Log_1 = __importDefault(require("../../utils/Log"));
-var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../../netengine/ProtoManager"));
 var LobbyProto_1 = __importDefault(require("../protocol/protofile/LobbyProto"));
 var CommonProto_1 = __importDefault(require("../protocol/protofile/CommonProto"));
-var GameInfoHandle_1 = __importDefault(require("./handle/GameInfoHandle"));
-var RoomHandle_1 = __importDefault(require("./handle/RoomHandle"));
+var RoomHandle_1 = __importDefault(require("./handler/RoomHandle"));
+var GameInfoHandle_1 = __importDefault(require("./handler/GameInfoHandle"));
 /**
  * 房间号，玩家ID，游戏逻辑进程ID，
  */
@@ -25,6 +25,7 @@ var LobbyModle = /** @class */ (function () {
             _a[LobbyProto_1["default"].XY_ID.REQ_DESSOLVEROOM] = this.on_req_dessolve_room,
             _a[LobbyProto_1["default"].XY_ID.REQ_BACKROOM] = this.on_req_back_room,
             _a[LobbyProto_1["default"].XY_ID.REQ_ROOMSTATUS] = this.on_req_room_status,
+            _a[LobbyProto_1["default"].XY_ID.REQ_GAMEINFO] = this.on_req_game_info,
             _a);
     }
     LobbyModle.getInstance = function () {
@@ -56,25 +57,29 @@ var LobbyModle = /** @class */ (function () {
     LobbyModle.prototype.on_req_create_room = function (session, utag, proto_type, raw_cmd) {
         RoomHandle_1["default"].do_req_create_room(session, utag, proto_type, raw_cmd);
     };
-    //加入 OK 
+    //加入
     LobbyModle.prototype.on_req_join_room = function (session, utag, proto_type, raw_cmd) {
         RoomHandle_1["default"].do_req_join_room(session, utag, proto_type, raw_cmd);
     };
-    //退出 OK 
+    //退出
     LobbyModle.prototype.on_req_exit_room = function (session, utag, proto_type, raw_cmd) {
         RoomHandle_1["default"].do_req_exit_room(session, utag, proto_type, raw_cmd);
     };
-    //返回 OK 
+    //返回
     LobbyModle.prototype.on_req_back_room = function (session, utag, proto_type, raw_cmd) {
         RoomHandle_1["default"].do_req_back_room(session, utag, proto_type, raw_cmd);
     };
-    //解散 OK 
+    //解散
     LobbyModle.prototype.on_req_dessolve_room = function (session, utag, proto_type, raw_cmd) {
         RoomHandle_1["default"].do_req_dessolve_room(session, utag, proto_type, raw_cmd);
     };
-    //查询玩家是否在房间内 OK 
+    //查询玩家是否在房间内
     LobbyModle.prototype.on_req_room_status = function (session, utag, proto_type, raw_cmd) {
         RoomHandle_1["default"].do_req_room_status(session, utag, proto_type, raw_cmd);
+    };
+    //获取玩家游戏数据库信息
+    LobbyModle.prototype.on_req_game_info = function (session, utag, proto_type, raw_cmd) {
+        GameInfoHandle_1["default"].do_req_game_info(session, utag, proto_type, raw_cmd);
     };
     LobbyModle.Instance = new LobbyModle();
     return LobbyModle;

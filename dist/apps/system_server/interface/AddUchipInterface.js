@@ -46,7 +46,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 exports.__esModule = true;
-var ProtoManager_1 = __importDefault(require("../../../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../../../netengine/ProtoManager"));
 var GameHoodleConfig_1 = __importDefault(require("../../game_server/config/GameHoodleConfig"));
 var MySqlGame_1 = __importDefault(require("../../../database/MySqlGame"));
 var SystemSend_1 = __importDefault(require("../SystemSend"));
@@ -66,12 +66,16 @@ var AddUchipInterface = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        if (utag == 0) {
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].ERROR_1 });
+                            return [2 /*return*/];
+                        }
                         body = ProtoManager_1["default"].decode_cmd(proto_type, raw_cmd);
                         if (!body) return [3 /*break*/, 9];
                         propid = body.propid;
                         propcount = body.propcount;
                         if (propcount <= 0) {
-                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].ERROR_2 });
                             return [2 /*return*/];
                         }
                         config = body.config;
@@ -81,7 +85,7 @@ var AddUchipInterface = /** @class */ (function () {
                         ret = _a.sent();
                         if (ret) {
                             res_body = {
-                                status: Response_1["default"].OK,
+                                status: Response_1["default"].SUCCESS,
                                 propid: propid,
                                 propcount: propcount,
                                 config: config
@@ -89,7 +93,7 @@ var AddUchipInterface = /** @class */ (function () {
                             SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, res_body);
                             return [2 /*return*/];
                         }
-                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].ERROR_3 });
                         return [3 /*break*/, 9];
                     case 2:
                         if (!(propid == GameHoodleConfig_1["default"].KW_PROP_ID_BALL)) return [3 /*break*/, 9];
@@ -124,7 +128,7 @@ var AddUchipInterface = /** @class */ (function () {
                         ret = _a.sent();
                         if (ret) {
                             res_body = {
-                                status: Response_1["default"].OK,
+                                status: Response_1["default"].SUCCESS,
                                 propid: propid,
                                 propcount: propcount,
                                 config: config
@@ -139,7 +143,7 @@ var AddUchipInterface = /** @class */ (function () {
                         Log_1["default"].error(error_1);
                         return [3 /*break*/, 8];
                     case 8:
-                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
+                        SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].ERROR_4 });
                         _a.label = 9;
                     case 9: return [2 /*return*/];
                 }

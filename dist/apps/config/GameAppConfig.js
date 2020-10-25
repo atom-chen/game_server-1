@@ -55,6 +55,7 @@ var GameAppConfig = /** @class */ (function () {
     };
     GameAppConfig.rabbit_channel_auth = "channel_auth_center";
     GameAppConfig.rabbit_channel_game = "rabbit_channel_game";
+    GameAppConfig.MAX_GAME_SERVER_PLAYER_COUNT = 1000; //单个逻辑服务承载最大人数
     //网关服
     GameAppConfig.gateway_config = {
         host: LOCAL_HOST,
@@ -168,10 +169,6 @@ var GameAppConfig = /** @class */ (function () {
         GameAppConfig.game_route_server,
         // GameAppConfig.system_server,
         GameAppConfig.lobby_server,
-    ];
-    //逻辑路由服务连接到其他逻辑服务
-    GameAppConfig.logic_connect_servers = [
-        GameAppConfig.game_logic_server_1,
     ];
     return GameAppConfig;
 }());

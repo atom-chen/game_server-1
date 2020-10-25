@@ -8,7 +8,6 @@ let ROOMID_ROOMINFO_KEY = "hash_roomid_roominfo_key"
 let UID_ROOMINFO_KEY = "hash_uid_roominfo_key" 
 let room_id_length = 6;
 let game_serverindex_playercount_key = "game_serverindex_playercount_key"
-let MAX_GAME_SERVER_PLAYER_COUNT = 1000;  //
 
 /*
 1. 这两个地方同时保存了roominfo_json
@@ -136,6 +135,27 @@ export default class RedisLobby {
         return false;
     }
 
+    public static async set_game_state(roomid:string, game_state:number){
+        let roomid_key = RedisLobby.get_roomid_key(roomid);
+        let ret = await RedisLobby.engine().hget(ROOMID_ROOMINFO_KEY, roomid_key);
+        if (ret) {
+            let roominfo_obj = JSON.parse(ret);
+            if (roominfo_obj){
+                roominfo_obj.game_state = game_state;
+            }
+            let uids: Array<number> = roominfo_obj.uids;
+            if (uids) {
+                let roominfo_json = JSON.stringify(roominfo_obj);
+                await RedisLobby.save_roomid_roominfo_inredis(roomid, roominfo_json);
+                uids.forEach(async uid => {
+                    await RedisLobby.save_uid_roominfo_inredis(uid, roominfo_json);
+                });
+                return true;
+            }
+        }
+        return false;
+    }
+
     //删除玩家uid和获取roominfo_json的映射
     //返回boolean
     //内部使用
@@ -227,9 +247,9 @@ export default class RedisLobby {
 
     //////////////////////////////////////
     //保存服务id, 人数
-    static async set_server_playercount(server_index: any, playercount: number) {
+    static async set_server_playercount(server_key: string, playercount: number) {
         let key = game_serverindex_playercount_key;
-        let ret = await RedisLobby.engine().hset(key, server_index, playercount);
+        let ret = await RedisLobby.engine().hset(key, server_key, playercount);
         let result_str = ret == 1;
         Log.info("hcc>>redis set_server_playercount ", key, result_str);
         return ret;
@@ -243,6 +263,7 @@ export default class RedisLobby {
         return ret;
     }
 
+    //服务是否存在
     public static async is_server_exist(server_key:string){
         let gameinfo = await RedisLobby.get_server_playercount_info();
         if (gameinfo) {
@@ -255,6 +276,14 @@ export default class RedisLobby {
         return false;
     }
 
+    //删除某个服务的信息
+    //返回boolean
+    static async delete_server_info(server_key:string){
+        let key = game_serverindex_playercount_key;
+        let ret = await RedisLobby.engine().hdelete(key, server_key);
+        return ret == 1;
+    }
+
     //根据服务的负载，进行选择哪个game_server
     public static async choose_game_server(){
         let gameinfo = await RedisLobby.get_server_playercount_info();
@@ -262,7 +291,7 @@ export default class RedisLobby {
             for (let key in gameinfo){
                 let gameserver_key = Number(key);
                 let playercount = Number(gameinfo[key]);
-                if (playercount <= MAX_GAME_SERVER_PLAYER_COUNT){
+                if (playercount < GameAppConfig.MAX_GAME_SERVER_PLAYER_COUNT){
                     return gameserver_key;
                 }
             }

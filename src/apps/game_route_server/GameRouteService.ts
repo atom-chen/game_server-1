@@ -1,8 +1,8 @@
-import ServiceBase from "../../netbus/ServiceBase";
-import NetClient from "../../netbus/NetClient";
+import ServiceBase from "../../netengine/ServiceBase";
+import NetClient from "../../netengine/NetClient";
 import Log from "../../utils/Log";
 import GameRouteSaveSession from './GameRouteData';
-import NetServer from "../../netbus/NetServer";
+import NetServer from "../../netengine/NetServer";
 import RedisLobby from '../../database/RedisLobby';
 
 class GameRouteService extends ServiceBase {
@@ -23,22 +23,20 @@ class GameRouteService extends ServiceBase {
             try {
                 let roominfo_obj = JSON.parse(roominfo_json);
                 server_key = roominfo_obj.game_serverid;
-                // Log.info("hcc>>roominfo_json:", roominfo_obj);
             } catch (error) {
-                Log.error(error);
+                Log.error("on_recv_client_player_cmd>>",error);
                 return;
             }
         }
-        Log.info("hcc>>server_key:", server_key);
+        Log.info("send to server port:" , server_key);
         if (server_key == null || server_key == undefined || server_key < 0 || typeof(server_key) != "number"){
             Log.error("server_index is invalid!", server_key);
             return;
         }
         
         let server_session = GameRouteSaveSession.get_logic_server_session(server_key);
-        if (server_session){
+        if (server_session && server_session.is_connected){
             NetClient.send_encoded_cmd(server_session, raw_cmd);
-            Log.info("hcc>>send data to:", server_key);
         }else{
             Log.error("hcc>>send data to:", server_key, "error!,  server is not started!!!!");
         }

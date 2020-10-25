@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
+var NetServer_1 = __importDefault(require("../../netengine/NetServer"));
 var Stype_1 = __importDefault(require("../protocol/Stype"));
 var AuthSendMsg = /** @class */ (function () {
     function AuthSendMsg() {

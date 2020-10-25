@@ -1,6 +1,6 @@
 //账号服务
 
-import ServiceBase from "../../netbus/ServiceBase"
+import ServiceBase from "../../netengine/ServiceBase"
 import AuthModel from './AuthModel'
 
 class AuthService extends ServiceBase {

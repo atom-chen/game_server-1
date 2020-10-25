@@ -8,8 +8,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var GameAppConfig_1 = __importDefault(require("../config/GameAppConfig"));
-var NetServer_1 = __importDefault(require("../../netbus/NetServer"));
-var ServiceManager_1 = __importDefault(require("../../netbus/ServiceManager"));
+var NetServer_1 = __importDefault(require("../../netengine/NetServer"));
+var ServiceManager_1 = __importDefault(require("../../netengine/ServiceManager"));
 var SystemService_1 = __importDefault(require("./SystemService"));
 var MysqlSystem_1 = __importDefault(require("../../database/MysqlSystem"));
 var MySqlGame_1 = __importDefault(require("../../database/MySqlGame"));

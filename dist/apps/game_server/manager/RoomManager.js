@@ -3,12 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var Room_1 = __importDefault(require("../cell/Room"));
+var Room_1 = __importDefault(require("../objects/Room"));
 var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
-var Response_1 = __importDefault(require("../../protocol/Response"));
-var GameHoodleProto_1 = __importDefault(require("../../protocol/protofile/GameHoodleProto"));
+var RedisLobby_1 = __importDefault(require("../../../database/RedisLobby"));
 var RoomManager = /** @class */ (function () {
     function RoomManager() {
         this._room_set = {}; //roomid-->room
@@ -21,7 +20,6 @@ var RoomManager = /** @class */ (function () {
                 var tick_count = room.get_tick_count();
                 // Log.info("tick count: roomid: " , room.get_room_id() , " count: ", tick_count);
                 if (tick_count >= GameHoodleConfig_1["default"].ROOM_MAX_DISMISS_TIME) {
-                    room.broadcast_in_room(GameHoodleProto_1["default"].XY_ID.eDessolveRes, { status: Response_1["default"].OK });
                     _this.delete_room(room.get_room_id());
                 }
             }
@@ -47,6 +45,7 @@ var RoomManager = /** @class */ (function () {
         if (this._room_set[roomid]) {
             delete this._room_set[roomid];
             Log_1["default"].info("delete_room:", roomid, "success, roomCount: ", this.get_room_count());
+            RedisLobby_1["default"].delete_room(roomid);
             return true;
         }
         else {

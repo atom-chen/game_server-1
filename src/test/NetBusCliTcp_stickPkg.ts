@@ -1,7 +1,7 @@
 var net = require("net");
 var StickPackage 	 = require("stickpackage")
 
-import ProtoManager from "../netbus/ProtoManager"
+import ProtoManager from "../netengine/ProtoManager"
 import Platform from "../utils/Platform"
 import Log from '../utils/Log';
 import Stype from '../apps/protocol/Stype';

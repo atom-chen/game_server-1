@@ -4,7 +4,7 @@ import MySqlAuth from "../../../database/MySqlAuth"
 import Response from '../../protocol/Response';
 import Log from "../../../utils/Log";
 import AuthSendMsg from "../AuthSendMsg";
-import ProtoManager from "../../../netbus/ProtoManager";
+import ProtoManager from "../../../netengine/ProtoManager";
 import * as util from 'util';
 import * as https from 'https';
 import * as http from "http";
@@ -19,6 +19,10 @@ let HTTPS_WECHAT_LOGIN   = "https://api.weixin.qq.com/sns/jscode2session?appid=%
 class AuthWeChatLoginInterface {
 
     static async do_wechat_login_req(session: any, utag: number, proto_type: number, raw_cmd: any){
+        if (utag == 0) {
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response.ERROR_1 })
+            return;
+        }
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         // Log.info("hcc>>do_wechat_login_req:" , body);
         let logincode = body.logincode;
@@ -116,7 +120,7 @@ class AuthWeChatLoginInterface {
             }else{
                 let sql_info = data[0]
                 let resbody = {
-                    status: Response.OK,
+                    status: Response.SUCCESS,
                     uid: Number(sql_info.uid),
                     userlogininfo: JSON.stringify(sql_info)
                 }
@@ -133,11 +137,15 @@ class AuthWeChatLoginInterface {
                 return;
             }
         }
-        AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
+        AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATLOGIN, utag, proto_type, { status: Response.ERROR_1 })
     }
 
     //微信session登录(其实就是unionid登录)
     static async do_wechat_session_login_req(session: any, utag: number, proto_type: number, raw_cmd: any) {
+        if (utag == 0) {
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response.ERROR_1 })
+            return;
+        }
         let body = ProtoManager.decode_cmd(proto_type, raw_cmd);
         // Log.info("hcc>>do_wechat_session_login_req111,body:  " , body);
         if(body){
@@ -147,7 +155,7 @@ class AuthWeChatLoginInterface {
                 if(data.length > 0){
                     let sql_info = data[0]
                     let resbody = {
-                        status: Response.OK,
+                        status: Response.SUCCESS,
                         uid: Number(sql_info.uid),
                         userlogininfo: JSON.stringify(sql_info)
                     }
@@ -156,7 +164,7 @@ class AuthWeChatLoginInterface {
                     return;
                 }
             }
-            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response.INVALID_PARAMS })
+            AuthSendMsg.send(session, AuthProto.XY_ID.RES_WECHATSESSIONLOGIN, utag, proto_type, { status: Response.ERROR_2 })
         }
     }
 }

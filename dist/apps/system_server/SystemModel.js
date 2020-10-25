@@ -3,11 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 exports.__esModule = true;
-var Response_1 = __importDefault(require("../protocol/Response"));
-var ProtoManager_1 = __importDefault(require("../../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../../netengine/ProtoManager"));
 var CommonProto_1 = __importDefault(require("../protocol/protofile/CommonProto"));
 var Log_1 = __importDefault(require("../../utils/Log"));
-var SystemSend_1 = __importDefault(require("./SystemSend"));
 var LoginRewardInterface_1 = __importDefault(require("./interface/LoginRewardInterface"));
 var ShareInterface_1 = __importDefault(require("./interface/ShareInterface"));
 var AddUchipInterface_1 = __importDefault(require("./interface/AddUchipInterface"));
@@ -39,35 +37,17 @@ var SystemModel = /** @class */ (function () {
         }
     };
     SystemModel.prototype.on_player_lost_connect = function (session, utag, proto_type, raw_cmd) {
-        var body = this.decode_cmd(proto_type, raw_cmd);
-        Log_1["default"].info("on_player_lost_connect utag:", utag, body);
     };
     SystemModel.prototype.on_user_login_reward_config = function (session, utag, proto_type, raw_cmd) {
-        if (utag == 0) {
-            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDCONFIG, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
-            return;
-        }
         LoginRewardInterface_1["default"].do_user_login_reward_config(session, utag, proto_type, raw_cmd);
     };
     SystemModel.prototype.on_user_login_reward_sign = function (session, utag, proto_type, raw_cmd) {
-        if (utag == 0) {
-            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_LOGINREWARDSIGN, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
-            return;
-        }
         LoginRewardInterface_1["default"].do_user_login_reward_sign(session, utag, proto_type, raw_cmd);
     };
     SystemModel.prototype.on_user_share_req = function (session, utag, proto_type, raw_cmd) {
-        if (utag == 0) {
-            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERSHARE, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
-            return;
-        }
         ShareInterface_1["default"].dn_user_share_req(session, utag, proto_type, raw_cmd);
     };
     SystemModel.prototype.on_user_add_chip_req = function (session, utag, proto_type, raw_cmd) {
-        if (utag == 0) {
-            SystemSend_1["default"].send(session, SystemProto_1["default"].XY_ID.RES_USERADDCHIP, utag, proto_type, { status: Response_1["default"].INVALIDI_OPT });
-            return;
-        }
         AddUchipInterface_1["default"].do_user_add_chip_req(session, utag, proto_type, raw_cmd);
     };
     SystemModel.Instance = new SystemModel();

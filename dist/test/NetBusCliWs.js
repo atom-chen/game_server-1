@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 exports.__esModule = true;
 var ws = require("ws");
-var ProtoManager_1 = __importDefault(require("../netbus/ProtoManager"));
+var ProtoManager_1 = __importDefault(require("../netengine/ProtoManager"));
 var Platform_1 = __importDefault(require("../utils/Platform"));
 var Log_1 = __importDefault(require("../utils/Log"));
 var Stype_1 = __importDefault(require("../apps/protocol/Stype"));

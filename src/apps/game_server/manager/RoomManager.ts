@@ -1,9 +1,7 @@
-import Room from '../cell/Room';
+import Room from '../objects/Room';
 import ArrayUtil from '../../../utils/ArrayUtil';
 import Log from '../../../utils/Log';
 import GameHoodleConfig from '../config/GameHoodleConfig';
-import Response from '../../protocol/Response';
-import GameHoodleProto from '../../protocol/protofile/GameHoodleProto';
 import RedisLobby from '../../../database/RedisLobby';
 
 class RoomManager {
@@ -15,18 +13,15 @@ class RoomManager {
         //删除创建超过10分钟的房间
         let _this = this;
         setInterval(function() {
-            /*
             for(let idx in _this._room_set){
                 let room:Room = _this._room_set[idx];
                 room.set_tick_count(room.get_tick_count() + 1);
                 let tick_count = room.get_tick_count();
                 // Log.info("tick count: roomid: " , room.get_room_id() , " count: ", tick_count);
                 if( tick_count >= GameHoodleConfig.ROOM_MAX_DISMISS_TIME){
-                    room.broadcast_in_room(GameHoodleProto.XY_ID.eDessolveRes, { status: Response.OK });
                     _this.delete_room(room.get_room_id());
                 }
             }
-        */
         },1000);
     }
 

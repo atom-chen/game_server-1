@@ -5,12 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 exports.__esModule = true;
 var ArrayUtil_1 = __importDefault(require("../../../utils/ArrayUtil"));
 var Log_1 = __importDefault(require("../../../utils/Log"));
-var State_1 = require("../config/State");
 var RoomManager_1 = __importDefault(require("./RoomManager"));
 var GameHoodleConfig_1 = __importDefault(require("../config/GameHoodleConfig"));
-var Response_1 = __importDefault(require("../../protocol/Response"));
 var RoomListConfig_1 = require("../config/RoomListConfig");
-var GameHoodleProto_1 = __importDefault(require("../../protocol/protofile/GameHoodleProto"));
+var State_1 = __importDefault(require("../../config/State"));
 var roomMgr = RoomManager_1["default"].getInstance();
 var MatchManager = /** @class */ (function () {
     /*
@@ -78,7 +76,7 @@ var MatchManager = /** @class */ (function () {
                             player.set_offline(false);
                             _this.set_room_host(not_full_room);
                             let body = {
-                                status: Response.OK,
+                                status: Response.SUCCESS,
                                 matchsuccess: true,
                             }
                             player.send_cmd(GameHoodleProto.XY_ID.eUserMatchRes, body);
@@ -142,14 +140,14 @@ var MatchManager = /** @class */ (function () {
                 player.set_offline(false);
                 if(!room.add_player(player)){
                     Log.warn("on_server_match_success enter room error")
-                    room.broadcast_in_room(GameHoodleProto.XY_ID.eUserMatchRes,{status:Response.INVALIDI_OPT});
+                    room.broadcast_in_room(GameHoodleProto.XY_ID.eUserMatchRes,{status:Response.ERROR_1});
                     RoomManager.getInstance().delete_room(room.get_room_id())
                     return;
                 }
             }
             this.set_room_host(room);
             let body = {
-                status: Response.OK,
+                status: Response.SUCCESS,
                 matchsuccess: true,
             }
             room.broadcast_in_room(GameHoodleProto.XY_ID.eUserMatchRes,body);
@@ -180,37 +178,41 @@ var MatchManager = /** @class */ (function () {
         }
     };
     //发送匹配列表中的玩家
-    MatchManager.prototype.send_match_player = function (in_match_list) {
-        var userinfo_array = [];
-        for (var key in in_match_list) {
-            var player = in_match_list[key];
-            if (player) {
-                var userinfo = {
+    /*
+    send_match_player(in_match_list:any){
+        let userinfo_array = [];
+        for(let key in in_match_list){
+            let player:Player = in_match_list[key];
+            if(player){
+                let userinfo = {
                     numberid: String(player.get_numberid()),
-                    userinfostring: JSON.stringify(player.get_player_info())
-                };
+                    userinfostring: JSON.stringify(player.get_player_info()),
+                }
                 userinfo_array.push(userinfo);
             }
         }
-        var body = {
-            status: Response_1["default"].OK,
+
+        let body = {
+            status: Response.SUCCESS,
             matchsuccess: false,
-            userinfo: userinfo_array
-        };
-        for (var key in in_match_list) {
-            var player = in_match_list[key];
-            if (player) {
-                player.send_cmd(GameHoodleProto_1["default"].XY_ID.eUserMatchRes, body);
+            userinfo: userinfo_array,
+        }
+
+        for(let key in in_match_list){
+            let player:Player = in_match_list[key];
+            if(player){
+                player.send_cmd(GameHoodleProto.XY_ID.eUserMatchRes,body)
             }
         }
-    };
+    }
+    */
     //获取正在等待列表中，未进入匹配的玩家  inview状态
     //先找玩家，再找机器人
     MatchManager.prototype.get_matching_player = function (zoom) {
         //先找玩家
         for (var key in zoom.match_list) {
             var player = zoom.match_list[key];
-            if (player.get_user_state() == State_1.UserState.InView) {
+            if (player.get_user_state() == State_1["default"].UserState.InView) {
                 if (!player.is_robot()) {
                     return player;
                 }
@@ -219,7 +221,7 @@ var MatchManager = /** @class */ (function () {
         //再找机器人
         for (var key in zoom.match_list) {
             var player = zoom.match_list[key];
-            if (player.get_user_state() == State_1.UserState.InView) {
+            if (player.get_user_state() == State_1["default"].UserState.InView) {
                 return player;
             }
         }
@@ -229,7 +231,7 @@ var MatchManager = /** @class */ (function () {
     MatchManager.prototype.get_in_matching_player = function (zoom) {
         for (var key in zoom.in_match_list) {
             var p = zoom.in_match_list[key];
-            if (p.get_user_state() == State_1.UserState.MatchIng) {
+            if (p.get_user_state() == State_1["default"].UserState.MatchIng) {
                 if (!p.is_robot()) {
                     return p;
                 }
@@ -237,7 +239,7 @@ var MatchManager = /** @class */ (function () {
         }
         for (var key in zoom.in_match_list) {
             var p = zoom.in_match_list[key];
-            if (p.get_user_state() == State_1.UserState.MatchIng) {
+            if (p.get_user_state() == State_1["default"].UserState.MatchIng) {
                 return p;
             }
         }
@@ -247,7 +249,7 @@ var MatchManager = /** @class */ (function () {
         var count = 0;
         for (var key in zoom.in_match_list) {
             var player = zoom.in_match_list[key];
-            if (player && player.get_user_state() == State_1.UserState.MatchIng) {
+            if (player && player.get_user_state() == State_1["default"].UserState.MatchIng) {
                 count++;
             }
         }
@@ -269,7 +271,7 @@ var MatchManager = /** @class */ (function () {
         for (var key in in_match_list) {
             var player = in_match_list[key];
             if (player) {
-                player.set_user_state(State_1.UserState.InView);
+                player.set_user_state(State_1["default"].UserState.InView);
                 key_set.push(player.get_uid());
             }
         }
@@ -298,7 +300,7 @@ var MatchManager = /** @class */ (function () {
         //     return false;
         // }
         zoom.match_list[player.get_uid()] = player;
-        player.set_user_state(State_1.UserState.InView);
+        player.set_user_state(State_1["default"].UserState.InView);
         return true;
     };
     //添加到匹配完成列表中 inview-> Matching
@@ -306,7 +308,7 @@ var MatchManager = /** @class */ (function () {
         if (!player) {
             return false;
         }
-        if (player.get_user_state() != State_1.UserState.InView) {
+        if (player.get_user_state() != State_1["default"].UserState.InView) {
             return false;
         }
         // if (roomMgr.get_room_by_uid(player.get_uid())) {
@@ -329,14 +331,14 @@ var MatchManager = /** @class */ (function () {
             }
         }
         zoom.in_match_list[player.get_uid()] = player;
-        player.set_user_state(State_1.UserState.MatchIng);
+        player.set_user_state(State_1["default"].UserState.MatchIng);
         return true;
     };
     //从待匹配的列表中删除 inview
     MatchManager.prototype.del_player_from_match_list_by_uid = function (uid, match_list) {
         var player = match_list[uid];
         if (player) {
-            player.set_user_state(State_1.UserState.InView);
+            player.set_user_state(State_1["default"].UserState.InView);
             match_list[uid] = null;
             delete match_list[uid];
             return true;
@@ -347,7 +349,7 @@ var MatchManager = /** @class */ (function () {
     MatchManager.prototype.del_player_from_in_match_list_by_uid = function (uid, in_match_list) {
         var player = in_match_list[uid];
         if (player) {
-            player.set_user_state(State_1.UserState.InView);
+            player.set_user_state(State_1["default"].UserState.InView);
             in_match_list[uid] = null;
             delete in_match_list[uid];
             return true;

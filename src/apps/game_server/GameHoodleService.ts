@@ -1,6 +1,6 @@
 //游戏逻辑服务
 
-import ServiceBase from '../../netbus/ServiceBase';
+import ServiceBase from '../../netengine/ServiceBase';
 import GameHoodleModle from './GameHoodleModle';
 
 class GameHoodleService extends ServiceBase {

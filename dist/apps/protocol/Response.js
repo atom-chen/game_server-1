@@ -1,20 +1,27 @@
 "use strict";
 exports.__esModule = true;
 var Response = {
-    OK: 0,
-    INVALID_PARAMS: -100,
-    SYSTEM_ERR: -101,
-    ILLEGAL_ACCOUNT: -102,
-    INVALIDI_OPT: -103,
-    PHONE_IS_REG: -104,
-    PHONE_CODE_ERR: -105,
-    UNAME_OR_UPWD_ERR: -106,
-    PHONE_IS_NOT_REG: -107,
-    RANK_IS_EMPTY: -108,
-    INVALID_ZONE: -109,
-    CHIP_IS_NOT_ENOUGH: -110,
-    VIP_IS_NOT_ENOUGH: -111,
-    NOT_YOUR_TURN: -112
+    SUCCESS: 1,
+    ERROR_1: -1,
+    ERROR_2: -2,
+    ERROR_3: -3,
+    ERROR_4: -4,
+    ERROR_5: -5,
+    ERROR_6: -6,
+    ERROR_7: -7,
+    ERROR_8: -8,
+    ERROR_9: -9,
+    ERROR_10: -10,
+    ERROR_11: -11,
+    ERROR_12: -12,
+    ERROR_13: -13,
+    ERROR_14: -14,
+    ERROR_15: -15,
+    ERROR_16: -16,
+    ERROR_17: -17,
+    ERROR_18: -18,
+    ERROR_19: -19,
+    ERROR_20: -20
 };
 exports["default"] = Response;
 //# sourceMappingURL=Response.js.map

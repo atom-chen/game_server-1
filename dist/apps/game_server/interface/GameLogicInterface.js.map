@@ -1,1 +1,0 @@
-{"version":3,"file":"GameLogicInterface.js","sourceRoot":"","sources":["../../../../src/apps/game_server/interface/GameLogicInterface.ts"],"names":[],"mappings":";;;;;AAGA,2EAAqD;AACrD,uEAAiD;AAOjD,IAAI,SAAS,GAAqB,0BAAa,CAAC,WAAW,EAAE,CAAC;AAC9D,IAAI,OAAO,GAAuB,wBAAW,CAAC,WAAW,EAAE,CAAC;AAE5D;IAAA;IA+IA,CAAC;IAAD,yBAAC;AAAD,CAAC,AA/ID,IA+IC;AAED,qBAAe,kBAAkB,CAAC"}

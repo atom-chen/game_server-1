@@ -1,4 +1,4 @@
-import NetServer from "../../netbus/NetServer";
+import NetServer from "../../netengine/NetServer";
 import Stype from '../protocol/Stype';
 
 class SystemSend {

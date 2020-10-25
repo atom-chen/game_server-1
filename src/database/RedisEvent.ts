@@ -9,9 +9,10 @@ export default class RedisEvent {
         lobby_channel : "lobby_channel",
         game_channel: "game_channel",
         auth_channel: "auth_channel",
+        gameroute_channel: "gameroute_channel",
     }
 
-    public static redis_lobby_msg_name = {
+    public static redis_lobby_channel_msg = {
         create_room: "lobby_create_room",
         join_room: "lobby_join_room",
         exit_room: "lobby_exit_room",
@@ -19,11 +20,15 @@ export default class RedisEvent {
         back_room: "lobby_back_room",
     }
 
-    public static redis_game_msg_name = {
-
+    public static game_route_channel_msg = {
+        route_connect_gameserver: "route_connect_gameserver",
+        game_route_restart: "game_route_restart",
     }
 
-    public static redis_auth_msg_name = {
+    public static redis_game_channel_msg = {
+    }
+
+    public static redis_auth_channel_msg = {
 
     }
 

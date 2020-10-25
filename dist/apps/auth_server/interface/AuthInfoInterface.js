@@ -52,13 +52,18 @@ var AuthInfoInterface = /** @class */ (function () {
             var data, sql_info, resbody;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, MySqlAuth_1["default"].get_uinfo_by_uid(utag)];
+                    case 0:
+                        if (utag == 0) {
+                            AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response_1["default"].ERROR_1 });
+                            return [2 /*return*/];
+                        }
+                        return [4 /*yield*/, MySqlAuth_1["default"].get_uinfo_by_uid(utag)];
                     case 1:
                         data = _a.sent();
                         if (!(data && data.length > 0)) return [3 /*break*/, 3];
                         sql_info = data[0];
                         resbody = {
-                            status: Response_1["default"].OK,
+                            status: Response_1["default"].SUCCESS,
                             usercenterinfo: JSON.stringify(sql_info)
                         };
                         AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, resbody);
@@ -69,7 +74,7 @@ var AuthInfoInterface = /** @class */ (function () {
                         // Log.info("hcc>>outInfo:" , outInfo);
                         return [2 /*return*/];
                     case 3:
-                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response_1["default"].ILLEGAL_ACCOUNT });
+                        AuthSendMsg_1["default"].send(session, AuthProto_1["default"].XY_ID.RES_USERCENTERINFO, utag, proto_type, { status: Response_1["default"].ERROR_2 });
                         return [2 /*return*/];
                 }
             });

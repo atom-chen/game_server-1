@@ -29,26 +29,29 @@ package lobby.client.proto;
 enum XY_ID {
 	INVALED = 0;
 	
-	REQ_LOGINLOBBY 		= 20001;
+	REQ_LOGINLOBBY 		= 20001; //登录大厅
 	RES_LOBINLOBBY 		= 20002;
 
-	REQ_CERATEROOM 		= 20003;
+	REQ_CERATEROOM 		= 20003; //创建房间
 	RES_CERATEROOM 		= 20004;
 
-	REQ_JOINROOM 		= 20005;
+	REQ_JOINROOM 		= 20005; //加入房间
 	RES_JOINROOM 		= 20006;
 
-	REQ_EXITROOM 		= 20007;
+	REQ_EXITROOM 		= 20007; //退出房间
 	RES_EXITROOM 		= 20008;
 
-	REQ_BACKROOM 		= 20009;
+	REQ_BACKROOM 		= 20009; //返回房间
 	RES_BACKROOM 		= 20010;
 
-	REQ_DESSOLVEROOM 	= 20011;
+	REQ_DESSOLVEROOM 	= 20011; //解散房间
 	RES_DESSOLVEROOM 	= 20012;
 	
-	REQ_ROOMSTATUS 		= 20013;
+	REQ_ROOMSTATUS 		= 20013; //房间状态
 	RES_ROOMSTATUS 		= 20014;
+
+	REQ_GAMEINFO 		= 20015; //玩家游戏道具信息
+	RES_GAMEINFO 		= 20016;
 }
 
 message ReqLoginLobby {
@@ -130,4 +133,13 @@ message ResRoomStatus {
 		FAILED = 1;
 	}
 	required sint32 status = 1;
+}
+
+message ReqGameInfo {
+
+}
+
+message ResGameInfo {
+	required sint32 status = 1;
+	optional string userinfostring = 2;
 }

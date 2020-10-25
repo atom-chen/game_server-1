@@ -1,6 +1,6 @@
 //系统服务
 
-import ServiceBase from "../../netbus/ServiceBase"
+import ServiceBase from "../../netengine/ServiceBase"
 import SystemModel from './SystemModel';
 
 class SystemService extends ServiceBase {

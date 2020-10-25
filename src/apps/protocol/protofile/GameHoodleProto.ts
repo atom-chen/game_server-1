@@ -55,32 +55,32 @@ export default class GameHoodleProto {
 
 		///////////////////////////////////////
 
-		eUserMatchReq: 37,		// 玩家匹配
-		eUserMatchRes: 38,
-		eUserStopMatchReq: 39,		// 玩家取消匹配
-		eUserStopMatchRes: 40,
-		eUserGameInfoReq: 41,		// 游戏中心数据
-		eUserGameInfoRes: 42,
-		eUserBallInfoReq: 43,		// 小球信息
-		eUserBallInfoRes: 44,
-		eUpdateUserBallReq: 45,		// 更新小球信息
-		eUpdateUserBallRes: 46,
-		eStoreListReq: 47, 		// 获取商城列表
-		eStoreListRes: 48,
-		eBuyThingsReq: 49, 		// 购买
-		eBuyThingsRes: 50,
-		eUseHoodleBallReq: 51,		// 使用小球
-		eUseHoodleBallRes: 52,
-		eUserConfigReq: 53,  		// 玩家配置
-		eUserConfigRes: 54,
+		// eUserMatchReq: 37,		// 玩家匹配
+		// eUserMatchRes: 38,
+		// eUserStopMatchReq: 39,		// 玩家取消匹配
+		// eUserStopMatchRes: 40,
+		// eUserGameInfoReq: 41,		// 游戏中心数据
+		// eUserGameInfoRes: 42,
+		// eUserBallInfoReq: 43,		// 小球信息
+		// eUserBallInfoRes: 44,
+		// eUpdateUserBallReq: 45,		// 更新小球信息
+		// eUpdateUserBallRes: 46,
+		// eStoreListReq: 47, 		// 获取商城列表
+		// eStoreListRes: 48,
+		// eBuyThingsReq: 49, 		// 购买
+		// eBuyThingsRes: 50,
+		// eUseHoodleBallReq: 51,		// 使用小球
+		// eUseHoodleBallRes: 52,
+		// eUserConfigReq: 53,  		// 玩家配置
+		// eUserConfigRes: 54,
 
-		eUserPlayAgainReq: 57,		// 玩家请求再次对局（当前对局结束时的玩家）
-		eUserPlayAgainRes: 58,		// 玩家收到另一个对局玩家再次对局的回应
-		eUserPlayAgainAnswerReq: 59,		// 玩家回应：另外一个玩家的再次对局请求
-		eUserPlayAgainAnswerRes: 60,		// 玩家收到：另外一个玩家的再次对局的请求
-		eUserPlayAgainStartRes: 61, 		// 玩家再次对局，开始游戏
-		eRoomListConfigReq: 62,		// 房间列表信息
-		eRoomListConfigRes: 63,
+		// eUserPlayAgainReq: 57,		// 玩家请求再次对局（当前对局结束时的玩家）
+		// eUserPlayAgainRes: 58,		// 玩家收到另一个对局玩家再次对局的回应
+		// eUserPlayAgainAnswerReq: 59,		// 玩家回应：另外一个玩家的再次对局请求
+		// eUserPlayAgainAnswerRes: 60,		// 玩家收到：另外一个玩家的再次对局的请求
+		// eUserPlayAgainStartRes: 61, 		// 玩家再次对局，开始游戏
+		// eRoomListConfigReq: 62,		// 房间列表信息
+		// eRoomListConfigRes: 63,
 	}
 
 	public static XY_NAME = {
@@ -130,6 +130,9 @@ export default class GameHoodleProto {
 		[GameHoodleProto.XY_ID.eGameResultRes]: "GameResultRes",				// 小结算
 		[GameHoodleProto.XY_ID.eTotalGameResultRes]: "TotalGameResultRes", 		// 大结算
 		[GameHoodleProto.XY_ID.ePlayerScoreRes]: "PlayerScoreRes", 			// 玩家得分
+		[GameHoodleProto.XY_ID.eUserEmojReq]: "UserEmojReq",
+		[GameHoodleProto.XY_ID.eUserEmojRes]: "UserEmojRes",
+		/*
 		[GameHoodleProto.XY_ID.eUserMatchReq]: "UserMatchReq", 				// 玩家匹配
 		[GameHoodleProto.XY_ID.eUserMatchRes]: "UserMatchRes",
 		[GameHoodleProto.XY_ID.eUserStopMatchReq]: "UserStopMatchReq",			// 玩家取消匹配 		
@@ -148,8 +151,6 @@ export default class GameHoodleProto {
 		[GameHoodleProto.XY_ID.eUseHoodleBallRes]: "UseHoodleBallRes",
 		[GameHoodleProto.XY_ID.eUserConfigReq]: "UserConfigReq", 				//玩家配置
 		[GameHoodleProto.XY_ID.eUserConfigRes]: "UserConfigRes",
-		[GameHoodleProto.XY_ID.eUserEmojReq]: "UserEmojReq",
-		[GameHoodleProto.XY_ID.eUserEmojRes]: "UserEmojRes",
 		[GameHoodleProto.XY_ID.eUserPlayAgainReq]: "UserPlayAgainReq",
 		[GameHoodleProto.XY_ID.eUserPlayAgainRes]: "UserPlayAgainRes",
 		[GameHoodleProto.XY_ID.eUserPlayAgainAnswerReq]: "UserPlayAgainAnswerReq",
@@ -157,5 +158,6 @@ export default class GameHoodleProto {
 		[GameHoodleProto.XY_ID.eUserPlayAgainStartRes]: "UserPlayAgainStartRes",
 		[GameHoodleProto.XY_ID.eRoomListConfigReq]: "RoomListConfigReq",
 		[GameHoodleProto.XY_ID.eRoomListConfigRes]: "RoomListConfigRes",
+		*/
 	}
 }

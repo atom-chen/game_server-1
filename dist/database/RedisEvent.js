@@ -26,17 +26,22 @@ var RedisEvent = /** @class */ (function () {
     RedisEvent.channel_name = {
         lobby_channel: "lobby_channel",
         game_channel: "game_channel",
-        auth_channel: "auth_channel"
+        auth_channel: "auth_channel",
+        gameroute_channel: "gameroute_channel"
     };
-    RedisEvent.redis_lobby_msg_name = {
+    RedisEvent.redis_lobby_channel_msg = {
         create_room: "lobby_create_room",
         join_room: "lobby_join_room",
         exit_room: "lobby_exit_room",
         dessolve_room: "lobby_dessolve_room",
         back_room: "lobby_back_room"
     };
-    RedisEvent.redis_game_msg_name = {};
-    RedisEvent.redis_auth_msg_name = {};
+    RedisEvent.game_route_channel_msg = {
+        route_connect_gameserver: "route_connect_gameserver",
+        game_route_restart: "game_route_restart"
+    };
+    RedisEvent.redis_game_channel_msg = {};
+    RedisEvent.redis_auth_channel_msg = {};
     return RedisEvent;
 }());
 exports["default"] = RedisEvent;
