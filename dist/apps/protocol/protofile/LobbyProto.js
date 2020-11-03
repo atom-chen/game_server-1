@@ -9,7 +9,7 @@ var LobbyProto = /** @class */ (function () {
     LobbyProto.XY_ID = {
         INVALED: 0,
         REQ_LOGINLOBBY: 20001,
-        RES_LOBINLOBBY: 20002,
+        RES_LOGINLOBBY: 20002,
         REQ_CERATEROOM: 20003,
         RES_CERATEROOM: 20004,
         REQ_JOINROOM: 20005,
@@ -27,7 +27,7 @@ var LobbyProto = /** @class */ (function () {
     };
     LobbyProto.XY_NAME = (_a = {},
         _a[LobbyProto.XY_ID.REQ_LOGINLOBBY] = "ReqLoginLobby",
-        _a[LobbyProto.XY_ID.RES_LOBINLOBBY] = "ResLoginLobby",
+        _a[LobbyProto.XY_ID.RES_LOGINLOBBY] = "ResLoginLobby",
         _a[LobbyProto.XY_ID.REQ_CERATEROOM] = "ReqCreateRoom",
         _a[LobbyProto.XY_ID.RES_CERATEROOM] = "ResCreateRoom",
         _a[LobbyProto.XY_ID.REQ_JOINROOM] = "ReqJoinRoom",

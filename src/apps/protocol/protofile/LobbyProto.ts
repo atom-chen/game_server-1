@@ -6,7 +6,7 @@ export default class LobbyProto {
     public static XY_ID = {
         INVALED : 0,
         REQ_LOGINLOBBY : 20001,
-        RES_LOBINLOBBY : 20002,
+        RES_LOGINLOBBY : 20002,
         REQ_CERATEROOM : 20003,
         RES_CERATEROOM : 20004,
         REQ_JOINROOM : 20005,
@@ -26,7 +26,7 @@ export default class LobbyProto {
     public static XY_NAME = {
 
         [LobbyProto.XY_ID.REQ_LOGINLOBBY]: "ReqLoginLobby",
-        [LobbyProto.XY_ID.RES_LOBINLOBBY]: "ResLoginLobby",
+        [LobbyProto.XY_ID.RES_LOGINLOBBY]: "ResLoginLobby",
 
         [LobbyProto.XY_ID.REQ_CERATEROOM]: "ReqCreateRoom",
         [LobbyProto.XY_ID.RES_CERATEROOM]: "ResCreateRoom",

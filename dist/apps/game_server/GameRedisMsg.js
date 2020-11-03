@@ -47,6 +47,7 @@ var GameServerData_1 = __importDefault(require("./GameServerData"));
 var RoomManager_1 = __importDefault(require("./manager/RoomManager"));
 var RedisLobby_1 = __importDefault(require("../../database/RedisLobby"));
 var SendLogicInfo_1 = __importDefault(require("./handler/SendLogicInfo"));
+var SendLogicInfo_2 = __importDefault(require("./handler/SendLogicInfo"));
 var playerMgr = PlayerManager_1["default"].getInstance();
 var roomMgr = RoomManager_1["default"].getInstance();
 /*
@@ -68,6 +69,7 @@ var GameRedisMsg = /** @class */ (function () {
             _a[RedisEvent_1["default"].redis_lobby_channel_msg.dessolve_room] = this.on_redis_dessolve_room,
             _a[RedisEvent_1["default"].redis_lobby_channel_msg.exit_room] = this.on_redis_exit_room,
             _a[RedisEvent_1["default"].redis_lobby_channel_msg.join_room] = this.on_redis_join_room,
+            _a[RedisEvent_1["default"].redis_lobby_channel_msg.lobby_user_offinle] = this.on_redis_user_offline,
             _a);
     }
     GameRedisMsg.getInstance = function () {
@@ -117,11 +119,6 @@ var GameRedisMsg = /** @class */ (function () {
         }
         else {
             room = roomMgr.alloc_room(roomid, body);
-        }
-        var player = playerMgr.get_player(uid);
-        if (player) {
-            player.set_offline(false);
-            SendLogicInfo_1["default"].broadcast_player_info_in_rooom(room, player.get_uid());
         }
     };
     GameRedisMsg.prototype.on_redis_dessolve_room = function (uid, body) {
@@ -177,6 +174,16 @@ var GameRedisMsg = /** @class */ (function () {
         }
         else {
             room = roomMgr.alloc_room(roomid, body);
+        }
+    };
+    GameRedisMsg.prototype.on_redis_user_offline = function (uid, body) {
+        var player = playerMgr.get_player(uid);
+        if (player) {
+            player.set_offline(true);
+        }
+        var room = roomMgr.get_room_by_roomid(body.roomid);
+        if (room) {
+            SendLogicInfo_2["default"].broadcast_player_info_in_rooom(room, player.get_uid());
         }
     };
     GameRedisMsg.Instance = new GameRedisMsg();

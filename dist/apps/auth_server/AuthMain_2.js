@@ -21,4 +21,4 @@ var db_auth = GameAppConfig_1["default"].auth_database;
 MySqlAuth_1["default"].connect(db_auth.host, db_auth.port, db_auth.db_name, db_auth.uname, db_auth.upwd);
 var auth_redis = GameAppConfig_1["default"].auth_center_redis;
 RedisAuth_1["default"].connect(auth_redis.host, auth_redis.port, auth_redis.db_index);
-//# sourceMappingURL=AuthMain.js.map
+//# sourceMappingURL=AuthMain_2.js.map

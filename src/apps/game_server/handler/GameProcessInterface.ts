@@ -23,6 +23,7 @@ class GameProcessInterface {
             return; 
         }
         
+        player.set_offline(false);
         let room: Room = await player.get_room();
         if (!room) {
             Log.warn("check_link_game room is not exist!")

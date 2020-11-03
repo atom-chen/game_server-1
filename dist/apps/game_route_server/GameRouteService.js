@@ -94,7 +94,7 @@ var GameRouteService = /** @class */ (function (_super) {
                         }
                         Log_1["default"].info("send to server port:", server_key);
                         if (server_key == null || server_key == undefined || server_key < 0 || typeof (server_key) != "number") {
-                            Log_1["default"].error("server_index is invalid!", server_key);
+                            Log_1["default"].warn("server_index is invalid!", server_key);
                             return [2 /*return*/];
                         }
                         server_session = GameRouteData_1["default"].get_logic_server_session(server_key);

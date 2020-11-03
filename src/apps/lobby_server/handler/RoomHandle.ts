@@ -247,8 +247,20 @@ export default class RoomHandle {
         }
 
         let game_state = roominfo_obj.game_state;
-        if (!game_state || (game_state && (game_state == State.GameState.Gameing || game_state == State.GameState.CheckOut))) {
+        if (!game_state) {
             LobbySendMsg.send(session, LobbyProto.XY_ID.RES_EXITROOM, utag, proto_type, { status: Response.ERROR_4 });
+            return;
+        }
+
+        //游戏中，玩家请求推出了，告诉客户端玩家掉线
+        if ((game_state && (game_state == State.GameState.Gameing || game_state == State.GameState.CheckOut))){
+            let msg = {
+                xy_name: RedisEvent.redis_lobby_channel_msg.lobby_user_offinle,
+                uid: utag,
+            }
+            let body = ArrayUtil.ObjCat(msg, roominfo_obj);
+            RedisEvent.publish_msg(RedisEvent.channel_name.lobby_channel, JSON.stringify(body));
+            LobbySendMsg.send(session, LobbyProto.XY_ID.RES_EXITROOM, utag, proto_type, { status: Response.ERROR_5 });
             return;
         }
 

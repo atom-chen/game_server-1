@@ -23,4 +23,4 @@ for (var key in game_server) {
     });
     ServiceManager_1["default"].register_service(game_server[key].stype, GatewayService_1["default"]);
 }
-//# sourceMappingURL=GatewayMain.js.map
+//# sourceMappingURL=GatewayMain_2.js.map

@@ -1,2 +1,2 @@
-ts-node src/apps/auth_server/AuthMain.ts
+ts-node src/apps/auth_server/AuthMain_2.ts
 pause;

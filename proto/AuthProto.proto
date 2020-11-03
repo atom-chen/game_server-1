@@ -62,11 +62,6 @@ message ReqUnameRegist {
 }
 
 message ResUnameRegist {
-  enum STATUS {
-    SUCCESS = 0;
-    FAILED_ALREADY_EXIST = 1;
-    FAILED_UNAME_PWD_INVALID = 2;
-  }
   required sint32 status = 1;
 }
 
@@ -76,10 +71,6 @@ message ReqUnameLogin {
 }
 
 message ResUnameLogin {
-  enum STATUS {
-    SUCCESS = 0;
-    FAILED_UNAME_PWD_INVALID = 1;
-  }
   required sint32 status = 1;
   optional sint32 uid = 2;
   optional string logininfo = 3; //登录信息，以便客户端保存
@@ -90,10 +81,6 @@ message ReqGuestLogin {
 }
 
 message ResGuestLogin {
-  enum STATUS {
-    SUCCESS = 0;
-    FAILED_PWD_INVALID = 1;
-  }
   required sint32 status = 1;
   optional sint32 uid = 2;
   optional string logininfo = 3;
@@ -105,10 +92,6 @@ message ReqWeChatLogin {
 }
 
 message ResWeChatLogin {
-  enum STATUS {
-    SUCCESS = 0;
-    FAILED = 1;
-  }
   required sint32 status = 1;
   optional sint32 uid = 2;
   optional string userlogininfo = 3;
@@ -119,10 +102,6 @@ message ReqWeChatSessionLogin {
 }
 
 message ResWeChatSessionLogin {
-  enum STATUS {
-    SUCCESS = 0;
-    FAILED = 1;
-  }
   required sint32 status = 1;
   optional sint32 uid = 2;
   optional string userlogininfo = 3;
@@ -132,10 +111,6 @@ message ReqLoginOut {
 }
 
 message ResLoginOut {
-  enum STATUS {
-    SUCCESS = 0;
-    FAILED = 1;
-  }
   required sint32 status = 1;
 }
 
@@ -146,10 +121,6 @@ message ReqUserCenterInfo {
 }
 
 message ResUserCenterInfo {
-  enum STATUS {
-    SUCCESS = 0;
-    FAILED = 1;
-  }
   required sint32 status = 1;
 	optional string usercenterinfo = 2;
 }

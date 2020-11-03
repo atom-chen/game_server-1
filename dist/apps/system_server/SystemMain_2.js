@@ -22,4 +22,4 @@ var game_database = GameAppConfig_1["default"].game_database;
 MysqlSystem_1["default"].connect(game_database.host, game_database.port, game_database.db_name, game_database.uname, game_database.upwd);
 //游戏服务
 MySqlGame_1["default"].connect(game_database.host, game_database.port, game_database.db_name, game_database.uname, game_database.upwd);
-//# sourceMappingURL=SystemMain.js.map
+//# sourceMappingURL=SystemMain_2.js.map

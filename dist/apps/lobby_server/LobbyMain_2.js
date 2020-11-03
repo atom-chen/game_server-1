@@ -31,4 +31,4 @@ RedisGame_1["default"].connect(game_redis_config.host, game_redis_config.port, g
 //事件reids
 var event_redis_config = GameAppConfig_1["default"].event_redis;
 RedisEvent_1["default"].connect(event_redis_config.host, event_redis_config.port, event_redis_config.db_index);
-//# sourceMappingURL=LobbyMain.js.map
+//# sourceMappingURL=LobbyMain_2.js.map

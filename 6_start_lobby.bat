@@ -1,2 +1,2 @@
-ts-node src/apps/lobby_server/LobbyMain.ts
+ts-node src/apps/lobby_server/LobbyMain_2.ts
 pause;

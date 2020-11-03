@@ -30,7 +30,7 @@ class GameRouteService extends ServiceBase {
         }
         Log.info("send to server port:" , server_key);
         if (server_key == null || server_key == undefined || server_key < 0 || typeof(server_key) != "number"){
-            Log.error("server_index is invalid!", server_key);
+            Log.warn("server_index is invalid!", server_key);
             return;
         }
         

@@ -64,6 +64,7 @@ var GameProcessInterface = /** @class */ (function () {
                             GameSendMsg_1["default"].send(session, GameHoodleProto_1["default"].XY_ID.eCheckLinkGameRes, utag, proto_type, { status: Response_1["default"].ERROR_1 });
                             return [2 /*return*/];
                         }
+                        player.set_offline(false);
                         return [4 /*yield*/, player.get_room()];
                     case 1:
                         room = _a.sent();

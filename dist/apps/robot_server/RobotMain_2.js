@@ -27,4 +27,4 @@ function on_success_callfunc(server_session) {
  *  robot(as client) ----> gateway ----> game_server
  *  game_server ----> gateway -----> robot
  */ 
-//# sourceMappingURL=RobotMain.js.map
+//# sourceMappingURL=RobotMain_2.js.map

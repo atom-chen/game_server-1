@@ -31,17 +31,17 @@ var Log_1 = __importDefault(require("../../utils/Log"));
 var Stype_1 = __importDefault(require("../protocol/Stype"));
 var LOCAL_HOST = "127.0.0.1";
 var ALY_CLOUD_HOST = "172.16.166.106";
-var WSS_WEBSOCKET_PORT = 6081;
+var WSS_WEBSOCKET_PORT = 5081;
 var IS_LOCAL_DEBUG = true; //是否启用本地ip来测试，启用后只能用当前电脑ip调试服务端程序
 if (Platform_1["default"].isWin32()) {
     if (IS_LOCAL_DEBUG) {
         LOCAL_HOST = Platform_1["default"].getLocalIP(); //本地电脑ip,pc调试用
     }
-    WSS_WEBSOCKET_PORT = 6081;
+    WSS_WEBSOCKET_PORT = 5081;
 }
 else if (Platform_1["default"].isLinux()) {
     LOCAL_HOST = ALY_CLOUD_HOST; //阿里云外网ip
-    WSS_WEBSOCKET_PORT = 6061;
+    WSS_WEBSOCKET_PORT = 5061;
 }
 Log_1["default"].info("hcc>>localIP: ", LOCAL_HOST);
 // websocket wss://172.16.166.106:6061 阿里云服务内网端口
@@ -59,41 +59,41 @@ var GameAppConfig = /** @class */ (function () {
     //网关服
     GameAppConfig.gateway_config = {
         host: LOCAL_HOST,
-        tcp_port: 6080,
+        tcp_port: 5080,
         wbsocket_port: WSS_WEBSOCKET_PORT
     };
     //web热更新服务
     GameAppConfig.hotupdate_webserver = {
         host: LOCAL_HOST,
-        port: 7000
+        port: 5000
     };
     //web配置服务
     GameAppConfig.config_webserver = {
         host: LOCAL_HOST,
-        port: 6091
+        port: 5091
     };
     //用户中心服务
     GameAppConfig.auth_server = {
         host: LOCAL_HOST,
-        port: 6001,
+        port: 5001,
         stype: Stype_1["default"].S_TYPE.Auth
     };
     //大厅服务
     GameAppConfig.lobby_server = {
         host: LOCAL_HOST,
-        port: 6085,
+        port: 5085,
         stype: Stype_1["default"].S_TYPE.Lobby
     };
     //系统服务
     GameAppConfig.system_server = {
         host: LOCAL_HOST,
-        port: 6087,
+        port: 5087,
         stype: Stype_1["default"].S_TYPE.System
     };
     //游戏route服务
     GameAppConfig.game_route_server = {
         host: LOCAL_HOST,
-        port: 6088,
+        port: 5088,
         stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     ////////////////////
@@ -149,17 +149,17 @@ var GameAppConfig = /** @class */ (function () {
     //游戏逻辑服务，可拓展多个
     GameAppConfig.game_logic_server_1 = {
         host: LOCAL_HOST,
-        port: 6090,
+        port: 5090,
         stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     GameAppConfig.game_logic_server_2 = {
         host: LOCAL_HOST,
-        port: 6091,
+        port: 5091,
         stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     GameAppConfig.game_logic_server_3 = {
         host: LOCAL_HOST,
-        port: 6092,
+        port: 5092,
         stype: Stype_1["default"].S_TYPE.GameHoodle
     };
     ////////////////////

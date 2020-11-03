@@ -24,10 +24,6 @@ message reqLoginRewardConfig {
 }
 
 message ResLoginRewardConfig {
-    enum STATUS {
-      SUCCESS = 0;
-      FAILED = 1;
-    }
     required sint32 status = 1;
     optional sint32 signdays = 2;   //累计签到了几天
     optional bool istodaysign = 3;  //今天是否签到了
@@ -39,10 +35,6 @@ message ReqLoginRewardSign {
 }
 
 message ResLoginRewardSign {
-  enum STATUS {
-      SUCCESS = 0;
-      FAILED = 1;
-  }
   required sint32 status = 1;
   optional string rewardconfig = 2; //签到奖励
 }
@@ -51,10 +43,6 @@ message ReqUserShare {
 }
 
 message ResUserShare {
-  enum STATUS {
-      SUCCESS = 0;
-      FAILED = 1;
-  }
 	required sint32 status = 1;
 }
 
@@ -65,10 +53,6 @@ message ReqUserAddChip {
 }
 
 message ResUserAddChip {
-  enum STATUS {
-      SUCCESS = 0;
-      FAILED = 1;
-  }
   required sint32 status = 1;
   optional sint32 propid = 2;
   optional sint32 propcount = 3;

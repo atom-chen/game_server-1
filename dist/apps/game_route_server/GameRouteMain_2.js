@@ -138,4 +138,4 @@ NetServer_1["default"].start_tcp_server(route_server_config.host, route_server_c
     }
 });
 ServiceManager_1["default"].register_service(Stype_1["default"].S_TYPE.GameHoodle, GameRouteService_1["default"]);
-//# sourceMappingURL=GameRouteMain.js.map
+//# sourceMappingURL=GameRouteMain_2.js.map

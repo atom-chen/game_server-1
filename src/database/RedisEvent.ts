@@ -18,6 +18,7 @@ export default class RedisEvent {
         exit_room: "lobby_exit_room",
         dessolve_room: "lobby_dessolve_room",
         back_room: "lobby_back_room",
+        lobby_user_offinle: "lobby_user_offinle",
     }
 
     public static game_route_channel_msg = {

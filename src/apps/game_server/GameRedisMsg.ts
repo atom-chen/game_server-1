@@ -9,6 +9,7 @@ import Room from './objects/Room';
 import RedisLobby from '../../database/RedisLobby';
 import Player from './objects/Player';
 import GameSendInfo from "./handler/SendLogicInfo";
+import SendLogicInfo from "./handler/SendLogicInfo";
 
 let playerMgr: PlayerManager = PlayerManager.getInstance();
 let roomMgr: RoomManager = RoomManager.getInstance();
@@ -38,6 +39,7 @@ export default class GameRedisMsg {
             [RedisEvent.redis_lobby_channel_msg.dessolve_room]: this.on_redis_dessolve_room,
             [RedisEvent.redis_lobby_channel_msg.exit_room]: this.on_redis_exit_room,
             [RedisEvent.redis_lobby_channel_msg.join_room]: this.on_redis_join_room,
+            [RedisEvent.redis_lobby_channel_msg.lobby_user_offinle]: this.on_redis_user_offline,
         }
     }
 
@@ -84,12 +86,6 @@ export default class GameRedisMsg {
             room.init_data(roomid, body);
         } else {
             room = roomMgr.alloc_room(roomid, body);
-        }
-
-        let player:Player =  playerMgr.get_player(uid)
-        if (player){
-            player.set_offline(false)
-            GameSendInfo.broadcast_player_info_in_rooom(room, player.get_uid());
         }
     }
 
@@ -141,6 +137,17 @@ export default class GameRedisMsg {
             room.init_data(roomid, body);
         }else{
             room = roomMgr.alloc_room(roomid, body);
+        }
+    }
+
+    on_redis_user_offline(uid:number, body:any){
+        let player:Player = playerMgr.get_player(uid);
+        if(player){
+            player.set_offline(true);
+        }
+        let room:Room = roomMgr.get_room_by_roomid(body.roomid);
+        if(room){
+            SendLogicInfo.broadcast_player_info_in_rooom(room, player.get_uid());
         }
     }
 

@@ -70,7 +70,7 @@ var GameInfoHandle = /** @class */ (function () {
                     case 1:
                         ret = _a.sent();
                         if (ret) {
-                            LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_LOBINLOBBY, utag, proto_type, { status: Response_1["default"].SUCCESS });
+                            LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_LOGINLOBBY, utag, proto_type, { status: Response_1["default"].SUCCESS });
                         }
                         return [2 /*return*/];
                 }

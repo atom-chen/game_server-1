@@ -17,7 +17,7 @@ export default class GameInfoHandle {
     public static async do_req_login_lobby(session: any, utag: number, proto_type: number, raw_cmd: any) {
         let ret = await GameInfoHandle.do_check_ugame_info(utag);
         if (ret) {
-            LobbySendMsg.send(session, LobbyProto.XY_ID.RES_LOBINLOBBY, utag, proto_type, { status: Response.SUCCESS });
+            LobbySendMsg.send(session, LobbyProto.XY_ID.RES_LOGINLOBBY, utag, proto_type, { status: Response.SUCCESS });
         }
     }
 

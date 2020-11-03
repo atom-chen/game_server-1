@@ -292,7 +292,7 @@ var RoomHandle = /** @class */ (function () {
     };
     RoomHandle.do_req_exit_room = function (session, utag, proto_type, raw_cmd) {
         return __awaiter(this, void 0, void 0, function () {
-            var game_info, uidIsExist, roominfo_obj, game_state, roomid, game_serverid, ret, roominfo_str, msg, roominfo_obj_ex, body, msg, body;
+            var game_info, uidIsExist, roominfo_obj, game_state, msg, body, roomid, game_serverid, ret, roominfo_str, msg, roominfo_obj_ex, body, msg, body;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4 /*yield*/, GameInfoHandle_1["default"].do_get_ugame_info(utag)];
@@ -318,8 +318,19 @@ var RoomHandle = /** @class */ (function () {
                             return [2 /*return*/];
                         }
                         game_state = roominfo_obj.game_state;
-                        if (!game_state || (game_state && (game_state == State_1["default"].GameState.Gameing || game_state == State_1["default"].GameState.CheckOut))) {
+                        if (!game_state) {
                             LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_EXITROOM, utag, proto_type, { status: Response_1["default"].ERROR_4 });
+                            return [2 /*return*/];
+                        }
+                        //游戏中，玩家请求推出了，告诉客户端玩家掉线
+                        if ((game_state && (game_state == State_1["default"].GameState.Gameing || game_state == State_1["default"].GameState.CheckOut))) {
+                            msg = {
+                                xy_name: RedisEvent_1["default"].redis_lobby_channel_msg.lobby_user_offinle,
+                                uid: utag
+                            };
+                            body = ArrayUtil_1["default"].ObjCat(msg, roominfo_obj);
+                            RedisEvent_1["default"].publish_msg(RedisEvent_1["default"].channel_name.lobby_channel, JSON.stringify(body));
+                            LobbySendMsg_1["default"].send(session, LobbyProto_1["default"].XY_ID.RES_EXITROOM, utag, proto_type, { status: Response_1["default"].ERROR_5 });
                             return [2 /*return*/];
                         }
                         roomid = roominfo_obj.roomid || "";

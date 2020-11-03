@@ -29,17 +29,17 @@ import Stype from '../protocol/Stype';
 
 let LOCAL_HOST:string = "127.0.0.1";
 let ALY_CLOUD_HOST: string = "172.16.166.106";
-let WSS_WEBSOCKET_PORT:number = 6081;
+let WSS_WEBSOCKET_PORT:number = 5081;
 let IS_LOCAL_DEBUG:boolean = true; //是否启用本地ip来测试，启用后只能用当前电脑ip调试服务端程序
 
 if(Platform.isWin32()){
 	if(IS_LOCAL_DEBUG){
 		LOCAL_HOST = Platform.getLocalIP();//本地电脑ip,pc调试用
 	}
-	WSS_WEBSOCKET_PORT = 6081;
+	WSS_WEBSOCKET_PORT = 5081;
 }else if(Platform.isLinux()){
 	LOCAL_HOST = ALY_CLOUD_HOST;//阿里云外网ip
-	WSS_WEBSOCKET_PORT = 6061;
+	WSS_WEBSOCKET_PORT = 5061;
 }
 
 Log.info("hcc>>localIP: " , LOCAL_HOST);
@@ -60,47 +60,47 @@ class GameAppConfig {
 	//网关服
 	static gateway_config  ={
 		host: LOCAL_HOST,
-		tcp_port: 6080,
+		tcp_port: 5080,
 		wbsocket_port: WSS_WEBSOCKET_PORT, 
 	}
 
 	//web热更新服务
 	static hotupdate_webserver = {
 		host: LOCAL_HOST,
-		port: 7000,
+		port: 5000,
 	}
 
 	//web配置服务
 	static config_webserver = {
 		host: LOCAL_HOST,
-		port: 6091,
+		port: 5091,
 	}
 
 	//用户中心服务
 	static auth_server = {
 		host: LOCAL_HOST,
-		port: 6001,
+		port: 5001,
 		stype: Stype.S_TYPE.Auth,
 	}
 
 	//大厅服务
 	static lobby_server = {
 		host: LOCAL_HOST,
-		port: 6085,
+		port: 5085,
 		stype: Stype.S_TYPE.Lobby,
 	}
 
 	//系统服务
 	static system_server =  {
 		host: LOCAL_HOST,
-		port: 6087,
+		port: 5087,
 		stype: Stype.S_TYPE.System,
 	}
 
 	//游戏route服务
 	static game_route_server =  {
 		host: LOCAL_HOST,
-		port: 6088,
+		port: 5088,
 		stype: Stype.S_TYPE.GameHoodle,
 	}
 
@@ -164,18 +164,18 @@ class GameAppConfig {
 	//游戏逻辑服务，可拓展多个
 	static game_logic_server_1 = {
 		host: LOCAL_HOST,
-		port: 6090,
+		port: 5090,
 		stype: Stype.S_TYPE.GameHoodle,
 	}
 	static game_logic_server_2 = {
 		host: LOCAL_HOST,
-		port: 6091,
+		port: 5091,
 		stype: Stype.S_TYPE.GameHoodle,
 	}
 
 	static game_logic_server_3 = {
 		host: LOCAL_HOST,
-		port: 6092,
+		port: 5092,
 		stype: Stype.S_TYPE.GameHoodle,
 	}
 
